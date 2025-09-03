@@ -1,7 +1,8 @@
 #pragma once
 
+#include <QFuture>
+#include <QObject>
 #include <QtQuick/QQuickItem>
-#include <qobject.h>
 #include <qqmlintegration.h>
 
 class CachingImageManager : public QObject {
@@ -56,5 +57,5 @@ private:
     [[nodiscard]] QSize effectiveSize() const;
 
     void createCache(const QString& path, const QString& cache, const QString& fillMode, const QSize& size) const;
-    [[nodiscard]] QString sha256sum(const QString& path) const;
+    [[nodiscard]] static QString sha256sum(const QString& path);
 };

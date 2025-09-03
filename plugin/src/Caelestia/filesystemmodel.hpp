@@ -155,5 +155,5 @@ private:
     void updateEntries();
     void updateEntriesForDir(const QString& dir);
     void applyChanges(const QSet<QString>& removedPaths, const QSet<QString>& addedPaths);
-    static bool compareEntries(const FileSystemEntry* a, const FileSystemEntry* b);
+    [[nodiscard]] static bool compareEntries(const FileSystemEntry* a, const FileSystemEntry* b);
 };

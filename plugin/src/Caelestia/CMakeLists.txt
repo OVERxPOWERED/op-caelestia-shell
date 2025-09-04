@@ -1,5 +1,6 @@
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(QALCULATE REQUIRED libqalculate)
+pkg_check_modules(AUBIO REQUIRED aubio)
 
 qt_add_qml_module(caelestia
     URI Caelestia
@@ -9,6 +10,7 @@ qt_add_qml_module(caelestia
         cachingimagemanager.hpp cachingimagemanager.cpp
         filesystemmodel.hpp filesystemmodel.cpp
         qalculator.hpp qalculator.cpp
+        beattracker.hpp beattracker.cpp
 )
 
 qt_query_qml_module(caelestia
@@ -28,5 +30,8 @@ install(TARGETS "${module_plugin_target}" LIBRARY DESTINATION "${module_dir}" RU
 install(FILES "${module_qmldir}" DESTINATION "${module_dir}")
 install(FILES "${module_typeinfo}" DESTINATION "${module_dir}")
 
-target_include_directories(caelestia SYSTEM PRIVATE ${QALCULATE_INCLUDE_DIRS})
-target_link_libraries(caelestia PRIVATE Qt::Core Qt::Qml Qt::Gui Qt::Concurrent ${QALCULATE_LIBRARIES})
+target_include_directories(caelestia SYSTEM PRIVATE ${QALCULATE_INCLUDE_DIRS} ${AUBIO_INCLUDE_DIRS})
+target_link_libraries(caelestia PRIVATE
+    Qt::Core Qt::Qml Qt::Gui Qt::Concurrent Qt::Multimedia
+    ${QALCULATE_LIBRARIES} ${AUBIO_LIBRARIES}
+)

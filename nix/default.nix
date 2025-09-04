@@ -14,12 +14,8 @@
   swappy,
   wl-clipboard,
   libqalculate,
-  inotify-tools,
-  bluez,
   bash,
   hyprland,
-  coreutils,
-  file,
   material-symbols,
   rubik,
   nerd-fonts,
@@ -50,12 +46,8 @@
       swappy
       wl-clipboard
       libqalculate
-      inotify-tools
-      bluez
       bash
       hyprland
-      coreutils
-      file
     ]
     ++ extraRuntimeDeps
     ++ lib.optional withCli caelestia-cli;

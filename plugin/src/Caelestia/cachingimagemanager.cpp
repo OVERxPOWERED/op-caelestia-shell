@@ -12,6 +12,8 @@
 #include <QtQuick/QQuickItem>
 #include <QtQuick/QQuickWindow>
 
+namespace caelestia {
+
 qreal CachingImageManager::effectiveScale() const {
     if (m_item && m_item->window()) {
         return m_item->window()->devicePixelRatio();
@@ -220,3 +222,5 @@ QString CachingImageManager::sha256sum(const QString& path) {
 
     return hash.result().toHex();
 }
+
+} // namespace caelestia

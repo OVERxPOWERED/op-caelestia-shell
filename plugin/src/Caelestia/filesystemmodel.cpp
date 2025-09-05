@@ -10,6 +10,8 @@
 #include <QtConcurrent>
 #include <qqmlintegration.h>
 
+namespace caelestia {
+
 int FileSystemModel::rowCount(const QModelIndex& parent) const {
     if (parent != QModelIndex()) {
         return 0;
@@ -366,3 +368,5 @@ bool FileSystemModel::compareEntries(const FileSystemEntry* a, const FileSystemE
     }
     return a->relativePath().localeAwareCompare(b->relativePath()) < 0;
 }
+
+} // namespace caelestia

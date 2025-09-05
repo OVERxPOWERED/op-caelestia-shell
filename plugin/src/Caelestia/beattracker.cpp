@@ -7,6 +7,8 @@
 #include <QObject>
 #include <aubio/aubio.h>
 
+namespace caelestia {
+
 BeatTracker::BeatTracker(uint_t sampleRate, uint_t hopSize, QObject* parent)
     : QObject(parent)
     , m_tempo(new_aubio_tempo("default", 1024, hopSize, sampleRate))
@@ -104,3 +106,5 @@ void BeatTracker::handleStateChanged(QtAudio::State state) const {
         }
     }
 }
+
+} // namespace caelestia

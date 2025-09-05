@@ -4,6 +4,8 @@
 #include <qobject.h>
 #include <qqmlintegration.h>
 
+namespace caelestia {
+
 class CUtils : public QObject {
     Q_OBJECT
     QML_ELEMENT
@@ -37,3 +39,5 @@ private:
     QColor findDominantColour(const QImage& image, int rescaleSize) const;
     qreal findAverageLuminance(const QImage& image, int rescaleSize) const;
 };
+
+} // namespace caelestia

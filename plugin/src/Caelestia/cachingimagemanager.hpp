@@ -5,6 +5,8 @@
 #include <QtQuick/QQuickItem>
 #include <qqmlintegration.h>
 
+namespace caelestia {
+
 class CachingImageManager : public QObject {
     Q_OBJECT
     QML_ELEMENT
@@ -59,3 +61,5 @@ private:
     void createCache(const QString& path, const QString& cache, const QString& fillMode, const QSize& size) const;
     [[nodiscard]] static QString sha256sum(const QString& path);
 };
+
+} // namespace caelestia

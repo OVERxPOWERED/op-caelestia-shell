@@ -8,6 +8,8 @@
 #include <QtQuick/QQuickItemGrabResult>
 #include <QtQuick/QQuickWindow>
 
+namespace caelestia {
+
 void CUtils::saveItem(QQuickItem* target, const QUrl& path) {
     this->saveItem(target, path, QRect(), QJSValue(), QJSValue());
 }
@@ -346,3 +348,5 @@ QString CUtils::toLocalFile(const QUrl& url) const {
 
     return url.toLocalFile();
 }
+
+} // namespace caelestia

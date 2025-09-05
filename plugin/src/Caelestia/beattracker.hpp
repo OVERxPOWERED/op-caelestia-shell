@@ -6,6 +6,8 @@
 #include <aubio/aubio.h>
 #include <qqmlintegration.h>
 
+namespace caelestia {
+
 class BeatTracker : public QObject {
     Q_OBJECT
     QML_ELEMENT
@@ -45,3 +47,5 @@ private:
     void process();
     void handleStateChanged(QtAudio::State state) const;
 };
+
+} // namespace caelestia

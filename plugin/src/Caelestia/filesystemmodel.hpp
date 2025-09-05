@@ -10,6 +10,8 @@
 #include <QObject>
 #include <qqmlintegration.h>
 
+namespace caelestia {
+
 class FileSystemEntry : public QObject {
     Q_OBJECT
     QML_ELEMENT
@@ -157,3 +159,5 @@ private:
     void applyChanges(const QSet<QString>& removedPaths, const QSet<QString>& addedPaths);
     [[nodiscard]] static bool compareEntries(const FileSystemEntry* a, const FileSystemEntry* b);
 };
+
+} // namespace caelestia

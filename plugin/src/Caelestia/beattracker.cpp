@@ -6,33 +6,46 @@
 
 namespace caelestia {
 
-BeatTracker::BeatTracker(uint_t sampleRate, uint_t hopSize, QObject* parent)
-    : AudioProvider(static_cast<int>(sampleRate), static_cast<int>(hopSize), parent)
+BeatWorker::BeatWorker(uint_t sampleRate, uint_t hopSize, QObject* parent)
+    : AudioWorker(static_cast<int>(sampleRate), static_cast<int>(hopSize), parent)
     , m_tempo(new_aubio_tempo("default", 1024, hopSize, sampleRate))
     , m_in(new_fvec(hopSize))
-    , m_out(new_fvec(2))
-    , m_bpm(120) {};
+    , m_out(new_fvec(2)) {};
 
-BeatTracker::~BeatTracker() {
+BeatWorker::~BeatWorker() {
     del_aubio_tempo(m_tempo);
     del_fvec(m_in);
     del_fvec(m_out);
+}
+
+void BeatWorker::processData() {
+    process(m_in->data);
+}
+
+void BeatWorker::consumeData() {
+    aubio_tempo_do(m_tempo, m_in, m_out);
+    if (m_out->data[0] != 0.0f) {
+        emit beat(aubio_tempo_get_bpm(m_tempo));
+    }
+}
+
+BeatTracker::BeatTracker(uint_t sampleRate, uint_t hopSize, QObject* parent)
+    : AudioProvider(parent)
+    , m_bpm(120) {
+    m_worker = new BeatWorker(sampleRate, hopSize, this);
+    init();
+
+    connect(static_cast<BeatWorker*>(m_worker), &BeatWorker::beat, this, &BeatTracker::updateBpm);
 }
 
 smpl_t BeatTracker::bpm() const {
     return m_bpm;
 }
 
-void BeatTracker::processData() {
-    process(m_in->data);
-}
-
-void BeatTracker::consumeData() {
-    aubio_tempo_do(m_tempo, m_in, m_out);
-    if (m_out->data[0] != 0.0f) {
-        m_bpm = aubio_tempo_get_bpm(m_tempo);
+void BeatTracker::updateBpm(smpl_t bpm) {
+    if (!qFuzzyCompare(bpm + 1.0f, m_bpm + 1.0f)) {
+        m_bpm = bpm;
         emit bpmChanged();
-        emit beat(m_bpm);
     }
 }
 

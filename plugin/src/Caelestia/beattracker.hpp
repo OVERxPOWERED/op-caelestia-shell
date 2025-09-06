@@ -7,6 +7,25 @@
 
 namespace caelestia {
 
+class BeatWorker : public AudioWorker {
+    Q_OBJECT
+
+public:
+    explicit BeatWorker(uint_t sampleRate = 44100, uint_t hopSize = 512, QObject* parent = nullptr);
+    ~BeatWorker();
+
+signals:
+    void beat(smpl_t bpm);
+
+private:
+    aubio_tempo_t* m_tempo;
+    fvec_t* m_in;
+    fvec_t* m_out;
+
+    void processData() override;
+    void consumeData() override;
+};
+
 class BeatTracker : public AudioProvider {
     Q_OBJECT
     QML_ELEMENT
@@ -16,7 +35,6 @@ class BeatTracker : public AudioProvider {
 
 public:
     explicit BeatTracker(uint_t sampleRate = 44100, uint_t hopSize = 512, QObject* parent = nullptr);
-    ~BeatTracker();
 
     [[nodiscard]] smpl_t bpm() const;
 
@@ -25,14 +43,9 @@ signals:
     void beat(smpl_t bpm);
 
 private:
-    aubio_tempo_t* m_tempo;
-    fvec_t* m_in;
-    fvec_t* m_out;
-
     smpl_t m_bpm;
 
-    void processData() override;
-    void consumeData() override;
+    void updateBpm(smpl_t bpm);
 };
 
 } // namespace caelestia

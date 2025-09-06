@@ -6,39 +6,49 @@
 #include <QIODevice>
 #include <QMediaDevices>
 #include <QObject>
+#include <QThread>
 #include <cstddef>
 #include <cstdint>
 
 namespace caelestia {
 
-AudioProvider::AudioProvider(int sampleRate, int hopSize, QObject* parent)
-    : Service(parent)
-    , m_hopSize(hopSize) {
+AudioWorker::AudioWorker(int sampleRate, int hopSize, QObject* parent)
+    : QObject(parent)
+    , m_sampleRate(sampleRate)
+    , m_hopSize(hopSize)
+    , m_source(nullptr)
+    , m_device(nullptr) {}
+
+void AudioWorker::init() {
     QAudioFormat format;
-    format.setSampleRate(sampleRate);
+    format.setSampleRate(m_sampleRate);
     format.setChannelCount(1);
     format.setSampleFormat(QAudioFormat::Int16);
 
     m_source = new QAudioSource(QMediaDevices::defaultAudioInput(), format, this);
-    connect(m_source, &QAudioSource::stateChanged, this, &AudioProvider::handleStateChanged);
+    connect(m_source, &QAudioSource::stateChanged, this, &AudioWorker::handleStateChanged);
 };
 
-AudioProvider::~AudioProvider() {
+AudioWorker::~AudioWorker() {
     m_source->stop();
     delete m_source;
 }
 
-void AudioProvider::start() {
+void AudioWorker::start() {
+    if (!m_source) {
+        return;
+    }
+
     m_device = m_source->start();
-    connect(m_device, &QIODevice::readyRead, this, &AudioProvider::processData);
+    connect(m_device, &QIODevice::readyRead, this, &AudioWorker::processData);
 }
 
-void AudioProvider::stop() {
+void AudioWorker::stop() {
     m_source->stop();
     m_device = nullptr;
 }
 
-template <typename T> void AudioProvider::process(T* outBuf) {
+template <typename T> void AudioWorker::process(T* outBuf) {
     const QByteArray data = m_device->readAll();
     const int16_t* samples = reinterpret_cast<const int16_t*>(data.constData());
     const size_t count = static_cast<size_t>(data.size()) / sizeof(int16_t);
@@ -51,27 +61,67 @@ template <typename T> void AudioProvider::process(T* outBuf) {
         }
     }
 }
-template void AudioProvider::process(float* outBuf);
-template void AudioProvider::process(double* outBuf);
+template void AudioWorker::process(float* outBuf);
+template void AudioWorker::process(double* outBuf);
 
-void AudioProvider::handleStateChanged(QtAudio::State state) const {
+void AudioWorker::handleStateChanged(QtAudio::State state) const {
     if (state == QtAudio::StoppedState && m_source->error() != QtAudio::NoError) {
         switch (m_source->error()) {
         case QtAudio::OpenError:
-            qWarning() << "AudioProvider: failed to open audio device";
+            qWarning() << "AudioWorker: failed to open audio device";
             break;
         case QtAudio::IOError:
-            qWarning() << "AudioProvider: an error occurred during read/write of audio device";
+            qWarning() << "AudioWorker: an error occurred during read/write of audio device";
             break;
         case QtAudio::UnderrunError:
-            qWarning() << "AudioProvider: audio data is not being fed to audio device fast enough";
+            qWarning() << "AudioWorker: audio data is not being fed to audio device fast enough";
             break;
         case QtAudio::FatalError:
-            qCritical() << "AudioProvider: fatal error in audio device";
+            qCritical() << "AudioWorker: fatal error in audio device";
             break;
         default:
             break;
         }
+    }
+}
+
+AudioProvider::AudioProvider(QObject* parent)
+    : Service(parent)
+    , m_worker(nullptr)
+    , m_thread(nullptr) {}
+
+AudioProvider::~AudioProvider() {
+    if (m_thread) {
+        m_thread->quit();
+        m_thread->wait();
+    }
+}
+
+void AudioProvider::init() {
+    if (!m_worker) {
+        qWarning() << "AudioProvider::init: attempted to init with no worker set";
+        return;
+    }
+
+    m_thread = new QThread(this);
+    m_worker->moveToThread(m_thread);
+
+    connect(m_thread, &QThread::started, m_worker, &AudioWorker::init);
+    connect(m_thread, &QThread::finished, m_worker, &AudioWorker::deleteLater);
+    connect(m_thread, &QThread::finished, m_thread, &QThread::deleteLater);
+
+    m_thread->start();
+}
+
+void AudioProvider::start() {
+    if (m_worker) {
+        QMetaObject::invokeMethod(m_worker, "start", Qt::QueuedConnection);
+    }
+}
+
+void AudioProvider::stop() {
+    if (m_worker) {
+        QMetaObject::invokeMethod(m_worker, "stop", Qt::QueuedConnection);
     }
 }
 

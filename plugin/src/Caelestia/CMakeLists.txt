@@ -4,7 +4,7 @@ pkg_check_modules(AUBIO REQUIRED aubio)
 
 qt_add_qml_module(caelestia
     URI Caelestia
-    VERSION ${VERSION}
+    VERSION ${VERSION_SHORT}
     SOURCES
         cutils.hpp cutils.cpp
         cachingimagemanager.hpp cachingimagemanager.cpp
@@ -23,9 +23,9 @@ qt_query_qml_module(caelestia
     TARGET_PATH module_target_path
     QMLDIR module_qmldir
     TYPEINFO module_typeinfo
-    QML_FILES module_qml_files
-    RESOURCES module_resources
 )
+
+message(STATUS "Created QML module ${module_uri}, version ${module_version}")
 
 set(module_dir "${INSTALL_QMLDIR}/${module_target_path}")
 install(TARGETS caelestia LIBRARY DESTINATION "${module_dir}" RUNTIME DESTINATION "${module_dir}")

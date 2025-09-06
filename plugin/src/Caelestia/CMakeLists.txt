@@ -11,6 +11,8 @@ qt_add_qml_module(caelestia
         filesystemmodel.hpp filesystemmodel.cpp
         qalculator.hpp qalculator.cpp
         beattracker.hpp beattracker.cpp
+        service.hpp service.cpp
+        serviceref.hpp serviceref.cpp
 )
 
 qt_query_qml_module(caelestia

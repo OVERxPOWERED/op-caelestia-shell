@@ -59,7 +59,7 @@ Item {
         service: Cava
     }
 
-    Ref {
+    ServiceRef {
         service: BeatTracker
     }
 

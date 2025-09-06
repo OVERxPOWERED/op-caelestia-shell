@@ -1,5 +1,6 @@
 #include "beattracker.hpp"
 
+#include "service.hpp"
 #include <QAudioSource>
 #include <QDebug>
 #include <QIODevice>
@@ -10,13 +11,12 @@
 namespace caelestia {
 
 BeatTracker::BeatTracker(uint_t sampleRate, uint_t hopSize, QObject* parent)
-    : QObject(parent)
+    : Service(parent)
     , m_tempo(new_aubio_tempo("default", 1024, hopSize, sampleRate))
     , m_in(new_fvec(hopSize))
     , m_out(new_fvec(2))
     , m_hopSize(hopSize)
-    , m_bpm(120)
-    , m_refCount(0) {
+    , m_bpm(120) {
     QAudioFormat format;
     format.setSampleRate(static_cast<int>(sampleRate));
     format.setChannelCount(1);
@@ -37,25 +37,6 @@ BeatTracker::~BeatTracker() {
 
 smpl_t BeatTracker::bpm() const {
     return m_bpm;
-}
-
-int BeatTracker::refCount() const {
-    return m_refCount;
-}
-
-void BeatTracker::setRefCount(int refCount) {
-    if (m_refCount == refCount) {
-        return;
-    }
-
-    m_refCount = refCount;
-    emit refCountChanged();
-
-    if (m_refCount == 0) {
-        stop();
-    } else if (!m_device) {
-        start();
-    }
 }
 
 void BeatTracker::start() {

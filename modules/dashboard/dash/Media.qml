@@ -33,7 +33,7 @@ Item {
         onTriggered: Players.active?.positionChanged()
     }
 
-    Ref {
+    ServiceRef {
         service: BeatTracker
     }
 

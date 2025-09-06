@@ -1,5 +1,6 @@
 #pragma once
 
+#include "service.hpp"
 #include <QAudioSource>
 #include <QIODevice>
 #include <QObject>
@@ -8,13 +9,12 @@
 
 namespace caelestia {
 
-class BeatTracker : public QObject {
+class BeatTracker : public Service {
     Q_OBJECT
     QML_ELEMENT
     QML_SINGLETON
 
     Q_PROPERTY(smpl_t bpm READ bpm NOTIFY bpmChanged)
-    Q_PROPERTY(int refCount READ refCount WRITE setRefCount NOTIFY refCountChanged)
 
 public:
     explicit BeatTracker(uint_t sampleRate = 44100, uint_t hopSize = 512, QObject* parent = nullptr);
@@ -22,12 +22,8 @@ public:
 
     [[nodiscard]] smpl_t bpm() const;
 
-    [[nodiscard]] int refCount() const;
-    void setRefCount(int refCount);
-
 signals:
     void bpmChanged();
-    void refCountChanged();
     void beat(smpl_t bpm);
 
 private:
@@ -40,10 +36,9 @@ private:
     uint_t m_hopSize;
 
     smpl_t m_bpm;
-    int m_refCount;
 
-    void start();
-    void stop();
+    void start() override;
+    void stop() override;
     void process();
     void handleStateChanged(QtAudio::State state) const;
 };

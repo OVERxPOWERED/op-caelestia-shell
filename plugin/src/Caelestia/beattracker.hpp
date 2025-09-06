@@ -1,15 +1,13 @@
 #pragma once
 
-#include "service.hpp"
-#include <QAudioSource>
-#include <QIODevice>
+#include "audioprovider.hpp"
 #include <QObject>
 #include <aubio/aubio.h>
 #include <qqmlintegration.h>
 
 namespace caelestia {
 
-class BeatTracker : public Service {
+class BeatTracker : public AudioProvider {
     Q_OBJECT
     QML_ELEMENT
     QML_SINGLETON
@@ -27,20 +25,14 @@ signals:
     void beat(smpl_t bpm);
 
 private:
-    QAudioSource* m_source;
-    QIODevice* m_device;
-
     aubio_tempo_t* m_tempo;
     fvec_t* m_in;
     fvec_t* m_out;
-    uint_t m_hopSize;
 
     smpl_t m_bpm;
 
-    void start() override;
-    void stop() override;
-    void process();
-    void handleStateChanged(QtAudio::State state) const;
+    void processData() override;
+    void consumeData() override;
 };
 
 } // namespace caelestia

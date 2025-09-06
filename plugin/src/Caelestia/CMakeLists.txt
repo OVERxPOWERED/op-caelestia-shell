@@ -4,7 +4,7 @@ pkg_check_modules(AUBIO REQUIRED aubio)
 
 qt_add_qml_module(caelestia
     URI Caelestia
-    VERSION 0.1
+    VERSION ${VERSION}
     SOURCES
         cutils.hpp cutils.cpp
         cachingimagemanager.hpp cachingimagemanager.cpp
@@ -13,6 +13,7 @@ qt_add_qml_module(caelestia
         beattracker.hpp beattracker.cpp
         service.hpp service.cpp
         serviceref.hpp serviceref.cpp
+        audioprovider.hpp audioprovider.cpp
 )
 
 qt_query_qml_module(caelestia

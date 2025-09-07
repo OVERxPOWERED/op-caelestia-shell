@@ -99,7 +99,8 @@ void CavaProcessor::processChunk(const QVector<double>& chunk) {
 
 CavaProvider::CavaProvider(int sampleRate, int chunkSize, QObject* parent)
     : AudioProvider(sampleRate, chunkSize, parent)
-    , m_bars(0) {
+    , m_bars(0)
+    , m_values(m_bars) {
     m_processor = new CavaProcessor(this);
     init();
 
@@ -120,8 +121,10 @@ void CavaProvider::setBars(int bars) {
         return;
     }
 
+    m_values.resize(bars);
     m_bars = bars;
     emit barsChanged();
+    emit valuesChanged();
 
     QMetaObject::invokeMethod(m_processor, "setBars", Qt::QueuedConnection, Q_ARG(int, bars));
 }

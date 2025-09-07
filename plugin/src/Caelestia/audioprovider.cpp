@@ -5,66 +5,84 @@
 #include <QDebug>
 #include <QIODevice>
 #include <QMediaDevices>
+#include <QMutexLocker>
 #include <QObject>
 #include <QThread>
+#include <QVector>
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 
 namespace caelestia {
 
-AudioWorker::AudioWorker(int sampleRate, int hopSize, QObject* parent)
+AudioCollector::AudioCollector(AudioProvider* provider, QObject* parent)
     : QObject(parent)
-    , m_sampleRate(sampleRate)
-    , m_hopSize(hopSize)
     , m_source(nullptr)
-    , m_device(nullptr) {}
+    , m_device(nullptr)
+    , m_provider(provider)
+    , m_sampleRate(provider->sampleRate())
+    , m_chunkSize(provider->chunkSize())
+    , m_chunk(m_chunkSize)
+    , m_chunkOffset(0) {}
 
-void AudioWorker::init() {
+AudioCollector::~AudioCollector() {
+    m_source->stop();
+}
+
+void AudioCollector::init() {
     QAudioFormat format;
     format.setSampleRate(m_sampleRate);
     format.setChannelCount(1);
     format.setSampleFormat(QAudioFormat::Int16);
 
     m_source = new QAudioSource(QMediaDevices::defaultAudioInput(), format, this);
-    connect(m_source, &QAudioSource::stateChanged, this, &AudioWorker::handleStateChanged);
+    connect(m_source, &QAudioSource::stateChanged, this, &AudioCollector::handleStateChanged);
 };
 
-AudioWorker::~AudioWorker() {
-    m_source->stop();
-    delete m_source;
-}
-
-void AudioWorker::start() {
+void AudioCollector::start() {
     if (!m_source) {
         return;
     }
 
     m_device = m_source->start();
-    connect(m_device, &QIODevice::readyRead, this, &AudioWorker::processData);
+    connect(m_device, &QIODevice::readyRead, this, &AudioCollector::loadChunk);
 }
 
-void AudioWorker::stop() {
-    m_source->stop();
-    m_device = nullptr;
+void AudioCollector::stop() {
+    if (m_source) {
+        m_source->stop();
+        m_device = nullptr;
+    }
 }
 
-template <typename T> void AudioWorker::process(T* outBuf) {
+void AudioCollector::loadChunk() {
     const QByteArray data = m_device->readAll();
     const int16_t* samples = reinterpret_cast<const int16_t*>(data.constData());
     const size_t count = static_cast<size_t>(data.size()) / sizeof(int16_t);
-    const size_t hopSize = static_cast<size_t>(m_hopSize);
 
-    for (size_t i = 0; i < count; ++i) {
-        outBuf[i % hopSize] = static_cast<T>(samples[i] / 32768.0);
-        if ((i + 1) % hopSize == 0) {
-            consumeData();
+    size_t i = 0;
+    while (i < count) {
+        const int spaceLeft = m_chunkSize - m_chunkOffset;
+        const auto toCopy = std::min<size_t>(static_cast<size_t>(spaceLeft), count - i);
+
+        std::transform(samples + i, samples + i + toCopy, m_chunk.begin() + m_chunkOffset, [](int16_t sample) {
+            return sample / 32768.0;
+        });
+
+        m_chunkOffset += toCopy;
+        i += toCopy;
+
+        if (m_chunkOffset == m_chunkSize) {
+            m_provider->withLock([&] {
+                m_provider->loadChunk(m_chunk);
+            });
+
+            m_chunkOffset = 0;
         }
     }
 }
-template void AudioWorker::process(float* outBuf);
-template void AudioWorker::process(double* outBuf);
 
-void AudioWorker::handleStateChanged(QtAudio::State state) const {
+void AudioCollector::handleStateChanged(QtAudio::State state) const {
     if (state == QtAudio::StoppedState && m_source->error() != QtAudio::NoError) {
         switch (m_source->error()) {
         case QtAudio::OpenError:
@@ -85,43 +103,128 @@ void AudioWorker::handleStateChanged(QtAudio::State state) const {
     }
 }
 
-AudioProvider::AudioProvider(QObject* parent)
+AudioProcessor::AudioProcessor(AudioProvider* provider, QObject* parent)
+    : QObject(parent)
+    , m_sampleRate(provider->sampleRate())
+    , m_chunkSize(provider->chunkSize())
+    , m_provider(provider) {}
+
+AudioProcessor::~AudioProcessor() {
+    if (m_timer) {
+        m_timer->stop();
+    }
+}
+
+void AudioProcessor::init() {
+    m_timer = new QTimer(this);
+    m_timer->setInterval(static_cast<int>(m_chunkSize * 1000.0 / m_sampleRate));
+    connect(m_timer, &QTimer::timeout, this, &AudioProcessor::handleTimeout);
+}
+
+void AudioProcessor::start() {
+    if (m_timer) {
+        m_timer->start();
+    }
+}
+
+void AudioProcessor::stop() {
+    if (m_timer) {
+        m_timer->stop();
+    }
+}
+
+void AudioProcessor::handleTimeout() {
+    QVector<double> chunk;
+
+    m_provider->withLock([&] {
+        if (m_provider->hasChunks()) {
+            chunk = m_provider->nextChunk();
+        }
+    });
+
+    if (!chunk.isEmpty()) {
+        processChunk(chunk);
+    }
+}
+
+AudioProvider::AudioProvider(int sampleRate, int chunkSize, QObject* parent)
     : Service(parent)
-    , m_worker(nullptr)
-    , m_thread(nullptr) {}
+    , m_sampleRate(sampleRate)
+    , m_chunkSize(chunkSize)
+    , m_collector(new AudioCollector(this))
+    , m_processor(nullptr)
+    , m_collectorThread(new QThread(this))
+    , m_processorThread(nullptr) {
+    m_collector->moveToThread(m_collectorThread);
+
+    connect(m_collectorThread, &QThread::started, m_collector, &AudioCollector::init);
+    connect(m_collectorThread, &QThread::finished, m_collector, &AudioCollector::deleteLater);
+    connect(m_collectorThread, &QThread::finished, m_collectorThread, &QThread::deleteLater);
+
+    m_collectorThread->start();
+}
 
 AudioProvider::~AudioProvider() {
-    if (m_thread) {
-        m_thread->quit();
-        m_thread->wait();
+    m_collectorThread->quit();
+    if (m_processorThread) {
+        m_processorThread->quit();
+        m_processorThread->wait();
     }
+    m_collectorThread->wait();
+}
+
+int AudioProvider::sampleRate() const {
+    return m_sampleRate;
+}
+
+int AudioProvider::chunkSize() const {
+    return m_chunkSize;
+}
+
+void AudioProvider::withLock(std::function<void()> fn) {
+    QMutexLocker locker(&m_mutex);
+    fn();
+}
+
+bool AudioProvider::hasChunks() const {
+    return !m_chunks.isEmpty();
+}
+
+QVector<double> AudioProvider::nextChunk() {
+    return m_chunks.dequeue();
+}
+
+void AudioProvider::loadChunk(QVector<double> chunk) {
+    m_chunks.enqueue(std::move(chunk));
 }
 
 void AudioProvider::init() {
-    if (!m_worker) {
-        qWarning() << "AudioProvider::init: attempted to init with no worker set";
+    if (!m_processor) {
+        qWarning() << "AudioProvider::init: attempted to init with no processor set";
         return;
     }
 
-    m_thread = new QThread(this);
-    m_worker->moveToThread(m_thread);
+    m_processorThread = new QThread(this);
+    m_processor->moveToThread(m_processorThread);
 
-    connect(m_thread, &QThread::started, m_worker, &AudioWorker::init);
-    connect(m_thread, &QThread::finished, m_worker, &AudioWorker::deleteLater);
-    connect(m_thread, &QThread::finished, m_thread, &QThread::deleteLater);
+    connect(m_processorThread, &QThread::started, m_processor, &AudioProcessor::init);
+    connect(m_processorThread, &QThread::finished, m_processor, &AudioProcessor::deleteLater);
+    connect(m_processorThread, &QThread::finished, m_processorThread, &QThread::deleteLater);
 
-    m_thread->start();
+    m_processorThread->start();
 }
 
 void AudioProvider::start() {
-    if (m_worker) {
-        QMetaObject::invokeMethod(m_worker, "start", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_collector, "start", Qt::QueuedConnection);
+    if (m_processor) {
+        QMetaObject::invokeMethod(m_processor, "start", Qt::QueuedConnection);
     }
 }
 
 void AudioProvider::stop() {
-    if (m_worker) {
-        QMetaObject::invokeMethod(m_worker, "stop", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_collector, "stop", Qt::QueuedConnection);
+    if (m_processor) {
+        QMetaObject::invokeMethod(m_processor, "stop", Qt::QueuedConnection);
     }
 }
 

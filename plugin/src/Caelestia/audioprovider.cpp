@@ -73,10 +73,7 @@ void AudioCollector::loadChunk() {
         i += toCopy;
 
         if (m_chunkOffset == m_chunkSize) {
-            m_provider->withLock([&] {
-                m_provider->loadChunk(m_chunk);
-            });
-
+            m_provider->loadChunk(m_chunk);
             m_chunkOffset = 0;
         }
     }
@@ -134,14 +131,7 @@ void AudioProcessor::stop() {
 }
 
 void AudioProcessor::handleTimeout() {
-    QVector<double> chunk;
-
-    m_provider->withLock([&] {
-        if (m_provider->hasChunks()) {
-            chunk = m_provider->nextChunk();
-        }
-    });
-
+    const QVector<double> chunk = m_provider->nextChunk();
     if (!chunk.isEmpty()) {
         processChunk(chunk);
     }
@@ -181,21 +171,17 @@ int AudioProvider::chunkSize() const {
     return m_chunkSize;
 }
 
-void AudioProvider::withLock(std::function<void()> fn) {
-    QMutexLocker locker(&m_mutex);
-    fn();
-}
-
-bool AudioProvider::hasChunks() const {
-    return !m_chunks.isEmpty();
-}
-
 QVector<double> AudioProvider::nextChunk() {
+    QMutexLocker lock(&m_mutex);
+    if (m_chunks.isEmpty()) {
+        return {};
+    }
     return m_chunks.dequeue();
 }
 
-void AudioProvider::loadChunk(QVector<double> chunk) {
-    m_chunks.enqueue(std::move(chunk));
+void AudioProvider::loadChunk(const QVector<double>& chunk) {
+    QMutexLocker lock(&m_mutex);
+    m_chunks.enqueue(chunk);
 }
 
 void AudioProvider::init() {

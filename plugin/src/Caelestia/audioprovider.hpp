@@ -76,11 +76,8 @@ public:
     [[nodiscard]] int sampleRate() const;
     [[nodiscard]] int chunkSize() const;
 
-    void withLock(std::function<void()> fn);
-
-    [[nodiscard]] bool hasChunks() const;
     [[nodiscard]] QVector<double> nextChunk();
-    void loadChunk(QVector<double> chunk);
+    void loadChunk(const QVector<double>& chunk);
 
 protected:
     int m_sampleRate;

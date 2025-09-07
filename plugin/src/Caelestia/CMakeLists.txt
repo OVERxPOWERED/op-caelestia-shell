@@ -1,7 +1,7 @@
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(QALCULATE REQUIRED libqalculate)
-pkg_check_modules(AUBIO REQUIRED aubio)
-pkg_check_modules(CAVA REQUIRED cava)
+pkg_check_modules(Qalculate IMPORTED_TARGET libqalculate REQUIRED)
+pkg_check_modules(Aubio IMPORTED_TARGET aubio REQUIRED)
+pkg_check_modules(Cava IMPORTED_TARGET cava REQUIRED)
 
 qt_add_qml_module(caelestia
     URI Caelestia
@@ -35,10 +35,7 @@ install(TARGETS "${module_plugin_target}" LIBRARY DESTINATION "${module_dir}" RU
 install(FILES "${module_qmldir}" DESTINATION "${module_dir}")
 install(FILES "${module_typeinfo}" DESTINATION "${module_dir}")
 
-target_include_directories(caelestia SYSTEM PRIVATE
-    ${QALCULATE_INCLUDE_DIRS} ${AUBIO_INCLUDE_DIRS} ${CAVA_INCLUDE_DIRS}
-)
 target_link_libraries(caelestia PRIVATE
     Qt::Core Qt::Qml Qt::Gui Qt::Concurrent Qt::Multimedia
-    ${QALCULATE_LIBRARIES} ${AUBIO_LIBRARIES} ${CAVA_LIBRARIES}
+    PkgConfig::Qalculate PkgConfig::Aubio PkgConfig::Cava
 )

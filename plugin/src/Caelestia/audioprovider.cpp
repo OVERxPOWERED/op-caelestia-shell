@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 
 namespace caelestia {
 
@@ -73,7 +74,11 @@ void AudioCollector::loadChunk() {
         i += toCopy;
 
         if (m_chunkOffset == m_chunkSize) {
-            m_provider->loadChunk(m_chunk);
+            if (std::any_of(m_chunk.constBegin(), m_chunk.constEnd(), [](double d) {
+                    return std::abs(d) > 1e-6;
+                })) {
+                m_provider->loadChunk(m_chunk);
+            }
             m_chunkOffset = 0;
         }
     }

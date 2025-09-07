@@ -19,7 +19,8 @@ class CachingImageManager : public QObject {
 
 public:
     explicit CachingImageManager(QObject* parent = nullptr)
-        : QObject(parent) {}
+        : QObject(parent)
+        , m_item(nullptr) {}
 
     [[nodiscard]] QQuickItem* item() const;
     void setItem(QQuickItem* item);

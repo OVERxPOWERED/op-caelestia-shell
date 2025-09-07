@@ -22,6 +22,7 @@
   qt6,
   quickshell,
   aubio,
+  libcava,
   xkeyboard-config,
   cmake,
   ninja,
@@ -86,7 +87,7 @@
     };
 
     nativeBuildInputs = [cmake ninja pkg-config];
-    buildInputs = [qt6.qtbase qt6.qtdeclarative qt6.qtmultimedia libqalculate aubio];
+    buildInputs = [qt6.qtbase qt6.qtdeclarative qt6.qtmultimedia libqalculate aubio libcava];
 
     dontWrapQtApps = true;
     cmakeFlags =

@@ -64,7 +64,9 @@ PipeWireWorker::PipeWireWorker(std::stop_token token, AudioCollector* collector)
     m_stream = pw_stream_new_simple(pw_main_loop_get_loop(m_loop), "caelestia-shell", props, &events, this);
 
     pw_stream_connect(m_stream, PW_DIRECTION_INPUT, PW_ID_ANY,
-        static_cast<pw_stream_flags>(PW_STREAM_FLAG_AUTOCONNECT | PW_STREAM_FLAG_MAP_BUFFERS), params, 1);
+        static_cast<pw_stream_flags>(
+            PW_STREAM_FLAG_AUTOCONNECT | PW_STREAM_FLAG_MAP_BUFFERS | PW_STREAM_FLAG_RT_PROCESS),
+        params, 1);
 
     pw_main_loop_run(m_loop);
 

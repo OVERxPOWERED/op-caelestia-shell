@@ -2,22 +2,16 @@
 
 #include "audiocollector.hpp"
 #include "service.hpp"
-#include <QAudioSource>
 #include <QDebug>
-#include <QIODevice>
-#include <QMediaDevices>
-#include <QMutexLocker>
 #include <QObject>
 #include <QThread>
-#include <QVector>
 
 namespace caelestia {
 
 AudioProcessor::AudioProcessor(QObject* parent)
     : QObject(parent)
     , m_sampleRate(AudioCollector::instance()->sampleRate())
-    , m_chunkSize(AudioCollector::instance()->chunkSize())
-    , m_bufferSize(AudioCollector::instance()->bufferSize()) {}
+    , m_chunkSize(AudioCollector::instance()->chunkSize()) {}
 
 AudioProcessor::~AudioProcessor() {
     stop();

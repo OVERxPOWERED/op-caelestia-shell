@@ -2,6 +2,7 @@
 
 #include "service.hpp"
 #include <QObject>
+#include <atomic>
 #include <cstdint>
 #include <mutex>
 #include <pipewire/pipewire.h>
@@ -43,15 +44,13 @@ class AudioCollector : public Service {
     Q_OBJECT
 
 public:
-    explicit AudioCollector(
-        uint32_t sampleRate = 44100, uint32_t chunkSize = 512, uint32_t bufferSize = 512, QObject* parent = nullptr);
+    explicit AudioCollector(uint32_t sampleRate = 44100, uint32_t chunkSize = 512, QObject* parent = nullptr);
     ~AudioCollector();
 
     static AudioCollector* instance();
 
     [[nodiscard]] uint32_t sampleRate() const;
     [[nodiscard]] uint32_t chunkSize() const;
-    [[nodiscard]] uint32_t bufferSize() const;
 
     void clearBuffer();
     void loadChunk(const int16_t* samples, uint32_t count);
@@ -63,13 +62,14 @@ private:
     inline static std::mutex s_mutex;
 
     std::jthread m_thread;
-    std::vector<float> m_buffer;
-    uint32_t m_bufferIndex;
-    std::mutex m_bufferMutex;
+    std::vector<float> m_buffer1;
+    std::vector<float> m_buffer2;
+    std::atomic<std::vector<float>*> m_readBuffer;
+    std::atomic<std::vector<float>*> m_writeBuffer;
+    uint32_t m_sampleCount;
 
     const uint32_t m_sampleRate;
     const uint32_t m_chunkSize;
-    const uint32_t m_bufferSize;
 
     void start() override;
     void stop() override;

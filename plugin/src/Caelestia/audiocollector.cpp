@@ -2,12 +2,10 @@
 #include "service.hpp"
 
 #include <QDebug>
-#include <QVector>
 #include <algorithm>
 #include <cstdint>
 #include <mutex>
 #include <pipewire/pipewire.h>
-#include <qmutex.h>
 #include <spa/param/audio/format-utils.h>
 #include <spa/param/latency-utils.h>
 #include <stop_token>
@@ -157,13 +155,14 @@ unsigned int PipeWireWorker::nextPowerOf2(unsigned int n) {
     return n;
 }
 
-AudioCollector::AudioCollector(uint32_t sampleRate, uint32_t chunkSize, uint32_t bufferSize, QObject* parent)
+AudioCollector::AudioCollector(uint32_t sampleRate, uint32_t chunkSize, QObject* parent)
     : Service(parent)
-    , m_buffer(bufferSize, 0.0f)
-    , m_bufferIndex(bufferSize)
+    , m_buffer1(chunkSize)
+    , m_buffer2(chunkSize)
+    , m_readBuffer(&m_buffer1)
+    , m_writeBuffer(&m_buffer2)
     , m_sampleRate(sampleRate)
-    , m_chunkSize(chunkSize)
-    , m_bufferSize(bufferSize) {}
+    , m_chunkSize(chunkSize) {}
 
 AudioCollector::~AudioCollector() {
     stop();
@@ -185,71 +184,48 @@ uint32_t AudioCollector::chunkSize() const {
     return m_chunkSize;
 }
 
-uint32_t AudioCollector::bufferSize() const {
-    return m_bufferSize;
-}
-
 void AudioCollector::clearBuffer() {
-    std::lock_guard<std::mutex> lock(m_bufferMutex);
-    std::fill(m_buffer.begin(), m_buffer.end(), 0.0f);
-    m_bufferIndex = m_bufferSize;
+    auto* writeBuffer = m_writeBuffer.load(std::memory_order_relaxed);
+    std::fill(writeBuffer->begin(), writeBuffer->end(), 0.0f);
+
+    auto* oldRead = m_readBuffer.exchange(writeBuffer, std::memory_order_acq_rel);
+    m_writeBuffer.store(oldRead, std::memory_order_release);
 }
 
 void AudioCollector::loadChunk(const int16_t* samples, uint32_t count) {
-    std::lock_guard<std::mutex> lock(m_bufferMutex);
-
-    while (count > 0) {
-        const auto spaceToEnd = m_bufferSize - m_bufferIndex;
-        const auto toCopy = (count < spaceToEnd) ? count : spaceToEnd;
-
-        std::transform(samples, samples + toCopy, m_buffer.begin() + m_bufferIndex, [](int16_t sample) {
-            return sample / 32768.0f;
-        });
-
-        m_bufferIndex = (m_bufferIndex + toCopy) % m_bufferSize;
-        samples += toCopy;
-        count -= toCopy;
+    if (count > m_chunkSize) {
+        count = m_chunkSize;
     }
+
+    auto* writeBuffer = m_writeBuffer.load(std::memory_order_relaxed);
+    std::transform(samples, samples + count, writeBuffer->begin(), [](int16_t sample) {
+        return sample / 32768.0f;
+    });
+
+    auto* oldRead = m_readBuffer.exchange(writeBuffer, std::memory_order_acq_rel);
+    m_writeBuffer.store(oldRead, std::memory_order_release);
 }
 
 uint32_t AudioCollector::readChunk(float* out, uint32_t count) {
-    std::lock_guard<std::mutex> lock(m_bufferMutex);
-
-    if (count == 0 || count > m_bufferSize) {
-        count = m_bufferSize;
+    if (count == 0 || count > m_chunkSize) {
+        count = m_chunkSize;
     }
 
-    const auto start = (m_bufferIndex + m_bufferSize - count) % m_bufferSize;
-    const auto firstChunk = std::min(count, m_bufferSize - start);
-
-    std::copy(m_buffer.begin() + start, m_buffer.begin() + start + firstChunk, out);
-
-    if (firstChunk < count) {
-        std::copy(m_buffer.begin(), m_buffer.begin() + (count - firstChunk), out + firstChunk);
-    }
+    auto* readBuffer = m_readBuffer.load(std::memory_order_acquire);
+    std::memcpy(out, readBuffer->data(), count * sizeof(float));
 
     return count;
 }
 
 uint32_t AudioCollector::readChunk(double* out, uint32_t count) {
-    std::lock_guard<std::mutex> lock(m_bufferMutex);
-
-    if (count == 0 || count > m_bufferSize) {
-        count = m_bufferSize;
+    if (count == 0 || count > m_chunkSize) {
+        count = m_chunkSize;
     }
 
-    const auto start = (m_bufferIndex + m_bufferSize - count) % m_bufferSize;
-    const auto firstChunk = std::min(count, m_bufferSize - start);
-
-    std::transform(m_buffer.begin() + start, m_buffer.begin() + start + firstChunk, out, [](float sample) {
+    auto* readBuffer = m_readBuffer.load(std::memory_order_acquire);
+    std::transform(readBuffer->begin(), readBuffer->begin() + count, out, [](float sample) {
         return static_cast<double>(sample);
     });
-
-    if (firstChunk < count) {
-        std::transform(m_buffer.begin(), m_buffer.begin() + (count - firstChunk), out + firstChunk, [](float sample) {
-            return static_cast<double>(sample);
-        });
-    }
 
     return count;
 }

@@ -1,12 +1,11 @@
 #include "cutils.hpp"
 
-#include <QDir>
-#include <QObject>
-#include <QQmlEngine>
-#include <QThreadPool>
-#include <QtQuick/QQuickItem>
-#include <QtQuick/QQuickItemGrabResult>
-#include <QtQuick/QQuickWindow>
+#include <QtQuick/qquickitemgrabresult.h>
+#include <QtQuick/qquickwindow.h>
+#include <qdir.h>
+#include <qfileinfo.h>
+#include <qqmlengine.h>
+#include <qthreadpool.h>
 
 namespace caelestia {
 

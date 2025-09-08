@@ -1,6 +1,5 @@
 #include "qalculator.hpp"
 
-#include <QObject>
 #include <libqalculate/qalculate.h>
 
 namespace caelestia {

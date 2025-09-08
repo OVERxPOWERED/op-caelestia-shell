@@ -1,14 +1,8 @@
 #include "filesystemmodel.hpp"
 
-#include <QAbstractListModel>
-#include <QDir>
-#include <QDirIterator>
-#include <QFileInfo>
-#include <QFutureWatcher>
-#include <QImageReader>
-#include <QObject>
-#include <QtConcurrent>
-#include <qqmlintegration.h>
+#include <qdiriterator.h>
+#include <qfuturewatcher.h>
+#include <qtconcurrentrun.h>
 
 namespace caelestia {
 

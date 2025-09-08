@@ -1,7 +1,6 @@
 #pragma once
 
 #include "service.hpp"
-#include <QObject>
 #include <atomic>
 #include <cstdint>
 #include <mutex>

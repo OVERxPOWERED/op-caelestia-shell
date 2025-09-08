@@ -1,7 +1,6 @@
 #pragma once
 
 #include "audioprovider.hpp"
-#include <QObject>
 #include <aubio/aubio.h>
 #include <qqmlintegration.h>
 

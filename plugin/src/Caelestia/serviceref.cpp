@@ -1,7 +1,6 @@
 #include "serviceref.hpp"
-#include "service.hpp"
 
-#include <QObject>
+#include "service.hpp"
 
 namespace caelestia {
 

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <QMutex>
-#include <QObject>
-
+#include <qmutex.h>
+#include <qobject.h>
 namespace caelestia {
 
 class Service : public QObject {

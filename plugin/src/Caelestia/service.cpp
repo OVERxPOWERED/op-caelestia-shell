@@ -1,8 +1,6 @@
 #include "service.hpp"
 
-#include <QDebug>
-#include <QMutexLocker>
-#include <QObject>
+#include <qdebug.h>
 
 namespace caelestia {
 

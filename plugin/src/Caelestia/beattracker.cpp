@@ -2,7 +2,6 @@
 
 #include "audiocollector.hpp"
 #include "audioprovider.hpp"
-#include <QObject>
 #include <aubio/aubio.h>
 
 namespace caelestia {

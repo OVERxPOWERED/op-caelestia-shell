@@ -1,13 +1,12 @@
 #pragma once
 
-#include <QAbstractListModel>
-#include <QDir>
-#include <QFileInfo>
-#include <QFileSystemWatcher>
-#include <QFuture>
-#include <QImageReader>
-#include <QMimeDatabase>
-#include <QObject>
+#include <qabstractitemmodel.h>
+#include <qdir.h>
+#include <qfilesystemwatcher.h>
+#include <qfuture.h>
+#include <qimagereader.h>
+#include <qmimedatabase.h>
+#include <qobject.h>
 #include <qqmlintegration.h>
 
 namespace caelestia {

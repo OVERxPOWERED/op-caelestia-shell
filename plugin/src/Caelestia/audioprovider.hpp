@@ -1,11 +1,9 @@
 #pragma once
 
 #include "service.hpp"
-#include <QObject>
-#include <QThread>
-#include <QTimer>
 #include <cstdint>
 #include <qqmlintegration.h>
+#include <qtimer.h>
 
 namespace caelestia {
 

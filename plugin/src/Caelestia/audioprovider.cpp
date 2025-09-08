@@ -2,9 +2,8 @@
 
 #include "audiocollector.hpp"
 #include "service.hpp"
-#include <QDebug>
-#include <QObject>
-#include <QThread>
+#include <qdebug.h>
+#include <qthread.h>
 
 namespace caelestia {
 

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <QFuture>
-#include <QObject>
-#include <QtQuick/QQuickItem>
+#include <QtQuick/qquickitem.h>
+#include <qobject.h>
 #include <qqmlintegration.h>
 
 namespace caelestia {

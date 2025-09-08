@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QObject>
+#include <qobject.h>
 #include <qqmlintegration.h>
 
 namespace caelestia {

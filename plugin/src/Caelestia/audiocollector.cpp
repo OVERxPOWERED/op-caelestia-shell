@@ -1,11 +1,11 @@
 #include "audiocollector.hpp"
-#include "service.hpp"
 
-#include <QDebug>
+#include "service.hpp"
 #include <algorithm>
 #include <cstdint>
 #include <mutex>
 #include <pipewire/pipewire.h>
+#include <qdebug.h>
 #include <spa/param/audio/format-utils.h>
 #include <spa/param/latency-utils.h>
 #include <stop_token>

@@ -2,11 +2,10 @@
 
 #include "audiocollector.hpp"
 #include "audioprovider.hpp"
-#include <QDebug>
-#include <QObject>
 #include <cava/cavacore.h>
 #include <cmath>
 #include <cstddef>
+#include <qdebug.h>
 
 namespace caelestia {
 

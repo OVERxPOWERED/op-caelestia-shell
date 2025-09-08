@@ -8,7 +8,6 @@
   ddcutil,
   brightnessctl,
   app2unit,
-  cava,
   networkmanager,
   lm_sensors,
   swappy,
@@ -41,7 +40,6 @@
       ddcutil
       brightnessctl
       app2unit
-      cava
       networkmanager
       lm_sensors
       swappy

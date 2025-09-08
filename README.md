@@ -320,6 +320,7 @@ default, you must create it manually.
             "showBattery": true,
             "showBluetooth": true,
             "showKbLayout": false,
+            "showMicrophone": false,
             "showNetwork": true,
             "showLockStatus": true
         },

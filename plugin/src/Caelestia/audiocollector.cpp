@@ -19,6 +19,7 @@ PipeWireWorker::PipeWireWorker(std::stop_token token, AudioCollector* collector)
     : m_loop(nullptr)
     , m_stream(nullptr)
     , m_timer(nullptr)
+    , m_idle(true)
     , m_token(token)
     , m_collector(collector) {
     pw_init(nullptr, nullptr);
@@ -56,6 +57,10 @@ PipeWireWorker::PipeWireWorker(std::stop_token token, AudioCollector* collector)
     params[0] = spa_format_audio_raw_build(&b, SPA_PARAM_EnumFormat, &info);
 
     pw_stream_events events{};
+    events.state_changed = [](void* data, pw_stream_state, pw_stream_state state, const char*) {
+        auto* self = static_cast<PipeWireWorker*>(data);
+        self->streamStateChanged(state);
+    };
     events.process = [](void* data) {
         auto* self = static_cast<PipeWireWorker*>(data);
         self->processStream();
@@ -76,11 +81,40 @@ PipeWireWorker::PipeWireWorker(std::stop_token token, AudioCollector* collector)
 }
 
 void PipeWireWorker::handleTimeout(void* data, uint64_t expirations) {
-    Q_UNUSED(expirations);
     auto* self = static_cast<PipeWireWorker*>(data);
 
     if (self->m_token.stop_requested()) {
         pw_main_loop_quit(self->m_loop);
+        return;
+    }
+
+    if (!self->m_idle) {
+        if (expirations < 10) {
+            self->m_collector->clearBuffer();
+        } else {
+            self->m_idle = true;
+            timespec timeout = { 0, 500 * SPA_NSEC_PER_MSEC };
+            pw_loop_update_timer(pw_main_loop_get_loop(self->m_loop), self->m_timer, &timeout, &timeout, false);
+        }
+    }
+}
+
+void PipeWireWorker::streamStateChanged(pw_stream_state state) {
+    m_idle = false;
+    switch (state) {
+    case PW_STREAM_STATE_PAUSED: {
+        timespec timeout = { 0, 10 * SPA_NSEC_PER_MSEC };
+        pw_loop_update_timer(pw_main_loop_get_loop(m_loop), m_timer, &timeout, &timeout, false);
+        break;
+    }
+    case PW_STREAM_STATE_STREAMING:
+        pw_loop_update_timer(pw_main_loop_get_loop(m_loop), m_timer, nullptr, nullptr, false);
+        break;
+    case PW_STREAM_STATE_ERROR:
+        pw_main_loop_quit(m_loop);
+        break;
+    default:
+        break;
     }
 }
 
@@ -125,9 +159,8 @@ unsigned int PipeWireWorker::nextPowerOf2(unsigned int n) {
 
 AudioCollector::AudioCollector(uint32_t sampleRate, uint32_t chunkSize, uint32_t bufferSize, QObject* parent)
     : Service(parent)
-    , m_buffer(bufferSize)
-    , m_bufferIndex(0)
-    , m_bufferFull(false)
+    , m_buffer(bufferSize, 0.0f)
+    , m_bufferIndex(bufferSize)
     , m_sampleRate(sampleRate)
     , m_chunkSize(chunkSize)
     , m_bufferSize(bufferSize) {}
@@ -156,6 +189,12 @@ uint32_t AudioCollector::bufferSize() const {
     return m_bufferSize;
 }
 
+void AudioCollector::clearBuffer() {
+    std::lock_guard<std::mutex> lock(m_bufferMutex);
+    std::fill(m_buffer.begin(), m_buffer.end(), 0.0f);
+    m_bufferIndex = m_bufferSize;
+}
+
 void AudioCollector::loadChunk(const int16_t* samples, uint32_t count) {
     std::lock_guard<std::mutex> lock(m_bufferMutex);
 
@@ -168,10 +207,6 @@ void AudioCollector::loadChunk(const int16_t* samples, uint32_t count) {
         });
 
         m_bufferIndex = (m_bufferIndex + toCopy) % m_bufferSize;
-        if (m_bufferIndex == 0) {
-            m_bufferFull = true;
-        }
-
         samples += toCopy;
         count -= toCopy;
     }
@@ -180,13 +215,11 @@ void AudioCollector::loadChunk(const int16_t* samples, uint32_t count) {
 uint32_t AudioCollector::readChunk(float* out, uint32_t count) {
     std::lock_guard<std::mutex> lock(m_bufferMutex);
 
-    const auto available = m_bufferFull ? m_bufferSize : m_bufferIndex;
-    if (count == 0 || count > available) {
-        count = available;
+    if (count == 0 || count > m_bufferSize) {
+        count = m_bufferSize;
     }
 
-    const auto start = m_bufferFull ? (m_bufferIndex + m_bufferSize - count) % m_bufferSize
-                                    : (m_bufferIndex >= count ? m_bufferIndex - count : 0);
+    const auto start = (m_bufferIndex + m_bufferSize - count) % m_bufferSize;
     const auto firstChunk = std::min(count, m_bufferSize - start);
 
     std::copy(m_buffer.begin() + start, m_buffer.begin() + start + firstChunk, out);
@@ -201,13 +234,11 @@ uint32_t AudioCollector::readChunk(float* out, uint32_t count) {
 uint32_t AudioCollector::readChunk(double* out, uint32_t count) {
     std::lock_guard<std::mutex> lock(m_bufferMutex);
 
-    const auto available = m_bufferFull ? m_bufferSize : m_bufferIndex;
-    if (count == 0 || count > available) {
-        count = available;
+    if (count == 0 || count > m_bufferSize) {
+        count = m_bufferSize;
     }
 
-    const auto start = m_bufferFull ? (m_bufferIndex + m_bufferSize - count) % m_bufferSize
-                                    : (m_bufferIndex >= count ? m_bufferIndex - count : 0);
+    const auto start = (m_bufferIndex + m_bufferSize - count) % m_bufferSize;
     const auto firstChunk = std::min(count, m_bufferSize - start);
 
     std::transform(m_buffer.begin() + start, m_buffer.begin() + start + firstChunk, out, [](float sample) {
@@ -228,12 +259,7 @@ void AudioCollector::start() {
         return;
     }
 
-    {
-        std::lock_guard<std::mutex> lock(m_bufferMutex);
-        m_buffer.clear();
-        m_bufferIndex = 0;
-        m_bufferFull = false;
-    }
+    clearBuffer();
 
     m_thread = std::jthread([this](std::stop_token token) {
         PipeWireWorker worker(token, this);

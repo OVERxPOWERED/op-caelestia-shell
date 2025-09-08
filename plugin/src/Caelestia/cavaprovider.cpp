@@ -136,7 +136,7 @@ QVector<double> CavaProvider::values() const {
 
 void CavaProvider::updateValues(QVector<double> values) {
     if (values != m_values) {
-        m_values = std::move(values);
+        m_values = values;
         emit valuesChanged();
     }
 }

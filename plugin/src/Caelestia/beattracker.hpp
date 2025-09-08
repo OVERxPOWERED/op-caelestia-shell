@@ -11,7 +11,7 @@ class BeatProcessor : public AudioProcessor {
     Q_OBJECT
 
 public:
-    explicit BeatProcessor(AudioProvider* provider, QObject* parent = nullptr);
+    explicit BeatProcessor(QObject* parent = nullptr);
     ~BeatProcessor();
 
 signals:
@@ -22,7 +22,7 @@ private:
     fvec_t* m_in;
     fvec_t* m_out;
 
-    void processChunk(const QVector<double>& chunk) override;
+    void process() override;
 };
 
 class BeatTracker : public AudioProvider {
@@ -33,7 +33,7 @@ class BeatTracker : public AudioProvider {
     Q_PROPERTY(smpl_t bpm READ bpm NOTIFY bpmChanged)
 
 public:
-    explicit BeatTracker(int sampleRate = 44100, int chunkSize = 512, QObject* parent = nullptr);
+    explicit BeatTracker(QObject* parent = nullptr);
 
     [[nodiscard]] smpl_t bpm() const;
 

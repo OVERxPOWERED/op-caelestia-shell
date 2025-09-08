@@ -11,7 +11,7 @@ class CavaProcessor : public AudioProcessor {
     Q_OBJECT
 
 public:
-    explicit CavaProcessor(AudioProvider* provider, QObject* parent = nullptr);
+    explicit CavaProcessor(QObject* parent = nullptr);
     ~CavaProcessor();
 
 signals:
@@ -31,7 +31,7 @@ private:
     void initCava();
     void cleanup();
 
-    void processChunk(const QVector<double>& chunk) override;
+    void process() override;
 };
 
 class CavaProvider : public AudioProvider {
@@ -43,7 +43,7 @@ class CavaProvider : public AudioProvider {
     Q_PROPERTY(QVector<double> values READ values NOTIFY valuesChanged)
 
 public:
-    explicit CavaProvider(int sampleRate = 48000, int chunkSize = 512, QObject* parent = nullptr);
+    explicit CavaProvider(QObject* parent = nullptr);
 
     [[nodiscard]] int bars() const;
     void setBars(int bars);

@@ -1,6 +1,7 @@
 #include "service.hpp"
 
 #include <QDebug>
+#include <QMutexLocker>
 #include <QObject>
 
 namespace caelestia {
@@ -9,30 +10,46 @@ Service::Service(QObject* parent)
     : QObject(parent)
     , m_refCount(0) {}
 
-int Service::refCount() const {
+int Service::refCount() {
+    QMutexLocker locker(&m_mutex);
     return m_refCount;
 }
 
 void Service::ref() {
-    if (m_refCount == 0) {
-        start();
-    }
+    bool needsStart = false;
 
-    m_refCount++;
+    {
+        QMutexLocker locker(&m_mutex);
+        if (m_refCount == 0) {
+            needsStart = true;
+        }
+        m_refCount++;
+    }
     emit refCountChanged();
+
+    if (needsStart) {
+        QMetaObject::invokeMethod(this, &Service::start, Qt::QueuedConnection);
+    }
 }
 
 void Service::unref() {
-    if (m_refCount == 0) {
-        qWarning() << "ServiceRef::unref: attempted to unref service with no active refs";
-        return;
-    }
+    bool needsStop = false;
 
-    m_refCount--;
+    {
+        QMutexLocker locker(&m_mutex);
+        if (m_refCount == 0) {
+            qWarning() << "ServiceRef::unref: attempted to unref service with no active refs";
+            return;
+        }
+        m_refCount--;
+        if (m_refCount == 0) {
+            needsStop = true;
+        }
+    }
     emit refCountChanged();
 
-    if (m_refCount == 0) {
-        stop();
+    if (needsStop) {
+        QMetaObject::invokeMethod(this, &Service::stop, Qt::QueuedConnection);
     }
 }
 

@@ -1,5 +1,6 @@
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(Qalculate IMPORTED_TARGET libqalculate REQUIRED)
+pkg_check_modules(Pipewire IMPORTED_TARGET libpipewire-0.3 REQUIRED)
 pkg_check_modules(Aubio IMPORTED_TARGET aubio REQUIRED)
 pkg_check_modules(Cava IMPORTED_TARGET cava REQUIRED)
 
@@ -14,6 +15,7 @@ qt_add_qml_module(caelestia
         beattracker.hpp beattracker.cpp
         service.hpp service.cpp
         serviceref.hpp serviceref.cpp
+        audiocollector.hpp audiocollector.cpp
         audioprovider.hpp audioprovider.cpp
         cavaprovider.hpp cavaprovider.cpp
 )
@@ -37,5 +39,5 @@ install(FILES "${module_typeinfo}" DESTINATION "${module_dir}")
 
 target_link_libraries(caelestia PRIVATE
     Qt::Core Qt::Qml Qt::Gui Qt::Concurrent Qt::Multimedia
-    PkgConfig::Qalculate PkgConfig::Aubio PkgConfig::Cava
+    PkgConfig::Qalculate PkgConfig::Pipewire PkgConfig::Aubio PkgConfig::Cava
 )

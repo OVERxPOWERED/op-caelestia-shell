@@ -1,5 +1,6 @@
 #include "cavaprovider.hpp"
 
+#include "audiocollector.hpp"
 #include "audioprovider.hpp"
 #include <QDebug>
 #include <QObject>
@@ -9,8 +10,8 @@
 
 namespace caelestia {
 
-CavaProcessor::CavaProcessor(AudioProvider* provider, QObject* parent)
-    : AudioProcessor(provider, parent)
+CavaProcessor::CavaProcessor(QObject* parent)
+    : AudioProcessor(parent)
     , m_plan(nullptr)
     , m_in(new double[static_cast<size_t>(m_chunkSize)])
     , m_out(nullptr)
@@ -68,15 +69,15 @@ void CavaProcessor::initCava() {
     m_out = new double[static_cast<size_t>(m_bars)];
 }
 
-void CavaProcessor::processChunk(const QVector<double>& chunk) {
+void CavaProcessor::process() {
     if (!m_plan || m_bars == 0) {
         return;
     }
 
-    std::copy(chunk.constBegin(), chunk.constEnd(), m_in);
+    const int count = static_cast<int>(AudioCollector::instance()->readChunk(m_in));
 
     // Process in data via cava
-    cava_execute(m_in, m_chunkSize, m_out, m_plan);
+    cava_execute(m_in, count, m_out, m_plan);
 
     // Apply monstercat filter
     for (int i = 0; i < m_bars; i++) {
@@ -97,11 +98,11 @@ void CavaProcessor::processChunk(const QVector<double>& chunk) {
     }
 }
 
-CavaProvider::CavaProvider(int sampleRate, int chunkSize, QObject* parent)
-    : AudioProvider(sampleRate, chunkSize, parent)
+CavaProvider::CavaProvider(QObject* parent)
+    : AudioProvider(parent)
     , m_bars(0)
     , m_values(m_bars) {
-    m_processor = new CavaProcessor(this);
+    m_processor = new CavaProcessor();
     init();
 
     connect(static_cast<CavaProcessor*>(m_processor), &CavaProcessor::valuesChanged, this, &CavaProvider::updateValues);

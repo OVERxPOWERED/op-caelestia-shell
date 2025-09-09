@@ -543,7 +543,6 @@ Item {
         readonly property string icon: Icons.getAppIcon(player?.identity)
 
         Layout.fillHeight: true
-        asynchronous: true
         sourceComponent: !player || icon === "image://icon/" ? fallbackIcon : playerImage
 
         Component {

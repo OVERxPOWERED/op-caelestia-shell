@@ -331,6 +331,7 @@ default, you must create it manually.
         },
         "tray": {
             "background": false,
+            "iconSubs": [],
             "recolour": false
         },
         "workspaces": {

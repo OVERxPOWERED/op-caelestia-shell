@@ -1,4 +1,4 @@
-find_package(Qt6 REQUIRED COMPONENTS Core Qml Gui Concurrent)
+find_package(Qt6 REQUIRED COMPONENTS Core Qml Gui Concurrent Sql)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(Qalculate IMPORTED_TARGET libqalculate REQUIRED)
 pkg_check_modules(Pipewire IMPORTED_TARGET libpipewire-0.3 REQUIRED)
@@ -21,6 +21,7 @@ qt_add_qml_module(caelestia
         audiocollector.hpp audiocollector.cpp
         audioprovider.hpp audioprovider.cpp
         cavaprovider.hpp cavaprovider.cpp
+        appdb.hpp appdb.cpp
 )
 
 qt_query_qml_module(caelestia
@@ -45,6 +46,7 @@ target_link_libraries(caelestia PRIVATE
     Qt::Qml
     Qt::Gui
     Qt::Concurrent
+    Qt::Sql
     PkgConfig::Qalculate
     PkgConfig::Pipewire
     PkgConfig::Aubio

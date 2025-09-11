@@ -23,6 +23,7 @@ qt_add_qml_module(caelestia
         audioprovider.hpp audioprovider.cpp
         cavaprovider.hpp cavaprovider.cpp
         appdb.hpp appdb.cpp
+        requests.hpp requests.cpp
 )
 
 qt_query_qml_module(caelestia

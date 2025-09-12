@@ -517,6 +517,9 @@ default, you must create it manually.
             "hibernate": ["systemctl", "hibernate"],
             "reboot": ["systemctl", "reboot"]
         }
+    },
+    "utilities": {
+        "enabled": true
     }
 }
 ```

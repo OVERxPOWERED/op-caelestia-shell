@@ -5,18 +5,18 @@ import QtQuick
 Item {
     id: root
 
-    required property bool visibility
+    required property var visibilities
 
     visible: height > 0
     implicitHeight: 0
-    implicitWidth: content.implicitWidth
+    implicitWidth: Config.utilities.sizes.width
 
     states: State {
         name: "visible"
-        when: root.visibility
+        when: root.visibilities.utilities
 
         PropertyChanges {
-            root.implicitHeight: content.implicitHeight
+            root.implicitHeight: content.implicitHeight + Appearance.padding.large * 2
         }
     }
 
@@ -46,5 +46,12 @@ Item {
 
     Content {
         id: content
+
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: Appearance.padding.large
+
+        visibilities: root.visibilities
     }
 }

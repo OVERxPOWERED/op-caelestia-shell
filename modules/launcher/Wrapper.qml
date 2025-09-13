@@ -20,6 +20,7 @@ Item {
 
     onShouldBeActiveChanged: {
         if (shouldBeActive) {
+            timer.stop();
             hideAnim.stop();
             showAnim.start();
         } else {
@@ -57,16 +58,52 @@ Item {
         }
     }
 
+    Connections {
+        target: Config.launcher
+
+        function onEnabledChanged(): void {
+            timer.start();
+        }
+
+        function onMaxShownChanged(): void {
+            timer.start();
+        }
+    }
+
+    Connections {
+        target: DesktopEntries.applications
+
+        function onValuesChanged(): void {
+            if (DesktopEntries.applications.values.length < Config.launcher.maxShown)
+                timer.start();
+        }
+    }
+
+    Timer {
+        id: timer
+
+        interval: Appearance.anim.durations.extraLarge
+        onRunningChanged: {
+            if (running) {
+                content.visible = false;
+                content.active = true;
+            } else {
+                root.contentHeight = content.implicitHeight;
+                content.active = Qt.binding(() => root.shouldBeActive || root.visible);
+                content.visible = true;
+            }
+        }
+    }
+
     Loader {
         id: content
 
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
 
-        Component.onCompleted: {
-            root.contentHeight = implicitHeight;
-            active = Qt.binding(() => root.shouldBeActive || root.visible);
-        }
+        visible: false
+        active: false
+        Component.onCompleted: timer.start()
 
         sourceComponent: Content {
             visibilities: root.visibilities

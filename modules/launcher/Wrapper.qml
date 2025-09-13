@@ -8,11 +8,21 @@ import QtQuick
 Item {
     id: root
 
+    required property ShellScreen screen
     required property PersistentProperties visibilities
     required property var panels
 
     readonly property bool shouldBeActive: visibilities.launcher && Config.launcher.enabled
     property int contentHeight
+
+    readonly property real maxHeight: {
+        let max = screen.height - Config.border.thickness * 2 - Appearance.spacing.large;
+        if (visibilities.dashboard)
+            max -= panels.dashboard.nonAnimHeight;
+        return max;
+    }
+
+    onMaxHeightChanged: timer.start()
 
     visible: height > 0
     implicitHeight: 0
@@ -84,7 +94,7 @@ Item {
 
         interval: Appearance.anim.durations.extraLarge
         onRunningChanged: {
-            if (running) {
+            if (running && !root.shouldBeActive) {
                 content.visible = false;
                 content.active = true;
             } else {
@@ -108,6 +118,9 @@ Item {
         sourceComponent: Content {
             visibilities: root.visibilities
             panels: root.panels
+            maxHeight: root.maxHeight
+
+            Component.onCompleted: root.contentHeight = implicitHeight
         }
     }
 }

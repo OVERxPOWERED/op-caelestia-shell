@@ -12,13 +12,14 @@ StyledRect {
         Text
     }
 
-    required property string icon
+    property alias icon: label.text
     property bool checked
     property bool toggle
     property real padding: type == IconButton.Text ? Appearance.padding.small / 2 : Appearance.padding.smaller
     property alias font: label.font
     property int type: IconButton.Filled
 
+    property alias stateLayer: stateLayer
     property alias label: label
 
     property bool internalChecked
@@ -39,6 +40,8 @@ StyledRect {
     implicitHeight: label.implicitHeight + padding * 2
 
     StateLayer {
+        id: stateLayer
+
         color: root.internalChecked ? root.activeOnColour : root.inactiveOnColour
 
         function onClicked(): void {
@@ -52,8 +55,6 @@ StyledRect {
         id: label
 
         anchors.centerIn: parent
-
-        text: root.icon
         color: root.internalChecked ? root.activeOnColour : root.inactiveOnColour
         fill: root.internalChecked ? 1 : 0
 

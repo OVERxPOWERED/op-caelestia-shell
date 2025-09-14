@@ -11,6 +11,7 @@ Item {
     required property var visibilities
     readonly property PersistentProperties props: PersistentProperties {
         property bool recordingListExpanded: false
+        property string recordingConfirmDelete
 
         reloadableId: "utilities"
     }

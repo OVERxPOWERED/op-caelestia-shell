@@ -193,9 +193,10 @@ StyledRect {
                     icon: "delete_forever"
                     type: IconButton.Text
                     label.color: Colours.palette.m3error
+                    stateLayer.color: Colours.palette.m3error
 
                     function onClicked(): void {
-                        CUtils.deleteFile(Qt.resolvedUrl(recording.modelData.path));
+                        root.props.recordingConfirmDelete = recording.modelData.path;
                     }
                 }
             }

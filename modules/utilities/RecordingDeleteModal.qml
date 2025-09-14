@@ -133,12 +133,16 @@ Loader {
             radius: Appearance.rounding.large
             color: Colours.palette.m3surfaceContainerHigh
 
-            scale: 0.5
-            Component.onCompleted: scale = Qt.binding(() => root.props.recordingConfirmDelete ? 1 : 0.5)
+            scale: 0
+            Component.onCompleted: scale = Qt.binding(() => root.props.recordingConfirmDelete ? 1 : 0)
 
             width: Math.min(parent.width - Appearance.padding.large * 2, implicitWidth)
             implicitWidth: deleteConfirmationLayout.implicitWidth + Appearance.padding.large * 3
             implicitHeight: deleteConfirmationLayout.implicitHeight + Appearance.padding.large * 3
+
+            MouseArea {
+                anchors.fill: parent
+            }
 
             Elevation {
                 anchors.fill: parent

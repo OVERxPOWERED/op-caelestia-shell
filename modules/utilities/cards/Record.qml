@@ -175,7 +175,7 @@ StyledRect {
 
                     function onClicked(): void {
                         root.visibilities.utilities = false;
-                        Quickshell.execDetached([...Config.general.apps.playback, recording.modelData.path]);
+                        Quickshell.execDetached(["app2unit", "--", ...Config.general.apps.playback, recording.modelData.path]);
                     }
                 }
 
@@ -185,7 +185,7 @@ StyledRect {
 
                     function onClicked(): void {
                         root.visibilities.utilities = false;
-                        Quickshell.execDetached([...Config.general.apps.explorer, recording.modelData.path]);
+                        Quickshell.execDetached(["app2unit", "--", ...Config.general.apps.explorer, recording.modelData.path]);
                     }
                 }
 

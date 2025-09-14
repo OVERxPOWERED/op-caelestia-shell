@@ -8,6 +8,7 @@ import qs.config
 import Caelestia
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Shapes
 
 Loader {
     id: root
@@ -29,6 +30,95 @@ Loader {
 
         hoverEnabled: true
         onClicked: root.props.recordingConfirmDelete = ""
+
+        Item {
+            anchors.fill: parent
+            anchors.margins: -Appearance.padding.large
+            anchors.rightMargin: -Appearance.padding.large - Config.border.thickness
+            anchors.bottomMargin: -Appearance.padding.large - Config.border.thickness
+            opacity: 0.5
+
+            StyledRect {
+                anchors.fill: parent
+                topLeftRadius: Config.border.rounding
+                color: Colours.palette.m3scrim
+            }
+
+            Shape {
+                id: shape
+
+                anchors.fill: parent
+                preferredRendererType: Shape.CurveRenderer
+                asynchronous: true
+
+                ShapePath {
+                    startX: -Config.border.rounding
+                    startY: shape.height - Config.border.thickness
+                    strokeWidth: 0
+                    fillGradient: LinearGradient {
+                        orientation: LinearGradient.Horizontal
+                        x1: -Config.border.rounding
+
+                        GradientStop {
+                            position: 0
+                            color: Qt.alpha(Colours.palette.m3scrim, 0)
+                        }
+                        GradientStop {
+                            position: 1
+                            color: Colours.palette.m3scrim
+                        }
+                    }
+
+                    PathArc {
+                        relativeY: -Config.border.rounding
+                        radiusX: Config.border.rounding
+                        radiusY: Config.border.rounding
+                        direction: PathArc.Counterclockwise
+                    }
+                    PathLine {
+                        relativeX: 0
+                        relativeY: Config.border.rounding + Config.border.thickness
+                    }
+                    PathLine {
+                        relativeX: -Config.border.rounding
+                        relativeY: 0
+                    }
+                }
+
+                ShapePath {
+                    startX: shape.width - Config.border.rounding - Config.border.thickness
+                    strokeWidth: 0
+                    fillGradient: LinearGradient {
+                        orientation: LinearGradient.Vertical
+                        y1: -Config.border.rounding
+
+                        GradientStop {
+                            position: 0
+                            color: Qt.alpha(Colours.palette.m3scrim, 0)
+                        }
+                        GradientStop {
+                            position: 1
+                            color: Colours.palette.m3scrim
+                        }
+                    }
+
+                    PathArc {
+                        relativeX: Config.border.rounding
+                        relativeY: -Config.border.rounding
+                        radiusX: Config.border.rounding
+                        radiusY: Config.border.rounding
+                        direction: PathArc.Counterclockwise
+                    }
+                    PathLine {
+                        relativeX: Config.border.thickness
+                        relativeY: 0
+                    }
+                    PathLine {
+                        relativeX: 0
+                    }
+                }
+            }
+        }
 
         StyledRect {
             anchors.centerIn: parent

@@ -52,12 +52,12 @@ Loader {
                 asynchronous: true
 
                 ShapePath {
-                    startX: -Config.border.rounding
+                    startX: -Config.border.rounding * 2
                     startY: shape.height - Config.border.thickness
                     strokeWidth: 0
                     fillGradient: LinearGradient {
                         orientation: LinearGradient.Horizontal
-                        x1: -Config.border.rounding
+                        x1: -Config.border.rounding * 2
 
                         GradientStop {
                             position: 0
@@ -69,6 +69,10 @@ Loader {
                         }
                     }
 
+                    PathLine {
+                        relativeX: Config.border.rounding
+                        relativeY: 0
+                    }
                     PathArc {
                         relativeY: -Config.border.rounding
                         radiusX: Config.border.rounding
@@ -80,7 +84,7 @@ Loader {
                         relativeY: Config.border.rounding + Config.border.thickness
                     }
                     PathLine {
-                        relativeX: -Config.border.rounding
+                        relativeX: -Config.border.rounding * 2
                         relativeY: 0
                     }
                 }
@@ -90,7 +94,7 @@ Loader {
                     strokeWidth: 0
                     fillGradient: LinearGradient {
                         orientation: LinearGradient.Vertical
-                        y1: -Config.border.rounding
+                        y1: -Config.border.rounding * 2
 
                         GradientStop {
                             position: 0
@@ -108,6 +112,10 @@ Loader {
                         radiusX: Config.border.rounding
                         radiusY: Config.border.rounding
                         direction: PathArc.Counterclockwise
+                    }
+                    PathLine {
+                        relativeX: 0
+                        relativeY: -Config.border.rounding
                     }
                     PathLine {
                         relativeX: Config.border.thickness

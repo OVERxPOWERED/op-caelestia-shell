@@ -26,18 +26,17 @@ StyledRect {
     property alias label: label
 
     property bool internalChecked
-    property color activeColour: type == IconTextButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondary
-    property color inactiveColour: type == IconTextButton.Filled ? Colours.palette.m3surfaceContainer : Colours.palette.m3secondaryContainer
-    property color activeOnColour: type == IconTextButton.Filled ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondary
-    property color inactiveOnColour: type == IconTextButton.Filled ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
+    property color activeColour: type === IconTextButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondary
+    property color inactiveColour: type === IconTextButton.Filled ? Colours.palette.m3surfaceContainer : Colours.palette.m3secondaryContainer
+    property color activeOnColour: type === IconTextButton.Filled ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondary
+    property color inactiveOnColour: type === IconTextButton.Filled ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
 
-    function onClicked(): void {
-    }
+    signal clicked
 
     onCheckedChanged: internalChecked = checked
 
     radius: internalChecked ? Appearance.rounding.small : implicitHeight / 2
-    color: type == IconTextButton.Text ? "transparent" : internalChecked ? activeColour : inactiveColour
+    color: type === IconTextButton.Text ? "transparent" : internalChecked ? activeColour : inactiveColour
 
     implicitWidth: row.implicitWidth + horizontalPadding * 2
     implicitHeight: row.implicitHeight + verticalPadding * 2
@@ -50,7 +49,7 @@ StyledRect {
         function onClicked(): void {
             if (root.toggle)
                 root.internalChecked = !root.internalChecked;
-            root.onClicked();
+            root.clicked();
         }
     }
 

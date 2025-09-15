@@ -102,8 +102,8 @@ Row {
         StateLayer {
             id: expandStateLayer
 
-            rect.topRightRadius: parent.topRightRadius
-            rect.bottomRightRadius: parent.bottomRightRadius
+            rect.topLeftRadius: parent.topLeftRadius
+            rect.bottomLeftRadius: parent.bottomLeftRadius
             color: root.textColour
             disabled: root.disabled
 

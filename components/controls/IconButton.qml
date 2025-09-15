@@ -28,13 +28,13 @@ StyledRect {
     property color inactiveColour: {
         if (!toggle && type === IconButton.Filled)
             return Colours.palette.m3primary;
-        return type === IconButton.Filled ? Colours.palette.m3surfaceContainer : Colours.palette.m3secondaryContainer;
+        return type === IconButton.Filled ? Colours.tPalette.m3surfaceContainer : Colours.palette.m3secondaryContainer;
     }
-    property color activeOnColour: type === IconButton.Filled ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondary
+    property color activeOnColour: type === IconButton.Filled ? Colours.palette.m3onPrimary : type === IconButton.Tonal ? Colours.palette.m3onSecondary : Colours.palette.m3primary
     property color inactiveOnColour: {
         if (!toggle && type === IconButton.Filled)
             return Colours.palette.m3onPrimary;
-        return type === IconButton.Filled ? Colours.palette.m3onSurfaceVariant : Colours.palette.m3onSecondaryContainer;
+        return type === IconButton.Tonal ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant;
     }
 
     signal clicked

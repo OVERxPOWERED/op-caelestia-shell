@@ -21,6 +21,7 @@ StyledRect {
 
     property alias stateLayer: stateLayer
     property alias label: label
+    property alias radiusAnim: radiusAnim
 
     property bool internalChecked
     property color activeColour: type === IconButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondary
@@ -71,6 +72,8 @@ StyledRect {
     }
 
     Behavior on radius {
-        Anim {}
+        Anim {
+            id: radiusAnim
+        }
     }
 }

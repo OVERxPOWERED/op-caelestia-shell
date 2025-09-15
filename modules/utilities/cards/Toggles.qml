@@ -72,6 +72,12 @@ StyledRect {
                     });
                 }
             }
+
+            Toggle {
+                icon: "gamepad"
+                checked: GameMode.enabled
+                onClicked: GameMode.enabled = !GameMode.enabled
+            }
         }
     }
 

@@ -116,6 +116,10 @@ StyledRect {
             sourceComponent: running ? recordingControls : recordingList
 
             Behavior on Layout.preferredHeight {
+                id: locHeightAnim
+
+                enabled: false
+
                 Anim {}
             }
 
@@ -137,7 +141,17 @@ StyledRect {
                             easing.bezierCurve: Appearance.anim.curves.standardAccel
                         }
                     }
+                    PropertyAction {
+                        target: locHeightAnim
+                        property: "enabled"
+                        value: true
+                    }
                     PropertyAction {}
+                    PropertyAction {
+                        target: locHeightAnim
+                        property: "enabled"
+                        value: false
+                    }
                     ParallelAnimation {
                         Anim {
                             target: listOrControls

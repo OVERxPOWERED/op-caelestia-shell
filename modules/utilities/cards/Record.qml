@@ -18,6 +18,7 @@ StyledRect {
 
     required property var props
     required property var visibilities
+    property bool modePickerExpanded
 
     Layout.fillWidth: true
     implicitHeight: layout.implicitHeight + layout.anchors.margins * 2
@@ -34,6 +35,7 @@ StyledRect {
 
         RowLayout {
             spacing: Appearance.spacing.normal
+            z: 1
 
             StyledRect {
                 implicitWidth: implicitHeight
@@ -77,16 +79,36 @@ StyledRect {
                 }
             }
 
-            IconButton {
-                icon: "not_started"
-                checked: Recorder.running
-                type: IconButton.Filled
-                inactiveColour: Colours.palette.m3surfaceContainerHighest
-                toggle: true
+            SplitButton {
+                active: menuItems.find(m => root.props.recordingMode === m.icon + m.text) ?? menuItems[0]
+                menu.onItemSelected: item => root.props.recordingMode = item.icon + item.text
 
-                function onClicked(): void {
-                    Recorder.toggle();
-                }
+                menuItems: [
+                    MenuItem {
+                        icon: "fullscreen"
+                        text: qsTr("Record fullscreen")
+                        activeText: qsTr("Fullscreen")
+                        onClicked: Recorder.toggle()
+                    },
+                    MenuItem {
+                        icon: "screenshot_region"
+                        text: qsTr("Record region")
+                        activeText: qsTr("Region")
+                        onClicked: Recorder.toggle(["-r"])
+                    },
+                    MenuItem {
+                        icon: "select_to_speak"
+                        text: qsTr("Record fullscreen with sound")
+                        activeText: qsTr("Fullscreen")
+                        onClicked: Recorder.toggle(["-s"])
+                    },
+                    MenuItem {
+                        icon: "volume_up"
+                        text: qsTr("Record region with sound")
+                        activeText: qsTr("Region")
+                        onClicked: Recorder.toggle(["-sr"])
+                    }
+                ]
             }
         }
 

@@ -9,8 +9,8 @@ Singleton {
     readonly property alias running: props.running
     readonly property alias paused: props.paused
 
-    function toggle(): void {
-        Quickshell.execDetached(["caelestia", "record"]);
+    function toggle(extraArgs: list<string>): void {
+        Quickshell.execDetached(["caelestia", "record", ...extraArgs]);
         props.running = !props.running;
         if (!props.running)
             props.paused = false;

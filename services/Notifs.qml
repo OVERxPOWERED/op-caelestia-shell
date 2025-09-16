@@ -36,11 +36,10 @@ Singleton {
         onNotification: notif => {
             notif.tracked = true;
 
-            if (!props.dnd)
-                root.list.push(notifComp.createObject(root, {
-                    popup: true,
-                    notification: notif
-                }));
+            root.list.push(notifComp.createObject(root, {
+                popup: !props.dnd,
+                notification: notif
+            }));
         }
     }
 

@@ -12,6 +12,7 @@ JsonObject {
     }
 
     component Idle: JsonObject {
+        property bool inhibitWhenAudio: true
         property real lockTimeout: 180 // 3 mins
         property real dpmsTimeout: 300 // 5 mins
         property real sleepTimeout: 600 // 10 mins

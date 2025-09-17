@@ -252,6 +252,11 @@ default, you must create it manually.
         "apps": {
             "terminal": ["foot"],
             "audio": ["pavucontrol"]
+        },
+        "idle": {
+            "lockTimeout": 180,
+            "dpmsTimeout": 300,
+            "sleepTimeout": 600
         }
     },
     "background": {

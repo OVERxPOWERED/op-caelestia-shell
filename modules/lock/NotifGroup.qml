@@ -32,7 +32,7 @@ StyledRect {
     color: root.urgency === "critical" ? Colours.palette.m3secondaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
 
     RetainableLock {
-        object: root.notifs[0]?.notiftication ?? null
+        object: root.notifs[0]?.notification ?? null
         locked: true
     }
 

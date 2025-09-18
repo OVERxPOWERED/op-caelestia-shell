@@ -9,10 +9,10 @@ Item {
 
     required property var visibilities
     required property var panels
+    readonly property Props props: Props {}
 
     visible: width > 0
     implicitWidth: 0
-    implicitHeight: 0
 
     states: State {
         name: "visible"
@@ -51,15 +51,17 @@ Item {
         id: content
 
         anchors.top: parent.top
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.right: parent.right
         anchors.margins: Appearance.padding.large
+        anchors.bottomMargin: 0
 
-        visible: false
         active: true
         Component.onCompleted: active = Qt.binding(() => (root.visibilities.sidebar && Config.sidebar.enabled) || root.visible)
 
         sourceComponent: Content {
+            implicitWidth: Config.sidebar.sizes.width - Appearance.padding.large * 2
+            props: root.props
             visibilities: root.visibilities
         }
     }

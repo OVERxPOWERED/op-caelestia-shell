@@ -9,6 +9,8 @@ Item {
     id: root
 
     required property PersistentProperties visibilities
+    required property var panels
+    readonly property real nonAnimWidth: content.implicitWidth
 
     visible: width > 0
     implicitWidth: 0
@@ -19,7 +21,7 @@ Item {
         when: root.visibilities.session && Config.session.enabled
 
         PropertyChanges {
-            root.implicitWidth: content.implicitWidth
+            root.implicitWidth: root.nonAnimWidth
         }
     }
 
@@ -41,7 +43,7 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                easing.bezierCurve: root.visibilities.osd ? Appearance.anim.curves.expressiveDefaultSpatial : Appearance.anim.curves.emphasized
+                easing.bezierCurve: root.panels.osd.width > 0 ? Appearance.anim.curves.expressiveDefaultSpatial : Appearance.anim.curves.emphasized
             }
         }
     ]

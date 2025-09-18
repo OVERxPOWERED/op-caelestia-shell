@@ -516,6 +516,7 @@ default, you must create it manually.
     },
     "session": {
         "dragThreshold": 30,
+        "enabled": true,
         "vimKeybinds": false,
         "commands": {
             "logout": ["loginctl", "terminate-user", ""],
@@ -524,6 +525,10 @@ default, you must create it manually.
             "reboot": ["systemctl", "reboot"]
         }
     },
+    "sidebar": {
+        "dragThreshold": 80,
+        "enabled": true
+    }.
     "utilities": {
         "enabled": true
     }

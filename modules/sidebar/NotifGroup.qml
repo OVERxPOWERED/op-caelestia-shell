@@ -24,6 +24,15 @@ StyledRect {
 
     readonly property bool expanded: props.expandedNotifs.includes(modelData)
 
+    function toggleExpand(expand: bool): void {
+        if (expand) {
+            if (!expanded)
+                props.expandedNotifs.push(modelData);
+        } else if (expanded) {
+            props.expandedNotifs.splice(props.expandedNotifs.indexOf(modelData), 1);
+        }
+    }
+
     anchors.left: parent?.left
     anchors.right: parent?.right
     implicitHeight: content.implicitHeight + Appearance.padding.normal * 2
@@ -156,10 +165,7 @@ StyledRect {
                         color: root.urgency === "critical" ? Colours.palette.m3onError : Colours.palette.m3onSurface
 
                         function onClicked(): void {
-                            if (root.expanded)
-                                root.props.expandedNotifs.splice(root.props.expandedNotifs.indexOf(root.modelData), 1);
-                            else
-                                root.props.expandedNotifs.push(root.modelData);
+                            root.toggleExpand(!root.expanded);
                         }
                     }
 
@@ -197,6 +203,7 @@ StyledRect {
                 props: root.props
                 notifs: root.notifs
                 expanded: root.expanded
+                onRequestToggleExpand: expand => root.toggleExpand(expand)
             }
         }
     }

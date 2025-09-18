@@ -95,11 +95,68 @@ Item {
             clip: true
 
             model: ScriptModel {
-                values: [...new Set(Notifs.list.map(notif => notif.appName))].reverse()
+                values: [...new Set(Notifs.list.filter(n => !n.closed).map(n => n.appName))].reverse()
             }
 
-            delegate: NotifGroup {
-                props: root.props
+            delegate: MouseArea {
+                id: notif
+
+                required property int index
+                required property string modelData
+
+                property int startY
+
+                function closeAll(): void {
+                    for (const n of Notifs.list.filter(n => !n.closed && n.appName === modelData))
+                        n.close();
+                }
+
+                implicitWidth: root.width
+                implicitHeight: notifInner.implicitHeight
+
+                hoverEnabled: true
+                cursorShape: pressed ? Qt.ClosedHandCursor : undefined
+                acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+                preventStealing: true
+
+                drag.target: this
+                drag.axis: Drag.XAxis
+
+                onPressed: event => {
+                    if (event.button === Qt.LeftButton)
+                        startY = event.y;
+                    else if (event.button === Qt.RightButton)
+                        notifInner.toggleExpand();
+                    else if (event.button === Qt.MiddleButton)
+                        closeAll();
+                }
+                onPositionChanged: event => {
+                    if (pressed) {
+                        const diffY = event.y - startY;
+                        if (Math.abs(diffY) > Config.notifs.expandThreshold)
+                            notifInner.toggleExpand(diffY > 0);
+                    }
+                }
+                onReleased: event => {
+                    if (Math.abs(x) < width * Config.notifs.clearThreshold)
+                        x = 0;
+                    else
+                        closeAll();
+                }
+
+                NotifGroup {
+                    id: notifInner
+
+                    modelData: notif.modelData
+                    props: root.props
+                }
+
+                Behavior on x {
+                    Anim {
+                        duration: Appearance.anim.durations.expressiveDefaultSpatial
+                        easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                    }
+                }
             }
 
             add: Transition {

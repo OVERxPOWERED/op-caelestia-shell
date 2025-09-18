@@ -17,6 +17,8 @@ Item {
     readonly property int spacing: Math.round(Appearance.spacing.small / 2)
     property bool flag
 
+    signal requestToggleExpand(expand: bool)
+
     Layout.fillWidth: true
     implicitHeight: {
         const item = repeater.itemAt(repeater.count - 1);
@@ -56,15 +58,25 @@ Item {
 
             hoverEnabled: true
             cursorShape: pressed ? Qt.ClosedHandCursor : undefined
-            acceptedButtons: Qt.LeftButton | Qt.MiddleButton
+            acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+            preventStealing: true
 
             drag.target: this
             drag.axis: Drag.XAxis
 
             onPressed: event => {
                 startY = event.y;
-                if (event.button === Qt.MiddleButton)
+                if (event.button === Qt.RightButton)
+                    root.requestToggleExpand(!root.expanded);
+                else if (event.button === Qt.MiddleButton)
                     modelData.close();
+            }
+            onPositionChanged: event => {
+                if (pressed) {
+                    const diffY = event.y - startY;
+                    if (Math.abs(diffY) > Config.notifs.expandThreshold)
+                        root.requestToggleExpand(diffY > 0);
+                }
             }
             onReleased: event => {
                 if (Math.abs(x) < width * Config.notifs.clearThreshold)

@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import qs.components
-import qs.components.controls
 import qs.components.effects
 import qs.services
 import qs.config
@@ -119,13 +118,15 @@ StyledRect {
         }
 
         ColumnLayout {
+            id: column
+
             Layout.topMargin: -Appearance.padding.small
             Layout.bottomMargin: -Appearance.padding.small / 2
             Layout.fillWidth: true
-            spacing: Math.round(Appearance.spacing.small / 2)
+            spacing: 0
 
             RowLayout {
-                Layout.bottomMargin: -parent.spacing
+                Layout.bottomMargin: root.expanded ? Math.round(Appearance.spacing.small / 2) : 0
                 Layout.fillWidth: true
                 spacing: Appearance.spacing.smaller
 
@@ -173,7 +174,7 @@ StyledRect {
 
                             Layout.leftMargin: Appearance.padding.small / 2
                             animate: true
-                            text: root.notifs.length
+                            text: root.notifs.reduce((acc, n) => n.closed ? acc : acc + 1, 0)
                             color: root.urgency === "critical" ? Colours.palette.m3onError : Colours.palette.m3onSurface
                             font.pointSize: Appearance.font.size.small
                         }
@@ -186,31 +187,17 @@ StyledRect {
                         }
                     }
                 }
+
+                Behavior on Layout.bottomMargin {
+                    Anim {}
+                }
             }
 
-            Repeater {
-                id: notifList
-
-                model: ScriptModel {
-                    values: root.expanded ? root.notifs : root.notifs.slice(0, Config.notifs.groupPreviewNum)
-                }
-
-                Layout.fillWidth: true
-
-                Notif {
-                    id: notif
-
-                    props: root.props
-                    expanded: root.expanded
-                }
+            NotifGroupList {
+                props: root.props
+                notifs: root.notifs
+                expanded: root.expanded
             }
         }
     }
-
-    // Behavior on implicitHeight {
-    //     Anim {
-    //         duration: Appearance.anim.durations.expressiveDefaultSpatial
-    //         easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-    //     }
-    // }
 }

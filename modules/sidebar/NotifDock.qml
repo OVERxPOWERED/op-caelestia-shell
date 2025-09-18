@@ -160,8 +160,9 @@ Item {
         repeat: true
         interval: 50
         onTriggered: {
-            Notifs.list[0]?.notification.dismiss();
-            if (Notifs.list.length === 0)
+            if (Notifs.list.length > 0)
+                Notifs.list[0].close();
+            else
                 stop();
         }
     }

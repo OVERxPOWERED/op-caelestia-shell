@@ -55,7 +55,7 @@ Item {
             id: list
 
             model: ScriptModel {
-                values: [...Notifs.popups].reverse()
+                values: Notifs.popups.filter(n => !n.closed).reverse()
             }
 
             anchors.fill: parent

@@ -1,10 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import qs.components
-import qs.components.controls
 import qs.services
 import qs.config
-import Quickshell
 import QtQuick
 import QtQuick.Layouts
 
@@ -15,8 +13,9 @@ StyledRect {
     required property Props props
     required property bool expanded
 
-    Layout.fillWidth: true
-    implicitHeight: expanded ? summary.implicitHeight + expandedContent.implicitHeight + expandedContent.anchors.topMargin + Appearance.padding.normal * 2 : summary.implicitHeight
+    readonly property real nonAnimHeight: expanded ? summary.implicitHeight + expandedContent.implicitHeight + expandedContent.anchors.topMargin + Appearance.padding.normal * 2 : summary.implicitHeight
+
+    implicitHeight: nonAnimHeight
 
     radius: Appearance.rounding.small
     color: {
@@ -42,34 +41,6 @@ StyledRect {
         Anim {
             properties: "margins,width"
         }
-    }
-
-    ParallelAnimation {
-        running: true
-
-        Anim {
-            target: root
-            property: "opacity"
-            from: 0
-            to: 1
-        }
-        Anim {
-            target: root
-            property: "scale"
-            from: 0.7
-            to: 1
-        }
-        // Anim {
-        //     target: root.Layout
-        //     property: "preferredHeight"
-        //     from: 0
-        //     to: root.implicitHeight
-        // }
-    }
-
-    RetainableLock {
-        object: root.modelData.notification
-        locked: true
     }
 
     StyledText {
@@ -139,7 +110,8 @@ StyledRect {
 
             StyledText {
                 Layout.fillWidth: true
-                text: root.modelData.body || qsTr("No body here! :/")
+                textFormat: Text.MarkdownText
+                text: root.modelData.body.replace(/(.)\n(?!\n)/g, "$1\n\n") || qsTr("No body here! :/")
                 color: root.modelData.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
                 wrapMode: Text.WordWrap
             }

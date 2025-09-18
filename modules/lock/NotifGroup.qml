@@ -31,11 +31,6 @@ StyledRect {
     radius: Appearance.rounding.normal
     color: root.urgency === "critical" ? Colours.palette.m3secondaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
 
-    RetainableLock {
-        object: root.notifs[0]?.notification ?? null
-        locked: true
-    }
-
     RowLayout {
         id: content
 
@@ -229,6 +224,27 @@ StyledRect {
                             to: notif.implicitHeight
                         }
                     }
+
+                    ParallelAnimation {
+                        running: notif.modelData.closed
+                        onFinished: notif.modelData.lock(notif)
+
+                        Anim {
+                            target: notif
+                            property: "opacity"
+                            to: 0
+                        }
+                        Anim {
+                            target: notif
+                            property: "scale"
+                            to: 0.7
+                        }
+                        Anim {
+                            target: notif.Layout
+                            property: "preferredHeight"
+                            to: 0
+                        }
+                    }
                 }
             }
 
@@ -287,10 +303,8 @@ StyledRect {
         }
         color: root.urgency === "critical" ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
 
-        RetainableLock {
-            object: notifLine.modelData.notification
-            locked: true
-        }
+        Component.onCompleted: modelData.lock(this)
+        Component.onDestruction: modelData.unlock(this)
 
         TextMetrics {
             id: metrics

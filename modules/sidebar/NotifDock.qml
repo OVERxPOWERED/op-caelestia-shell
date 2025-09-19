@@ -98,6 +98,8 @@ Item {
                 values: [...new Set(Notifs.list.filter(n => !n.closed).map(n => n.appName))].reverse()
             }
 
+            StyledScrollBar.vertical: StyledScrollBar {}
+
             delegate: MouseArea {
                 id: notif
 
@@ -218,7 +220,7 @@ Item {
         interval: 50
         onTriggered: {
             if (root.notifCount > 0)
-                Notifs.list[0].close();
+                Notifs.list.find(n => !n.closed).close();
             else
                 stop();
         }
@@ -239,7 +241,7 @@ Item {
             icon: "clear_all"
             radius: Appearance.rounding.normal
             padding: Appearance.padding.normal
-            font.pointSize: Math.round(Appearance.font.size.large * 1.3)
+            font.pointSize: Math.round(Appearance.font.size.large * 1.2)
             onClicked: clearTimer.start()
 
             Elevation {

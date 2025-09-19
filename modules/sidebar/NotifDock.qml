@@ -90,6 +90,8 @@ Item {
         }
 
         StyledListView {
+            id: view
+
             anchors.fill: parent
 
             spacing: Appearance.spacing.small
@@ -98,7 +100,9 @@ Item {
                 values: [...new Set(Notifs.list.filter(n => !n.closed).map(n => n.appName))].reverse()
             }
 
-            StyledScrollBar.vertical: StyledScrollBar {}
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: view
+            }
 
             delegate: MouseArea {
                 id: notif

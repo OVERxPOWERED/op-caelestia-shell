@@ -23,6 +23,7 @@ Singleton {
             return;
 
         storage.setText(JSON.stringify(list.filter(n => !n.closed).map(n => ({
+                    time: n.time,
                     id: n.id,
                     summary: n.summary,
                     body: n.body,
@@ -150,10 +151,10 @@ Singleton {
         property bool resident: notification?.resident ?? false
         property bool hasActionIcons: notification?.hasActionIcons ?? false
         property list<var> actions: notification?.actions.map(a => ({
-                identifier: a.identifier,
-                text: a.text,
-                invoke: () => a.invoke()
-            })) ?? []
+                    identifier: a.identifier,
+                    text: a.text,
+                    invoke: () => a.invoke()
+                })) ?? []
 
         readonly property Timer timer: Timer {
             running: true

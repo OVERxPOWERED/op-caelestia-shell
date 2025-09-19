@@ -97,7 +97,10 @@ Item {
             spacing: Appearance.spacing.small
 
             model: ScriptModel {
-                values: [...new Set(Notifs.list.filter(n => !n.closed).map(n => n.appName))].reverse()
+                values: {
+                    const list = Notifs.list.filter(n => !n.closed).sort((a, b) => b.time - a.time).map(n => [n.appName, null]);
+                    return [...new Map(list).keys()];
+                }
             }
 
             StyledScrollBar.vertical: StyledScrollBar {

@@ -14,16 +14,23 @@ Item {
     required property list<var> notifs
     required property bool expanded
 
+    readonly property real nonAnimHeight: {
+        let h = -root.spacing;
+        for (let i = 0; i < repeater.count; i++) {
+            const item = repeater.itemAt(i);
+            if (!item.modelData.closed)
+                h += item.nonAnimHeight + root.spacing;
+        }
+        return h;
+    }
+
     readonly property int spacing: Math.round(Appearance.spacing.small / 2)
     property bool flag
 
     signal requestToggleExpand(expand: bool)
 
     Layout.fillWidth: true
-    implicitHeight: {
-        const item = repeater.itemAt(repeater.count - 1);
-        return item ? item.y + item.implicitHeight : 0;
-    }
+    implicitHeight: nonAnimHeight
 
     Repeater {
         id: repeater
@@ -143,6 +150,13 @@ Item {
                     easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
                 }
             }
+        }
+    }
+
+    Behavior on implicitHeight {
+        Anim {
+            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
         }
     }
 }

@@ -107,10 +107,12 @@ StyledRect {
                     return Colours.palette.m3onSurface;
                 }
                 font.pointSize: Appearance.font.size.normal
+                elide: Text.ElideRight
             }
 
             StyledText {
                 Layout.fillWidth: true
+                textFormat: Text.StyledText
                 text: root.modelData.message
                 color: {
                     if (root.modelData.type === Toast.Success)
@@ -122,6 +124,7 @@ StyledRect {
                     return Colours.palette.m3onSurface;
                 }
                 opacity: 0.8
+                elide: Text.ElideRight
             }
         }
     }

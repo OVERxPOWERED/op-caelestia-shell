@@ -58,6 +58,11 @@ Item {
                 return index >= Config.utilities.maxToasts + extraHidden;
             }
 
+            onPreviewHiddenChanged: {
+                if (initAnim.running && previewHidden)
+                    initAnim.stop();
+            }
+
             opacity: modelData.closed || previewHidden ? 0 : 1
             scale: modelData.closed || previewHidden ? 0.7 : 1
 
@@ -83,6 +88,8 @@ Item {
             Component.onCompleted: modelData.lock(this)
 
             Anim {
+                id: initAnim
+
                 Component.onCompleted: running = !toast.previewHidden
 
                 target: toast

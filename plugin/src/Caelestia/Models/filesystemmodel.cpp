@@ -413,16 +413,18 @@ void FileSystemModel::applyChanges(const QSet<QString>& removedPaths, const QSet
     for (const auto& path : addedPaths) {
         newEntries << new FileSystemEntry(path, m_dir.relativeFilePath(path), this);
     }
-    const auto comp = [this](const FileSystemEntry* a, const FileSystemEntry* b) {
+    std::sort(newEntries.begin(), newEntries.end(), [this](const FileSystemEntry* a, const FileSystemEntry* b) {
         return compareEntries(a, b);
-    };
-    std::sort(newEntries.begin(), newEntries.end(), comp);
+    });
 
     int insertStart = -1;
     int prevRow = -1;
     QList<FileSystemEntry*> batchItems;
     for (const auto& entry : newEntries) {
-        const auto it = std::lower_bound(m_entries.begin(), m_entries.end(), entry, comp);
+        const auto it = std::lower_bound(
+            m_entries.begin(), m_entries.end(), entry, [this](const FileSystemEntry* a, const FileSystemEntry* b) {
+                return compareEntries(a, b);
+            });
         int row = static_cast<int>(it - m_entries.begin());
 
         if (insertStart == -1) {

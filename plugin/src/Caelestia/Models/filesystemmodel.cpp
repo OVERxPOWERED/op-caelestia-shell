@@ -380,6 +380,8 @@ void FileSystemModel::applyChanges(const QSet<QString>& removedPaths, const QSet
     }
     std::sort(removedIndices.begin(), removedIndices.end(), std::greater<int>());
 
+    QList<FileSystemEntry*> toDelete;
+
     int start = -1;
     int end = -1;
     for (int idx : removedIndices) {
@@ -392,7 +394,7 @@ void FileSystemModel::applyChanges(const QSet<QString>& removedPaths, const QSet
             beginRemoveRows(QModelIndex(), end, start);
             for (int i = start; i >= end; --i) {
                 emit removed(m_entries[i]->path());
-                m_entries.takeAt(i)->deleteLater();
+                toDelete << m_entries.takeAt(i);
             }
             endRemoveRows();
 
@@ -404,7 +406,7 @@ void FileSystemModel::applyChanges(const QSet<QString>& removedPaths, const QSet
         beginRemoveRows(QModelIndex(), end, start);
         for (int i = start; i >= end; --i) {
             emit removed(m_entries[i]->path());
-            m_entries.takeAt(i)->deleteLater();
+            toDelete << m_entries.takeAt(i);
         }
         endRemoveRows();
     }
@@ -460,6 +462,7 @@ void FileSystemModel::applyChanges(const QSet<QString>& removedPaths, const QSet
     }
 
     emit entriesChanged();
+    qDeleteAll(toDelete);
 }
 
 bool FileSystemModel::compareEntries(const FileSystemEntry* a, const FileSystemEntry* b) const {

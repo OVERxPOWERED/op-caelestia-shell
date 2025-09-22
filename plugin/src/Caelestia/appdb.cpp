@@ -207,15 +207,17 @@ void AppDb::updateApps() {
         newIds.insert(entry->property("id").toString());
     }
 
+    QList<AppEntry*> toDelete;
     for (auto id : m_apps.keys()) {
         if (!newIds.contains(id)) {
             dirty = true;
-            m_apps.take(id)->deleteLater();
+            toDelete << m_apps.take(id);
         }
     }
 
     if (dirty) {
         emit appsChanged();
+        qDeleteAll(toDelete);
     }
 }
 

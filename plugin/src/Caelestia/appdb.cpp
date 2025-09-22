@@ -75,7 +75,12 @@ QString AppEntry::keywords() const {
 
 AppDb::AppDb(QObject* parent)
     : QObject(parent)
+    , m_timer(new QTimer(this))
     , m_uuid(QUuid::createUuid().toString()) {
+    m_timer->setSingleShot(true);
+    m_timer->setInterval(300);
+    connect(m_timer, &QTimer::timeout, this, &AppDb::updateApps);
+
     auto db = QSqlDatabase::addDatabase("QSQLITE", m_uuid);
     db.setDatabaseName(":memory:");
     db.open();
@@ -125,7 +130,7 @@ void AppDb::setEntries(const QList<QObject*>& entries) {
     m_entries = entries;
     emit entriesChanged();
 
-    updateApps();
+    m_timer->start();
 }
 
 QList<AppEntry*> AppDb::apps() const {

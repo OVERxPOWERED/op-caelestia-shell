@@ -3,6 +3,7 @@
 #include <qhash.h>
 #include <qobject.h>
 #include <qqmlintegration.h>
+#include <qtimer.h>
 
 namespace caelestia {
 
@@ -87,6 +88,8 @@ signals:
     void appsChanged();
 
 private:
+    QTimer* m_timer;
+
     const QString m_uuid;
     QString m_path;
     QList<QObject*> m_entries;

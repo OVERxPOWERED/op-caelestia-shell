@@ -8,7 +8,7 @@ namespace caelestia {
 
 FileSystemEntry::FileSystemEntry(const QString& path, const QString& relativePath, QObject* parent)
     : QObject(parent)
-    , m_fileInfo(QFileInfo(path))
+    , m_fileInfo(path)
     , m_path(path)
     , m_relativePath(relativePath)
     , m_isImageInitialised(false)

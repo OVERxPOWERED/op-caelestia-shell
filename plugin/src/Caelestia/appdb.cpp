@@ -9,7 +9,17 @@ namespace caelestia {
 AppEntry::AppEntry(QObject* entry, unsigned int frequency, QObject* parent)
     : QObject(parent)
     , m_entry(entry)
-    , m_frequency(frequency) {}
+    , m_frequency(frequency) {
+    const auto mo = m_entry->metaObject();
+    const auto tmo = metaObject();
+
+    for (const auto& prop :
+        { "name", "comment", "execString", "startupClass", "genericName", "categories", "keywords" }) {
+        const auto metaProp = mo->property(mo->indexOfProperty(prop));
+        const auto thisMetaProp = tmo->property(tmo->indexOfProperty(prop));
+        connect(m_entry, metaProp.notifySignal(), this, thisMetaProp.notifySignal());
+    }
+}
 
 QObject* AppEntry::entry() const {
     return m_entry;
@@ -39,7 +49,7 @@ QString AppEntry::name() const {
     return m_entry->property("name").toString();
 }
 
-QString AppEntry::desc() const {
+QString AppEntry::comment() const {
     return m_entry->property("comment").toString();
 }
 
@@ -47,7 +57,7 @@ QString AppEntry::execString() const {
     return m_entry->property("execString").toString();
 }
 
-QString AppEntry::wmClass() const {
+QString AppEntry::startupClass() const {
     return m_entry->property("startupClass").toString();
 }
 

@@ -121,7 +121,7 @@ signals:
     void nameFiltersChanged();
     void entriesChanged();
 
-    void added(const FileSystemEntry* entry);
+    void added(const caelestia::FileSystemEntry* entry);
     void removed(const QString& path);
 
 private:

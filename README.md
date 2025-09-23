@@ -571,10 +571,12 @@ default, you must create it manually.
         "toasts": {
             "audioInputChanged": true,
             "audioOutputChanged": true,
+            "capsLockChanged": true,
             "chargingChanged": true,
             "configLoaded": true,
             "dndChanged": true,
-            "gameModeChanged": true
+            "gameModeChanged": true,
+            "numLockChanged": true
         }
     }
 }

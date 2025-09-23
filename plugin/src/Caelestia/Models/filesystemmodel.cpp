@@ -253,11 +253,14 @@ void FileSystemModel::updateWatcher() {
 void FileSystemModel::updateEntries() {
     if (m_path.isEmpty()) {
         if (!m_entries.isEmpty()) {
+            auto toDelete = m_entries;
+
             beginResetModel();
-            qDeleteAll(m_entries);
             m_entries.clear();
-            emit entriesChanged();
             endResetModel();
+            emit entriesChanged();
+
+            qDeleteAll(toDelete);
         }
 
         return;

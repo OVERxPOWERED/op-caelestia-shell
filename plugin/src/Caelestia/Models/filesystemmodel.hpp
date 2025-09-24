@@ -121,9 +121,6 @@ signals:
     void nameFiltersChanged();
     void entriesChanged();
 
-    void added(const caelestia::FileSystemEntry* entry);
-    void removed(const QString& path);
-
 private:
     QDir m_dir;
     QFileSystemWatcher m_watcher;

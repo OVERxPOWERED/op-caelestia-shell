@@ -32,14 +32,14 @@ HyprExtras::HyprExtras(QObject* parent)
     }
 
     m_requestSocket = hyprDir + "/.socket.sock";
-    m_eventSocket = hyprDir + "/.event.sock";
+    m_eventSocket = hyprDir + "/.socket2.sock";
 
     refreshOptions();
     refreshDevices();
 
     m_socket = new QLocalSocket(this);
     QObject::connect(m_socket, &QLocalSocket::readyRead, this, &HyprExtras::readEvent);
-    m_socket->connectToServer(m_eventSocket);
+    m_socket->connectToServer(m_eventSocket, QLocalSocket::ReadOnly);
 }
 
 QVariantHash HyprExtras::options() const {

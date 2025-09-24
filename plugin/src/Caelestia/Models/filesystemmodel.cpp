@@ -4,7 +4,7 @@
 #include <qfuturewatcher.h>
 #include <qtconcurrentrun.h>
 
-namespace caelestia {
+namespace caelestia::models {
 
 FileSystemEntry::FileSystemEntry(const QString& path, const QString& relativePath, QObject* parent)
     : QObject(parent)
@@ -476,4 +476,4 @@ bool FileSystemModel::compareEntries(const FileSystemEntry* a, const FileSystemE
     return m_sortReverse ? cmp > 0 : cmp < 0;
 }
 
-} // namespace caelestia
+} // namespace caelestia::models

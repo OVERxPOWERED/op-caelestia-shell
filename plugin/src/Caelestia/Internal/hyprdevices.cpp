@@ -40,7 +40,7 @@ bool HyprKeyboard::main() const {
     return m_lastIpcObject.value("main").toBool();
 }
 
-bool HyprKeyboard::updateLastIpcObject(const QJsonObject& object) {
+bool HyprKeyboard::updateLastIpcObject(QJsonObject object) {
     if (m_lastIpcObject == object) {
         return false;
     }
@@ -89,7 +89,7 @@ QList<HyprKeyboard*> HyprDevices::keyboards() const {
     return m_keyboards;
 }
 
-bool HyprDevices::updateLastIpcObject(const QJsonObject& object) {
+bool HyprDevices::updateLastIpcObject(QJsonObject object) {
     const auto val = object.value("keyboards").toArray();
     bool dirty = false;
 

@@ -93,13 +93,18 @@ bool HyprDevices::updateLastIpcObject(QJsonObject object) {
     const auto val = object.value("keyboards").toArray();
     bool dirty = false;
 
-    for (const auto& keyboard : std::as_const(m_keyboards)) {
-        if (std::find_if(val.begin(), val.end(), [keyboard](const QJsonValue& object) {
-                return object.toObject().value("address").toString() == keyboard->address();
-            }) == val.end()) {
+    for (auto it = m_keyboards.begin(); it != m_keyboards.end();) {
+        auto* const keyboard = *it;
+        const auto inNewValues = std::any_of(val.begin(), val.end(), [keyboard](const QJsonValue& object) {
+            return object.toObject().value("address").toString() == keyboard->address();
+        });
+
+        if (!inNewValues) {
             dirty = true;
-            m_keyboards.removeAll(keyboard);
+            it = m_keyboards.erase(it);
             keyboard->deleteLater();
+        } else {
+            ++it;
         }
     }
 

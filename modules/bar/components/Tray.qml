@@ -12,19 +12,23 @@ StyledRect {
     readonly property alias layout: layout
     readonly property alias items: items
     readonly property alias expandIcon: expandIcon
+
     readonly property int padding: Config.bar.tray.background ? Appearance.padding.normal : Appearance.padding.small
     readonly property int spacing: Config.bar.tray.background ? Appearance.spacing.small : 0
+
     property bool expanded
+
+    readonly property real nonAnimHeight: {
+        if (!Config.bar.tray.compact)
+            return layout.implicitHeight + padding * 2;
+        return (expanded ? expandIcon.implicitHeight + layout.implicitHeight + spacing : expandIcon.implicitHeight) + padding * 2;
+    }
 
     clip: true
     visible: height > 0
 
     implicitWidth: Config.bar.sizes.innerWidth
-    implicitHeight: {
-        if (!Config.bar.tray.compact)
-            return layout.implicitHeight + padding * 2;
-        return (expanded ? expandIcon.implicitHeight + layout.implicitHeight + spacing : expandIcon.implicitHeight) + padding * 2;
-    }
+    implicitHeight: nonAnimHeight
 
     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Config.bar.tray.background ? Colours.tPalette.m3surfaceContainer.a : 0)
     radius: Appearance.rounding.full

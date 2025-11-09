@@ -11,6 +11,7 @@ QtObject {
     property bool navExpanded: false
 
     readonly property Bt bt: Bt {}
+    readonly property Network network: Network {}
 
     onActiveChanged: activeIndex = panes.indexOf(active)
     onActiveIndexChanged: active = panes[activeIndex]
@@ -21,5 +22,11 @@ QtObject {
         property bool editingAdapterName
         property bool fabMenuOpen
         property bool editingDeviceName
+    }
+
+    component Network: QtObject {
+        property var active
+        property bool showPasswordDialog: false
+        property var pendingNetwork
     }
 }

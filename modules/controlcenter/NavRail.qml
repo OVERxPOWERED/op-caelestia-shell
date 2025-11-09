@@ -168,7 +168,7 @@ Item {
         }
 
         NavItem {
-            icon: "tune"
+            icon: "volume_up"
             label: "audio"
         }
     }

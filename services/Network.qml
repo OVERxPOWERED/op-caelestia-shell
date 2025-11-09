@@ -27,13 +27,20 @@ Singleton {
     }
 
     function connectToNetwork(ssid: string, password: string): void {
-        // TODO: Implement password
-        connectProc.exec(["nmcli", "conn", "up", ssid]);
+        // First try to connect to an existing connection
+        // If that fails, create a new connection
+        if (password && password.length > 0) {
+            connectProc.exec(["nmcli", "device", "wifi", "connect", ssid, "password", password]);
+        } else {
+            // Try to connect to existing connection first
+            connectProc.exec(["nmcli", "device", "wifi", "connect", ssid]);
+        }
     }
 
     function disconnectFromNetwork(): void {
         if (active) {
-            disconnectProc.exec(["nmcli", "connection", "down", active.ssid]);
+            // Find the device name first, then disconnect
+            disconnectProc.exec(["nmcli", "device", "disconnect", "wifi"]);
         }
     }
 
@@ -86,6 +93,10 @@ Singleton {
     Process {
         id: connectProc
 
+        onExited: {
+            // Refresh network list after connection attempt
+            getNetworks.running = true;
+        }
         stdout: SplitParser {
             onRead: getNetworks.running = true
         }
@@ -97,6 +108,10 @@ Singleton {
     Process {
         id: disconnectProc
 
+        onExited: {
+            // Refresh network list after disconnection
+            getNetworks.running = true;
+        }
         stdout: SplitParser {
             onRead: getNetworks.running = true
         }

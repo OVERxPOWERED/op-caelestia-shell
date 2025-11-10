@@ -152,6 +152,18 @@ StyledRect {
             }
         }
 
+        // Ethernet icon
+        WrappedLoader {
+            name: "ethernet"
+            active: Config.bar.status.showEthernet && Network.activeEthernet
+
+            sourceComponent: MaterialIcon {
+                animate: true
+                text: "cable"
+                color: root.colour
+            }
+        }
+
         // Bluetooth section
         WrappedLoader {
             Layout.preferredHeight: implicitHeight

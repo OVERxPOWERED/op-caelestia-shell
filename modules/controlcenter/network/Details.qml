@@ -79,15 +79,35 @@ Item {
                         checked: root.network?.active ?? false
                         toggle.onToggled: {
                             if (checked) {
-                                if (root.network.isSecure) {
-                                    // TODO: Show password dialog
-                                    root.session.network.showPasswordDialog = true;
-                                    root.session.network.pendingNetwork = root.network;
+                                // If already connected to a different network, disconnect first
+                                if (Network.active && Network.active.ssid !== root.network.ssid) {
+                                    Network.disconnectFromNetwork();
+                                    // Wait a moment before connecting to new network
+                                    Qt.callLater(() => {
+                                        connectToNetwork();
+                                    });
                                 } else {
-                                    Network.connectToNetwork(root.network.ssid, "");
+                                    connectToNetwork();
                                 }
                             } else {
                                 Network.disconnectFromNetwork();
+                            }
+                        }
+
+                        function connectToNetwork(): void {
+                            if (root.network.isSecure) {
+                                // Try connecting without password first (in case it's saved)
+                                Network.connectToNetworkWithPasswordCheck(
+                                    root.network.ssid,
+                                    root.network.isSecure,
+                                    () => {
+                                        // Callback: connection failed, show password dialog
+                                        root.session.network.showPasswordDialog = true;
+                                        root.session.network.pendingNetwork = root.network;
+                                    }
+                                );
+                            } else {
+                                Network.connectToNetwork(root.network.ssid, "");
                             }
                         }
                     }

@@ -76,4 +76,10 @@ RowLayout {
             }
         }
     }
+
+    PasswordDialog {
+        anchors.fill: parent
+        session: root.session
+        z: 1000
+    }
 }

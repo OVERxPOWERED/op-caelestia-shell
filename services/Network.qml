@@ -26,20 +26,42 @@ Singleton {
         rescanProc.running = true;
     }
 
+    property var pendingConnection: null
+    signal connectionFailed(string ssid)
+
     function connectToNetwork(ssid: string, password: string): void {
         // First try to connect to an existing connection
         // If that fails, create a new connection
         if (password && password.length > 0) {
             connectProc.exec(["nmcli", "device", "wifi", "connect", ssid, "password", password]);
         } else {
-            // Try to connect to existing connection first
+            // Try to connect to existing connection first (will use saved password if available)
             connectProc.exec(["nmcli", "device", "wifi", "connect", ssid]);
         }
     }
 
+    function connectToNetworkWithPasswordCheck(ssid: string, isSecure: bool, callback: var): void {
+        // For secure networks, try connecting without password first
+        // If connection succeeds (saved password exists), we're done
+        // If it fails with password error, callback will be called to show password dialog
+        if (isSecure) {
+            root.pendingConnection = { ssid: ssid, callback: callback };
+            // Try connecting without password - will use saved password if available
+            connectProc.exec(["nmcli", "device", "wifi", "connect", ssid]);
+            // Start timer to check if connection succeeded
+            connectionCheckTimer.start();
+        } else {
+            connectToNetwork(ssid, "");
+        }
+    }
+
     function disconnectFromNetwork(): void {
-        if (active) {
-            // Find the device name first, then disconnect
+        // Try to disconnect - use connection name if available, otherwise use device
+        if (active && active.ssid) {
+            // First try to disconnect by connection name (more reliable)
+            disconnectByConnectionProc.exec(["nmcli", "connection", "down", active.ssid]);
+        } else {
+            // Fallback: disconnect by device
             disconnectProc.exec(["nmcli", "device", "disconnect", "wifi"]);
         }
     }
@@ -90,18 +112,102 @@ Singleton {
         }
     }
 
+    Timer {
+        id: connectionCheckTimer
+        interval: 4000
+        onTriggered: {
+            if (root.pendingConnection) {
+                // Final check - if connection still hasn't succeeded, show password dialog
+                const connected = root.active && root.active.ssid === root.pendingConnection.ssid;
+                if (!connected && root.pendingConnection.callback) {
+                    // Connection didn't succeed after multiple checks, show password dialog
+                    const pending = root.pendingConnection;
+                    root.pendingConnection = null;
+                    immediateCheckTimer.stop();
+                    immediateCheckTimer.checkCount = 0;
+                    pending.callback();
+                } else if (connected) {
+                    // Connection succeeded, clear pending
+                    root.pendingConnection = null;
+                    immediateCheckTimer.stop();
+                    immediateCheckTimer.checkCount = 0;
+                }
+            }
+        }
+    }
+
+    Timer {
+        id: immediateCheckTimer
+        interval: 500
+        repeat: true
+        triggeredOnStart: false
+        property int checkCount: 0
+        onTriggered: {
+            if (root.pendingConnection) {
+                checkCount++;
+                const connected = root.active && root.active.ssid === root.pendingConnection.ssid;
+                if (connected) {
+                    // Connection succeeded, stop timers and clear pending
+                    connectionCheckTimer.stop();
+                    immediateCheckTimer.stop();
+                    immediateCheckTimer.checkCount = 0;
+                    root.pendingConnection = null;
+                } else if (checkCount >= 6) {
+                    // Checked 6 times (3 seconds total), connection likely failed
+                    // Stop immediate check, let the main timer handle it
+                    immediateCheckTimer.stop();
+                    immediateCheckTimer.checkCount = 0;
+                }
+            } else {
+                immediateCheckTimer.stop();
+                immediateCheckTimer.checkCount = 0;
+            }
+        }
+    }
+
     Process {
         id: connectProc
 
         onExited: {
             // Refresh network list after connection attempt
             getNetworks.running = true;
+            
+            // Check if connection succeeded after a short delay (network list needs to update)
+            if (root.pendingConnection) {
+                immediateCheckTimer.start();
+            }
         }
         stdout: SplitParser {
             onRead: getNetworks.running = true
         }
         stderr: StdioCollector {
-            onStreamFinished: console.warn("Network connection error:", text)
+            onStreamFinished: {
+                const error = text.trim();
+                if (error && error.length > 0) {
+                    // Check for specific errors that indicate password is needed
+                    // Be careful not to match success messages
+                    const needsPassword = (error.includes("Secrets were required") || 
+                                        error.includes("No secrets provided") ||
+                                        error.includes("802-11-wireless-security.psk") ||
+                                        (error.includes("password") && !error.includes("Connection activated")) ||
+                                        (error.includes("Secrets") && !error.includes("Connection activated")) ||
+                                        (error.includes("802.11") && !error.includes("Connection activated"))) &&
+                                        !error.includes("Connection activated") &&
+                                        !error.includes("successfully");
+                    
+                    if (needsPassword && root.pendingConnection && root.pendingConnection.callback) {
+                        // Connection failed because password is needed - show dialog immediately
+                        connectionCheckTimer.stop();
+                        immediateCheckTimer.stop();
+                        const pending = root.pendingConnection;
+                        root.pendingConnection = null;
+                        pending.callback();
+                    } else if (error && error.length > 0 && !error.includes("Connection activated")) {
+                        // Only log non-success messages
+                        console.warn("Network connection error:", error);
+                    }
+                }
+            }
         }
     }
 
@@ -114,6 +220,36 @@ Singleton {
         }
         stdout: SplitParser {
             onRead: getNetworks.running = true
+        }
+        stderr: StdioCollector {
+            onStreamFinished: {
+                const error = text.trim();
+                if (error && error.length > 0 && !error.includes("successfully") && !error.includes("disconnected")) {
+                    console.warn("Network device disconnect error:", error);
+                }
+            }
+        }
+    }
+
+    Process {
+        id: disconnectByConnectionProc
+
+        onExited: {
+            // Refresh network list after disconnection
+            getNetworks.running = true;
+        }
+        stdout: SplitParser {
+            onRead: getNetworks.running = true
+        }
+        stderr: StdioCollector {
+            onStreamFinished: {
+                const error = text.trim();
+                if (error && error.length > 0 && !error.includes("successfully") && !error.includes("disconnected")) {
+                    console.warn("Network connection disconnect error:", error);
+                    // If connection down failed, try device disconnect as fallback
+                    disconnectProc.exec(["nmcli", "device", "disconnect", "wifi"]);
+                }
+            }
         }
     }
 
@@ -181,6 +317,20 @@ Singleton {
                             lastIpcObject: network
                         }));
                     }
+                }
+
+                // Check if pending connection succeeded after network list is fully updated
+                if (root.pendingConnection) {
+                    Qt.callLater(() => {
+                        const connected = root.active && root.active.ssid === root.pendingConnection.ssid;
+                        if (connected) {
+                            // Connection succeeded, stop timers and clear pending
+                            connectionCheckTimer.stop();
+                            immediateCheckTimer.stop();
+                            immediateCheckTimer.checkCount = 0;
+                            root.pendingConnection = null;
+                        }
+                    });
                 }
             }
         }

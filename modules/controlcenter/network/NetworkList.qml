@@ -214,12 +214,33 @@ ColumnLayout {
                             if (modelData.active) {
                                 Network.disconnectFromNetwork();
                             } else {
-                                if (modelData.isSecure) {
-                                    root.session.network.showPasswordDialog = true;
-                                    root.session.network.pendingNetwork = modelData;
+                                // If already connected to a different network, disconnect first
+                                if (Network.active && Network.active.ssid !== modelData.ssid) {
+                                    Network.disconnectFromNetwork();
+                                    // Wait a moment before connecting to new network
+                                    Qt.callLater(() => {
+                                        connectToNetwork();
+                                    });
                                 } else {
-                                    Network.connectToNetwork(modelData.ssid, "");
+                                    connectToNetwork();
                                 }
+                            }
+                        }
+
+                        function connectToNetwork(): void {
+                            if (modelData.isSecure) {
+                                // Try connecting without password first (in case it's saved)
+                                Network.connectToNetworkWithPasswordCheck(
+                                    modelData.ssid,
+                                    modelData.isSecure,
+                                    () => {
+                                        // Callback: connection failed, show password dialog
+                                        root.session.network.showPasswordDialog = true;
+                                        root.session.network.pendingNetwork = modelData;
+                                    }
+                                );
+                            } else {
+                                Network.connectToNetwork(modelData.ssid, "");
                             }
                         }
                     }

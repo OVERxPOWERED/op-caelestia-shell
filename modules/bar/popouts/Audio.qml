@@ -4,6 +4,7 @@ import qs.components
 import qs.components.controls
 import qs.services
 import qs.config
+import qs.modules.controlcenter
 import Quickshell
 import Quickshell.Services.Pipewire
 import QtQuick
@@ -106,7 +107,6 @@ Item {
 
         StyledRect {
             Layout.topMargin: Appearance.spacing.normal
-            visible: Config.general.apps.audio.length > 0
 
             implicitWidth: expandBtn.implicitWidth + Appearance.padding.normal * 2
             implicitHeight: expandBtn.implicitHeight + Appearance.padding.small
@@ -119,7 +119,7 @@ Item {
 
                 function onClicked(): void {
                     root.wrapper.hasCurrent = false;
-                    Quickshell.execDetached(["app2unit", "--", ...Config.general.apps.audio]);
+                    WindowFactory.create(null, { active: "audio" });
                 }
             }
 

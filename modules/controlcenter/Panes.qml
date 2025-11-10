@@ -5,6 +5,7 @@ import "bluetooth"
 import "network"
 import "audio"
 import "appearance"
+import "taskbar"
 import qs.components
 import qs.services
 import qs.config
@@ -56,6 +57,13 @@ ClippingRectangle {
         Pane {
             index: 4
             sourceComponent: AppearancePane {
+                session: root.session
+            }
+        }
+
+        Pane {
+            index: 5
+            sourceComponent: TaskbarPane {
                 session: root.session
             }
         }

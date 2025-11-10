@@ -181,6 +181,11 @@ Item {
             icon: "palette"
             label: "appearance"
         }
+
+        NavItem {
+            icon: "task_alt"
+            label: "taskbar"
+        }
     }
 
     component NavItem: Item {

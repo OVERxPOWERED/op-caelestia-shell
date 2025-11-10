@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import "ethernet"
 import "bluetooth"
 import "network"
 import "audio"
@@ -26,27 +27,34 @@ ClippingRectangle {
 
         Pane {
             index: 0
-            sourceComponent: NetworkPane {
+            sourceComponent: EthernetPane {
                 session: root.session
             }
         }
 
         Pane {
             index: 1
-            sourceComponent: BtPane {
+            sourceComponent: NetworkPane {
                 session: root.session
             }
         }
 
         Pane {
             index: 2
-            sourceComponent: AudioPane {
+            sourceComponent: BtPane {
                 session: root.session
             }
         }
 
         Pane {
             index: 3
+            sourceComponent: AudioPane {
+                session: root.session
+            }
+        }
+
+        Pane {
+            index: 4
             sourceComponent: AppearancePane {
                 session: root.session
             }

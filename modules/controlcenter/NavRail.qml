@@ -158,8 +158,13 @@ Item {
 
         NavItem {
             Layout.topMargin: Appearance.spacing.large * 2
-            icon: "network_manage"
-            label: "network"
+            icon: "cable"
+            label: "ethernet"
+        }
+
+        NavItem {
+            icon: "wifi"
+            label: "wireless"
         }
 
         NavItem {

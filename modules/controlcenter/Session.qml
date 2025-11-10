@@ -2,7 +2,7 @@ import Quickshell.Bluetooth
 import QtQuick
 
 QtObject {
-    readonly property list<string> panes: ["network", "bluetooth", "audio", "appearance"]
+    readonly property list<string> panes: ["ethernet", "wireless", "bluetooth", "audio", "appearance"]
 
     required property var root
     property bool floating: false
@@ -12,6 +12,7 @@ QtObject {
 
     readonly property Bt bt: Bt {}
     readonly property Network network: Network {}
+    readonly property Ethernet ethernet: Ethernet {}
 
     onActiveChanged: activeIndex = panes.indexOf(active)
     onActiveIndexChanged: active = panes[activeIndex]
@@ -28,5 +29,9 @@ QtObject {
         property var active
         property bool showPasswordDialog: false
         property var pendingNetwork
+    }
+
+    component Ethernet: QtObject {
+        property var active
     }
 }

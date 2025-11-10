@@ -7,10 +7,23 @@ import QtQuick
 Singleton {
     id: root
 
+    Component.onCompleted: {
+        // Trigger ethernet device detection after initialization
+        Qt.callLater(() => {
+            getEthernetDevices();
+        });
+    }
+
     readonly property list<AccessPoint> networks: []
     readonly property AccessPoint active: networks.find(n => n.active) ?? null
     property bool wifiEnabled: true
     readonly property bool scanning: rescanProc.running
+
+    property list<var> ethernetDevices: []
+    readonly property var activeEthernet: ethernetDevices.find(d => d.connected) ?? null
+    property int ethernetDeviceCount: 0
+    property string ethernetDebugInfo: ""
+    property bool ethernetProcessRunning: false
 
     function enableWifi(enabled: bool): void {
         const cmd = enabled ? "on" : "off";
@@ -70,11 +83,27 @@ Singleton {
         wifiStatusProc.running = true;
     }
 
+    function getEthernetDevices(): void {
+        getEthernetDevicesProc.running = true;
+    }
+
+
+    function connectEthernet(connectionName: string): void {
+        connectEthernetProc.exec(["nmcli", "connection", "up", connectionName]);
+    }
+
+    function disconnectEthernet(connectionName: string): void {
+        disconnectEthernetProc.exec(["nmcli", "connection", "down", connectionName]);
+    }
+
     Process {
         running: true
         command: ["nmcli", "m"]
         stdout: SplitParser {
-            onRead: getNetworks.running = true
+            onRead: {
+                getNetworks.running = true;
+                getEthernetDevices();
+            }
         }
     }
 
@@ -331,6 +360,158 @@ Singleton {
                             root.pendingConnection = null;
                         }
                     });
+                }
+            }
+        }
+    }
+
+    Process {
+        id: getEthernetDevicesProc
+
+        running: false
+        command: ["nmcli", "-g", "DEVICE,TYPE,STATE,CONNECTION", "device", "status"]
+        environment: ({
+                LANG: "C.UTF-8",
+                LC_ALL: "C.UTF-8"
+            })
+        onRunningChanged: {
+            root.ethernetProcessRunning = running;
+            if (!running) {
+                // Process finished, update debug info
+                Qt.callLater(() => {
+                    if (root.ethernetDebugInfo === "" || root.ethernetDebugInfo.includes("Process exited")) {
+                        root.ethernetDebugInfo = "Process finished, waiting for output...";
+                    }
+                });
+            }
+        }
+        onExited: {
+            Qt.callLater(() => {
+                const outputLength = ethernetStdout.text ? ethernetStdout.text.length : 0;
+                root.ethernetDebugInfo = "Process exited with code: " + exitCode + ", output length: " + outputLength;
+                if (outputLength > 0) {
+                    // Output was captured, process it
+                    const output = ethernetStdout.text.trim();
+                    root.ethernetDebugInfo = "Processing output from onExited, length: " + output.length + "\nOutput: " + output.substring(0, 200);
+                    root.processEthernetOutput(output);
+                } else {
+                    root.ethernetDebugInfo = "No output captured in onExited";
+                }
+            });
+        }
+        stdout: StdioCollector {
+            id: ethernetStdout
+            onStreamFinished: {
+                const output = text.trim();
+                root.ethernetDebugInfo = "Output received in onStreamFinished! Length: " + output.length + ", First 100 chars: " + output.substring(0, 100);
+                
+                if (!output || output.length === 0) {
+                    root.ethernetDebugInfo = "No output received (empty)";
+                    return;
+                }
+                
+                root.processEthernetOutput(output);
+            }
+        }
+    }
+
+    function processEthernetOutput(output: string): void {
+        const PLACEHOLDER = "STRINGWHICHHOPEFULLYWONTBEUSED";
+        const rep = new RegExp("\\\\:", "g");
+        const rep2 = new RegExp(PLACEHOLDER, "g");
+
+        const lines = output.split("\n");
+        root.ethernetDebugInfo = "Processing " + lines.length + " lines";
+        
+        const allDevices = lines.map(d => {
+            const dev = d.replace(rep, PLACEHOLDER).split(":");
+            return {
+                interface: dev[0]?.replace(rep2, ":") ?? "",
+                type: dev[1]?.replace(rep2, ":") ?? "",
+                state: dev[2]?.replace(rep2, ":") ?? "",
+                connection: dev[3]?.replace(rep2, ":") ?? ""
+            };
+        });
+        
+        root.ethernetDebugInfo = "All devices: " + allDevices.length + ", Types: " + allDevices.map(d => d.type).join(", ");
+        
+        const ethernetOnly = allDevices.filter(d => d.type === "ethernet");
+        root.ethernetDebugInfo = "Ethernet devices found: " + ethernetOnly.length;
+
+        const ethernetDevices = ethernetOnly.map(d => {
+            const state = d.state || "";
+            const connected = state === "100 (connected)" || state === "connected" || state.startsWith("connected");
+            return {
+                interface: d.interface,
+                type: d.type,
+                state: state,
+                connection: d.connection,
+                connected: connected,
+                ipAddress: "",
+                gateway: "",
+                dns: [],
+                subnet: "",
+                macAddress: "",
+                speed: ""
+            };
+        });
+        
+        root.ethernetDebugInfo = "Ethernet devices processed: " + ethernetDevices.length + ", First device: " + (ethernetDevices[0]?.interface || "none");
+
+        // Update the list - replace the entire array to ensure QML detects the change
+        // Create a new array and assign it to the property
+        const newDevices = [];
+        for (let i = 0; i < ethernetDevices.length; i++) {
+            newDevices.push(ethernetDevices[i]);
+        }
+        
+        // Replace the entire list
+        root.ethernetDevices = newDevices;
+        
+        // Force QML to detect the change by updating a property
+        root.ethernetDeviceCount = ethernetDevices.length;
+        
+        // Force QML to re-evaluate the list by accessing it
+        Qt.callLater(() => {
+            const count = root.ethernetDevices.length;
+            root.ethernetDebugInfo = "Final: Found " + ethernetDevices.length + " devices, List length: " + count + ", Parsed all: " + allDevices.length + ", Output length: " + output.length;
+        });
+    }
+
+
+    Process {
+        id: connectEthernetProc
+
+        onExited: {
+            getEthernetDevices();
+        }
+        stdout: SplitParser {
+            onRead: getEthernetDevices()
+        }
+        stderr: StdioCollector {
+            onStreamFinished: {
+                const error = text.trim();
+                if (error && error.length > 0 && !error.includes("successfully") && !error.includes("Connection activated")) {
+                    console.warn("Ethernet connection error:", error);
+                }
+            }
+        }
+    }
+
+    Process {
+        id: disconnectEthernetProc
+
+        onExited: {
+            getEthernetDevices();
+        }
+        stdout: SplitParser {
+            onRead: getEthernetDevices()
+        }
+        stderr: StdioCollector {
+            onStreamFinished: {
+                const error = text.trim();
+                if (error && error.length > 0 && !error.includes("successfully") && !error.includes("disconnected")) {
+                    console.warn("Ethernet disconnection error:", error);
                 }
             }
         }

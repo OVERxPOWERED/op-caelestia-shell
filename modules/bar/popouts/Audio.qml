@@ -4,7 +4,6 @@ import qs.components
 import qs.components.controls
 import qs.services
 import qs.config
-import qs.modules.controlcenter
 import Quickshell
 import Quickshell.Services.Pipewire
 import QtQuick
@@ -118,8 +117,7 @@ Item {
                 color: Colours.palette.m3onPrimaryContainer
 
                 function onClicked(): void {
-                    root.wrapper.hasCurrent = false;
-                    WindowFactory.create(null, { active: "audio" });
+                    root.wrapper.detach("audio");
                 }
             }
 
@@ -131,7 +129,7 @@ Item {
 
                 StyledText {
                     Layout.leftMargin: Appearance.padding.smaller
-                    text: qsTr("Open settings")
+                    text: qsTr("Open panel")
                     color: Colours.palette.m3onPrimaryContainer
                 }
 

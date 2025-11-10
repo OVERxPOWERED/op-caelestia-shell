@@ -5,6 +5,7 @@ import qs.components
 import qs.components.effects
 import qs.components.containers
 import qs.config
+import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
 
@@ -41,30 +42,92 @@ RowLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        Loader {
-            id: loader
-
+        ClippingRectangle {
             anchors.fill: parent
-            anchors.margins: Appearance.padding.large * 2
+            anchors.margins: Appearance.padding.normal
+            anchors.leftMargin: 0
+            anchors.rightMargin: Appearance.padding.normal / 2
 
-            sourceComponent: root.session.network.active ? details : settings
+            radius: rightBorder.innerRadius
+            color: "transparent"
 
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 200
+            Loader {
+                id: loader
+
+                property var pane: root.session.network.active
+                property string paneId: pane ? (pane.ssid || pane.bssid || "") : ""
+
+                anchors.fill: parent
+                anchors.margins: Appearance.padding.large * 2
+
+                opacity: 1
+                scale: 1
+                transformOrigin: Item.Center
+
+                clip: false
+                asynchronous: true
+                sourceComponent: pane ? details : settings
+
+                Behavior on paneId {
+                    SequentialAnimation {
+                        ParallelAnimation {
+                            Anim {
+                                target: loader
+                                property: "opacity"
+                                to: 0
+                                easing.bezierCurve: Appearance.anim.curves.standardAccel
+                            }
+                            Anim {
+                                target: loader
+                                property: "scale"
+                                to: 0.8
+                                easing.bezierCurve: Appearance.anim.curves.standardAccel
+                            }
+                        }
+                        PropertyAction {}
+                        ParallelAnimation {
+                            Anim {
+                                target: loader
+                                property: "opacity"
+                                to: 1
+                                easing.bezierCurve: Appearance.anim.curves.standardDecel
+                            }
+                            Anim {
+                                target: loader
+                                property: "scale"
+                                to: 1
+                                easing.bezierCurve: Appearance.anim.curves.standardDecel
+                            }
+                        }
+                    }
+                }
+
+                onPaneChanged: {
+                    paneId = pane ? (pane.ssid || pane.bssid || "") : "";
                 }
             }
         }
 
         InnerBorder {
+            id: rightBorder
+
             leftThickness: Appearance.padding.normal / 2
         }
 
         Component {
             id: settings
 
-            Settings {
-                session: root.session
+            StyledFlickable {
+                flickableDirection: Flickable.VerticalFlick
+                contentHeight: settingsInner.height
+
+                Settings {
+                    id: settingsInner
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    session: root.session
+                }
             }
         }
 
@@ -81,5 +144,11 @@ RowLayout {
         anchors.fill: parent
         session: root.session
         z: 1000
+    }
+
+    component Anim: NumberAnimation {
+        target: loader
+        duration: Appearance.anim.durations.normal / 2
+        easing.type: Easing.BezierSpline
     }
 }

@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import "bluetooth"
 import "network"
 import "audio"
+import "appearance"
 import qs.components
 import qs.services
 import qs.config
@@ -40,6 +41,13 @@ ClippingRectangle {
         Pane {
             index: 2
             sourceComponent: AudioPane {
+                session: root.session
+            }
+        }
+
+        Pane {
+            index: 3
+            sourceComponent: AppearancePane {
                 session: root.session
             }
         }

@@ -159,12 +159,6 @@ ColumnLayout {
                 }
             }
             DelegateChoice {
-                roleValue: "settings"
-                delegate: WrappedLoader {
-                    sourceComponent: SettingsIcon {}
-                }
-            }
-            DelegateChoice {
                 roleValue: "power"
                 delegate: WrappedLoader {
                     sourceComponent: Power {

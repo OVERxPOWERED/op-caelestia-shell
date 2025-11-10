@@ -46,10 +46,6 @@ JsonObject {
             enabled: true
         },
         {
-            id: "settings",
-            enabled: true
-        },
-        {
             id: "power",
             enabled: true
         }

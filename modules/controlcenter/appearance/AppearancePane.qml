@@ -108,6 +108,7 @@ RowLayout {
             StyledListView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.topMargin: 0
 
                 model: M3Variants.list
                 spacing: Appearance.spacing.small / 2
@@ -202,6 +203,7 @@ RowLayout {
             StyledListView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.topMargin: 0
 
                 model: Schemes.list
                 spacing: Appearance.spacing.small / 2
@@ -262,66 +264,75 @@ RowLayout {
 
                         spacing: Appearance.spacing.normal
 
-                        Item {
-                            readonly property real itemHeight: schemeRow.implicitHeight || 50
-                            Layout.preferredWidth: itemHeight * 0.8
-                            Layout.preferredHeight: itemHeight * 0.8
+                        StyledRect {
+                            id: preview
 
-                            StyledRect {
-                                id: preview
+                            anchors.verticalCenter: parent.verticalCenter
 
-                                anchors.verticalCenter: parent.verticalCenter
+                            border.width: 1
+                            border.color: Qt.alpha(`#${modelData.colours?.outline}`, 0.5)
 
-                                border.width: 1
-                                border.color: Qt.alpha(`#${modelData.colours?.outline}`, 0.5)
+                            color: `#${modelData.colours?.surface}`
+                            radius: Appearance.rounding.full
+                            implicitWidth: iconPlaceholder.implicitWidth
+                            implicitHeight: iconPlaceholder.implicitWidth
 
-                                color: `#${modelData.colours?.surface}`
-                                radius: Appearance.rounding.full
-                                implicitWidth: parent.itemHeight * 0.8
-                                implicitHeight: parent.itemHeight * 0.8
+                            MaterialIcon {
+                                id: iconPlaceholder
+                                visible: false
+                                text: "circle"
+                                font.pointSize: Appearance.font.size.large
+                            }
 
-                                Item {
+                            Item {
+                                anchors.top: parent.top
+                                anchors.bottom: parent.bottom
+                                anchors.right: parent.right
+
+                                implicitWidth: parent.implicitWidth / 2
+                                clip: true
+
+                                StyledRect {
                                     anchors.top: parent.top
                                     anchors.bottom: parent.bottom
                                     anchors.right: parent.right
 
-                                    implicitWidth: parent.implicitWidth / 2
-                                    clip: true
-
-                                    StyledRect {
-                                        anchors.top: parent.top
-                                        anchors.bottom: parent.bottom
-                                        anchors.right: parent.right
-
-                                        implicitWidth: preview.implicitWidth
-                                        color: `#${modelData.colours?.primary}`
-                                        radius: Appearance.rounding.full
-                                    }
+                                    implicitWidth: preview.implicitWidth
+                                    color: `#${modelData.colours?.primary}`
+                                    radius: Appearance.rounding.full
                                 }
                             }
                         }
 
-                        ColumnLayout {
+                        Column {
                             Layout.fillWidth: true
                             spacing: 0
 
                             StyledText {
-                                text: modelData.name
-                                font.weight: isCurrent ? 500 : 400
+                                text: modelData.flavour ?? ""
+                                font.pointSize: Appearance.font.size.normal
                             }
 
                             StyledText {
-                                text: modelData.flavour
+                                text: modelData.name ?? ""
                                 font.pointSize: Appearance.font.size.small
                                 color: Colours.palette.m3outline
+
+                                elide: Text.ElideRight
+                                anchors.left: parent.left
+                                anchors.right: parent.right
                             }
                         }
 
-                        MaterialIcon {
-                            visible: isCurrent
-                            text: "check"
-                            color: Colours.palette.m3primary
-                            font.pointSize: Appearance.font.size.large
+                        Loader {
+                            active: isCurrent
+                            asynchronous: true
+
+                            sourceComponent: MaterialIcon {
+                                text: "check"
+                                color: Colours.palette.m3onSurfaceVariant
+                                font.pointSize: Appearance.font.size.large
+                            }
                         }
                     }
 

@@ -130,7 +130,25 @@ RowLayout {
 
                     StateLayer {
                         function onClicked(): void {
-                            Quickshell.execDetached(["caelestia", "scheme", "set", "-v", modelData.variant]);
+                            const variant = modelData.variant;
+                            
+                            // Optimistic update - set immediately
+                            Schemes.currentVariant = variant;
+                            
+                            // Execute the command
+                            Quickshell.execDetached(["caelestia", "scheme", "set", "-v", variant]);
+                            
+                            // Reload after a delay to confirm
+                            Qt.callLater(() => {
+                                reloadTimer.restart();
+                            });
+                        }
+                    }
+                    
+                    Timer {
+                        id: reloadTimer
+                        interval: 300
+                        onTriggered: {
                             Schemes.reload();
                         }
                     }
@@ -209,7 +227,27 @@ RowLayout {
 
                     StateLayer {
                         function onClicked(): void {
-                            Quickshell.execDetached(["caelestia", "scheme", "set", "-n", modelData.name, "-f", modelData.flavour]);
+                            const name = modelData.name;
+                            const flavour = modelData.flavour;
+                            const schemeKey = `${name} ${flavour}`;
+                            
+                            // Optimistic update - set immediately
+                            Schemes.currentScheme = schemeKey;
+                            
+                            // Execute the command
+                            Quickshell.execDetached(["caelestia", "scheme", "set", "-n", name, "-f", flavour]);
+                            
+                            // Reload after a delay to confirm
+                            Qt.callLater(() => {
+                                reloadTimer.restart();
+                            });
+                        }
+                    }
+                    
+                    Timer {
+                        id: reloadTimer
+                        interval: 300
+                        onTriggered: {
                             Schemes.reload();
                         }
                     }

@@ -1,0 +1,124 @@
+import qs.components
+import qs.services
+import qs.config
+import Quickshell
+import QtQuick
+import QtQuick.Layouts
+
+Item {
+    id: root
+
+    required property var list
+    readonly property string code: list.search.text.slice(`${Config.launcher.actionPrefix}python `.length)
+
+    function onClicked(): void {
+        // Execute Python code and copy result to clipboard
+        // Escape single quotes in code for shell safety
+        const escapedCode = root.code.replace(/'/g, "'\\''");
+        Quickshell.execDetached(["sh", "-c", `python3 -c '${escapedCode}' 2>&1 | wl-copy`]);
+        root.list.visibilities.launcher = false;
+    }
+
+    implicitHeight: Config.launcher.sizes.itemHeight
+
+    anchors.left: parent?.left
+    anchors.right: parent?.right
+
+    StateLayer {
+        radius: Appearance.rounding.normal
+
+        function onClicked(): void {
+            root.onClicked();
+        }
+    }
+
+    RowLayout {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.margins: Appearance.padding.larger
+
+        spacing: Appearance.spacing.normal
+
+        MaterialIcon {
+            text: "code"
+            font.pointSize: Appearance.font.size.extraLarge
+            Layout.alignment: Qt.AlignVCenter
+        }
+
+        StyledText {
+            id: result
+
+            color: {
+                if (!root.code)
+                    return Colours.palette.m3onSurfaceVariant;
+                return Colours.palette.m3onSurface;
+            }
+
+            text: root.code.length > 0 ? qsTr("Press Enter to execute: %1").arg(root.code) : qsTr("Type Python code to execute")
+            elide: Text.ElideLeft
+
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignVCenter
+        }
+
+        StyledRect {
+            color: Colours.palette.m3tertiary
+            radius: Appearance.rounding.normal
+            clip: true
+
+            implicitWidth: (stateLayer.containsMouse ? label.implicitWidth + label.anchors.rightMargin : 0) + icon.implicitWidth + Appearance.padding.normal * 2
+            implicitHeight: Math.max(label.implicitHeight, icon.implicitHeight) + Appearance.padding.small * 2
+
+            Layout.alignment: Qt.AlignVCenter
+
+            StateLayer {
+                id: stateLayer
+
+                color: Colours.palette.m3onTertiary
+
+                function onClicked(): void {
+                    const escapedCode = root.code.replace(/'/g, "'\\''");
+                    Quickshell.execDetached(["app2unit", "--", ...Config.general.apps.terminal, "fish", "-C", `python3 -i -c '${escapedCode}'`]);
+                    root.list.visibilities.launcher = false;
+                }
+            }
+
+            StyledText {
+                id: label
+
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: icon.left
+                anchors.rightMargin: Appearance.spacing.small
+
+                text: qsTr("Open in terminal")
+                color: Colours.palette.m3onTertiary
+                font.pointSize: Appearance.font.size.normal
+
+                opacity: stateLayer.containsMouse ? 1 : 0
+
+                Behavior on opacity {
+                    Anim {}
+                }
+            }
+
+            MaterialIcon {
+                id: icon
+
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: Appearance.padding.normal
+
+                text: "open_in_new"
+                color: Colours.palette.m3onTertiary
+                font.pointSize: Appearance.font.size.large
+            }
+
+            Behavior on implicitWidth {
+                Anim {
+                    easing.bezierCurve: Appearance.anim.curves.emphasized
+                }
+            }
+        }
+    }
+}

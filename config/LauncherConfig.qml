@@ -39,6 +39,14 @@ JsonObject {
             dangerous: false
         },
         {
+            name: "Python",
+            icon: "code",
+            description: "Execute Python one-liners",
+            command: ["autocomplete", "python"],
+            enabled: true,
+            dangerous: false
+        },
+        {
             name: "Scheme",
             icon: "palette",
             description: "Change the current colour scheme",

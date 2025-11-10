@@ -16,6 +16,20 @@ Item {
     required property Session session
     readonly property var device: session.ethernet.active
 
+    Component.onCompleted: {
+        if (device && device.interface) {
+            Network.updateEthernetDeviceDetails(device.interface);
+        }
+    }
+
+    onDeviceChanged: {
+        if (device && device.interface) {
+            Network.updateEthernetDeviceDetails(device.interface);
+        } else {
+            Network.ethernetDeviceDetails = null;
+        }
+    }
+
     StyledFlickable {
         anchors.fill: parent
 
@@ -79,9 +93,8 @@ Item {
                         checked: root.device?.connected ?? false
                         toggle.onToggled: {
                             if (checked) {
-                                if (root.device?.connection) {
-                                    Network.connectEthernet(root.device.connection);
-                                }
+                                // Use connection name if available, otherwise use interface
+                                Network.connectEthernet(root.device?.connection || "", root.device?.interface || "");
                             } else {
                                 if (root.device?.connection) {
                                     Network.disconnectEthernet(root.device.connection);
@@ -151,6 +164,82 @@ Item {
                         text: root.device?.state ?? qsTr("Unknown")
                         color: Colours.palette.m3outline
                         font.pointSize: Appearance.font.size.small
+                    }
+                }
+            }
+
+            StyledText {
+                Layout.topMargin: Appearance.spacing.large
+                text: qsTr("Connection information")
+                font.pointSize: Appearance.font.size.larger
+                font.weight: 500
+            }
+
+            StyledText {
+                text: qsTr("Network connection details")
+                color: Colours.palette.m3outline
+            }
+
+            StyledRect {
+                Layout.fillWidth: true
+                implicitHeight: connectionInfo.implicitHeight + Appearance.padding.large * 2
+
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                ColumnLayout {
+                    id: connectionInfo
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+
+                    spacing: Appearance.spacing.small / 2
+
+                    StyledText {
+                        text: qsTr("IP Address")
+                    }
+
+                    StyledText {
+                        text: Network.ethernetDeviceDetails?.ipAddress || qsTr("Not available")
+                        color: Colours.palette.m3outline
+                        font.pointSize: Appearance.font.size.small
+                    }
+
+                    StyledText {
+                        Layout.topMargin: Appearance.spacing.normal
+                        text: qsTr("Subnet Mask")
+                    }
+
+                    StyledText {
+                        text: Network.ethernetDeviceDetails?.subnet || qsTr("Not available")
+                        color: Colours.palette.m3outline
+                        font.pointSize: Appearance.font.size.small
+                    }
+
+                    StyledText {
+                        Layout.topMargin: Appearance.spacing.normal
+                        text: qsTr("Gateway")
+                    }
+
+                    StyledText {
+                        text: Network.ethernetDeviceDetails?.gateway || qsTr("Not available")
+                        color: Colours.palette.m3outline
+                        font.pointSize: Appearance.font.size.small
+                    }
+
+                    StyledText {
+                        Layout.topMargin: Appearance.spacing.normal
+                        text: qsTr("DNS Servers")
+                    }
+
+                    StyledText {
+                        text: (Network.ethernetDeviceDetails && Network.ethernetDeviceDetails.dns && Network.ethernetDeviceDetails.dns.length > 0) ? Network.ethernetDeviceDetails.dns.join(", ") : qsTr("Not available")
+                        color: Colours.palette.m3outline
+                        font.pointSize: Appearance.font.size.small
+                        wrapMode: Text.Wrap
+                        Layout.maximumWidth: parent.width
                     }
                 }
             }

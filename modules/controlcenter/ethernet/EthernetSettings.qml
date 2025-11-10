@@ -81,56 +81,6 @@ ColumnLayout {
             }
         }
     }
-
-    StyledText {
-        Layout.topMargin: Appearance.spacing.large
-        text: qsTr("Debug Info")
-        font.pointSize: Appearance.font.size.larger
-        font.weight: 500
-    }
-
-    StyledRect {
-        Layout.fillWidth: true
-        implicitHeight: debugInfo.implicitHeight + Appearance.padding.large * 2
-
-        radius: Appearance.rounding.normal
-        color: Colours.tPalette.m3surfaceContainer
-
-        ColumnLayout {
-            id: debugInfo
-
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.margins: Appearance.padding.large
-
-            spacing: Appearance.spacing.small / 2
-
-            StyledText {
-                text: qsTr("Process running: %1").arg(Network.ethernetProcessRunning ? "Yes" : "No")
-                font.pointSize: Appearance.font.size.small
-            }
-
-            StyledText {
-                text: qsTr("List length: %1").arg(Network.ethernetDevices.length)
-                font.pointSize: Appearance.font.size.small
-            }
-
-            StyledText {
-                text: qsTr("Device count: %1").arg(Network.ethernetDeviceCount)
-                font.pointSize: Appearance.font.size.small
-            }
-
-            StyledText {
-                Layout.topMargin: Appearance.spacing.normal
-                text: qsTr("Debug: %1").arg(Network.ethernetDebugInfo || "No info")
-                font.pointSize: Appearance.font.size.small
-                color: Colours.palette.m3outline
-                wrapMode: Text.Wrap
-                Layout.maximumWidth: parent.width
-            }
-        }
-    }
 }
 
 

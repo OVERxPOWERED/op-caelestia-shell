@@ -144,8 +144,9 @@ ColumnLayout {
                         function onClicked(): void {
                             if (modelData.connected && modelData.connection) {
                                 Network.disconnectEthernet(modelData.connection);
-                            } else if (modelData.connection) {
-                                Network.connectEthernet(modelData.connection);
+                            } else {
+                                // Use connection name if available, otherwise use interface
+                                Network.connectEthernet(modelData.connection || "", modelData.interface || "");
                             }
                         }
                     }

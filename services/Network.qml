@@ -24,6 +24,7 @@ Singleton {
     property int ethernetDeviceCount: 0
     property string ethernetDebugInfo: ""
     property bool ethernetProcessRunning: false
+    property var ethernetDeviceDetails: null
 
     function enableWifi(enabled: bool): void {
         const cmd = enabled ? "on" : "off";
@@ -88,12 +89,44 @@ Singleton {
     }
 
 
-    function connectEthernet(connectionName: string): void {
-        connectEthernetProc.exec(["nmcli", "connection", "up", connectionName]);
+    function connectEthernet(connectionName: string, interfaceName: string): void {
+        if (connectionName && connectionName.length > 0) {
+            // Use connection name if available
+            connectEthernetProc.exec(["nmcli", "connection", "up", connectionName]);
+        } else if (interfaceName && interfaceName.length > 0) {
+            // Fallback to device interface if no connection name
+            connectEthernetProc.exec(["nmcli", "device", "connect", interfaceName]);
+        }
     }
 
     function disconnectEthernet(connectionName: string): void {
         disconnectEthernetProc.exec(["nmcli", "connection", "down", connectionName]);
+    }
+
+    function updateEthernetDeviceDetails(interfaceName: string): void {
+        if (interfaceName && interfaceName.length > 0) {
+            getEthernetDetailsProc.exec(["nmcli", "device", "show", interfaceName]);
+        } else {
+            ethernetDeviceDetails = null;
+        }
+    }
+
+    function cidrToSubnetMask(cidr: string): string {
+        // Convert CIDR notation (e.g., "24") to subnet mask (e.g., "255.255.255.0")
+        const cidrNum = parseInt(cidr);
+        if (isNaN(cidrNum) || cidrNum < 0 || cidrNum > 32) {
+            return "";
+        }
+        
+        const mask = (0xffffffff << (32 - cidrNum)) >>> 0;
+        const octets = [
+            (mask >>> 24) & 0xff,
+            (mask >>> 16) & 0xff,
+            (mask >>> 8) & 0xff,
+            mask & 0xff
+        ];
+        
+        return octets.join(".");
     }
 
     Process {
@@ -484,6 +517,13 @@ Singleton {
 
         onExited: {
             getEthernetDevices();
+            // Refresh device details after connection
+            Qt.callLater(() => {
+                const activeDevice = root.ethernetDevices.find(function(d) { return d.connected; });
+                if (activeDevice && activeDevice.interface) {
+                    updateEthernetDeviceDetails(activeDevice.interface);
+                }
+            });
         }
         stdout: SplitParser {
             onRead: getEthernetDevices()
@@ -503,6 +543,10 @@ Singleton {
 
         onExited: {
             getEthernetDevices();
+            // Clear device details after disconnection
+            Qt.callLater(() => {
+                root.ethernetDeviceDetails = null;
+            });
         }
         stdout: SplitParser {
             onRead: getEthernetDevices()
@@ -513,6 +557,70 @@ Singleton {
                 if (error && error.length > 0 && !error.includes("successfully") && !error.includes("disconnected")) {
                     console.warn("Ethernet disconnection error:", error);
                 }
+            }
+        }
+    }
+
+    Process {
+        id: getEthernetDetailsProc
+
+        environment: ({
+                LANG: "C.UTF-8",
+                LC_ALL: "C.UTF-8"
+            })
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const output = text.trim();
+                if (!output || output.length === 0) {
+                    root.ethernetDeviceDetails = null;
+                    return;
+                }
+
+                const lines = output.split("\n");
+                const details = {
+                    ipAddress: "",
+                    gateway: "",
+                    dns: [],
+                    subnet: "",
+                    macAddress: "",
+                    speed: ""
+                };
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    const parts = line.split(":");
+                    if (parts.length >= 2) {
+                        const key = parts[0].trim();
+                        const value = parts.slice(1).join(":").trim();
+
+                        if (key.startsWith("IP4.ADDRESS")) {
+                            // Extract IP and subnet from format like "10.13.1.45/24"
+                            const ipParts = value.split("/");
+                            details.ipAddress = ipParts[0] || "";
+                            if (ipParts[1]) {
+                                // Convert CIDR notation to subnet mask
+                                details.subnet = root.cidrToSubnetMask(ipParts[1]);
+                            } else {
+                                details.subnet = "";
+                            }
+                        } else if (key === "IP4.GATEWAY") {
+                            details.gateway = value;
+                        } else if (key.startsWith("IP4.DNS")) {
+                            details.dns.push(value);
+                        } else if (key === "WIRED-PROPERTIES.MAC") {
+                            details.macAddress = value;
+                        } else if (key === "WIRED-PROPERTIES.SPEED") {
+                            details.speed = value;
+                        }
+                    }
+                }
+
+                root.ethernetDeviceDetails = details;
+            }
+        }
+        onExited: {
+            if (exitCode !== 0) {
+                root.ethernetDeviceDetails = null;
             }
         }
     }

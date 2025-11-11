@@ -22,7 +22,6 @@ RowLayout {
     required property Session session
 
     property var selectedApp: null
-    property bool showDebugInfo: false
 
     anchors.fill: parent
 
@@ -321,119 +320,6 @@ RowLayout {
                             }
                         }
 
-                        StyledRect {
-                            Layout.fillWidth: true
-                            Layout.topMargin: Appearance.spacing.normal
-                            implicitHeight: debugToggleRow.implicitHeight + Appearance.padding.large * 2
-                            color: Colours.tPalette.m3surfaceContainer
-                            radius: Appearance.rounding.normal
-
-                            RowLayout {
-                                id: debugToggleRow
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Appearance.padding.large
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    Layout.fillWidth: true
-                                    text: qsTr("Show debug information")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                StyledSwitch {
-                                    id: showDebugInfoSwitch
-                                    checked: root.showDebugInfo
-                                    onToggled: {
-                                        root.showDebugInfo = checked;
-                                    }
-                                }
-                            }
-                        }
-
-                        StyledRect {
-                            Layout.fillWidth: true
-                            Layout.topMargin: Appearance.spacing.normal
-                            Layout.preferredHeight: 300
-                            visible: root.showDebugInfo
-                            color: Colours.tPalette.m3surfaceContainer
-                            radius: Appearance.rounding.normal
-                            clip: true
-
-                            ColumnLayout {
-                                anchors.fill: parent
-                                anchors.margins: Appearance.padding.normal
-                                spacing: Appearance.spacing.small
-
-                                StyledText {
-                                    Layout.alignment: Qt.AlignHCenter
-                                    text: qsTr("Debug Info - All Available Properties")
-                                    font.pointSize: Appearance.font.size.normal
-                                    font.weight: 500
-                                }
-
-                                StyledFlickable {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    flickableDirection: Flickable.VerticalFlick
-                                    contentHeight: debugText.implicitHeight
-                                    clip: true
-
-                                    StyledScrollBar.vertical: StyledScrollBar {
-                                        flickable: parent
-                                    }
-
-                                    TextEdit {
-                                        id: debugText
-                                        anchors.left: parent.left
-                                        anchors.right: parent.right
-                                        anchors.top: parent.top
-                                        width: parent.width
-
-                                        text: {
-                                            if (!root.selectedApp) return "No app selected";
-                                            
-                                            let debug = "";
-                                            const app = root.selectedApp;
-                                            const entry = app.entry;
-                                            
-                                            debug += "=== App Properties ===\n";
-                                            for (let prop in app) {
-                                                try {
-                                                    const value = app[prop];
-                                                    debug += prop + ": " + (value !== null && value !== undefined ? String(value) : "null/undefined") + "\n";
-                                                } catch (e) {
-                                                    debug += prop + ": [error accessing]\n";
-                                                }
-                                            }
-                                            
-                                            debug += "\n=== Entry Properties ===\n";
-                                            if (entry) {
-                                                for (let prop in entry) {
-                                                    try {
-                                                        const value = entry[prop];
-                                                        debug += prop + ": " + (value !== null && value !== undefined ? String(value) : "null/undefined") + "\n";
-                                                    } catch (e) {
-                                                        debug += prop + ": [error accessing]\n";
-                                                    }
-                                                }
-                                            } else {
-                                                debug += "entry is null\n";
-                                            }
-                                            
-                                            return debug;
-                                        }
-                                        font.pointSize: Appearance.font.size.small
-                                        color: Colours.palette.m3onSurfaceVariant
-                                        wrapMode: TextEdit.Wrap
-                                        readOnly: true
-                                        selectByMouse: true
-                                        selectByKeyboard: true
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }

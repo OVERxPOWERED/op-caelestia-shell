@@ -18,8 +18,6 @@ RowLayout {
 
     required property Session session
 
-    property bool showDebugInfo: false
-
     // Bar Behavior
     property bool persistent: true
     property bool showOnHover: true
@@ -120,8 +118,6 @@ RowLayout {
 
     function saveConfig(entryIndex, entryEnabled) {
         if (!configFile.loaded) {
-            root.lastSaveStatus = "Error: Config file not loaded yet";
-            root.debugInfo = "Config file not loaded yet, cannot save";
             return;
         }
         
@@ -168,11 +164,6 @@ RowLayout {
             if (!config.bar.entries) config.bar.entries = [];
             config.bar.entries = [];
             
-            let debugInfo = `saveConfig called\n`;
-            debugInfo += `entryIndex: ${entryIndex}\n`;
-            debugInfo += `entryEnabled: ${entryEnabled}\n`;
-            debugInfo += `entriesModel.count: ${entriesModel.count}\n\n`;
-            
             for (let i = 0; i < entriesModel.count; i++) {
                 const entry = entriesModel.get(i);
                 // If this is the entry being updated, use the provided value (same as clock toggle reads from switch)
@@ -180,9 +171,6 @@ RowLayout {
                 let enabled = entry.enabled;
                 if (entryIndex !== undefined && i === entryIndex) {
                     enabled = entryEnabled;
-                    debugInfo += `Entry ${i} (${entry.id}): Using provided value = ${entryEnabled}\n`;
-                } else {
-                    debugInfo += `Entry ${i} (${entry.id}): Using model value = ${entry.enabled}\n`;
                 }
                 config.bar.entries.push({
                     id: entry.id,
@@ -190,16 +178,11 @@ RowLayout {
                 });
             }
 
-            debugInfo += `\nFinal entries array:\n${JSON.stringify(config.bar.entries, null, 2)}\n`;
-            root.debugInfo = debugInfo;
-
             // Write back to file using setText (same simple approach that worked for clock)
             const jsonString = JSON.stringify(config, null, 4);
             configFile.setText(jsonString);
-            root.lastSaveStatus = `Saved! Entries count: ${config.bar.entries.length}`;
         } catch (e) {
-            root.lastSaveStatus = `Error: ${e.message}`;
-            root.debugInfo = `Failed to save config:\n${e.message}\n${e.stack}`;
+            console.error("Failed to save config:", e);
         }
     }
 
@@ -207,9 +190,6 @@ RowLayout {
         id: entriesModel
     }
 
-    // Debug info
-    property string debugInfo: ""
-    property string lastSaveStatus: ""
 
     function collapseAllSections(exceptSection) {
         if (exceptSection !== clockSection) clockSection.expanded = false;
@@ -1261,93 +1241,6 @@ RowLayout {
                     color: Colours.palette.m3outline
                 }
 
-                StyledRect {
-                    Layout.fillWidth: true
-                    Layout.topMargin: Appearance.spacing.large
-                    implicitHeight: debugToggleRow.implicitHeight + Appearance.padding.large * 2
-                    color: Colours.tPalette.m3surfaceContainer
-                    radius: Appearance.rounding.normal
-
-                    RowLayout {
-                        id: debugToggleRow
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.large
-                        spacing: Appearance.spacing.normal
-
-                        StyledText {
-                            Layout.fillWidth: true
-                            text: qsTr("Show debug information")
-                            font.pointSize: Appearance.font.size.normal
-                        }
-
-                        StyledSwitch {
-                            id: showDebugInfoSwitch
-                            checked: root.showDebugInfo
-                            onToggled: {
-                                root.showDebugInfo = checked;
-                            }
-                        }
-                    }
-                }
-
-                StyledText {
-                    Layout.topMargin: Appearance.spacing.large
-                    Layout.alignment: Qt.AlignHCenter
-                    visible: root.showDebugInfo
-                    text: qsTr("Debug Info")
-                    font.pointSize: Appearance.font.size.larger
-                    font.weight: 500
-                }
-
-                StyledRect {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 200
-                    Layout.maximumHeight: 300
-                    visible: root.showDebugInfo
-
-                    radius: Appearance.rounding.normal
-                    color: Colours.tPalette.m3surfaceContainer
-                    clip: true
-
-                    StyledFlickable {
-                        id: debugFlickable
-                        anchors.fill: parent
-                        anchors.margins: Appearance.padding.normal
-                        contentHeight: debugText.implicitHeight
-                        clip: true
-
-                        StyledScrollBar.vertical: StyledScrollBar {
-                            flickable: debugFlickable
-                        }
-
-                        TextEdit {
-                            id: debugText
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.top: parent.top
-                            width: parent.width
-
-                            text: root.debugInfo || "No debug info yet"
-                            font.pointSize: Appearance.font.size.small
-                            color: Colours.palette.m3onSurface
-                            wrapMode: TextEdit.Wrap
-                            readOnly: true
-                            selectByMouse: true
-                            selectByKeyboard: true
-                        }
-                    }
-                }
-
-                StyledText {
-                    Layout.topMargin: Appearance.spacing.small
-                    Layout.alignment: Qt.AlignHCenter
-                    visible: root.showDebugInfo
-                    text: root.lastSaveStatus || ""
-                    font.pointSize: Appearance.font.size.small
-                    color: root.lastSaveStatus.includes("Error") ? Colours.palette.m3error : Colours.palette.m3primary
-                }
             }
         }
 

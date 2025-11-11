@@ -20,6 +20,32 @@ RowLayout {
 
     property bool showDebugInfo: false
 
+    // Bar Behavior
+    property bool persistent: true
+    property bool showOnHover: true
+    property int dragThreshold: 20
+
+    // Status Icons
+    property bool showAudio: true
+    property bool showMicrophone: true
+    property bool showKbLayout: false
+    property bool showNetwork: true
+    property bool showBluetooth: true
+    property bool showBattery: true
+    property bool showLockStatus: true
+
+    // Tray Settings
+    property bool trayBackground: false
+    property bool trayCompact: false
+    property bool trayRecolour: false
+
+    // Workspaces
+    property int workspacesShown: 5
+    property bool workspacesActiveIndicator: true
+    property bool workspacesOccupiedBg: false
+    property bool workspacesShowWindows: false
+    property bool workspacesPerMonitor: true
+
     anchors.fill: parent
 
     spacing: 0
@@ -56,6 +82,40 @@ RowLayout {
                 });
             }
         }
+
+        // Update bar behavior
+        if (config.bar) {
+            root.persistent = config.bar.persistent !== false;
+            root.showOnHover = config.bar.showOnHover !== false;
+            root.dragThreshold = config.bar.dragThreshold || 20;
+        }
+
+        // Update status icons
+        if (config.bar && config.bar.status) {
+            root.showAudio = config.bar.status.showAudio !== false;
+            root.showMicrophone = config.bar.status.showMicrophone !== false;
+            root.showKbLayout = config.bar.status.showKbLayout === true;
+            root.showNetwork = config.bar.status.showNetwork !== false;
+            root.showBluetooth = config.bar.status.showBluetooth !== false;
+            root.showBattery = config.bar.status.showBattery !== false;
+            root.showLockStatus = config.bar.status.showLockStatus !== false;
+        }
+
+        // Update tray settings
+        if (config.bar && config.bar.tray) {
+            root.trayBackground = config.bar.tray.background === true;
+            root.trayCompact = config.bar.tray.compact === true;
+            root.trayRecolour = config.bar.tray.recolour === true;
+        }
+
+        // Update workspaces
+        if (config.bar && config.bar.workspaces) {
+            root.workspacesShown = config.bar.workspaces.shown || 5;
+            root.workspacesActiveIndicator = config.bar.workspaces.activeIndicator !== false;
+            root.workspacesOccupiedBg = config.bar.workspaces.occupiedBg === true;
+            root.workspacesShowWindows = config.bar.workspaces.showWindows === true;
+            root.workspacesPerMonitor = config.bar.workspaces.perMonitorWorkspaces !== false;
+        }
     }
 
     function saveConfig(entryIndex, entryEnabled) {
@@ -68,10 +128,41 @@ RowLayout {
         try {
             const config = JSON.parse(configFile.text());
             
-            // Update clock setting (same simple approach - read directly from the switch)
+            // Ensure bar object exists
             if (!config.bar) config.bar = {};
+            
+            // Update clock setting
             if (!config.bar.clock) config.bar.clock = {};
             config.bar.clock.showIcon = clockShowIconSwitch.checked;
+
+            // Update bar behavior
+            config.bar.persistent = root.persistent;
+            config.bar.showOnHover = root.showOnHover;
+            config.bar.dragThreshold = root.dragThreshold;
+
+            // Update status icons
+            if (!config.bar.status) config.bar.status = {};
+            config.bar.status.showAudio = root.showAudio;
+            config.bar.status.showMicrophone = root.showMicrophone;
+            config.bar.status.showKbLayout = root.showKbLayout;
+            config.bar.status.showNetwork = root.showNetwork;
+            config.bar.status.showBluetooth = root.showBluetooth;
+            config.bar.status.showBattery = root.showBattery;
+            config.bar.status.showLockStatus = root.showLockStatus;
+
+            // Update tray settings
+            if (!config.bar.tray) config.bar.tray = {};
+            config.bar.tray.background = root.trayBackground;
+            config.bar.tray.compact = root.trayCompact;
+            config.bar.tray.recolour = root.trayRecolour;
+
+            // Update workspaces
+            if (!config.bar.workspaces) config.bar.workspaces = {};
+            config.bar.workspaces.shown = root.workspacesShown;
+            config.bar.workspaces.activeIndicator = root.workspacesActiveIndicator;
+            config.bar.workspaces.occupiedBg = root.workspacesOccupiedBg;
+            config.bar.workspaces.showWindows = root.workspacesShowWindows;
+            config.bar.workspaces.perMonitorWorkspaces = root.workspacesPerMonitor;
 
             // Update entries from the model (same approach as clock - use provided value if available)
             if (!config.bar.entries) config.bar.entries = [];
@@ -120,18 +211,39 @@ RowLayout {
     property string debugInfo: ""
     property string lastSaveStatus: ""
 
+    function collapseAllSections(exceptSection) {
+        if (exceptSection !== clockSection) clockSection.expanded = false;
+        if (exceptSection !== barBehaviorSection) barBehaviorSection.expanded = false;
+        if (exceptSection !== statusIconsSection) statusIconsSection.expanded = false;
+        if (exceptSection !== traySettingsSection) traySettingsSection.expanded = false;
+        if (exceptSection !== workspacesSection) workspacesSection.expanded = false;
+    }
+
     Item {
         Layout.preferredWidth: Math.floor(parent.width * 0.4)
         Layout.minimumWidth: 420
         Layout.fillHeight: true
 
-        ColumnLayout {
+        StyledFlickable {
+            id: sidebarFlickable
             anchors.fill: parent
-            anchors.margins: Appearance.padding.large + Appearance.padding.normal
-            anchors.leftMargin: Appearance.padding.large
-            anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: sidebarLayout.implicitHeight + Appearance.padding.large * 2
 
-            spacing: Appearance.spacing.small
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: sidebarFlickable
+            }
+
+            ColumnLayout {
+                id: sidebarLayout
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.margins: Appearance.padding.large + Appearance.padding.normal
+                anchors.leftMargin: Appearance.padding.large
+                anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
+
+                spacing: Appearance.spacing.small
 
             RowLayout {
                 spacing: Appearance.spacing.smaller
@@ -147,24 +259,74 @@ RowLayout {
                 }
             }
 
-            StyledText {
-                Layout.topMargin: Appearance.spacing.large
-                text: qsTr("Clock")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
+            Item {
+                id: clockSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: clockSectionHeader.implicitHeight
+                property bool expanded: false
 
-            StyledText {
-                text: qsTr("Clock display settings")
-                color: Colours.palette.m3outline
+                ColumnLayout {
+                    id: clockSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Clock")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: clockSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = clockSection.expanded;
+                            root.collapseAllSections(clockSection);
+                            clockSection.expanded = !wasExpanded;
+                        }
+                    }
+
+                    StyledText {
+                        visible: clockSection.expanded
+                        text: qsTr("Clock display settings")
+                        color: Colours.palette.m3outline
+                        Layout.fillWidth: true
+                    }
+                }
             }
 
             StyledRect {
                 Layout.fillWidth: true
-                implicitHeight: clockRow.implicitHeight + Appearance.padding.large * 2
+                visible: clockSection.expanded
+                implicitHeight: clockSection.expanded ? clockRow.implicitHeight + Appearance.padding.large * 2 : 0
 
                 radius: Appearance.rounding.normal
                 color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
 
                 RowLayout {
                     id: clockRow
@@ -191,80 +353,840 @@ RowLayout {
                 }
             }
 
-            StyledText {
-                Layout.topMargin: Appearance.spacing.large
-                text: qsTr("Taskbar Entries")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
-
-            StyledText {
-                text: qsTr("Enable or disable taskbar entries")
-                color: Colours.palette.m3outline
-            }
-
-            StyledListView {
+            Item {
+                id: barBehaviorSection
                 Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.topMargin: 0
+                Layout.preferredHeight: barBehaviorSectionHeader.implicitHeight
+                property bool expanded: false
 
-                model: entriesModel
-                spacing: Appearance.spacing.small / 2
-                clip: true
-
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: parent
-                }
-
-                delegate: StyledRect {
-                    id: delegate
-                    required property string id
-                    required property bool enabled
-                    required property int index
-
+                ColumnLayout {
+                    id: barBehaviorSectionHeader
                     anchors.left: parent.left
                     anchors.right: parent.right
-
-                    color: Colours.tPalette.m3surfaceContainer
-                    radius: Appearance.rounding.normal
+                    spacing: Appearance.spacing.small
 
                     RowLayout {
-                        id: entryRow
-
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.normal
-
-                        spacing: Appearance.spacing.normal
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
 
                         StyledText {
-                            Layout.fillWidth: true
-                            text: id.charAt(0).toUpperCase() + id.slice(1)
-                            font.weight: enabled ? 500 : 400
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Bar Behavior")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
                         }
 
-                        StyledSwitch {
-                            checked: enabled
-                            onToggled: {
-                                // Store the values in local variables to ensure they're accessible
-                                // Access index from the delegate
-                                const entryIndex = delegate.index;
-                                const entryEnabled = checked;
-                                console.log(`Entry toggle: index=${entryIndex}, checked=${entryEnabled}`);
-                                // Update the model first
-                                entriesModel.setProperty(entryIndex, "enabled", entryEnabled);
-                                // Save immediately with the value directly (same technique as clock toggle)
-                                // Clock toggle reads directly from clockShowIconSwitch.checked
-                                // We pass the value directly here (same approach)
-                                root.saveConfig(entryIndex, entryEnabled);
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: barBehaviorSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
                             }
                         }
                     }
 
-                    implicitHeight: entryRow.implicitHeight + Appearance.padding.normal * 2
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = barBehaviorSection.expanded;
+                            root.collapseAllSections(barBehaviorSection);
+                            barBehaviorSection.expanded = !wasExpanded;
+                        }
+                    }
                 }
             }
+
+            StyledRect {
+                visible: barBehaviorSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: barBehaviorSection.expanded ? persistentRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: persistentRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Persistent")
+                    }
+
+                    StyledSwitch {
+                        checked: root.persistent
+                        onToggled: {
+                            root.persistent = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: barBehaviorSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: barBehaviorSection.expanded ? showOnHoverRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: showOnHoverRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Show on hover")
+                    }
+
+                    StyledSwitch {
+                        checked: root.showOnHover
+                        onToggled: {
+                            root.showOnHover = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: barBehaviorSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: barBehaviorSection.expanded ? dragThresholdRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: dragThresholdRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Drag threshold")
+                    }
+
+                    CustomSpinBox {
+                        min: 0
+                        max: 100
+                        value: root.dragThreshold
+                        onValueModified: value => {
+                            root.dragThreshold = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            Item {
+                id: statusIconsSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: statusIconsSectionHeader.implicitHeight
+                property bool expanded: false
+
+                ColumnLayout {
+                    id: statusIconsSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Status Icons")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: statusIconsSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = statusIconsSection.expanded;
+                            root.collapseAllSections(statusIconsSection);
+                            statusIconsSection.expanded = !wasExpanded;
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: statusIconsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: statusIconsSection.expanded ? showAudioRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: showAudioRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Show audio")
+                    }
+
+                    StyledSwitch {
+                        checked: root.showAudio
+                        onToggled: {
+                            root.showAudio = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: statusIconsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: statusIconsSection.expanded ? showMicrophoneRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: showMicrophoneRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Show microphone")
+                    }
+
+                    StyledSwitch {
+                        checked: root.showMicrophone
+                        onToggled: {
+                            root.showMicrophone = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: statusIconsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: statusIconsSection.expanded ? showKbLayoutRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: showKbLayoutRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Show keyboard layout")
+                    }
+
+                    StyledSwitch {
+                        checked: root.showKbLayout
+                        onToggled: {
+                            root.showKbLayout = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: statusIconsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: statusIconsSection.expanded ? showNetworkRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: showNetworkRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Show network")
+                    }
+
+                    StyledSwitch {
+                        checked: root.showNetwork
+                        onToggled: {
+                            root.showNetwork = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: statusIconsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: statusIconsSection.expanded ? showBluetoothRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: showBluetoothRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Show bluetooth")
+                    }
+
+                    StyledSwitch {
+                        checked: root.showBluetooth
+                        onToggled: {
+                            root.showBluetooth = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: statusIconsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: statusIconsSection.expanded ? showBatteryRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: showBatteryRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Show battery")
+                    }
+
+                    StyledSwitch {
+                        checked: root.showBattery
+                        onToggled: {
+                            root.showBattery = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: statusIconsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: statusIconsSection.expanded ? showLockStatusRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: showLockStatusRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Show lock status")
+                    }
+
+                    StyledSwitch {
+                        checked: root.showLockStatus
+                        onToggled: {
+                            root.showLockStatus = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            Item {
+                id: traySettingsSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: traySettingsSectionHeader.implicitHeight
+                property bool expanded: false
+
+                ColumnLayout {
+                    id: traySettingsSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Tray Settings")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: traySettingsSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = traySettingsSection.expanded;
+                            root.collapseAllSections(traySettingsSection);
+                            traySettingsSection.expanded = !wasExpanded;
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: traySettingsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: traySettingsSection.expanded ? trayBackgroundRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: trayBackgroundRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Background")
+                    }
+
+                    StyledSwitch {
+                        checked: root.trayBackground
+                        onToggled: {
+                            root.trayBackground = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: traySettingsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: traySettingsSection.expanded ? trayCompactRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: trayCompactRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Compact")
+                    }
+
+                    StyledSwitch {
+                        checked: root.trayCompact
+                        onToggled: {
+                            root.trayCompact = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: traySettingsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: traySettingsSection.expanded ? trayRecolourRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: trayRecolourRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Recolour")
+                    }
+
+                    StyledSwitch {
+                        checked: root.trayRecolour
+                        onToggled: {
+                            root.trayRecolour = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            Item {
+                id: workspacesSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: workspacesSectionHeader.implicitHeight
+                property bool expanded: false
+
+                ColumnLayout {
+                    id: workspacesSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Workspaces")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: workspacesSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = workspacesSection.expanded;
+                            root.collapseAllSections(workspacesSection);
+                            workspacesSection.expanded = !wasExpanded;
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: workspacesSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: workspacesSection.expanded ? workspacesShownRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: workspacesShownRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Shown")
+                    }
+
+                    CustomSpinBox {
+                        min: 1
+                        max: 20
+                        value: root.workspacesShown
+                        onValueModified: value => {
+                            root.workspacesShown = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: workspacesSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: workspacesSection.expanded ? workspacesActiveIndicatorRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: workspacesActiveIndicatorRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Active indicator")
+                    }
+
+                    StyledSwitch {
+                        checked: root.workspacesActiveIndicator
+                        onToggled: {
+                            root.workspacesActiveIndicator = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: workspacesSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: workspacesSection.expanded ? workspacesOccupiedBgRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: workspacesOccupiedBgRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Occupied background")
+                    }
+
+                    StyledSwitch {
+                        checked: root.workspacesOccupiedBg
+                        onToggled: {
+                            root.workspacesOccupiedBg = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: workspacesSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: workspacesSection.expanded ? workspacesShowWindowsRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: workspacesShowWindowsRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Show windows")
+                    }
+
+                    StyledSwitch {
+                        checked: root.workspacesShowWindows
+                        onToggled: {
+                            root.workspacesShowWindows = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: workspacesSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: workspacesSection.expanded ? workspacesPerMonitorRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: workspacesPerMonitorRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Per monitor workspaces")
+                    }
+
+                    StyledSwitch {
+                        checked: root.workspacesPerMonitor
+                        onToggled: {
+                            root.workspacesPerMonitor = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+        }
         }
 
         InnerBorder {
@@ -434,4 +1356,3 @@ RowLayout {
         }
     }
 }
-

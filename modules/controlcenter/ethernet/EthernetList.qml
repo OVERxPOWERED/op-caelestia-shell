@@ -122,6 +122,8 @@ ColumnLayout {
 
                 StyledText {
                     Layout.fillWidth: true
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
 
                     text: modelData.interface || qsTr("Unknown")
                 }

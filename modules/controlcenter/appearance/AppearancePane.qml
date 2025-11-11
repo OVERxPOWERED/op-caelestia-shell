@@ -33,6 +33,8 @@ RowLayout {
     property bool transparencyEnabled: false
     property real transparencyBase: 0.85
     property real transparencyLayers: 0.4
+    property real borderRounding: 1
+    property real borderThickness: 1
 
     // Background settings
     property bool desktopClockEnabled: true
@@ -98,6 +100,12 @@ RowLayout {
             }
         }
 
+        // Update border settings
+        if (config.border) {
+            root.borderRounding = config.border.rounding ?? 1;
+            root.borderThickness = config.border.thickness ?? 1;
+        }
+
         // Update background settings
         if (config.background) {
             root.desktopClockEnabled = config.background.desktopClock?.enabled !== undefined ? config.background.desktopClock.enabled : false;
@@ -133,6 +141,7 @@ RowLayout {
         if (exceptSection !== fontsSection) fontsSection.expanded = false;
         if (exceptSection !== scalesSection) scalesSection.expanded = false;
         if (exceptSection !== transparencySection) transparencySection.expanded = false;
+        if (exceptSection !== borderSection) borderSection.expanded = false;
         if (exceptSection !== backgroundSection) backgroundSection.expanded = false;
     }
 
@@ -192,6 +201,11 @@ RowLayout {
             config.background.visualiser.autoHide = root.visualiserAutoHide;
             config.background.visualiser.rounding = root.visualiserRounding;
             config.background.visualiser.spacing = root.visualiserSpacing;
+
+            // Update border
+            if (!config.border) config.border = {};
+            config.border.rounding = root.borderRounding;
+            config.border.thickness = root.borderThickness;
 
             // Write back to file using setText (same simple approach that worked for taskbar)
             const jsonString = JSON.stringify(config, null, 4);
@@ -1417,6 +1431,132 @@ RowLayout {
                         value: root.transparencyLayers
                         onValueModified: value => {
                             root.transparencyLayers = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            Item {
+                id: borderSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: borderSectionHeader.implicitHeight
+                property bool expanded: false
+
+                ColumnLayout {
+                    id: borderSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Border")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: borderSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = borderSection.expanded;
+                            root.collapseAllSections(borderSection);
+                            borderSection.expanded = !wasExpanded;
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: borderSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: borderSection.expanded ? borderRoundingRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: borderRoundingRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Border rounding")
+                    }
+
+                    CustomSpinBox {
+                        id: borderRoundingSpinBox
+                        min: 0.1
+                        max: 5
+                        value: root.borderRounding
+                        onValueModified: value => {
+                            root.borderRounding = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: borderSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: borderSection.expanded ? borderThicknessRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: borderThicknessRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Border thickness")
+                    }
+
+                    CustomSpinBox {
+                        id: borderThicknessSpinBox
+                        min: 0.1
+                        max: 5
+                        value: root.borderThickness
+                        onValueModified: value => {
+                            root.borderThickness = value;
                             root.saveConfig();
                         }
                     }

@@ -2045,16 +2045,76 @@ RowLayout {
                                 }
                             }
 
-                            StyledText {
+                            // Gradient overlay for filename with rounded bottom corners
+                            Rectangle {
+                                id: filenameOverlay
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 anchors.bottom: parent.bottom
-                                anchors.margins: Appearance.padding.small
+                                height: filenameText.implicitHeight + Appearance.padding.normal * 2
+                                
+                                // Match the parent's rounded corners at the bottom
+                                radius: Appearance.rounding.normal
+                                
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: Qt.rgba(0, 0, 0, 0) }
+                                    GradientStop { position: 0.3; color: Qt.rgba(0, 0, 0, 0.3) }
+                                    GradientStop { position: 0.7; color: Qt.rgba(0, 0, 0, 0.75) }
+                                    GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.85) }
+                                }
+                                
+                                opacity: 0
+                                
+                                Behavior on opacity {
+                                    NumberAnimation {
+                                        duration: 200
+                                        easing.type: Easing.OutCubic
+                                    }
+                                }
+                                
+                                Component.onCompleted: {
+                                    opacity = 1;
+                                }
+                            }
 
-                                text: modelData.relativePath
-                                font.pointSize: Appearance.font.size.small
-                                color: isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurface
-                                elide: Text.ElideRight
+                            StyledText {
+                                id: filenameText
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.bottom: parent.bottom
+                                anchors.leftMargin: Appearance.padding.normal
+                                anchors.rightMargin: Appearance.padding.normal
+                                anchors.bottomMargin: Appearance.padding.normal
+
+                                readonly property string fileName: {
+                                    const path = modelData.relativePath || "";
+                                    const parts = path.split("/");
+                                    return parts.length > 0 ? parts[parts.length - 1] : path;
+                                }
+
+                                text: fileName
+                                font.pointSize: Appearance.font.size.smaller
+                                font.weight: 500
+                                color: isCurrent ? Colours.palette.m3primary : "#FFFFFF"
+                                elide: Text.ElideMiddle
+                                maximumLineCount: 1
+                                
+                                // Text shadow for better readability
+                                style: Text.Outline
+                                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                                
+                                opacity: 0
+                                
+                                Behavior on opacity {
+                                    NumberAnimation {
+                                        duration: 200
+                                        easing.type: Easing.OutCubic
+                                    }
+                                }
+                                
+                                Component.onCompleted: {
+                                    opacity = 1;
+                                }
                             }
                         }
                     }

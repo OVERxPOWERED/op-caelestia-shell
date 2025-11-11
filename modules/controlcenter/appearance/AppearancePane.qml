@@ -9,6 +9,7 @@ import qs.components.containers
 import qs.components.images
 import qs.services
 import qs.config
+import qs.utils
 import Caelestia.Models
 import Quickshell
 import Quickshell.Io
@@ -38,50 +39,45 @@ RowLayout {
         path: `${Paths.config}/shell.json`
         watchChanges: true
 
-        property bool isSaving: false
-
         onLoaded: {
-            if (!isSaving) {
-                try {
-                    const config = JSON.parse(text());
-                    updateFromConfig(config);
-                } catch (e) {
-                    console.error("Failed to parse config:", e);
-                }
+            try {
+                const config = JSON.parse(text());
+                updateFromConfig(config);
+            } catch (e) {
+                console.error("Failed to parse config:", e);
             }
         }
 
-        onFileChanged: {
-            if (!isSaving) {
-                try {
-                    const config = JSON.parse(text());
-                    updateFromConfig(config);
-                } catch (e) {
-                    console.error("Failed to parse config:", e);
-                }
-            }
+        onSaveFailed: err => {
+            console.error("Failed to save config file:", err);
         }
     }
 
     function updateFromConfig(config) {
         // Update background settings
         if (config.background) {
-            root.desktopClockEnabled = config.background.desktopClock?.enabled !== false;
-            root.backgroundEnabled = config.background.enabled !== false;
+            root.desktopClockEnabled = config.background.desktopClock?.enabled !== undefined ? config.background.desktopClock.enabled : false;
+            root.backgroundEnabled = config.background.enabled !== undefined ? config.background.enabled : true;
             if (config.background.visualiser) {
-                root.visualiserEnabled = config.background.visualiser.enabled !== false;
-                root.visualiserAutoHide = config.background.visualiser.autoHide !== false;
-                root.visualiserRounding = config.background.visualiser.rounding || 1;
-                root.visualiserSpacing = config.background.visualiser.spacing || 1;
+                root.visualiserEnabled = config.background.visualiser.enabled !== undefined ? config.background.visualiser.enabled : false;
+                root.visualiserAutoHide = config.background.visualiser.autoHide !== undefined ? config.background.visualiser.autoHide : true;
+                root.visualiserRounding = config.background.visualiser.rounding !== undefined ? config.background.visualiser.rounding : 1;
+                root.visualiserSpacing = config.background.visualiser.spacing !== undefined ? config.background.visualiser.spacing : 1;
+            } else {
+                // Set defaults if visualiser object doesn't exist (matching BackgroundConfig defaults)
+                root.visualiserEnabled = false;
+                root.visualiserAutoHide = true;
+                root.visualiserRounding = 1;
+                root.visualiserSpacing = 1;
             }
-        }
-    }
-
-    Timer {
-        id: saveTimer
-        interval: 500
-        onTriggered: {
-            configFile.isSaving = false;
+        } else {
+            // Set defaults if background object doesn't exist (matching BackgroundConfig defaults)
+            root.desktopClockEnabled = false;
+            root.backgroundEnabled = true;
+            root.visualiserEnabled = false;
+            root.visualiserAutoHide = true;
+            root.visualiserRounding = 1;
+            root.visualiserSpacing = 1;
         }
     }
 
@@ -99,9 +95,6 @@ RowLayout {
         }
 
         try {
-            // Set flag to prevent reloading during save
-            configFile.isSaving = true;
-
             const config = JSON.parse(configFile.text());
 
             // Ensure background object exists
@@ -121,16 +114,11 @@ RowLayout {
             config.background.visualiser.rounding = root.visualiserRounding;
             config.background.visualiser.spacing = root.visualiserSpacing;
 
-            // Write back to file
+            // Write back to file using setText (same simple approach that worked for taskbar)
             const jsonString = JSON.stringify(config, null, 4);
             configFile.setText(jsonString);
-
-            // Reset flag after a delay to allow file write to complete
-            // Use a timer to ensure the file system has time to write
-            saveTimer.restart();
         } catch (e) {
             console.error("Failed to save config:", e);
-            configFile.isSaving = false;
         }
     }
 
@@ -690,6 +678,7 @@ RowLayout {
                     }
 
                     StyledSwitch {
+                        id: desktopClockSwitch
                         checked: root.desktopClockEnabled
                         onToggled: {
                             root.desktopClockEnabled = checked;
@@ -725,6 +714,7 @@ RowLayout {
                     }
 
                     StyledSwitch {
+                        id: backgroundEnabledSwitch
                         checked: root.backgroundEnabled
                         onToggled: {
                             root.backgroundEnabled = checked;
@@ -768,6 +758,7 @@ RowLayout {
                     }
 
                     StyledSwitch {
+                        id: visualiserEnabledSwitch
                         checked: root.visualiserEnabled
                         onToggled: {
                             root.visualiserEnabled = checked;
@@ -803,6 +794,7 @@ RowLayout {
                     }
 
                     StyledSwitch {
+                        id: visualiserAutoHideSwitch
                         checked: root.visualiserAutoHide
                         onToggled: {
                             root.visualiserAutoHide = checked;
@@ -838,6 +830,7 @@ RowLayout {
                     }
 
                     CustomSpinBox {
+                        id: visualiserRoundingSpinBox
                         min: 0
                         max: 10
                         value: Math.round(root.visualiserRounding)
@@ -875,6 +868,7 @@ RowLayout {
                     }
 
                     CustomSpinBox {
+                        id: visualiserSpacingSpinBox
                         min: 0
                         max: 10
                         value: Math.round(root.visualiserSpacing)

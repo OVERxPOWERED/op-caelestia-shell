@@ -186,6 +186,11 @@ Item {
             icon: "task_alt"
             label: "taskbar"
         }
+
+        NavItem {
+            icon: "apps"
+            label: "launcher"
+        }
     }
 
     component NavItem: Item {

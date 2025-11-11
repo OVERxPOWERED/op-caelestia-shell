@@ -2,7 +2,7 @@ import Quickshell.Bluetooth
 import QtQuick
 
 QtObject {
-    readonly property list<string> panes: ["ethernet", "wireless", "bluetooth", "audio", "appearance", "taskbar"]
+    readonly property list<string> panes: ["ethernet", "wireless", "bluetooth", "audio", "appearance", "taskbar", "launcher"]
 
     required property var root
     property bool floating: false

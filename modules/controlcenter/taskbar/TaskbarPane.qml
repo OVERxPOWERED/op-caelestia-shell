@@ -18,6 +18,8 @@ RowLayout {
 
     required property Session session
 
+    property bool showDebugInfo: false
+
     anchors.fill: parent
 
     spacing: 0
@@ -98,7 +100,6 @@ RowLayout {
             }
 
             debugInfo += `\nFinal entries array:\n${JSON.stringify(config.bar.entries, null, 2)}\n`;
-            debugInfo += `\nFinal clock.showIcon: ${config.bar.clock.showIcon}\n`;
             root.debugInfo = debugInfo;
 
             // Write back to file using setText (same simple approach that worked for clock)
@@ -338,9 +339,41 @@ RowLayout {
                     color: Colours.palette.m3outline
                 }
 
+                StyledRect {
+                    Layout.fillWidth: true
+                    Layout.topMargin: Appearance.spacing.large
+                    implicitHeight: debugToggleRow.implicitHeight + Appearance.padding.large * 2
+                    color: Colours.tPalette.m3surfaceContainer
+                    radius: Appearance.rounding.normal
+
+                    RowLayout {
+                        id: debugToggleRow
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: Appearance.padding.large
+                        spacing: Appearance.spacing.normal
+
+                        StyledText {
+                            Layout.fillWidth: true
+                            text: qsTr("Show debug information")
+                            font.pointSize: Appearance.font.size.normal
+                        }
+
+                        StyledSwitch {
+                            id: showDebugInfoSwitch
+                            checked: root.showDebugInfo
+                            onToggled: {
+                                root.showDebugInfo = checked;
+                            }
+                        }
+                    }
+                }
+
                 StyledText {
                     Layout.topMargin: Appearance.spacing.large
                     Layout.alignment: Qt.AlignHCenter
+                    visible: root.showDebugInfo
                     text: qsTr("Debug Info")
                     font.pointSize: Appearance.font.size.larger
                     font.weight: 500
@@ -350,6 +383,7 @@ RowLayout {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 200
                     Layout.maximumHeight: 300
+                    visible: root.showDebugInfo
 
                     radius: Appearance.rounding.normal
                     color: Colours.tPalette.m3surfaceContainer
@@ -387,6 +421,7 @@ RowLayout {
                 StyledText {
                     Layout.topMargin: Appearance.spacing.small
                     Layout.alignment: Qt.AlignHCenter
+                    visible: root.showDebugInfo
                     text: root.lastSaveStatus || ""
                     font.pointSize: Appearance.font.size.small
                     color: root.lastSaveStatus.includes("Error") ? Colours.palette.m3error : Colours.palette.m3primary

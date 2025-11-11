@@ -11,6 +11,7 @@ import qs.services
 import qs.config
 import Caelestia.Models
 import Quickshell
+import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 
@@ -19,22 +20,145 @@ RowLayout {
 
     required property Session session
 
+    // Background settings
+    property bool desktopClockEnabled: true
+    property bool backgroundEnabled: true
+    property bool visualiserEnabled: true
+    property bool visualiserAutoHide: true
+    property real visualiserRounding: 1
+    property real visualiserSpacing: 1
+
     anchors.fill: parent
 
     spacing: 0
+
+    FileView {
+        id: configFile
+
+        path: `${Paths.config}/shell.json`
+        watchChanges: true
+
+        property bool isSaving: false
+
+        onLoaded: {
+            if (!isSaving) {
+                try {
+                    const config = JSON.parse(text());
+                    updateFromConfig(config);
+                } catch (e) {
+                    console.error("Failed to parse config:", e);
+                }
+            }
+        }
+
+        onFileChanged: {
+            if (!isSaving) {
+                try {
+                    const config = JSON.parse(text());
+                    updateFromConfig(config);
+                } catch (e) {
+                    console.error("Failed to parse config:", e);
+                }
+            }
+        }
+    }
+
+    function updateFromConfig(config) {
+        // Update background settings
+        if (config.background) {
+            root.desktopClockEnabled = config.background.desktopClock?.enabled !== false;
+            root.backgroundEnabled = config.background.enabled !== false;
+            if (config.background.visualiser) {
+                root.visualiserEnabled = config.background.visualiser.enabled !== false;
+                root.visualiserAutoHide = config.background.visualiser.autoHide !== false;
+                root.visualiserRounding = config.background.visualiser.rounding || 1;
+                root.visualiserSpacing = config.background.visualiser.spacing || 1;
+            }
+        }
+    }
+
+    Timer {
+        id: saveTimer
+        interval: 500
+        onTriggered: {
+            configFile.isSaving = false;
+        }
+    }
+
+    function collapseAllSections(exceptSection) {
+        if (exceptSection !== themeModeSection) themeModeSection.expanded = false;
+        if (exceptSection !== colorVariantSection) colorVariantSection.expanded = false;
+        if (exceptSection !== colorSchemeSection) colorSchemeSection.expanded = false;
+        if (exceptSection !== backgroundSection) backgroundSection.expanded = false;
+    }
+
+    function saveConfig() {
+        if (!configFile.loaded) {
+            console.error("Config file not loaded yet");
+            return;
+        }
+
+        try {
+            // Set flag to prevent reloading during save
+            configFile.isSaving = true;
+
+            const config = JSON.parse(configFile.text());
+
+            // Ensure background object exists
+            if (!config.background) config.background = {};
+
+            // Update desktop clock
+            if (!config.background.desktopClock) config.background.desktopClock = {};
+            config.background.desktopClock.enabled = root.desktopClockEnabled;
+
+            // Update background enabled
+            config.background.enabled = root.backgroundEnabled;
+
+            // Update visualiser
+            if (!config.background.visualiser) config.background.visualiser = {};
+            config.background.visualiser.enabled = root.visualiserEnabled;
+            config.background.visualiser.autoHide = root.visualiserAutoHide;
+            config.background.visualiser.rounding = root.visualiserRounding;
+            config.background.visualiser.spacing = root.visualiserSpacing;
+
+            // Write back to file
+            const jsonString = JSON.stringify(config, null, 4);
+            configFile.setText(jsonString);
+
+            // Reset flag after a delay to allow file write to complete
+            // Use a timer to ensure the file system has time to write
+            saveTimer.restart();
+        } catch (e) {
+            console.error("Failed to save config:", e);
+            configFile.isSaving = false;
+        }
+    }
 
     Item {
         Layout.preferredWidth: Math.floor(parent.width * 0.4)
         Layout.minimumWidth: 420
         Layout.fillHeight: true
 
-        ColumnLayout {
+        StyledFlickable {
+            id: sidebarFlickable
             anchors.fill: parent
-            anchors.margins: Appearance.padding.large + Appearance.padding.normal
-            anchors.leftMargin: Appearance.padding.large
-            anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: sidebarLayout.implicitHeight + Appearance.padding.large * 2
 
-            spacing: Appearance.spacing.small
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: sidebarFlickable
+            }
+
+            ColumnLayout {
+                id: sidebarLayout
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.margins: Appearance.padding.large + Appearance.padding.normal
+                anchors.leftMargin: Appearance.padding.large
+                anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
+
+                spacing: Appearance.spacing.small
 
             RowLayout {
                 spacing: Appearance.spacing.smaller
@@ -50,24 +174,74 @@ RowLayout {
                 }
             }
 
-            StyledText {
-                Layout.topMargin: Appearance.spacing.large
-                text: qsTr("Theme mode")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
+            Item {
+                id: themeModeSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: themeModeSectionHeader.implicitHeight
+                property bool expanded: false
 
-            StyledText {
-                text: qsTr("Light or dark theme")
-                color: Colours.palette.m3outline
+                ColumnLayout {
+                    id: themeModeSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Theme mode")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: themeModeSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = themeModeSection.expanded;
+                            root.collapseAllSections(themeModeSection);
+                            themeModeSection.expanded = !wasExpanded;
+                        }
+                    }
+
+                    StyledText {
+                        visible: themeModeSection.expanded
+                        text: qsTr("Light or dark theme")
+                        color: Colours.palette.m3outline
+                        Layout.fillWidth: true
+                    }
+                }
             }
 
             StyledRect {
+                visible: themeModeSection.expanded
                 Layout.fillWidth: true
-                implicitHeight: modeToggle.implicitHeight + Appearance.padding.large * 2
+                implicitHeight: themeModeSection.expanded ? modeToggle.implicitHeight + Appearance.padding.large * 2 : 0
 
                 radius: Appearance.rounding.normal
                 color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
 
                 RowLayout {
                     id: modeToggle
@@ -93,22 +267,72 @@ RowLayout {
                 }
             }
 
-            StyledText {
-                Layout.topMargin: Appearance.spacing.large
-                text: qsTr("Color variant")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
+            Item {
+                id: colorVariantSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: colorVariantSectionHeader.implicitHeight
+                property bool expanded: false
 
-            StyledText {
-                text: qsTr("Material theme variant")
-                color: Colours.palette.m3outline
+                ColumnLayout {
+                    id: colorVariantSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Color variant")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: colorVariantSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = colorVariantSection.expanded;
+                            root.collapseAllSections(colorVariantSection);
+                            colorVariantSection.expanded = !wasExpanded;
+                        }
+                    }
+
+                    StyledText {
+                        visible: colorVariantSection.expanded
+                        text: qsTr("Material theme variant")
+                        color: Colours.palette.m3outline
+                        Layout.fillWidth: true
+                    }
+                }
             }
 
             StyledListView {
+                visible: colorVariantSection.expanded
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitHeight: colorVariantSection.expanded ? Math.min(400, M3Variants.list.length * 60) : 0
                 Layout.topMargin: 0
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
 
                 model: M3Variants.list
                 spacing: Appearance.spacing.small / 2
@@ -188,22 +412,72 @@ RowLayout {
                 }
             }
 
-            StyledText {
-                Layout.topMargin: Appearance.spacing.large
-                text: qsTr("Color scheme")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
+            Item {
+                id: colorSchemeSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: colorSchemeSectionHeader.implicitHeight
+                property bool expanded: false
 
-            StyledText {
-                text: qsTr("Available color schemes")
-                color: Colours.palette.m3outline
+                ColumnLayout {
+                    id: colorSchemeSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Color scheme")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: colorSchemeSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = colorSchemeSection.expanded;
+                            root.collapseAllSections(colorSchemeSection);
+                            colorSchemeSection.expanded = !wasExpanded;
+                        }
+                    }
+
+                    StyledText {
+                        visible: colorSchemeSection.expanded
+                        text: qsTr("Available color schemes")
+                        color: Colours.palette.m3outline
+                        Layout.fillWidth: true
+                    }
+                }
             }
 
             StyledListView {
+                visible: colorSchemeSection.expanded
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitHeight: colorSchemeSection.expanded ? Math.min(400, Schemes.list.length * 80) : 0
                 Layout.topMargin: 0
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
 
                 model: Schemes.list
                 spacing: Appearance.spacing.small / 2
@@ -338,6 +612,279 @@ RowLayout {
 
                     implicitHeight: schemeRow.implicitHeight + Appearance.padding.normal * 2
                 }
+            }
+
+            Item {
+                id: backgroundSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: backgroundSectionHeader.implicitHeight
+                property bool expanded: false
+
+                ColumnLayout {
+                    id: backgroundSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Background")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: backgroundSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = backgroundSection.expanded;
+                            root.collapseAllSections(backgroundSection);
+                            backgroundSection.expanded = !wasExpanded;
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: backgroundSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: backgroundSection.expanded ? desktopClockRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: desktopClockRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Desktop clock")
+                    }
+
+                    StyledSwitch {
+                        checked: root.desktopClockEnabled
+                        onToggled: {
+                            root.desktopClockEnabled = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: backgroundSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: backgroundSection.expanded ? backgroundEnabledRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: backgroundEnabledRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Background enabled")
+                    }
+
+                    StyledSwitch {
+                        checked: root.backgroundEnabled
+                        onToggled: {
+                            root.backgroundEnabled = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledText {
+                visible: backgroundSection.expanded
+                Layout.topMargin: Appearance.spacing.normal
+                text: qsTr("Visualiser")
+                font.pointSize: Appearance.font.size.larger
+                font.weight: 500
+            }
+
+            StyledRect {
+                visible: backgroundSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: backgroundSection.expanded ? visualiserEnabledRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: visualiserEnabledRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Visualiser enabled")
+                    }
+
+                    StyledSwitch {
+                        checked: root.visualiserEnabled
+                        onToggled: {
+                            root.visualiserEnabled = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: backgroundSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: backgroundSection.expanded ? visualiserAutoHideRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: visualiserAutoHideRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Visualiser auto hide")
+                    }
+
+                    StyledSwitch {
+                        checked: root.visualiserAutoHide
+                        onToggled: {
+                            root.visualiserAutoHide = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: backgroundSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: backgroundSection.expanded ? visualiserRoundingRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: visualiserRoundingRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Visualiser rounding")
+                    }
+
+                    CustomSpinBox {
+                        min: 0
+                        max: 10
+                        value: Math.round(root.visualiserRounding)
+                        onValueModified: value => {
+                            root.visualiserRounding = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: backgroundSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: backgroundSection.expanded ? visualiserSpacingRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: visualiserSpacingRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Visualiser spacing")
+                    }
+
+                    CustomSpinBox {
+                        min: 0
+                        max: 10
+                        value: Math.round(root.visualiserSpacing)
+                        onValueModified: value => {
+                            root.visualiserSpacing = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
             }
         }
 

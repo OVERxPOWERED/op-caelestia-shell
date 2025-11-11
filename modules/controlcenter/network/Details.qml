@@ -16,6 +16,31 @@ Item {
     required property Session session
     readonly property var network: session.network.active
 
+    Component.onCompleted: {
+        if (network && network.active) {
+            Network.updateWirelessDeviceDetails();
+        }
+    }
+
+    onNetworkChanged: {
+        if (network && network.active) {
+            Network.updateWirelessDeviceDetails();
+        } else {
+            Network.wirelessDeviceDetails = null;
+        }
+    }
+
+    Connections {
+        target: Network
+        function onActiveChanged() {
+            if (root.network && root.network.active && Network.active && Network.active.ssid === root.network.ssid) {
+                Network.updateWirelessDeviceDetails();
+            } else if (!root.network || !root.network.active) {
+                Network.wirelessDeviceDetails = null;
+            }
+        }
+    }
+
     StyledFlickable {
         anchors.fill: parent
 
@@ -195,6 +220,82 @@ Item {
                         text: root.network ? (root.network.isSecure ? root.network.security : qsTr("Open")) : qsTr("N/A")
                         color: Colours.palette.m3outline
                         font.pointSize: Appearance.font.size.small
+                    }
+                }
+            }
+
+            StyledText {
+                Layout.topMargin: Appearance.spacing.large
+                text: qsTr("Connection information")
+                font.pointSize: Appearance.font.size.larger
+                font.weight: 500
+            }
+
+            StyledText {
+                text: qsTr("Network connection details")
+                color: Colours.palette.m3outline
+            }
+
+            StyledRect {
+                Layout.fillWidth: true
+                implicitHeight: connectionInfo.implicitHeight + Appearance.padding.large * 2
+
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                ColumnLayout {
+                    id: connectionInfo
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+
+                    spacing: Appearance.spacing.small / 2
+
+                    StyledText {
+                        text: qsTr("IP Address")
+                    }
+
+                    StyledText {
+                        text: Network.wirelessDeviceDetails?.ipAddress || qsTr("Not available")
+                        color: Colours.palette.m3outline
+                        font.pointSize: Appearance.font.size.small
+                    }
+
+                    StyledText {
+                        Layout.topMargin: Appearance.spacing.normal
+                        text: qsTr("Subnet Mask")
+                    }
+
+                    StyledText {
+                        text: Network.wirelessDeviceDetails?.subnet || qsTr("Not available")
+                        color: Colours.palette.m3outline
+                        font.pointSize: Appearance.font.size.small
+                    }
+
+                    StyledText {
+                        Layout.topMargin: Appearance.spacing.normal
+                        text: qsTr("Gateway")
+                    }
+
+                    StyledText {
+                        text: Network.wirelessDeviceDetails?.gateway || qsTr("Not available")
+                        color: Colours.palette.m3outline
+                        font.pointSize: Appearance.font.size.small
+                    }
+
+                    StyledText {
+                        Layout.topMargin: Appearance.spacing.normal
+                        text: qsTr("DNS Servers")
+                    }
+
+                    StyledText {
+                        text: (Network.wirelessDeviceDetails && Network.wirelessDeviceDetails.dns && Network.wirelessDeviceDetails.dns.length > 0) ? Network.wirelessDeviceDetails.dns.join(", ") : qsTr("Not available")
+                        color: Colours.palette.m3outline
+                        font.pointSize: Appearance.font.size.small
+                        wrapMode: Text.Wrap
+                        Layout.maximumWidth: parent.width
                     }
                 }
             }

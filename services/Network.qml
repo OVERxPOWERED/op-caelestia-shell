@@ -25,6 +25,7 @@ Singleton {
     property string ethernetDebugInfo: ""
     property bool ethernetProcessRunning: false
     property var ethernetDeviceDetails: null
+    property var wirelessDeviceDetails: null
 
     function enableWifi(enabled: bool): void {
         const cmd = enabled ? "on" : "off";
@@ -109,6 +110,11 @@ Singleton {
         } else {
             ethernetDeviceDetails = null;
         }
+    }
+
+    function updateWirelessDeviceDetails(): void {
+        // Find the wireless interface by looking for wifi devices
+        findWirelessInterfaceProc.exec(["nmcli", "device", "status"]);
     }
 
     function cidrToSubnetMask(cidr: string): string {
@@ -587,7 +593,7 @@ Singleton {
                 };
 
                 for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i];
+const line = lines[i];
                     const parts = line.split(":");
                     if (parts.length >= 2) {
                         const key = parts[0].trim();
@@ -621,6 +627,112 @@ Singleton {
         onExited: {
             if (exitCode !== 0) {
                 root.ethernetDeviceDetails = null;
+            }
+        }
+    }
+
+    Process {
+        id: findWirelessInterfaceProc
+
+        environment: ({
+                LANG: "C.UTF-8",
+                LC_ALL: "C.UTF-8"
+            })
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const output = text.trim();
+                if (!output || output.length === 0) {
+                    root.wirelessDeviceDetails = null;
+                    return;
+                }
+
+                // Find the connected wifi interface from device status
+                const lines = output.split("\n");
+                let wifiInterface = "";
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    const parts = line.split(/\s+/);
+                    // Format: DEVICE TYPE STATE CONNECTION
+                    // Look for wifi devices that are connected
+                    if (parts.length >= 3 && parts[1] === "wifi" && parts[2] === "connected") {
+                        wifiInterface = parts[0];
+                        break;
+                    }
+                }
+
+                if (wifiInterface && wifiInterface.length > 0) {
+                    getWirelessDetailsProc.exec(["nmcli", "device", "show", wifiInterface]);
+                } else {
+                    root.wirelessDeviceDetails = null;
+                }
+            }
+        }
+        onExited: {
+            if (exitCode !== 0) {
+                root.wirelessDeviceDetails = null;
+            }
+        }
+    }
+
+    Process {
+        id: getWirelessDetailsProc
+
+        environment: ({
+                LANG: "C.UTF-8",
+                LC_ALL: "C.UTF-8"
+            })
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const output = text.trim();
+                if (!output || output.length === 0) {
+                    root.wirelessDeviceDetails = null;
+                    return;
+                }
+
+                const lines = output.split("\n");
+                const details = {
+                    ipAddress: "",
+                    gateway: "",
+                    dns: [],
+                    subnet: "",
+                    macAddress: "",
+                    speed: ""
+                };
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    const parts = line.split(":");
+                    if (parts.length >= 2) {
+                        const key = parts[0].trim();
+                        const value = parts.slice(1).join(":").trim();
+
+                        if (key.startsWith("IP4.ADDRESS")) {
+                            // Extract IP and subnet from format like "10.13.1.45/24"
+                            const ipParts = value.split("/");
+                            details.ipAddress = ipParts[0] || "";
+                            if (ipParts[1]) {
+                                // Convert CIDR notation to subnet mask
+                                details.subnet = root.cidrToSubnetMask(ipParts[1]);
+                            } else {
+                                details.subnet = "";
+                            }
+                        } else if (key === "IP4.GATEWAY") {
+                            details.gateway = value;
+                        } else if (key.startsWith("IP4.DNS")) {
+                            details.dns.push(value);
+                        } else if (key === "GENERAL.HWADDR") {
+                            details.macAddress = value;
+                        }
+                    }
+                }
+
+                root.wirelessDeviceDetails = details;
+            }
+        }
+        onExited: {
+            if (exitCode !== 0) {
+                root.wirelessDeviceDetails = null;
             }
         }
     }

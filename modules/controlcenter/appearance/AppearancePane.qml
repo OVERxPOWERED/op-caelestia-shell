@@ -21,6 +21,19 @@ RowLayout {
 
     required property Session session
 
+    // Appearance settings
+    property real animDurationsScale: 1
+    property string fontFamilyMaterial: "Material Symbols Rounded"
+    property string fontFamilyMono: "CaskaydiaCove NF"
+    property string fontFamilySans: "Rubik"
+    property real fontSizeScale: 1
+    property real paddingScale: 1
+    property real roundingScale: 1
+    property real spacingScale: 1
+    property bool transparencyEnabled: false
+    property real transparencyBase: 0.85
+    property real transparencyLayers: 0.4
+
     // Background settings
     property bool desktopClockEnabled: true
     property bool backgroundEnabled: true
@@ -54,6 +67,37 @@ RowLayout {
     }
 
     function updateFromConfig(config) {
+        // Update appearance settings
+        if (config.appearance) {
+            if (config.appearance.anim && config.appearance.anim.durations) {
+                root.animDurationsScale = config.appearance.anim.durations.scale ?? 1;
+            }
+            if (config.appearance.font) {
+                if (config.appearance.font.family) {
+                    root.fontFamilyMaterial = config.appearance.font.family.material ?? "Material Symbols Rounded";
+                    root.fontFamilyMono = config.appearance.font.family.mono ?? "CaskaydiaCove NF";
+                    root.fontFamilySans = config.appearance.font.family.sans ?? "Rubik";
+                }
+                if (config.appearance.font.size) {
+                    root.fontSizeScale = config.appearance.font.size.scale ?? 1;
+                }
+            }
+            if (config.appearance.padding) {
+                root.paddingScale = config.appearance.padding.scale ?? 1;
+            }
+            if (config.appearance.rounding) {
+                root.roundingScale = config.appearance.rounding.scale ?? 1;
+            }
+            if (config.appearance.spacing) {
+                root.spacingScale = config.appearance.spacing.scale ?? 1;
+            }
+            if (config.appearance.transparency) {
+                root.transparencyEnabled = config.appearance.transparency.enabled ?? false;
+                root.transparencyBase = config.appearance.transparency.base ?? 0.85;
+                root.transparencyLayers = config.appearance.transparency.layers ?? 0.4;
+            }
+        }
+
         // Update background settings
         if (config.background) {
             root.desktopClockEnabled = config.background.desktopClock?.enabled !== undefined ? config.background.desktopClock.enabled : false;
@@ -85,6 +129,10 @@ RowLayout {
         if (exceptSection !== themeModeSection) themeModeSection.expanded = false;
         if (exceptSection !== colorVariantSection) colorVariantSection.expanded = false;
         if (exceptSection !== colorSchemeSection) colorSchemeSection.expanded = false;
+        if (exceptSection !== animationsSection) animationsSection.expanded = false;
+        if (exceptSection !== fontsSection) fontsSection.expanded = false;
+        if (exceptSection !== scalesSection) scalesSection.expanded = false;
+        if (exceptSection !== transparencySection) transparencySection.expanded = false;
         if (exceptSection !== backgroundSection) backgroundSection.expanded = false;
     }
 
@@ -96,6 +144,37 @@ RowLayout {
 
         try {
             const config = JSON.parse(configFile.text());
+
+            // Ensure appearance object exists
+            if (!config.appearance) config.appearance = {};
+
+            // Update animations
+            if (!config.appearance.anim) config.appearance.anim = {};
+            if (!config.appearance.anim.durations) config.appearance.anim.durations = {};
+            config.appearance.anim.durations.scale = root.animDurationsScale;
+
+            // Update fonts
+            if (!config.appearance.font) config.appearance.font = {};
+            if (!config.appearance.font.family) config.appearance.font.family = {};
+            config.appearance.font.family.material = root.fontFamilyMaterial;
+            config.appearance.font.family.mono = root.fontFamilyMono;
+            config.appearance.font.family.sans = root.fontFamilySans;
+            if (!config.appearance.font.size) config.appearance.font.size = {};
+            config.appearance.font.size.scale = root.fontSizeScale;
+
+            // Update scales
+            if (!config.appearance.padding) config.appearance.padding = {};
+            config.appearance.padding.scale = root.paddingScale;
+            if (!config.appearance.rounding) config.appearance.rounding = {};
+            config.appearance.rounding.scale = root.roundingScale;
+            if (!config.appearance.spacing) config.appearance.spacing = {};
+            config.appearance.spacing.scale = root.spacingScale;
+
+            // Update transparency
+            if (!config.appearance.transparency) config.appearance.transparency = {};
+            config.appearance.transparency.enabled = root.transparencyEnabled;
+            config.appearance.transparency.base = root.transparencyBase;
+            config.appearance.transparency.layers = root.transparencyLayers;
 
             // Ensure background object exists
             if (!config.background) config.background = {};
@@ -599,6 +678,748 @@ RowLayout {
                     }
 
                     implicitHeight: schemeRow.implicitHeight + Appearance.padding.normal * 2
+                }
+            }
+
+            Item {
+                id: animationsSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: animationsSectionHeader.implicitHeight
+                property bool expanded: false
+
+                ColumnLayout {
+                    id: animationsSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Animations")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: animationsSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = animationsSection.expanded;
+                            root.collapseAllSections(animationsSection);
+                            animationsSection.expanded = !wasExpanded;
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: animationsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: animationsSection.expanded ? animDurationsScaleRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: animDurationsScaleRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Animation duration scale")
+                    }
+
+                    CustomSpinBox {
+                        id: animDurationsScaleSpinBox
+                        min: 0.1
+                        max: 5
+                        value: root.animDurationsScale
+                        onValueModified: value => {
+                            root.animDurationsScale = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            Item {
+                id: fontsSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: fontsSectionHeader.implicitHeight
+                property bool expanded: false
+
+                ColumnLayout {
+                    id: fontsSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Fonts")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: fontsSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = fontsSection.expanded;
+                            root.collapseAllSections(fontsSection);
+                            fontsSection.expanded = !wasExpanded;
+                        }
+                    }
+                }
+            }
+
+            StyledText {
+                visible: fontsSection.expanded
+                Layout.topMargin: Appearance.spacing.normal
+                text: qsTr("Material font family")
+                font.pointSize: Appearance.font.size.larger
+                font.weight: 500
+            }
+
+            StyledListView {
+                visible: fontsSection.expanded
+                Layout.fillWidth: true
+                implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
+                Layout.topMargin: 0
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                model: Qt.fontFamilies()
+                spacing: Appearance.spacing.small / 2
+                clip: true
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: parent
+                }
+
+                delegate: StyledRect {
+                    required property string modelData
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    readonly property bool isCurrent: modelData === root.fontFamilyMaterial
+                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                    radius: Appearance.rounding.normal
+                    border.width: isCurrent ? 1 : 0
+                    border.color: Colours.palette.m3primary
+
+                    StateLayer {
+                        function onClicked(): void {
+                            root.fontFamilyMaterial = modelData;
+                            root.saveConfig();
+                        }
+                    }
+
+                    RowLayout {
+                        id: fontFamilyMaterialRow
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: Appearance.padding.normal
+
+                        spacing: Appearance.spacing.normal
+
+                        StyledText {
+                            text: modelData
+                            font.pointSize: Appearance.font.size.normal
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        Loader {
+                            active: isCurrent
+                            asynchronous: true
+
+                            sourceComponent: MaterialIcon {
+                                text: "check"
+                                color: Colours.palette.m3onSurfaceVariant
+                                font.pointSize: Appearance.font.size.large
+                            }
+                        }
+                    }
+
+                    implicitHeight: fontFamilyMaterialRow.implicitHeight + Appearance.padding.normal * 2
+                }
+            }
+
+            StyledText {
+                visible: fontsSection.expanded
+                Layout.topMargin: Appearance.spacing.normal
+                text: qsTr("Monospace font family")
+                font.pointSize: Appearance.font.size.larger
+                font.weight: 500
+            }
+
+            StyledListView {
+                visible: fontsSection.expanded
+                Layout.fillWidth: true
+                implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
+                Layout.topMargin: 0
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                model: Qt.fontFamilies()
+                spacing: Appearance.spacing.small / 2
+                clip: true
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: parent
+                }
+
+                delegate: StyledRect {
+                    required property string modelData
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    readonly property bool isCurrent: modelData === root.fontFamilyMono
+                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                    radius: Appearance.rounding.normal
+                    border.width: isCurrent ? 1 : 0
+                    border.color: Colours.palette.m3primary
+
+                    StateLayer {
+                        function onClicked(): void {
+                            root.fontFamilyMono = modelData;
+                            root.saveConfig();
+                        }
+                    }
+
+                    RowLayout {
+                        id: fontFamilyMonoRow
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: Appearance.padding.normal
+
+                        spacing: Appearance.spacing.normal
+
+                        StyledText {
+                            text: modelData
+                            font.pointSize: Appearance.font.size.normal
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        Loader {
+                            active: isCurrent
+                            asynchronous: true
+
+                            sourceComponent: MaterialIcon {
+                                text: "check"
+                                color: Colours.palette.m3onSurfaceVariant
+                                font.pointSize: Appearance.font.size.large
+                            }
+                        }
+                    }
+
+                    implicitHeight: fontFamilyMonoRow.implicitHeight + Appearance.padding.normal * 2
+                }
+            }
+
+            StyledText {
+                visible: fontsSection.expanded
+                Layout.topMargin: Appearance.spacing.normal
+                text: qsTr("Sans-serif font family")
+                font.pointSize: Appearance.font.size.larger
+                font.weight: 500
+            }
+
+            StyledListView {
+                visible: fontsSection.expanded
+                Layout.fillWidth: true
+                implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
+                Layout.topMargin: 0
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                model: Qt.fontFamilies()
+                spacing: Appearance.spacing.small / 2
+                clip: true
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: parent
+                }
+
+                delegate: StyledRect {
+                    required property string modelData
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    readonly property bool isCurrent: modelData === root.fontFamilySans
+                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                    radius: Appearance.rounding.normal
+                    border.width: isCurrent ? 1 : 0
+                    border.color: Colours.palette.m3primary
+
+                    StateLayer {
+                        function onClicked(): void {
+                            root.fontFamilySans = modelData;
+                            root.saveConfig();
+                        }
+                    }
+
+                    RowLayout {
+                        id: fontFamilySansRow
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: Appearance.padding.normal
+
+                        spacing: Appearance.spacing.normal
+
+                        StyledText {
+                            text: modelData
+                            font.pointSize: Appearance.font.size.normal
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        Loader {
+                            active: isCurrent
+                            asynchronous: true
+
+                            sourceComponent: MaterialIcon {
+                                text: "check"
+                                color: Colours.palette.m3onSurfaceVariant
+                                font.pointSize: Appearance.font.size.large
+                            }
+                        }
+                    }
+
+                    implicitHeight: fontFamilySansRow.implicitHeight + Appearance.padding.normal * 2
+                }
+            }
+
+            StyledRect {
+                visible: fontsSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: fontsSection.expanded ? fontSizeScaleRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: fontSizeScaleRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Font size scale")
+                    }
+
+                    CustomSpinBox {
+                        id: fontSizeScaleSpinBox
+                        min: 0.1
+                        max: 5
+                        value: root.fontSizeScale
+                        onValueModified: value => {
+                            root.fontSizeScale = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            Item {
+                id: scalesSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: scalesSectionHeader.implicitHeight
+                property bool expanded: false
+
+                ColumnLayout {
+                    id: scalesSectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Scales")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: scalesSection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = scalesSection.expanded;
+                            root.collapseAllSections(scalesSection);
+                            scalesSection.expanded = !wasExpanded;
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: scalesSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: scalesSection.expanded ? paddingScaleRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: paddingScaleRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Padding scale")
+                    }
+
+                    CustomSpinBox {
+                        id: paddingScaleSpinBox
+                        min: 0.1
+                        max: 5
+                        value: root.paddingScale
+                        onValueModified: value => {
+                            root.paddingScale = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: scalesSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: scalesSection.expanded ? roundingScaleRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: roundingScaleRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Rounding scale")
+                    }
+
+                    CustomSpinBox {
+                        id: roundingScaleSpinBox
+                        min: 0.1
+                        max: 5
+                        value: root.roundingScale
+                        onValueModified: value => {
+                            root.roundingScale = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: scalesSection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: scalesSection.expanded ? spacingScaleRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: spacingScaleRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Spacing scale")
+                    }
+
+                    CustomSpinBox {
+                        id: spacingScaleSpinBox
+                        min: 0.1
+                        max: 5
+                        value: root.spacingScale
+                        onValueModified: value => {
+                            root.spacingScale = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            Item {
+                id: transparencySection
+                Layout.fillWidth: true
+                Layout.preferredHeight: transparencySectionHeader.implicitHeight
+                property bool expanded: false
+
+                ColumnLayout {
+                    id: transparencySectionHeader
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        StyledText {
+                            Layout.topMargin: Appearance.spacing.large
+                            text: qsTr("Transparency")
+                            font.pointSize: Appearance.font.size.larger
+                            font.weight: 500
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        MaterialIcon {
+                            text: "expand_more"
+                            rotation: transparencySection.expanded ? 180 : 0
+                            color: Colours.palette.m3onSurface
+                            Behavior on rotation {
+                                Anim {}
+                            }
+                        }
+                    }
+
+                    StateLayer {
+                        anchors.fill: parent
+                        anchors.leftMargin: -Appearance.padding.normal
+                        anchors.rightMargin: -Appearance.padding.normal
+                        function onClicked(): void {
+                            const wasExpanded = transparencySection.expanded;
+                            root.collapseAllSections(transparencySection);
+                            transparencySection.expanded = !wasExpanded;
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: transparencySection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: transparencySection.expanded ? transparencyEnabledRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: transparencyEnabledRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Transparency enabled")
+                    }
+
+                    StyledSwitch {
+                        id: transparencyEnabledSwitch
+                        checked: root.transparencyEnabled
+                        onToggled: {
+                            root.transparencyEnabled = checked;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: transparencySection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: transparencySection.expanded ? transparencyBaseRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: transparencyBaseRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Transparency base")
+                    }
+
+                    CustomSpinBox {
+                        id: transparencyBaseSpinBox
+                        min: 0
+                        max: 1
+                        value: root.transparencyBase
+                        onValueModified: value => {
+                            root.transparencyBase = value;
+                            root.saveConfig();
+                        }
+                    }
+                }
+            }
+
+            StyledRect {
+                visible: transparencySection.expanded
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.small / 2
+                implicitHeight: transparencySection.expanded ? transparencyLayersRow.implicitHeight + Appearance.padding.large * 2 : 0
+                radius: Appearance.rounding.normal
+                color: Colours.tPalette.m3surfaceContainer
+
+                Behavior on implicitHeight {
+                    Anim {}
+                }
+
+                RowLayout {
+                    id: transparencyLayersRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Appearance.padding.large
+                    spacing: Appearance.spacing.normal
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        text: qsTr("Transparency layers")
+                    }
+
+                    CustomSpinBox {
+                        id: transparencyLayersSpinBox
+                        min: 0
+                        max: 1
+                        value: root.transparencyLayers
+                        onValueModified: value => {
+                            root.transparencyLayers = value;
+                            root.saveConfig();
+                        }
+                    }
                 }
             }
 

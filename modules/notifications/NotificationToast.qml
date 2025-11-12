@@ -85,8 +85,6 @@ StyledRect {
                     modelData: root.modelData
                     hasImage: root.hasImage
                     hasAppIcon: root.hasAppIcon
-                    isCritical: root.modelData.urgency === NotificationUrgency.Critical
-                    isLow: root.modelData.urgency === NotificationUrgency.Low
                 }
             }
         }

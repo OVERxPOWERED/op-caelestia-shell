@@ -179,6 +179,41 @@ Singleton {
         property bool hasActionIcons
         property list<var> actions
 
+        readonly property bool isCritical: urgency === NotificationUrgency.Critical
+        readonly property bool isLow: urgency === NotificationUrgency.Low
+
+        function getBackgroundColor(): color {
+            if (isCritical) return Colours.palette.m3secondaryContainer;
+            return Colours.tPalette.m3surfaceContainer;
+        }
+
+        function getBadgeBackgroundColor(): color {
+            if (isCritical) return Colours.palette.m3error;
+            if (isLow) return Colours.layer(Colours.palette.m3surfaceContainerHighest, 2);
+            return Colours.palette.m3secondaryContainer;
+        }
+
+        function getIconColor(): color {
+            if (isCritical) return Colours.palette.m3onError;
+            if (isLow) return Colours.palette.m3onSurface;
+            return Colours.palette.m3onSecondaryContainer;
+        }
+
+        function getStateLayerColor(): color {
+            if (isCritical) return Colours.palette.m3onSecondaryContainer;
+            return Colours.palette.m3onSurface;
+        }
+
+        function getActionBackgroundColor(): color {
+            if (isCritical) return Colours.palette.m3secondary;
+            return Colours.layer(Colours.palette.m3surfaceContainerHigh, 2);
+        }
+
+        function getActionTextColor(): color {
+            if (isCritical) return Colours.palette.m3onSecondary;
+            return Colours.palette.m3onSurfaceVariant;
+        }
+
         readonly property Timer timer: Timer {
             id: toastTimer
             

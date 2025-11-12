@@ -17,8 +17,6 @@ StyledRect {
     required property Notifs.Notif modelData
     readonly property bool hasImage: modelData.image.length > 0
     readonly property bool hasAppIcon: modelData.appIcon.length > 0
-    readonly property bool isCritical: modelData.urgency === NotificationUrgency.Critical
-    readonly property bool isLow: modelData.urgency === NotificationUrgency.Low
     readonly property int nonAnimHeight: {
         const baseHeight = summary.implicitHeight + inner.anchors.margins * 2;
         return root.expanded 
@@ -28,9 +26,7 @@ StyledRect {
     property bool expanded
     property bool disableSlideIn: false
 
-    color: root.isCritical 
-        ? Colours.palette.m3secondaryContainer 
-        : Colours.tPalette.m3surfaceContainer
+    color: modelData.getBackgroundColor()
     radius: Appearance.rounding.normal
     implicitWidth: Config.notifs.sizes.width
     implicitHeight: inner.implicitHeight
@@ -159,8 +155,6 @@ StyledRect {
                     modelData: root.modelData
                     hasImage: root.hasImage
                     hasAppIcon: root.hasAppIcon
-                    isCritical: root.isCritical
-                    isLow: root.isLow
                 }
             }
 
@@ -302,9 +296,7 @@ StyledRect {
 
                 StateLayer {
                     radius: Appearance.rounding.full
-                    color: root.isCritical 
-                        ? Colours.palette.m3onSecondaryContainer 
-                        : Colours.palette.m3onSurface
+                    color: root.modelData.getStateLayerColor()
 
                     function onClicked() {
                         root.expanded = !root.expanded;
@@ -424,12 +416,8 @@ StyledRect {
 
         required property var modelData
 
-        readonly property bool isCritical: root.isCritical
-
         radius: Appearance.rounding.full
-        color: isCritical 
-            ? Colours.palette.m3secondary 
-            : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
+        color: root.modelData.getActionBackgroundColor()
 
         Layout.preferredWidth: actionText.width + Appearance.padding.normal * 2
         Layout.preferredHeight: actionText.height + Appearance.padding.small * 2
@@ -438,9 +426,7 @@ StyledRect {
 
         StateLayer {
             radius: Appearance.rounding.full
-            color: isCritical 
-                ? Colours.palette.m3onSecondary 
-                : Colours.palette.m3onSurface
+            color: root.modelData.getStateLayerColor()
 
             function onClicked(): void {
                 action.modelData.invoke();
@@ -452,9 +438,7 @@ StyledRect {
 
             anchors.centerIn: parent
             text: actionTextMetrics.elidedText
-            color: isCritical 
-                ? Colours.palette.m3onSecondary 
-                : Colours.palette.m3onSurfaceVariant
+            color: root.modelData.getActionTextColor()
             font.pointSize: Appearance.font.size.small
         }
 

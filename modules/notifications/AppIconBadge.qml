@@ -13,15 +13,9 @@ StyledRect {
     required property Notifs.Notif modelData
     required property bool hasImage
     required property bool hasAppIcon
-    required property bool isCritical
-    required property bool isLow
 
     radius: Appearance.rounding.full
-    color: {
-        if (root.isCritical) return Colours.palette.m3error;
-        if (root.isLow) return Colours.layer(Colours.palette.m3surfaceContainerHighest, 2);
-        return Colours.palette.m3secondaryContainer;
-    }
+    color: modelData.getBadgeBackgroundColor()
     implicitWidth: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
     implicitHeight: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
 
@@ -40,11 +34,7 @@ StyledRect {
         sourceComponent: ColouredIcon {
             anchors.fill: parent
             source: Quickshell.iconPath(root.modelData.appIcon)
-            colour: {
-                if (root.isCritical) return Colours.palette.m3onError;
-                if (root.isLow) return Colours.palette.m3onSurface;
-                return Colours.palette.m3onSecondaryContainer;
-            }
+            colour: root.modelData.getIconColor()
             layer.enabled: root.modelData.appIcon.endsWith("symbolic")
         }
     }
@@ -59,12 +49,7 @@ StyledRect {
 
         sourceComponent: MaterialIcon {
             text: Icons.getNotifIcon(root.modelData.summary, root.modelData.urgency)
-
-            color: {
-                if (root.isCritical) return Colours.palette.m3onError;
-                if (root.isLow) return Colours.palette.m3onSurface;
-                return Colours.palette.m3onSecondaryContainer;
-            }
+            color: root.modelData.getIconColor()
             font.pointSize: Appearance.font.size.large
         }
     }

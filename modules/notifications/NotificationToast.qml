@@ -81,44 +81,12 @@ StyledRect {
                 anchors.right: root.hasImage ? parent.right : undefined
                 anchors.bottom: root.hasImage ? parent.bottom : undefined
 
-                sourceComponent: StyledRect {
-                    radius: Appearance.rounding.full
-                    color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.modelData.urgency === NotificationUrgency.Low ? Colours.layer(Colours.palette.m3surfaceContainerHighest, 2) : Colours.palette.m3secondaryContainer
-                    implicitWidth: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
-                    implicitHeight: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
-
-                    Loader {
-                        id: appIcon
-
-                        active: root.hasAppIcon
-                        asynchronous: true
-
-                        anchors.centerIn: parent
-
-                        width: Math.round(parent.width * 0.6)
-                        height: Math.round(parent.width * 0.6)
-
-                        sourceComponent: ColouredIcon {
-                            anchors.fill: parent
-                            source: Quickshell.iconPath(root.modelData.appIcon)
-                            colour: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.modelData.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                            layer.enabled: root.modelData.appIcon.endsWith("symbolic")
-                        }
-                    }
-
-                    Loader {
-                        active: !root.hasAppIcon
-                        asynchronous: true
-                        anchors.centerIn: parent
-                        anchors.horizontalCenterOffset: -Appearance.font.size.large * 0.02
-                        anchors.verticalCenterOffset: Appearance.font.size.large * 0.02
-
-                        sourceComponent: MaterialIcon {
-                            text: Icons.getNotifIcon(root.modelData.summary, root.modelData.urgency)
-                            color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.modelData.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                            font.pointSize: Appearance.font.size.large
-                        }
-                    }
+                sourceComponent: AppIconBadge {
+                    modelData: root.modelData
+                    hasImage: root.hasImage
+                    hasAppIcon: root.hasAppIcon
+                    isCritical: root.modelData.urgency === NotificationUrgency.Critical
+                    isLow: root.modelData.urgency === NotificationUrgency.Low
                 }
             }
         }

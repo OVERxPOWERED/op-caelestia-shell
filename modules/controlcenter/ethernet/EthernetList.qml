@@ -34,7 +34,7 @@ ColumnLayout {
             icon: "settings"
             accent: "Primary"
 
-            function onClicked(): void {
+            onClicked: {
                 if (root.session.ethernet.active)
                     root.session.ethernet.active = null;
                 else {
@@ -164,81 +164,6 @@ ColumnLayout {
             }
 
             implicitHeight: rowLayout.implicitHeight + Appearance.padding.normal * 2
-        }
-    }
-
-    component ToggleButton: StyledRect {
-        id: toggleBtn
-
-        required property bool toggled
-        property string icon
-        property string label
-        property string accent: "Secondary"
-
-        function onClicked(): void {
-        }
-
-        Layout.preferredWidth: implicitWidth + (toggleStateLayer.pressed ? Appearance.padding.normal * 2 : toggled ? Appearance.padding.small * 2 : 0)
-        implicitWidth: toggleBtnInner.implicitWidth + Appearance.padding.large * 2
-        implicitHeight: toggleBtnIcon.implicitHeight + Appearance.padding.normal * 2
-
-        radius: toggled || toggleStateLayer.pressed ? Appearance.rounding.small : Math.min(width, height) / 2 * Math.min(1, Appearance.rounding.scale)
-        color: toggled ? Colours.palette[`m3${accent.toLowerCase()}`] : Colours.palette[`m3${accent.toLowerCase()}Container`]
-
-        StateLayer {
-            id: toggleStateLayer
-
-            color: toggleBtn.toggled ? Colours.palette[`m3on${toggleBtn.accent}`] : Colours.palette[`m3on${toggleBtn.accent}Container`]
-
-            function onClicked(): void {
-                toggleBtn.onClicked();
-            }
-        }
-
-        RowLayout {
-            id: toggleBtnInner
-
-            anchors.centerIn: parent
-            spacing: Appearance.spacing.normal
-
-            MaterialIcon {
-                id: toggleBtnIcon
-
-                visible: !!text
-                fill: toggleBtn.toggled ? 1 : 0
-                text: toggleBtn.icon
-                color: toggleBtn.toggled ? Colours.palette[`m3on${toggleBtn.accent}`] : Colours.palette[`m3on${toggleBtn.accent}Container`]
-                font.pointSize: Appearance.font.size.large
-
-                Behavior on fill {
-                    Anim {}
-                }
-            }
-
-            Loader {
-                asynchronous: true
-                active: !!toggleBtn.label
-                visible: active
-
-                sourceComponent: StyledText {
-                    text: toggleBtn.label
-                    color: toggleBtn.toggled ? Colours.palette[`m3on${toggleBtn.accent}`] : Colours.palette[`m3on${toggleBtn.accent}Container`]
-                }
-            }
-        }
-
-        Behavior on radius {
-            Anim {
-                duration: Appearance.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
-            }
-        }
-
-        Behavior on Layout.preferredWidth {
-            Anim {
-                duration: Appearance.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
-            }
         }
     }
 }

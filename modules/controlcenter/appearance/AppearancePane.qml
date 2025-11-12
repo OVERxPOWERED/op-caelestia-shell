@@ -255,1588 +255,770 @@ RowLayout {
                 }
             }
 
-            Item {
+            CollapsibleSection {
                 id: themeModeSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: themeModeSectionHeader.implicitHeight
-                property bool expanded: false
+                title: qsTr("Theme mode")
+                description: qsTr("Light or dark theme")
+                onToggleRequested: {
+                    root.collapseAllSections(themeModeSection);
+                }
 
-                ColumnLayout {
-                    id: themeModeSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
+                StyledRect {
+                    Layout.fillWidth: true
+                    implicitHeight: modeToggle.implicitHeight + Appearance.padding.large * 2
+
+                    radius: Appearance.rounding.normal
+                    color: Colours.tPalette.m3surfaceContainer
+
+                    Behavior on implicitHeight {
+                        Anim {}
+                    }
 
                     RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
+                        id: modeToggle
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: Appearance.padding.large
+
+                        spacing: Appearance.spacing.normal
 
                         StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Theme mode")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
                             Layout.fillWidth: true
+                            text: qsTr("Dark mode")
                         }
 
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: themeModeSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
+                        StyledSwitch {
+                            checked: !Colours.currentLight
+                            onToggled: {
+                                Colours.setMode(checked ? "dark" : "light");
                             }
                         }
                     }
-
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = themeModeSection.expanded;
-                            root.collapseAllSections(themeModeSection);
-                            themeModeSection.expanded = !wasExpanded;
-                        }
-                    }
-
-                    StyledText {
-                        visible: themeModeSection.expanded
-                        text: qsTr("Light or dark theme")
-                        color: Colours.palette.m3outline
-                        Layout.fillWidth: true
-                    }
                 }
             }
 
-            StyledRect {
-                visible: themeModeSection.expanded
-                Layout.fillWidth: true
-                implicitHeight: themeModeSection.expanded ? modeToggle.implicitHeight + Appearance.padding.large * 2 : 0
-
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: modeToggle
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Dark mode")
-                    }
-
-                    StyledSwitch {
-                        checked: !Colours.currentLight
-                        onToggled: {
-                            Colours.setMode(checked ? "dark" : "light");
-                        }
-                    }
-                }
-            }
-
-            Item {
+            CollapsibleSection {
                 id: colorVariantSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: colorVariantSectionHeader.implicitHeight
-                property bool expanded: false
-
-                ColumnLayout {
-                    id: colorVariantSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Color variant")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: colorVariantSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
-                            }
-                        }
-                    }
-
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = colorVariantSection.expanded;
-                            root.collapseAllSections(colorVariantSection);
-                            colorVariantSection.expanded = !wasExpanded;
-                        }
-                    }
-
-                    StyledText {
-                        visible: colorVariantSection.expanded
-                        text: qsTr("Material theme variant")
-                        color: Colours.palette.m3outline
-                        Layout.fillWidth: true
-                    }
-                }
-            }
-
-            StyledListView {
-                visible: colorVariantSection.expanded
-                Layout.fillWidth: true
-                implicitHeight: colorVariantSection.expanded ? Math.min(400, M3Variants.list.length * 60) : 0
-                Layout.topMargin: 0
-
-                Behavior on implicitHeight {
-                    Anim {}
+                title: qsTr("Color variant")
+                description: qsTr("Material theme variant")
+                onToggleRequested: {
+                    root.collapseAllSections(colorVariantSection);
                 }
 
-                model: M3Variants.list
-                spacing: Appearance.spacing.small / 2
-                clip: true
+                StyledListView {
+                    Layout.fillWidth: true
+                    implicitHeight: colorVariantSection.expanded ? Math.min(400, M3Variants.list.length * 60) : 0
 
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: parent
-                }
-
-                delegate: StyledRect {
-                    required property var modelData
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, modelData.variant === Schemes.currentVariant ? Colours.tPalette.m3surfaceContainer.a : 0)
-                    radius: Appearance.rounding.normal
-                    border.width: modelData.variant === Schemes.currentVariant ? 1 : 0
-                    border.color: Colours.palette.m3primary
-
-                    StateLayer {
-                        function onClicked(): void {
-                            const variant = modelData.variant;
-                            
-                            // Optimistic update - set immediately
-                            Schemes.currentVariant = variant;
-                            
-                            // Execute the command
-                            Quickshell.execDetached(["caelestia", "scheme", "set", "-v", variant]);
-                            
-                            // Reload after a delay to confirm
-                            Qt.callLater(() => {
-                                reloadTimer.restart();
-                            });
-                        }
-                    }
-                    
-                    Timer {
-                        id: reloadTimer
-                        interval: 300
-                        onTriggered: {
-                            Schemes.reload();
-                        }
+                    Behavior on implicitHeight {
+                        Anim {}
                     }
 
-                    RowLayout {
-                        id: variantRow
+                    model: M3Variants.list
+                    spacing: Appearance.spacing.small / 2
+                    clip: true
+
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: parent
+                    }
+
+                    delegate: StyledRect {
+                        required property var modelData
 
                         anchors.left: parent.left
                         anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.normal
 
-                        spacing: Appearance.spacing.normal
+                        color: Qt.alpha(Colours.tPalette.m3surfaceContainer, modelData.variant === Schemes.currentVariant ? Colours.tPalette.m3surfaceContainer.a : 0)
+                        radius: Appearance.rounding.normal
+                        border.width: modelData.variant === Schemes.currentVariant ? 1 : 0
+                        border.color: Colours.palette.m3primary
 
-                        MaterialIcon {
-                            text: modelData.icon
-                            font.pointSize: Appearance.font.size.large
-                            fill: modelData.variant === Schemes.currentVariant ? 1 : 0
-                        }
-
-                        StyledText {
-                            Layout.fillWidth: true
-                            text: modelData.name
-                            font.weight: modelData.variant === Schemes.currentVariant ? 500 : 400
-                        }
-
-                        MaterialIcon {
-                            visible: modelData.variant === Schemes.currentVariant
-                            text: "check"
-                            color: Colours.palette.m3primary
-                            font.pointSize: Appearance.font.size.large
-                        }
-                    }
-
-                    implicitHeight: variantRow.implicitHeight + Appearance.padding.normal * 2
-                }
-            }
-
-            Item {
-                id: colorSchemeSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: colorSchemeSectionHeader.implicitHeight
-                property bool expanded: false
-
-                ColumnLayout {
-                    id: colorSchemeSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Color scheme")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: colorSchemeSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
+                        StateLayer {
+                            function onClicked(): void {
+                                const variant = modelData.variant;
+                                
+                                // Optimistic update - set immediately
+                                Schemes.currentVariant = variant;
+                                
+                                // Execute the command
+                                Quickshell.execDetached(["caelestia", "scheme", "set", "-v", variant]);
+                                
+                                // Reload after a delay to confirm
+                                Qt.callLater(() => {
+                                    reloadTimer.restart();
+                                });
                             }
                         }
-                    }
-
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = colorSchemeSection.expanded;
-                            root.collapseAllSections(colorSchemeSection);
-                            colorSchemeSection.expanded = !wasExpanded;
+                        
+                        Timer {
+                            id: reloadTimer
+                            interval: 300
+                            onTriggered: {
+                                Schemes.reload();
+                            }
                         }
-                    }
 
-                    StyledText {
-                        visible: colorSchemeSection.expanded
-                        text: qsTr("Available color schemes")
-                        color: Colours.palette.m3outline
-                        Layout.fillWidth: true
-                    }
-                }
-            }
+                        RowLayout {
+                            id: variantRow
 
-            StyledListView {
-                visible: colorSchemeSection.expanded
-                Layout.fillWidth: true
-                implicitHeight: colorSchemeSection.expanded ? Math.min(400, Schemes.list.length * 80) : 0
-                Layout.topMargin: 0
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                model: Schemes.list
-                spacing: Appearance.spacing.small / 2
-                clip: true
-
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: parent
-                }
-
-                delegate: StyledRect {
-                    required property var modelData
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    readonly property string schemeKey: `${modelData.name} ${modelData.flavour}`
-                    readonly property bool isCurrent: schemeKey === Schemes.currentScheme
-
-                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                    radius: Appearance.rounding.normal
-                    border.width: isCurrent ? 1 : 0
-                    border.color: Colours.palette.m3primary
-
-                    StateLayer {
-                        function onClicked(): void {
-                            const name = modelData.name;
-                            const flavour = modelData.flavour;
-                            const schemeKey = `${name} ${flavour}`;
-                            
-                            // Optimistic update - set immediately
-                            Schemes.currentScheme = schemeKey;
-                            
-                            // Execute the command
-                            Quickshell.execDetached(["caelestia", "scheme", "set", "-n", name, "-f", flavour]);
-                            
-                            // Reload after a delay to confirm
-                            Qt.callLater(() => {
-                                reloadTimer.restart();
-                            });
-                        }
-                    }
-                    
-                    Timer {
-                        id: reloadTimer
-                        interval: 300
-                        onTriggered: {
-                            Schemes.reload();
-                        }
-                    }
-
-                    RowLayout {
-                        id: schemeRow
-
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.normal
-
-                        spacing: Appearance.spacing.normal
-
-                        StyledRect {
-                            id: preview
-
+                            anchors.left: parent.left
+                            anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
+                            anchors.margins: Appearance.padding.normal
 
-                            border.width: 1
-                            border.color: Qt.alpha(`#${modelData.colours?.outline}`, 0.5)
-
-                            color: `#${modelData.colours?.surface}`
-                            radius: Appearance.rounding.full
-                            implicitWidth: iconPlaceholder.implicitWidth
-                            implicitHeight: iconPlaceholder.implicitWidth
+                            spacing: Appearance.spacing.normal
 
                             MaterialIcon {
-                                id: iconPlaceholder
-                                visible: false
-                                text: "circle"
+                                text: modelData.icon
                                 font.pointSize: Appearance.font.size.large
+                                fill: modelData.variant === Schemes.currentVariant ? 1 : 0
                             }
 
-                            Item {
-                                anchors.top: parent.top
-                                anchors.bottom: parent.bottom
-                                anchors.right: parent.right
+                            StyledText {
+                                Layout.fillWidth: true
+                                text: modelData.name
+                                font.weight: modelData.variant === Schemes.currentVariant ? 500 : 400
+                            }
 
-                                implicitWidth: parent.implicitWidth / 2
-                                clip: true
+                            MaterialIcon {
+                                visible: modelData.variant === Schemes.currentVariant
+                                text: "check"
+                                color: Colours.palette.m3primary
+                                font.pointSize: Appearance.font.size.large
+                            }
+                        }
 
-                                StyledRect {
+                        implicitHeight: variantRow.implicitHeight + Appearance.padding.normal * 2
+                    }
+                }
+            }
+
+            CollapsibleSection {
+                id: colorSchemeSection
+                title: qsTr("Color scheme")
+                description: qsTr("Available color schemes")
+                onToggleRequested: {
+                    root.collapseAllSections(colorSchemeSection);
+                }
+
+                StyledListView {
+                    Layout.fillWidth: true
+                    implicitHeight: colorSchemeSection.expanded ? Math.min(400, Schemes.list.length * 80) : 0
+
+                    Behavior on implicitHeight {
+                        Anim {}
+                    }
+
+                    model: Schemes.list
+                    spacing: Appearance.spacing.small / 2
+                    clip: true
+
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: parent
+                    }
+
+                    delegate: StyledRect {
+                        required property var modelData
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+
+                        readonly property string schemeKey: `${modelData.name} ${modelData.flavour}`
+                        readonly property bool isCurrent: schemeKey === Schemes.currentScheme
+
+                        color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                        radius: Appearance.rounding.normal
+                        border.width: isCurrent ? 1 : 0
+                        border.color: Colours.palette.m3primary
+
+                        StateLayer {
+                            function onClicked(): void {
+                                const name = modelData.name;
+                                const flavour = modelData.flavour;
+                                const schemeKey = `${name} ${flavour}`;
+                                
+                                // Optimistic update - set immediately
+                                Schemes.currentScheme = schemeKey;
+                                
+                                // Execute the command
+                                Quickshell.execDetached(["caelestia", "scheme", "set", "-n", name, "-f", flavour]);
+                                
+                                // Reload after a delay to confirm
+                                Qt.callLater(() => {
+                                    reloadTimer.restart();
+                                });
+                            }
+                        }
+                        
+                        Timer {
+                            id: reloadTimer
+                            interval: 300
+                            onTriggered: {
+                                Schemes.reload();
+                            }
+                        }
+
+                        RowLayout {
+                            id: schemeRow
+
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.margins: Appearance.padding.normal
+
+                            spacing: Appearance.spacing.normal
+
+                            StyledRect {
+                                id: preview
+
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                border.width: 1
+                                border.color: Qt.alpha(`#${modelData.colours?.outline}`, 0.5)
+
+                                color: `#${modelData.colours?.surface}`
+                                radius: Appearance.rounding.full
+                                implicitWidth: iconPlaceholder.implicitWidth
+                                implicitHeight: iconPlaceholder.implicitWidth
+
+                                MaterialIcon {
+                                    id: iconPlaceholder
+                                    visible: false
+                                    text: "circle"
+                                    font.pointSize: Appearance.font.size.large
+                                }
+
+                                Item {
                                     anchors.top: parent.top
                                     anchors.bottom: parent.bottom
                                     anchors.right: parent.right
 
-                                    implicitWidth: preview.implicitWidth
-                                    color: `#${modelData.colours?.primary}`
-                                    radius: Appearance.rounding.full
+                                    implicitWidth: parent.implicitWidth / 2
+                                    clip: true
+
+                                    StyledRect {
+                                        anchors.top: parent.top
+                                        anchors.bottom: parent.bottom
+                                        anchors.right: parent.right
+
+                                        implicitWidth: preview.implicitWidth
+                                        color: `#${modelData.colours?.primary}`
+                                        radius: Appearance.rounding.full
+                                    }
+                                }
+                            }
+
+                            Column {
+                                Layout.fillWidth: true
+                                spacing: 0
+
+                                StyledText {
+                                    text: modelData.flavour ?? ""
+                                    font.pointSize: Appearance.font.size.normal
+                                }
+
+                                StyledText {
+                                    text: modelData.name ?? ""
+                                    font.pointSize: Appearance.font.size.small
+                                    color: Colours.palette.m3outline
+
+                                    elide: Text.ElideRight
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                }
+                            }
+
+                            Loader {
+                                active: isCurrent
+                                asynchronous: true
+
+                                sourceComponent: MaterialIcon {
+                                    text: "check"
+                                    color: Colours.palette.m3onSurfaceVariant
+                                    font.pointSize: Appearance.font.size.large
                                 }
                             }
                         }
 
-                        Column {
-                            Layout.fillWidth: true
-                            spacing: 0
+                        implicitHeight: schemeRow.implicitHeight + Appearance.padding.normal * 2
+                    }
+                }
+            }
+
+            CollapsibleSection {
+                id: animationsSection
+                title: qsTr("Animations")
+                onToggleRequested: {
+                    root.collapseAllSections(animationsSection);
+                }
+
+                SpinBoxRow {
+                    label: qsTr("Animation duration scale")
+                    min: 0.1
+                    max: 5
+                    value: root.animDurationsScale
+                    onValueModified: value => {
+                        root.animDurationsScale = value;
+                        root.saveConfig();
+                    }
+                }
+            }
+
+            CollapsibleSection {
+                id: fontsSection
+                title: qsTr("Fonts")
+                onToggleRequested: {
+                    root.collapseAllSections(fontsSection);
+                }
+
+                StyledText {
+                    Layout.topMargin: Appearance.spacing.normal
+                    text: qsTr("Material font family")
+                    font.pointSize: Appearance.font.size.larger
+                    font.weight: 500
+                }
+
+                StyledListView {
+                    Layout.fillWidth: true
+                    implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
+
+                    Behavior on implicitHeight {
+                        Anim {}
+                    }
+
+                    model: Qt.fontFamilies()
+                    spacing: Appearance.spacing.small / 2
+                    clip: true
+
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: parent
+                    }
+
+                    delegate: StyledRect {
+                        required property string modelData
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+
+                        readonly property bool isCurrent: modelData === root.fontFamilyMaterial
+                        color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                        radius: Appearance.rounding.normal
+                        border.width: isCurrent ? 1 : 0
+                        border.color: Colours.palette.m3primary
+
+                        StateLayer {
+                            function onClicked(): void {
+                                root.fontFamilyMaterial = modelData;
+                                root.saveConfig();
+                            }
+                        }
+
+                        RowLayout {
+                            id: fontFamilyMaterialRow
+
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.margins: Appearance.padding.normal
+
+                            spacing: Appearance.spacing.normal
 
                             StyledText {
-                                text: modelData.flavour ?? ""
+                                text: modelData
                                 font.pointSize: Appearance.font.size.normal
                             }
 
+                            Item {
+                                Layout.fillWidth: true
+                            }
+
+                            Loader {
+                                active: isCurrent
+                                asynchronous: true
+
+                                sourceComponent: MaterialIcon {
+                                    text: "check"
+                                    color: Colours.palette.m3onSurfaceVariant
+                                    font.pointSize: Appearance.font.size.large
+                                }
+                            }
+                        }
+
+                        implicitHeight: fontFamilyMaterialRow.implicitHeight + Appearance.padding.normal * 2
+                    }
+                }
+
+                StyledText {
+                    Layout.topMargin: Appearance.spacing.normal
+                    text: qsTr("Monospace font family")
+                    font.pointSize: Appearance.font.size.larger
+                    font.weight: 500
+                }
+
+                StyledListView {
+                    Layout.fillWidth: true
+                    implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
+
+                    Behavior on implicitHeight {
+                        Anim {}
+                    }
+
+                    model: Qt.fontFamilies()
+                    spacing: Appearance.spacing.small / 2
+                    clip: true
+
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: parent
+                    }
+
+                    delegate: StyledRect {
+                        required property string modelData
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+
+                        readonly property bool isCurrent: modelData === root.fontFamilyMono
+                        color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                        radius: Appearance.rounding.normal
+                        border.width: isCurrent ? 1 : 0
+                        border.color: Colours.palette.m3primary
+
+                        StateLayer {
+                            function onClicked(): void {
+                                root.fontFamilyMono = modelData;
+                                root.saveConfig();
+                            }
+                        }
+
+                        RowLayout {
+                            id: fontFamilyMonoRow
+
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.margins: Appearance.padding.normal
+
+                            spacing: Appearance.spacing.normal
+
                             StyledText {
-                                text: modelData.name ?? ""
-                                font.pointSize: Appearance.font.size.small
-                                color: Colours.palette.m3outline
+                                text: modelData
+                                font.pointSize: Appearance.font.size.normal
+                            }
 
-                                elide: Text.ElideRight
-                                anchors.left: parent.left
-                                anchors.right: parent.right
+                            Item {
+                                Layout.fillWidth: true
+                            }
+
+                            Loader {
+                                active: isCurrent
+                                asynchronous: true
+
+                                sourceComponent: MaterialIcon {
+                                    text: "check"
+                                    color: Colours.palette.m3onSurfaceVariant
+                                    font.pointSize: Appearance.font.size.large
+                                }
                             }
                         }
 
-                        Loader {
-                            active: isCurrent
-                            asynchronous: true
-
-                            sourceComponent: MaterialIcon {
-                                text: "check"
-                                color: Colours.palette.m3onSurfaceVariant
-                                font.pointSize: Appearance.font.size.large
-                            }
-                        }
-                    }
-
-                    implicitHeight: schemeRow.implicitHeight + Appearance.padding.normal * 2
-                }
-            }
-
-            Item {
-                id: animationsSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: animationsSectionHeader.implicitHeight
-                property bool expanded: false
-
-                ColumnLayout {
-                    id: animationsSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Animations")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: animationsSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
-                            }
-                        }
-                    }
-
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = animationsSection.expanded;
-                            root.collapseAllSections(animationsSection);
-                            animationsSection.expanded = !wasExpanded;
-                        }
+                        implicitHeight: fontFamilyMonoRow.implicitHeight + Appearance.padding.normal * 2
                     }
                 }
-            }
 
-            StyledRect {
-                visible: animationsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: animationsSection.expanded ? animDurationsScaleRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
+                StyledText {
+                    Layout.topMargin: Appearance.spacing.normal
+                    text: qsTr("Sans-serif font family")
+                    font.pointSize: Appearance.font.size.larger
+                    font.weight: 500
                 }
 
-                RowLayout {
-                    id: animDurationsScaleRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
+                StyledListView {
+                    Layout.fillWidth: true
+                    implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
 
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Animation duration scale")
+                    Behavior on implicitHeight {
+                        Anim {}
                     }
 
-                    CustomSpinBox {
-                        id: animDurationsScaleSpinBox
-                        min: 0.1
-                        max: 5
-                        value: root.animDurationsScale
-                        onValueModified: value => {
-                            root.animDurationsScale = value;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
+                    model: Qt.fontFamilies()
+                    spacing: Appearance.spacing.small / 2
+                    clip: true
 
-            Item {
-                id: fontsSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: fontsSectionHeader.implicitHeight
-                property bool expanded: false
-
-                ColumnLayout {
-                    id: fontsSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Fonts")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: fontsSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
-                            }
-                        }
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: parent
                     }
 
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = fontsSection.expanded;
-                            root.collapseAllSections(fontsSection);
-                            fontsSection.expanded = !wasExpanded;
-                        }
-                    }
-                }
-            }
-
-            StyledText {
-                visible: fontsSection.expanded
-                Layout.topMargin: Appearance.spacing.normal
-                text: qsTr("Material font family")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
-
-            StyledListView {
-                visible: fontsSection.expanded
-                Layout.fillWidth: true
-                implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
-                Layout.topMargin: 0
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                model: Qt.fontFamilies()
-                spacing: Appearance.spacing.small / 2
-                clip: true
-
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: parent
-                }
-
-                delegate: StyledRect {
-                    required property string modelData
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    readonly property bool isCurrent: modelData === root.fontFamilyMaterial
-                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                    radius: Appearance.rounding.normal
-                    border.width: isCurrent ? 1 : 0
-                    border.color: Colours.palette.m3primary
-
-                    StateLayer {
-                        function onClicked(): void {
-                            root.fontFamilyMaterial = modelData;
-                            root.saveConfig();
-                        }
-                    }
-
-                    RowLayout {
-                        id: fontFamilyMaterialRow
+                    delegate: StyledRect {
+                        required property string modelData
 
                         anchors.left: parent.left
                         anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.normal
 
-                        spacing: Appearance.spacing.normal
+                        readonly property bool isCurrent: modelData === root.fontFamilySans
+                        color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                        radius: Appearance.rounding.normal
+                        border.width: isCurrent ? 1 : 0
+                        border.color: Colours.palette.m3primary
 
-                        StyledText {
-                            text: modelData
-                            font.pointSize: Appearance.font.size.normal
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        Loader {
-                            active: isCurrent
-                            asynchronous: true
-
-                            sourceComponent: MaterialIcon {
-                                text: "check"
-                                color: Colours.palette.m3onSurfaceVariant
-                                font.pointSize: Appearance.font.size.large
+                        StateLayer {
+                            function onClicked(): void {
+                                root.fontFamilySans = modelData;
+                                root.saveConfig();
                             }
                         }
-                    }
 
-                    implicitHeight: fontFamilyMaterialRow.implicitHeight + Appearance.padding.normal * 2
-                }
-            }
+                        RowLayout {
+                            id: fontFamilySansRow
 
-            StyledText {
-                visible: fontsSection.expanded
-                Layout.topMargin: Appearance.spacing.normal
-                text: qsTr("Monospace font family")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.margins: Appearance.padding.normal
 
-            StyledListView {
-                visible: fontsSection.expanded
-                Layout.fillWidth: true
-                implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
-                Layout.topMargin: 0
+                            spacing: Appearance.spacing.normal
 
-                Behavior on implicitHeight {
-                    Anim {}
-                }
+                            StyledText {
+                                text: modelData
+                                font.pointSize: Appearance.font.size.normal
+                            }
 
-                model: Qt.fontFamilies()
-                spacing: Appearance.spacing.small / 2
-                clip: true
+                            Item {
+                                Layout.fillWidth: true
+                            }
 
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: parent
-                }
+                            Loader {
+                                active: isCurrent
+                                asynchronous: true
 
-                delegate: StyledRect {
-                    required property string modelData
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    readonly property bool isCurrent: modelData === root.fontFamilyMono
-                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                    radius: Appearance.rounding.normal
-                    border.width: isCurrent ? 1 : 0
-                    border.color: Colours.palette.m3primary
-
-                    StateLayer {
-                        function onClicked(): void {
-                            root.fontFamilyMono = modelData;
-                            root.saveConfig();
+                                sourceComponent: MaterialIcon {
+                                    text: "check"
+                                    color: Colours.palette.m3onSurfaceVariant
+                                    font.pointSize: Appearance.font.size.large
+                                }
+                            }
                         }
+
+                        implicitHeight: fontFamilySansRow.implicitHeight + Appearance.padding.normal * 2
+                    }
+                }
+
+                StyledRect {
+                    Layout.fillWidth: true
+                    implicitHeight: fontSizeScaleRow.implicitHeight + Appearance.padding.large * 2
+                    radius: Appearance.rounding.normal
+                    color: Colours.tPalette.m3surfaceContainer
+
+                    Behavior on implicitHeight {
+                        Anim {}
                     }
 
                     RowLayout {
-                        id: fontFamilyMonoRow
-
+                        id: fontSizeScaleRow
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.normal
-
+                        anchors.margins: Appearance.padding.large
                         spacing: Appearance.spacing.normal
 
                         StyledText {
-                            text: modelData
-                            font.pointSize: Appearance.font.size.normal
-                        }
-
-                        Item {
                             Layout.fillWidth: true
+                            text: qsTr("Font size scale")
                         }
 
-                        Loader {
-                            active: isCurrent
-                            asynchronous: true
-
-                            sourceComponent: MaterialIcon {
-                                text: "check"
-                                color: Colours.palette.m3onSurfaceVariant
-                                font.pointSize: Appearance.font.size.large
+                        CustomSpinBox {
+                            id: fontSizeScaleSpinBox
+                            min: 0.1
+                            max: 5
+                            value: root.fontSizeScale
+                            onValueModified: value => {
+                                root.fontSizeScale = value;
+                                root.saveConfig();
                             }
                         }
                     }
-
-                    implicitHeight: fontFamilyMonoRow.implicitHeight + Appearance.padding.normal * 2
                 }
             }
 
-            StyledText {
-                visible: fontsSection.expanded
-                Layout.topMargin: Appearance.spacing.normal
-                text: qsTr("Sans-serif font family")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
-
-            StyledListView {
-                visible: fontsSection.expanded
-                Layout.fillWidth: true
-                implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
-                Layout.topMargin: 0
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                model: Qt.fontFamilies()
-                spacing: Appearance.spacing.small / 2
-                clip: true
-
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: parent
-                }
-
-                delegate: StyledRect {
-                    required property string modelData
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    readonly property bool isCurrent: modelData === root.fontFamilySans
-                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                    radius: Appearance.rounding.normal
-                    border.width: isCurrent ? 1 : 0
-                    border.color: Colours.palette.m3primary
-
-                    StateLayer {
-                        function onClicked(): void {
-                            root.fontFamilySans = modelData;
-                            root.saveConfig();
-                        }
-                    }
-
-                    RowLayout {
-                        id: fontFamilySansRow
-
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.normal
-
-                        spacing: Appearance.spacing.normal
-
-                        StyledText {
-                            text: modelData
-                            font.pointSize: Appearance.font.size.normal
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        Loader {
-                            active: isCurrent
-                            asynchronous: true
-
-                            sourceComponent: MaterialIcon {
-                                text: "check"
-                                color: Colours.palette.m3onSurfaceVariant
-                                font.pointSize: Appearance.font.size.large
-                            }
-                        }
-                    }
-
-                    implicitHeight: fontFamilySansRow.implicitHeight + Appearance.padding.normal * 2
-                }
-            }
-
-            StyledRect {
-                visible: fontsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: fontsSection.expanded ? fontSizeScaleRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: fontSizeScaleRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Font size scale")
-                    }
-
-                    CustomSpinBox {
-                        id: fontSizeScaleSpinBox
-                        min: 0.1
-                        max: 5
-                        value: root.fontSizeScale
-                        onValueModified: value => {
-                            root.fontSizeScale = value;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            Item {
+            CollapsibleSection {
                 id: scalesSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: scalesSectionHeader.implicitHeight
-                property bool expanded: false
+                title: qsTr("Scales")
+                onToggleRequested: {
+                    root.collapseAllSections(scalesSection);
+                }
 
-                ColumnLayout {
-                    id: scalesSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Scales")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: scalesSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
-                            }
-                        }
+                SpinBoxRow {
+                    label: qsTr("Padding scale")
+                    min: 0.1
+                    max: 5
+                    value: root.paddingScale
+                    onValueModified: value => {
+                        root.paddingScale = value;
+                        root.saveConfig();
                     }
+                }
 
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = scalesSection.expanded;
-                            root.collapseAllSections(scalesSection);
-                            scalesSection.expanded = !wasExpanded;
-                        }
+                SpinBoxRow {
+                    label: qsTr("Rounding scale")
+                    min: 0.1
+                    max: 5
+                    value: root.roundingScale
+                    onValueModified: value => {
+                        root.roundingScale = value;
+                        root.saveConfig();
+                    }
+                }
+
+                SpinBoxRow {
+                    label: qsTr("Spacing scale")
+                    min: 0.1
+                    max: 5
+                    value: root.spacingScale
+                    onValueModified: value => {
+                        root.spacingScale = value;
+                        root.saveConfig();
                     }
                 }
             }
 
-            StyledRect {
-                visible: scalesSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: scalesSection.expanded ? paddingScaleRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: paddingScaleRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Padding scale")
-                    }
-
-                    CustomSpinBox {
-                        id: paddingScaleSpinBox
-                        min: 0.1
-                        max: 5
-                        value: root.paddingScale
-                        onValueModified: value => {
-                            root.paddingScale = value;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: scalesSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: scalesSection.expanded ? roundingScaleRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: roundingScaleRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Rounding scale")
-                    }
-
-                    CustomSpinBox {
-                        id: roundingScaleSpinBox
-                        min: 0.1
-                        max: 5
-                        value: root.roundingScale
-                        onValueModified: value => {
-                            root.roundingScale = value;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: scalesSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: scalesSection.expanded ? spacingScaleRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: spacingScaleRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Spacing scale")
-                    }
-
-                    CustomSpinBox {
-                        id: spacingScaleSpinBox
-                        min: 0.1
-                        max: 5
-                        value: root.spacingScale
-                        onValueModified: value => {
-                            root.spacingScale = value;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            Item {
+            CollapsibleSection {
                 id: transparencySection
-                Layout.fillWidth: true
-                Layout.preferredHeight: transparencySectionHeader.implicitHeight
-                property bool expanded: false
+                title: qsTr("Transparency")
+                onToggleRequested: {
+                    root.collapseAllSections(transparencySection);
+                }
 
-                ColumnLayout {
-                    id: transparencySectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Transparency")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: transparencySection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
-                            }
-                        }
+                SwitchRow {
+                    label: qsTr("Transparency enabled")
+                    checked: root.transparencyEnabled
+                    onToggled: checked => {
+                        root.transparencyEnabled = checked;
+                        root.saveConfig();
                     }
+                }
 
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = transparencySection.expanded;
-                            root.collapseAllSections(transparencySection);
-                            transparencySection.expanded = !wasExpanded;
-                        }
+                SpinBoxRow {
+                    label: qsTr("Transparency base")
+                    min: 0
+                    max: 1
+                    value: root.transparencyBase
+                    onValueModified: value => {
+                        root.transparencyBase = value;
+                        root.saveConfig();
+                    }
+                }
+
+                SpinBoxRow {
+                    label: qsTr("Transparency layers")
+                    min: 0
+                    max: 1
+                    value: root.transparencyLayers
+                    onValueModified: value => {
+                        root.transparencyLayers = value;
+                        root.saveConfig();
                     }
                 }
             }
 
-            StyledRect {
-                visible: transparencySection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: transparencySection.expanded ? transparencyEnabledRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: transparencyEnabledRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Transparency enabled")
-                    }
-
-                    StyledSwitch {
-                        id: transparencyEnabledSwitch
-                        checked: root.transparencyEnabled
-                        onToggled: {
-                            root.transparencyEnabled = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: transparencySection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: transparencySection.expanded ? transparencyBaseRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: transparencyBaseRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Transparency base")
-                    }
-
-                    CustomSpinBox {
-                        id: transparencyBaseSpinBox
-                        min: 0
-                        max: 1
-                        value: root.transparencyBase
-                        onValueModified: value => {
-                            root.transparencyBase = value;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: transparencySection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: transparencySection.expanded ? transparencyLayersRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: transparencyLayersRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Transparency layers")
-                    }
-
-                    CustomSpinBox {
-                        id: transparencyLayersSpinBox
-                        min: 0
-                        max: 1
-                        value: root.transparencyLayers
-                        onValueModified: value => {
-                            root.transparencyLayers = value;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            Item {
+            CollapsibleSection {
                 id: borderSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: borderSectionHeader.implicitHeight
-                property bool expanded: false
+                title: qsTr("Border")
+                onToggleRequested: {
+                    root.collapseAllSections(borderSection);
+                }
 
-                ColumnLayout {
-                    id: borderSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Border")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: borderSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
-                            }
-                        }
+                SpinBoxRow {
+                    label: qsTr("Border rounding")
+                    min: 0.1
+                    max: 5
+                    value: root.borderRounding
+                    onValueModified: value => {
+                        root.borderRounding = value;
+                        root.saveConfig();
                     }
+                }
 
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = borderSection.expanded;
-                            root.collapseAllSections(borderSection);
-                            borderSection.expanded = !wasExpanded;
-                        }
+                SpinBoxRow {
+                    label: qsTr("Border thickness")
+                    min: 0.1
+                    max: 5
+                    value: root.borderThickness
+                    onValueModified: value => {
+                        root.borderThickness = value;
+                        root.saveConfig();
                     }
                 }
             }
 
-            StyledRect {
-                visible: borderSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: borderSection.expanded ? borderRoundingRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: borderRoundingRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Border rounding")
-                    }
-
-                    CustomSpinBox {
-                        id: borderRoundingSpinBox
-                        min: 0.1
-                        max: 5
-                        value: root.borderRounding
-                        onValueModified: value => {
-                            root.borderRounding = value;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: borderSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: borderSection.expanded ? borderThicknessRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: borderThicknessRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Border thickness")
-                    }
-
-                    CustomSpinBox {
-                        id: borderThicknessSpinBox
-                        min: 0.1
-                        max: 5
-                        value: root.borderThickness
-                        onValueModified: value => {
-                            root.borderThickness = value;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            Item {
+            CollapsibleSection {
                 id: backgroundSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: backgroundSectionHeader.implicitHeight
-                property bool expanded: false
-
-                ColumnLayout {
-                    id: backgroundSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Background")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: backgroundSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
-                            }
-                        }
-                    }
-
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = backgroundSection.expanded;
-                            root.collapseAllSections(backgroundSection);
-                            backgroundSection.expanded = !wasExpanded;
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: backgroundSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: backgroundSection.expanded ? desktopClockRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
+                title: qsTr("Background")
+                onToggleRequested: {
+                    root.collapseAllSections(backgroundSection);
                 }
 
-                RowLayout {
-                    id: desktopClockRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Desktop clock")
-                    }
-
-                    StyledSwitch {
-                        id: desktopClockSwitch
-                        checked: root.desktopClockEnabled
-                        onToggled: {
-                            root.desktopClockEnabled = checked;
-                            root.saveConfig();
-                        }
+                SwitchRow {
+                    label: qsTr("Desktop clock")
+                    checked: root.desktopClockEnabled
+                    onToggled: checked => {
+                        root.desktopClockEnabled = checked;
+                        root.saveConfig();
                     }
                 }
-            }
 
-            StyledRect {
-                visible: backgroundSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: backgroundSection.expanded ? backgroundEnabledRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: backgroundEnabledRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Background enabled")
-                    }
-
-                    StyledSwitch {
-                        id: backgroundEnabledSwitch
-                        checked: root.backgroundEnabled
-                        onToggled: {
-                            root.backgroundEnabled = checked;
-                            root.saveConfig();
-                        }
+                SwitchRow {
+                    label: qsTr("Background enabled")
+                    checked: root.backgroundEnabled
+                    onToggled: checked => {
+                        root.backgroundEnabled = checked;
+                        root.saveConfig();
                     }
                 }
-            }
 
-            StyledText {
-                visible: backgroundSection.expanded
-                Layout.topMargin: Appearance.spacing.normal
-                text: qsTr("Visualiser")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
-
-            StyledRect {
-                visible: backgroundSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: backgroundSection.expanded ? visualiserEnabledRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
+                StyledText {
+                    Layout.topMargin: Appearance.spacing.normal
+                    text: qsTr("Visualiser")
+                    font.pointSize: Appearance.font.size.larger
+                    font.weight: 500
                 }
 
-                RowLayout {
-                    id: visualiserEnabledRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Visualiser enabled")
-                    }
-
-                    StyledSwitch {
-                        id: visualiserEnabledSwitch
-                        checked: root.visualiserEnabled
-                        onToggled: {
-                            root.visualiserEnabled = checked;
-                            root.saveConfig();
-                        }
+                SwitchRow {
+                    label: qsTr("Visualiser enabled")
+                    checked: root.visualiserEnabled
+                    onToggled: checked => {
+                        root.visualiserEnabled = checked;
+                        root.saveConfig();
                     }
                 }
-            }
 
-            StyledRect {
-                visible: backgroundSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: backgroundSection.expanded ? visualiserAutoHideRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: visualiserAutoHideRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Visualiser auto hide")
-                    }
-
-                    StyledSwitch {
-                        id: visualiserAutoHideSwitch
-                        checked: root.visualiserAutoHide
-                        onToggled: {
-                            root.visualiserAutoHide = checked;
-                            root.saveConfig();
-                        }
+                SwitchRow {
+                    label: qsTr("Visualiser auto hide")
+                    checked: root.visualiserAutoHide
+                    onToggled: checked => {
+                        root.visualiserAutoHide = checked;
+                        root.saveConfig();
                     }
                 }
-            }
 
-            StyledRect {
-                visible: backgroundSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: backgroundSection.expanded ? visualiserRoundingRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: visualiserRoundingRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Visualiser rounding")
-                    }
-
-                    CustomSpinBox {
-                        id: visualiserRoundingSpinBox
-                        min: 0
-                        max: 10
-                        value: Math.round(root.visualiserRounding)
-                        onValueModified: value => {
-                            root.visualiserRounding = value;
-                            root.saveConfig();
-                        }
+                SpinBoxRow {
+                    label: qsTr("Visualiser rounding")
+                    min: 0
+                    max: 10
+                    value: Math.round(root.visualiserRounding)
+                    onValueModified: value => {
+                        root.visualiserRounding = value;
+                        root.saveConfig();
                     }
                 }
-            }
 
-            StyledRect {
-                visible: backgroundSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: backgroundSection.expanded ? visualiserSpacingRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: visualiserSpacingRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Visualiser spacing")
-                    }
-
-                    CustomSpinBox {
-                        id: visualiserSpacingSpinBox
-                        min: 0
-                        max: 10
-                        value: Math.round(root.visualiserSpacing)
-                        onValueModified: value => {
-                            root.visualiserSpacing = value;
-                            root.saveConfig();
-                        }
+                SpinBoxRow {
+                    label: qsTr("Visualiser spacing")
+                    min: 0
+                    max: 10
+                    value: Math.round(root.visualiserSpacing)
+                    onValueModified: value => {
+                        root.visualiserSpacing = value;
+                        root.saveConfig();
                     }
                 }
             }

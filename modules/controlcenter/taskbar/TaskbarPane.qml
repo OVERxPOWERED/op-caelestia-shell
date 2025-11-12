@@ -239,73 +239,12 @@ RowLayout {
                 }
             }
 
-            Item {
+            CollapsibleSection {
                 id: clockSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: clockSectionHeader.implicitHeight
-                property bool expanded: false
-
-                ColumnLayout {
-                    id: clockSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Clock")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: clockSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
-                            }
-                        }
-                    }
-
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = clockSection.expanded;
-                            root.collapseAllSections(clockSection);
-                            clockSection.expanded = !wasExpanded;
-                        }
-                    }
-
-                    StyledText {
-                        visible: clockSection.expanded
-                        text: qsTr("Clock display settings")
-                        color: Colours.palette.m3outline
-                        Layout.fillWidth: true
-                    }
-                }
-            }
-
-            StyledRect {
-                Layout.fillWidth: true
-                visible: clockSection.expanded
-                implicitHeight: clockSection.expanded ? clockRow.implicitHeight + Appearance.padding.large * 2 : 0
-
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
+                title: qsTr("Clock")
+                description: qsTr("Clock display settings")
+                onToggleRequested: {
+                    root.collapseAllSections(clockSection);
                 }
 
                 RowLayout {
@@ -333,835 +272,319 @@ RowLayout {
                 }
             }
 
-            Item {
+            CollapsibleSection {
                 id: barBehaviorSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: barBehaviorSectionHeader.implicitHeight
-                property bool expanded: false
+                title: qsTr("Bar Behavior")
+                onToggleRequested: {
+                    root.collapseAllSections(barBehaviorSection);
+                }
 
-                ColumnLayout {
-                    id: barBehaviorSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Bar Behavior")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: barBehaviorSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
-                            }
-                        }
+                SwitchRow {
+                    label: qsTr("Persistent")
+                    checked: root.persistent
+                    onToggled: checked => {
+                        root.persistent = checked;
+                        root.saveConfig();
                     }
+                }
 
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = barBehaviorSection.expanded;
-                            root.collapseAllSections(barBehaviorSection);
-                            barBehaviorSection.expanded = !wasExpanded;
-                        }
+                SwitchRow {
+                    label: qsTr("Show on hover")
+                    checked: root.showOnHover
+                    onToggled: checked => {
+                        root.showOnHover = checked;
+                        root.saveConfig();
+                    }
+                }
+
+                SpinBoxRow {
+                    label: qsTr("Drag threshold")
+                    min: 0
+                    max: 100
+                    value: root.dragThreshold
+                    onValueModified: value => {
+                        root.dragThreshold = value;
+                        root.saveConfig();
                     }
                 }
             }
 
-            StyledRect {
-                visible: barBehaviorSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: barBehaviorSection.expanded ? persistentRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: persistentRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Persistent")
-                    }
-
-                    StyledSwitch {
-                        checked: root.persistent
-                        onToggled: {
-                            root.persistent = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: barBehaviorSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: barBehaviorSection.expanded ? showOnHoverRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: showOnHoverRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Show on hover")
-                    }
-
-                    StyledSwitch {
-                        checked: root.showOnHover
-                        onToggled: {
-                            root.showOnHover = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: barBehaviorSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: barBehaviorSection.expanded ? dragThresholdRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: dragThresholdRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Drag threshold")
-                    }
-
-                    CustomSpinBox {
-                        min: 0
-                        max: 100
-                        value: root.dragThreshold
-                        onValueModified: value => {
-                            root.dragThreshold = value;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            Item {
+            CollapsibleSection {
                 id: statusIconsSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: statusIconsSectionHeader.implicitHeight
-                property bool expanded: false
+                title: qsTr("Status Icons")
+                onToggleRequested: {
+                    root.collapseAllSections(statusIconsSection);
+                }
 
-                ColumnLayout {
-                    id: statusIconsSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Status Icons")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: statusIconsSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
-                            }
-                        }
+                SwitchRow {
+                    label: qsTr("Show audio")
+                    checked: root.showAudio
+                    onToggled: checked => {
+                        root.showAudio = checked;
+                        root.saveConfig();
                     }
+                }
 
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = statusIconsSection.expanded;
-                            root.collapseAllSections(statusIconsSection);
-                            statusIconsSection.expanded = !wasExpanded;
-                        }
+                SwitchRow {
+                    label: qsTr("Show microphone")
+                    checked: root.showMicrophone
+                    onToggled: checked => {
+                        root.showMicrophone = checked;
+                        root.saveConfig();
+                    }
+                }
+
+                SwitchRow {
+                    label: qsTr("Show keyboard layout")
+                    checked: root.showKbLayout
+                    onToggled: checked => {
+                        root.showKbLayout = checked;
+                        root.saveConfig();
+                    }
+                }
+
+                SwitchRow {
+                    label: qsTr("Show network")
+                    checked: root.showNetwork
+                    onToggled: checked => {
+                        root.showNetwork = checked;
+                        root.saveConfig();
+                    }
+                }
+
+                SwitchRow {
+                    label: qsTr("Show bluetooth")
+                    checked: root.showBluetooth
+                    onToggled: checked => {
+                        root.showBluetooth = checked;
+                        root.saveConfig();
+                    }
+                }
+
+                SwitchRow {
+                    label: qsTr("Show battery")
+                    checked: root.showBattery
+                    onToggled: checked => {
+                        root.showBattery = checked;
+                        root.saveConfig();
+                    }
+                }
+
+                SwitchRow {
+                    label: qsTr("Show lock status")
+                    checked: root.showLockStatus
+                    onToggled: checked => {
+                        root.showLockStatus = checked;
+                        root.saveConfig();
                     }
                 }
             }
 
-            StyledRect {
-                visible: statusIconsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: statusIconsSection.expanded ? showAudioRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: showAudioRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Show audio")
-                    }
-
-                    StyledSwitch {
-                        checked: root.showAudio
-                        onToggled: {
-                            root.showAudio = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: statusIconsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: statusIconsSection.expanded ? showMicrophoneRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: showMicrophoneRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Show microphone")
-                    }
-
-                    StyledSwitch {
-                        checked: root.showMicrophone
-                        onToggled: {
-                            root.showMicrophone = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: statusIconsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: statusIconsSection.expanded ? showKbLayoutRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: showKbLayoutRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Show keyboard layout")
-                    }
-
-                    StyledSwitch {
-                        checked: root.showKbLayout
-                        onToggled: {
-                            root.showKbLayout = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: statusIconsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: statusIconsSection.expanded ? showNetworkRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: showNetworkRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Show network")
-                    }
-
-                    StyledSwitch {
-                        checked: root.showNetwork
-                        onToggled: {
-                            root.showNetwork = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: statusIconsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: statusIconsSection.expanded ? showBluetoothRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: showBluetoothRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Show bluetooth")
-                    }
-
-                    StyledSwitch {
-                        checked: root.showBluetooth
-                        onToggled: {
-                            root.showBluetooth = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: statusIconsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: statusIconsSection.expanded ? showBatteryRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: showBatteryRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Show battery")
-                    }
-
-                    StyledSwitch {
-                        checked: root.showBattery
-                        onToggled: {
-                            root.showBattery = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: statusIconsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: statusIconsSection.expanded ? showLockStatusRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: showLockStatusRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Show lock status")
-                    }
-
-                    StyledSwitch {
-                        checked: root.showLockStatus
-                        onToggled: {
-                            root.showLockStatus = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            Item {
+            CollapsibleSection {
                 id: traySettingsSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: traySettingsSectionHeader.implicitHeight
-                property bool expanded: false
+                title: qsTr("Tray Settings")
+                onToggleRequested: {
+                    root.collapseAllSections(traySettingsSection);
+                }
 
-                ColumnLayout {
-                    id: traySettingsSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Tray Settings")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: traySettingsSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
-                            }
-                        }
+                SwitchRow {
+                    label: qsTr("Background")
+                    checked: root.trayBackground
+                    onToggled: checked => {
+                        root.trayBackground = checked;
+                        root.saveConfig();
                     }
+                }
 
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = traySettingsSection.expanded;
-                            root.collapseAllSections(traySettingsSection);
-                            traySettingsSection.expanded = !wasExpanded;
-                        }
+                SwitchRow {
+                    label: qsTr("Compact")
+                    checked: root.trayCompact
+                    onToggled: checked => {
+                        root.trayCompact = checked;
+                        root.saveConfig();
+                    }
+                }
+
+                SwitchRow {
+                    label: qsTr("Recolour")
+                    checked: root.trayRecolour
+                    onToggled: checked => {
+                        root.trayRecolour = checked;
+                        root.saveConfig();
                     }
                 }
             }
 
-            StyledRect {
-                visible: traySettingsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: traySettingsSection.expanded ? trayBackgroundRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: trayBackgroundRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Background")
-                    }
-
-                    StyledSwitch {
-                        checked: root.trayBackground
-                        onToggled: {
-                            root.trayBackground = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: traySettingsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: traySettingsSection.expanded ? trayCompactRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: trayCompactRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Compact")
-                    }
-
-                    StyledSwitch {
-                        checked: root.trayCompact
-                        onToggled: {
-                            root.trayCompact = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: traySettingsSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: traySettingsSection.expanded ? trayRecolourRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: trayRecolourRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Recolour")
-                    }
-
-                    StyledSwitch {
-                        checked: root.trayRecolour
-                        onToggled: {
-                            root.trayRecolour = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            Item {
+            CollapsibleSection {
                 id: workspacesSection
-                Layout.fillWidth: true
-                Layout.preferredHeight: workspacesSectionHeader.implicitHeight
-                property bool expanded: false
+                title: qsTr("Workspaces")
+                onToggleRequested: {
+                    root.collapseAllSections(workspacesSection);
+                }
 
-                ColumnLayout {
-                    id: workspacesSectionHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: Appearance.spacing.small
+                StyledRect {
+                    Layout.fillWidth: true
+                    implicitHeight: workspacesShownRow.implicitHeight + Appearance.padding.large * 2
+                    radius: Appearance.rounding.normal
+                    color: Colours.tPalette.m3surfaceContainer
+
+                    Behavior on implicitHeight {
+                        Anim {}
+                    }
 
                     RowLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
+                        id: workspacesShownRow
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: Appearance.padding.large
+                        spacing: Appearance.spacing.normal
 
                         StyledText {
-                            Layout.topMargin: Appearance.spacing.large
-                            text: qsTr("Workspaces")
-                            font.pointSize: Appearance.font.size.larger
-                            font.weight: 500
-                        }
-
-                        Item {
                             Layout.fillWidth: true
+                            text: qsTr("Shown")
                         }
 
-                        MaterialIcon {
-                            text: "expand_more"
-                            rotation: workspacesSection.expanded ? 180 : 0
-                            color: Colours.palette.m3onSurface
-                            Behavior on rotation {
-                                Anim {}
+                        CustomSpinBox {
+                            min: 1
+                            max: 20
+                            value: root.workspacesShown
+                            onValueModified: value => {
+                                root.workspacesShown = value;
+                                root.saveConfig();
                             }
                         }
                     }
+                }
 
-                    StateLayer {
-                        anchors.fill: parent
-                        anchors.leftMargin: -Appearance.padding.normal
-                        anchors.rightMargin: -Appearance.padding.normal
-                        function onClicked(): void {
-                            const wasExpanded = workspacesSection.expanded;
-                            root.collapseAllSections(workspacesSection);
-                            workspacesSection.expanded = !wasExpanded;
+                StyledRect {
+                    Layout.fillWidth: true
+                    implicitHeight: workspacesActiveIndicatorRow.implicitHeight + Appearance.padding.large * 2
+                    radius: Appearance.rounding.normal
+                    color: Colours.tPalette.m3surfaceContainer
+
+                    Behavior on implicitHeight {
+                        Anim {}
+                    }
+
+                    RowLayout {
+                        id: workspacesActiveIndicatorRow
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: Appearance.padding.large
+                        spacing: Appearance.spacing.normal
+
+                        StyledText {
+                            Layout.fillWidth: true
+                            text: qsTr("Active indicator")
+                        }
+
+                        StyledSwitch {
+                            checked: root.workspacesActiveIndicator
+                            onToggled: {
+                                root.workspacesActiveIndicator = checked;
+                                root.saveConfig();
+                            }
                         }
                     }
                 }
-            }
 
-            StyledRect {
-                visible: workspacesSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: workspacesSection.expanded ? workspacesShownRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
+                StyledRect {
+                    Layout.fillWidth: true
+                    implicitHeight: workspacesOccupiedBgRow.implicitHeight + Appearance.padding.large * 2
+                    radius: Appearance.rounding.normal
+                    color: Colours.tPalette.m3surfaceContainer
 
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: workspacesShownRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Shown")
+                    Behavior on implicitHeight {
+                        Anim {}
                     }
 
-                    CustomSpinBox {
-                        min: 1
-                        max: 20
-                        value: root.workspacesShown
-                        onValueModified: value => {
-                            root.workspacesShown = value;
-                            root.saveConfig();
+                    RowLayout {
+                        id: workspacesOccupiedBgRow
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: Appearance.padding.large
+                        spacing: Appearance.spacing.normal
+
+                        StyledText {
+                            Layout.fillWidth: true
+                            text: qsTr("Occupied background")
+                        }
+
+                        StyledSwitch {
+                            checked: root.workspacesOccupiedBg
+                            onToggled: {
+                                root.workspacesOccupiedBg = checked;
+                                root.saveConfig();
+                            }
                         }
                     }
                 }
-            }
 
-            StyledRect {
-                visible: workspacesSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: workspacesSection.expanded ? workspacesActiveIndicatorRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
+                StyledRect {
+                    Layout.fillWidth: true
+                    implicitHeight: workspacesShowWindowsRow.implicitHeight + Appearance.padding.large * 2
+                    radius: Appearance.rounding.normal
+                    color: Colours.tPalette.m3surfaceContainer
 
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: workspacesActiveIndicatorRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Active indicator")
+                    Behavior on implicitHeight {
+                        Anim {}
                     }
 
-                    StyledSwitch {
-                        checked: root.workspacesActiveIndicator
-                        onToggled: {
-                            root.workspacesActiveIndicator = checked;
-                            root.saveConfig();
+                    RowLayout {
+                        id: workspacesShowWindowsRow
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: Appearance.padding.large
+                        spacing: Appearance.spacing.normal
+
+                        StyledText {
+                            Layout.fillWidth: true
+                            text: qsTr("Show windows")
+                        }
+
+                        StyledSwitch {
+                            checked: root.workspacesShowWindows
+                            onToggled: {
+                                root.workspacesShowWindows = checked;
+                                root.saveConfig();
+                            }
                         }
                     }
                 }
-            }
 
-            StyledRect {
-                visible: workspacesSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: workspacesSection.expanded ? workspacesOccupiedBgRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
+                StyledRect {
+                    Layout.fillWidth: true
+                    implicitHeight: workspacesPerMonitorRow.implicitHeight + Appearance.padding.large * 2
+                    radius: Appearance.rounding.normal
+                    color: Colours.tPalette.m3surfaceContainer
 
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: workspacesOccupiedBgRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Occupied background")
+                    Behavior on implicitHeight {
+                        Anim {}
                     }
 
-                    StyledSwitch {
-                        checked: root.workspacesOccupiedBg
-                        onToggled: {
-                            root.workspacesOccupiedBg = checked;
-                            root.saveConfig();
+                    RowLayout {
+                        id: workspacesPerMonitorRow
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: Appearance.padding.large
+                        spacing: Appearance.spacing.normal
+
+                        StyledText {
+                            Layout.fillWidth: true
+                            text: qsTr("Per monitor workspaces")
                         }
-                    }
-                }
-            }
 
-            StyledRect {
-                visible: workspacesSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: workspacesSection.expanded ? workspacesShowWindowsRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: workspacesShowWindowsRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Show windows")
-                    }
-
-                    StyledSwitch {
-                        checked: root.workspacesShowWindows
-                        onToggled: {
-                            root.workspacesShowWindows = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-            }
-
-            StyledRect {
-                visible: workspacesSection.expanded
-                Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.small / 2
-                implicitHeight: workspacesSection.expanded ? workspacesPerMonitorRow.implicitHeight + Appearance.padding.large * 2 : 0
-                radius: Appearance.rounding.normal
-                color: Colours.tPalette.m3surfaceContainer
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-
-                RowLayout {
-                    id: workspacesPerMonitorRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Per monitor workspaces")
-                    }
-
-                    StyledSwitch {
-                        checked: root.workspacesPerMonitor
-                        onToggled: {
-                            root.workspacesPerMonitor = checked;
-                            root.saveConfig();
+                        StyledSwitch {
+                            checked: root.workspacesPerMonitor
+                            onToggled: {
+                                root.workspacesPerMonitor = checked;
+                                root.saveConfig();
+                            }
                         }
                     }
                 }

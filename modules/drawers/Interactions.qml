@@ -198,6 +198,52 @@ CustomMouseArea {
             utilitiesShortcutActive = false;
         }
 
+        // Show notifications panel on hover
+        // Try using inTopPanel first (works when panel is visible), fallback to corner detection only when panel is collapsed
+        const panelHeight = panels.notifications.height || panels.notifications.implicitHeight || 0;
+        const panelWidth = panels.notifications.width || panels.notifications.implicitWidth || Config.notifs.sizes.width;
+        const panelX = bar.implicitWidth + panels.notifications.x;
+        const isPanelCollapsed = panelHeight < 10; // Consider collapsed if height is very small
+        
+        let showNotifications = inTopPanel(panels.notifications, x, y);
+        
+        // Only use fallback corner detection when panel is collapsed
+        if (!showNotifications && isPanelCollapsed) {
+            // Use panel's actual width and position for fallback, with some padding
+            const cornerPadding = Config.border.rounding || 20;
+            showNotifications = x >= panelX - cornerPadding && 
+                               x <= panelX + panelWidth + cornerPadding && 
+                               y < Config.border.thickness + cornerPadding;
+        }
+        
+        // Check if mouse is over the clear all button area
+        // Button is positioned to the left of the notification panel
+        if (!showNotifications && panels.notifications.height > 0 && panels.clearAllButton && panels.clearAllButton.visible) {
+            const buttonX = bar.implicitWidth + panels.clearAllButton.x;
+            const buttonY = Config.border.thickness + panels.clearAllButton.y;
+            const buttonWidth = panels.clearAllButton.width;
+            const buttonHeight = panels.clearAllButton.height;
+            
+            const inButtonArea = x >= buttonX && 
+                                x <= buttonX + buttonWidth && 
+                                y >= buttonY && 
+                                y <= buttonY + buttonHeight;
+            
+            if (inButtonArea) {
+                showNotifications = true;
+            }
+        }
+        
+        // Show or hide notification panel based on hover
+        if (panels.notifications.content) {
+            if (showNotifications) {
+                panels.notifications.content.show();
+            } else {
+                // Hide if not hovering over panel or button
+                panels.notifications.content.shouldShow = false;
+            }
+        }
+
         // Show popouts on hover
         if (x < bar.implicitWidth) {
             bar.checkPopout(y);

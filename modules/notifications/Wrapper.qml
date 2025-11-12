@@ -8,6 +8,8 @@ Item {
     required property var visibilities
     required property Item panels
 
+    readonly property alias content: content
+
     visible: height > 0
     implicitWidth: Math.max(panels.sidebar.width, content.implicitWidth)
     implicitHeight: content.implicitHeight

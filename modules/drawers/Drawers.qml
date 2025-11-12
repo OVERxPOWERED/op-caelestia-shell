@@ -140,6 +140,7 @@ Variants {
                 property bool dashboard
                 property bool utilities
                 property bool sidebar
+                property bool notifications
 
                 Component.onCompleted: Visibilities.load(scope.modelData, this)
             }

@@ -77,8 +77,10 @@ Singleton {
         onNotification: notif => {
             notif.tracked = true;
 
+            const shouldShowAsToast = !props.dnd && ![...Visibilities.screens.values()].some(v => v.sidebar);
             const comp = notifComp.createObject(root, {
-                popup: !props.dnd && ![...Visibilities.screens.values()].some(v => v.sidebar),
+                popup: shouldShowAsToast,
+                showAsToast: shouldShowAsToast,
                 notification: notif
             });
             root.list = [comp, ...root.list];
@@ -143,6 +145,7 @@ Singleton {
 
         property bool popup
         property bool closed
+        property bool showAsToast: false
         property var locks: new Set()
 
         property date time: new Date()
@@ -177,6 +180,38 @@ Singleton {
         property list<var> actions
 
         readonly property Timer timer: Timer {
+            id: toastTimer
+            
+            running: notif.showAsToast
+            interval: {
+                let timeout = notif.expireTimeout;
+                if (timeout <= 0) {
+                    switch (notif.urgency) {
+                        case NotificationUrgency.Critical:
+                            timeout = 10000;
+                            break;
+                        case NotificationUrgency.Normal:
+                            timeout = 5000;
+                            break;
+                        case NotificationUrgency.Low:
+                            timeout = 5000;
+                            break;
+                        default:
+                            timeout = 5000;
+                    }
+                }
+                return timeout;
+            }
+            onTriggered: {
+                if (Config.notifs.expire)
+                    notif.popup = false;
+                if (notif.showAsToast) {
+                    notif.showAsToast = false;
+                }
+            }
+        }
+        
+        readonly property Timer popupTimer: Timer {
             running: true
             interval: notif.expireTimeout > 0 ? notif.expireTimeout : Config.notifs.defaultExpireTimeout
             onTriggered: {

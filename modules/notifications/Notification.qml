@@ -17,22 +17,35 @@ StyledRect {
     required property Notifs.Notif modelData
     readonly property bool hasImage: modelData.image.length > 0
     readonly property bool hasAppIcon: modelData.appIcon.length > 0
-    readonly property int nonAnimHeight: summary.implicitHeight + (root.expanded ? appName.height + body.height + actions.height + actions.anchors.topMargin : bodyPreview.height) + inner.anchors.margins * 2
+    readonly property bool isCritical: modelData.urgency === NotificationUrgency.Critical
+    readonly property bool isLow: modelData.urgency === NotificationUrgency.Low
+    readonly property int nonAnimHeight: {
+        const baseHeight = summary.implicitHeight + inner.anchors.margins * 2;
+        return root.expanded 
+            ? baseHeight + appName.height + body.height + actions.height + actions.anchors.topMargin
+            : baseHeight + bodyPreview.height;
+    }
     property bool expanded
+    property bool disableSlideIn: false
 
-    color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
+    color: root.isCritical 
+        ? Colours.palette.m3secondaryContainer 
+        : Colours.tPalette.m3surfaceContainer
     radius: Appearance.rounding.normal
     implicitWidth: Config.notifs.sizes.width
     implicitHeight: inner.implicitHeight
 
-    x: Config.notifs.sizes.width
+    x: disableSlideIn ? 0 : Config.notifs.sizes.width
     Component.onCompleted: {
-        x = 0;
+        if (!root.disableSlideIn) {
+            x = 0;
+        }
         modelData.lock(this);
     }
     Component.onDestruction: modelData.unlock(this)
 
     Behavior on x {
+        enabled: !disableSlideIn
         Anim {
             easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
         }
@@ -134,8 +147,8 @@ StyledRect {
             Loader {
                 id: appIcon
 
-                active: root.hasAppIcon || !root.hasImage
-                asynchronous: true
+                active: !root.hasImage || root.hasAppIcon
+                asynchronous: false
 
                 anchors.horizontalCenter: root.hasImage ? undefined : image.horizontalCenter
                 anchors.verticalCenter: root.hasImage ? undefined : image.verticalCenter
@@ -144,7 +157,11 @@ StyledRect {
 
                 sourceComponent: StyledRect {
                     radius: Appearance.rounding.full
-                    color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.modelData.urgency === NotificationUrgency.Low ? Colours.layer(Colours.palette.m3surfaceContainerHighest, 2) : Colours.palette.m3secondaryContainer
+                    color: {
+                        if (root.isCritical) return Colours.palette.m3error;
+                        if (root.isLow) return Colours.layer(Colours.palette.m3surfaceContainerHighest, 2);
+                        return Colours.palette.m3secondaryContainer;
+                    }
                     implicitWidth: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
                     implicitHeight: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
 
@@ -152,7 +169,8 @@ StyledRect {
                         id: icon
 
                         active: root.hasAppIcon
-                        asynchronous: true
+                        asynchronous: false
+                        visible: active
 
                         anchors.centerIn: parent
 
@@ -162,14 +180,19 @@ StyledRect {
                         sourceComponent: ColouredIcon {
                             anchors.fill: parent
                             source: Quickshell.iconPath(root.modelData.appIcon)
-                            colour: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.modelData.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
+                            colour: {
+                                if (root.isCritical) return Colours.palette.m3onError;
+                                if (root.isLow) return Colours.palette.m3onSurface;
+                                return Colours.palette.m3onSecondaryContainer;
+                            }
                             layer.enabled: root.modelData.appIcon.endsWith("symbolic")
                         }
                     }
 
                     Loader {
                         active: !root.hasAppIcon
-                        asynchronous: true
+                        asynchronous: false
+                        visible: active
                         anchors.centerIn: parent
                         anchors.horizontalCenterOffset: -Appearance.font.size.large * 0.02
                         anchors.verticalCenterOffset: Appearance.font.size.large * 0.02
@@ -177,7 +200,11 @@ StyledRect {
                         sourceComponent: MaterialIcon {
                             text: Icons.getNotifIcon(root.modelData.summary, root.modelData.urgency)
 
-                            color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.modelData.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
+                            color: {
+                                if (root.isCritical) return Colours.palette.m3onError;
+                                if (root.isLow) return Colours.palette.m3onSurface;
+                                return Colours.palette.m3onSecondaryContainer;
+                            }
                             font.pointSize: Appearance.font.size.large
                         }
                     }
@@ -322,7 +349,9 @@ StyledRect {
 
                 StateLayer {
                     radius: Appearance.rounding.full
-                    color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+                    color: root.isCritical 
+                        ? Colours.palette.m3onSecondaryContainer 
+                        : Colours.palette.m3onSurface
 
                     function onClicked() {
                         root.expanded = !root.expanded;
@@ -442,8 +471,12 @@ StyledRect {
 
         required property var modelData
 
+        readonly property bool isCritical: root.isCritical
+
         radius: Appearance.rounding.full
-        color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
+        color: isCritical 
+            ? Colours.palette.m3secondary 
+            : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
 
         Layout.preferredWidth: actionText.width + Appearance.padding.normal * 2
         Layout.preferredHeight: actionText.height + Appearance.padding.small * 2
@@ -452,7 +485,9 @@ StyledRect {
 
         StateLayer {
             radius: Appearance.rounding.full
-            color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurface
+            color: isCritical 
+                ? Colours.palette.m3onSecondary 
+                : Colours.palette.m3onSurface
 
             function onClicked(): void {
                 action.modelData.invoke();
@@ -464,7 +499,9 @@ StyledRect {
 
             anchors.centerIn: parent
             text: actionTextMetrics.elidedText
-            color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurfaceVariant
+            color: isCritical 
+                ? Colours.palette.m3onSecondary 
+                : Colours.palette.m3onSurfaceVariant
             font.pointSize: Appearance.font.size.small
         }
 

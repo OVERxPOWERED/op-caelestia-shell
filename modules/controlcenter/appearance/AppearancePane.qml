@@ -263,38 +263,11 @@ RowLayout {
                     root.collapseAllSections(themeModeSection);
                 }
 
-                StyledRect {
-                    Layout.fillWidth: true
-                    implicitHeight: modeToggle.implicitHeight + Appearance.padding.large * 2
-
-                    radius: Appearance.rounding.normal
-                    color: Colours.tPalette.m3surfaceContainer
-
-                    Behavior on implicitHeight {
-                        Anim {}
-                    }
-
-                    RowLayout {
-                        id: modeToggle
-
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.large
-
-                        spacing: Appearance.spacing.normal
-
-                        StyledText {
-                            Layout.fillWidth: true
-                            text: qsTr("Dark mode")
-                        }
-
-                        StyledSwitch {
-                            checked: !Colours.currentLight
-                            onToggled: {
-                                Colours.setMode(checked ? "dark" : "light");
-                            }
-                        }
+                SwitchRow {
+                    label: qsTr("Dark mode")
+                    checked: !Colours.currentLight
+                    onToggled: checked => {
+                        Colours.setMode(checked ? "dark" : "light");
                     }
                 }
             }
@@ -803,39 +776,14 @@ RowLayout {
                     }
                 }
 
-                StyledRect {
-                    Layout.fillWidth: true
-                    implicitHeight: fontSizeScaleRow.implicitHeight + Appearance.padding.large * 2
-                    radius: Appearance.rounding.normal
-                    color: Colours.tPalette.m3surfaceContainer
-
-                    Behavior on implicitHeight {
-                        Anim {}
-                    }
-
-                    RowLayout {
-                        id: fontSizeScaleRow
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.large
-                        spacing: Appearance.spacing.normal
-
-                        StyledText {
-                            Layout.fillWidth: true
-                            text: qsTr("Font size scale")
-                        }
-
-                        CustomSpinBox {
-                            id: fontSizeScaleSpinBox
-                            min: 0.1
-                            max: 5
-                            value: root.fontSizeScale
-                            onValueModified: value => {
-                                root.fontSizeScale = value;
-                                root.saveConfig();
-                            }
-                        }
+                SpinBoxRow {
+                    label: qsTr("Font size scale")
+                    min: 0.1
+                    max: 5
+                    value: root.fontSizeScale
+                    onValueModified: value => {
+                        root.fontSizeScale = value;
+                        root.saveConfig();
                     }
                 }
             }

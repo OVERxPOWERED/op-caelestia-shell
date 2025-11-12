@@ -22,6 +22,7 @@ RowLayout {
     required property Session session
 
     property var selectedApp: null
+    property bool hideFromLauncherChecked: false
 
     anchors.fill: parent
 
@@ -45,7 +46,7 @@ RowLayout {
 
     function updateToggleState() {
         if (!root.selectedApp || !configFile.loaded) {
-            hideFromLauncherSwitch.checked = false;
+            root.hideFromLauncherChecked = false;
             return;
         }
 
@@ -54,16 +55,16 @@ RowLayout {
             const appId = root.selectedApp.id || root.selectedApp.entry?.id;
             
             if (config.launcher && config.launcher.hiddenApps) {
-                hideFromLauncherSwitch.checked = config.launcher.hiddenApps.includes(appId);
+                root.hideFromLauncherChecked = config.launcher.hiddenApps.includes(appId);
             } else {
-                hideFromLauncherSwitch.checked = false;
+                root.hideFromLauncherChecked = false;
             }
         } catch (e) {
             console.error("Failed to update toggle state:", e);
         }
     }
 
-    function saveHiddenApps() {
+    function saveHiddenApps(isHidden) {
         if (!configFile.loaded || !root.selectedApp) {
             return;
         }
@@ -76,7 +77,6 @@ RowLayout {
             if (!config.launcher.hiddenApps) config.launcher.hiddenApps = [];
             
             const hiddenApps = config.launcher.hiddenApps;
-            const isHidden = hideFromLauncherSwitch.checked;
             
             if (isHidden) {
                 // Add to hiddenApps if not already there
@@ -288,35 +288,14 @@ RowLayout {
                         anchors.top: parent.top
                         spacing: Appearance.spacing.normal
 
-                        StyledRect {
-                            Layout.fillWidth: true
+                        SwitchRow {
                             Layout.topMargin: Appearance.spacing.normal
-                            implicitHeight: hideToggleRow.implicitHeight + Appearance.padding.large * 2
-                            color: Colours.tPalette.m3surfaceContainer
-                            radius: Appearance.rounding.normal
-
-                            RowLayout {
-                                id: hideToggleRow
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Appearance.padding.large
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    Layout.fillWidth: true
-                                    text: qsTr("Hide from launcher")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                StyledSwitch {
-                                    id: hideFromLauncherSwitch
-                                    checked: false
-                                    enabled: root.selectedApp !== null && configFile.loaded
-                                    onToggled: {
-                                        root.saveHiddenApps();
-                                    }
-                                }
+                            label: qsTr("Hide from launcher")
+                            checked: root.hideFromLauncherChecked
+                            enabled: root.selectedApp !== null && configFile.loaded
+                            onToggled: checked => {
+                                root.hideFromLauncherChecked = checked;
+                                root.saveHiddenApps(checked);
                             }
                         }
 

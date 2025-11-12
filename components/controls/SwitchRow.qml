@@ -11,6 +11,7 @@ StyledRect {
 
     required property string label
     required property bool checked
+    property bool enabled: true
     property var onToggled: function(checked) {}
 
     Layout.fillWidth: true
@@ -38,6 +39,7 @@ StyledRect {
 
         StyledSwitch {
             checked: root.checked
+            enabled: root.enabled
             onToggled: {
                 root.onToggled(checked);
             }

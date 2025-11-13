@@ -3,6 +3,7 @@ import qs.components.controls
 import qs.services
 import qs.config
 import qs.modules.controlcenter
+import "../../controlcenter/dev"
 import Quickshell
 import Quickshell.Bluetooth
 import QtQuick
@@ -91,6 +92,18 @@ StyledRect {
                 enabled: !VPN.connecting
                 visible: VPN.enabled
                 onClicked: VPN.toggle()
+            }
+
+            Toggle {
+                icon: "bug_report"
+                inactiveOnColour: Colours.palette.m3onSurfaceVariant
+                toggle: false
+                onClicked: {
+                    root.visibilities.utilities = false;
+                    DevWindowFactory.create(null, {
+                        screen: QsWindow.window?.screen ?? null
+                    });
+                }
             }
         }
     }

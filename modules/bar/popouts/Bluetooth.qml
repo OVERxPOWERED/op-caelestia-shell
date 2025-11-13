@@ -9,6 +9,7 @@ import Quickshell
 import Quickshell.Bluetooth
 import QtQuick
 import QtQuick.Layouts
+import "../../controlcenter/network"
 
 ColumnLayout {
     id: root
@@ -164,39 +165,16 @@ ColumnLayout {
         }
     }
 
-    StyledRect {
-        Layout.topMargin: Appearance.spacing.small
-        implicitWidth: expandBtn.implicitWidth + Appearance.padding.normal * 2
-        implicitHeight: expandBtn.implicitHeight + Appearance.padding.small
-
-        radius: Appearance.rounding.normal
+    SimpleButton {
+        Layout.fillWidth: true
+        Layout.topMargin: Appearance.spacing.normal
         color: Colours.palette.m3primaryContainer
+        onColor: Colours.palette.m3onPrimaryContainer
+        text: qsTr("Open Settings")
+        icon: "chevron_right"
 
-        StateLayer {
-            color: Colours.palette.m3onPrimaryContainer
-
-            function onClicked(): void {
-                root.wrapper.detach("bluetooth");
-            }
-        }
-
-        RowLayout {
-            id: expandBtn
-
-            anchors.centerIn: parent
-            spacing: Appearance.spacing.small
-
-            StyledText {
-                Layout.leftMargin: Appearance.padding.smaller
-                text: qsTr("Open Settings")
-                color: Colours.palette.m3onPrimaryContainer
-            }
-
-            MaterialIcon {
-                text: "chevron_right"
-                color: Colours.palette.m3onPrimaryContainer
-                font.pointSize: Appearance.font.size.large
-            }
+        onClicked: {
+            root.wrapper.detach("bluetooth");
         }
     }
 

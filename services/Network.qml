@@ -30,17 +30,17 @@ Singleton {
     property var wirelessDeviceDetails: null
     property string connectionStatus: ""
     property string connectionDebug: ""
-    
+
     function clearConnectionStatus(): void {
         connectionStatus = "";
         // Don't clear debug - keep it for reference
         // connectionDebug = "";
     }
-    
+
     function setConnectionStatus(status: string): void {
         connectionStatus = status;
     }
-    
+
     function addDebugInfo(info: string): void {
         const timestamp = new Date().toLocaleTimeString();
         const newInfo = "[" + timestamp + "] " + info;
@@ -79,23 +79,23 @@ Singleton {
         // When no password, use SSID (will use saved password if available)
         const hasBssid = bssid !== undefined && bssid !== null && bssid.length > 0;
         let cmd = [];
-        
+
         // Set up pending connection tracking if callback provided
         if (callback) {
             root.pendingConnection = { ssid: ssid, bssid: hasBssid ? bssid : "", callback: callback };
         }
-        
+
         if (password && password.length > 0) {
             // When password is provided, try BSSID first if available, otherwise use SSID
             if (hasBssid) {
                 // Use BSSID when password is provided - ensure BSSID is uppercase
                 const bssidUpper = bssid.toUpperCase();
-                
+
                 // Check if a connection with this SSID already exists
-                const existingConnection = root.savedConnections.find(conn => 
+                const existingConnection = root.savedConnections.find(conn =>
                     conn && conn.toLowerCase().trim() === ssid.toLowerCase().trim()
                 );
-                
+
                 if (existingConnection) {
                     // Connection already exists - delete it first, then create new one with updated password
                     root.addDebugInfo(qsTr("Connection '%1' already exists, deleting it first...").arg(existingConnection));
@@ -122,7 +122,7 @@ Singleton {
             root.setConnectionStatus(qsTr("Connecting to %1 (using saved password)...").arg(ssid));
             root.addDebugInfo(qsTr("Using saved password for: %1").arg(ssid));
         }
-        
+
         // Show the exact command being executed
         const cmdStr = cmd.join(" ");
         root.addDebugInfo(qsTr("=== COMMAND TO EXECUTE ==="));
@@ -130,17 +130,17 @@ Singleton {
         root.addDebugInfo(qsTr("Command array: [%1]").arg(cmd.map((arg, i) => `"${arg}"`).join(", ")));
         root.addDebugInfo(qsTr("Command array length: %1").arg(cmd.length));
         root.addDebugInfo(qsTr("==========================="));
-        
+
         // Set command and start process
         root.addDebugInfo(qsTr("Setting command property..."));
         connectProc.command = cmd;
         const setCmdStr = connectProc.command ? connectProc.command.join(" ") : "null";
         root.addDebugInfo(qsTr("Command property set, value: %1").arg(setCmdStr));
         root.addDebugInfo(qsTr("Command property verified: %1").arg(setCmdStr === cmdStr ? "Match" : "MISMATCH"));
-        
+
         // If we're creating a connection profile, we need to activate it after creation
         const isConnectionAdd = cmd.length > 0 && cmd[0] === "nmcli" && cmd[1] === "connection" && cmd[2] === "add";
-        
+
         // Wait a moment before starting to ensure command is set
         Qt.callLater(() => {
             root.addDebugInfo(qsTr("=== STARTING PROCESS ==="));
@@ -150,7 +150,7 @@ Singleton {
             connectProc.running = true;
             root.addDebugInfo(qsTr("Process running set to: %1").arg(connectProc.running));
             root.addDebugInfo(qsTr("========================"));
-            
+
             // Check if process actually started after a short delay
             Qt.callLater(() => {
                 root.addDebugInfo(qsTr("Process status check (100ms later):"));
@@ -162,7 +162,7 @@ Singleton {
                 }
             }, 100);
         });
-        
+
         // Start connection check timer if we have a callback
         if (callback) {
             root.addDebugInfo(qsTr("Starting connection check timer (4 second interval)"));
@@ -171,25 +171,25 @@ Singleton {
             root.addDebugInfo(qsTr("No callback provided - not starting connection check timer"));
         }
     }
-    
+
     function createConnectionWithPassword(ssid: string, bssidUpper: string, password: string): void {
         // Create connection profile with all required properties for BSSID + password
-        const cmd = ["nmcli", "connection", "add", 
-                   "type", "wifi", 
+        const cmd = ["nmcli", "connection", "add",
+                   "type", "wifi",
                    "con-name", ssid,
                    "ifname", "*",
                    "ssid", ssid,
                    "802-11-wireless.bssid", bssidUpper,
                    "802-11-wireless-security.key-mgmt", "wpa-psk",
                    "802-11-wireless-security.psk", password];
-        
+
         root.setConnectionStatus(qsTr("Connecting to %1 (BSSID: %2)...").arg(ssid).arg(bssidUpper));
         root.addDebugInfo(qsTr("Using BSSID: %1 for SSID: %2").arg(bssidUpper).arg(ssid));
         root.addDebugInfo(qsTr("Creating connection profile with password and key-mgmt"));
-        
+
         // Set command and start process
         connectProc.command = cmd;
-        
+
         Qt.callLater(() => {
             connectProc.running = true;
         });
@@ -198,7 +198,7 @@ Singleton {
     function connectToNetworkWithPasswordCheck(ssid: string, isSecure: bool, callback: var, bssid: string): void {
         root.addDebugInfo(qsTr("=== connectToNetworkWithPasswordCheck ==="));
         root.addDebugInfo(qsTr("SSID: %1, isSecure: %2").arg(ssid).arg(isSecure));
-        
+
         // For secure networks, try connecting without password first
         // If connection succeeds (saved password exists), we're done
         // If it fails with password error, callback will be called to show password dialog
@@ -228,7 +228,7 @@ Singleton {
             disconnectProc.exec(["nmcli", "device", "disconnect", "wifi"]);
         }
     }
-    
+
     function forgetNetwork(ssid: string): void {
         // Delete the connection profile for this network
         // This will remove the saved password and connection settings
@@ -240,7 +240,7 @@ Singleton {
             }, 500);
         }
     }
-    
+
     function hasConnectionProfile(ssid: string): bool {
         // Check if a connection profile exists for this SSID
         // This is synchronous check - returns true if connection exists
@@ -252,12 +252,12 @@ Singleton {
         // The actual check will be done asynchronously
         return false;
     }
-    
+
     property list<string> savedConnections: []
     property list<string> savedConnectionSsids: []
     property var wifiConnectionQueue: []
     property int currentSsidQueryIndex: 0
-    
+
     Process {
         id: listConnectionsProc
         command: ["nmcli", "-t", "-f", "NAME,TYPE", "connection", "show"]
@@ -276,12 +276,12 @@ Singleton {
             }
         }
     }
-    
+
     function parseConnectionList(output: string): void {
         const lines = output.trim().split("\n").filter(line => line.length > 0);
         const wifiConnections = [];
         const connections = [];
-        
+
         // First pass: identify WiFi connections
         for (const line of lines) {
             const parts = line.split(":");
@@ -289,15 +289,15 @@ Singleton {
                 const name = parts[0];
                 const type = parts[1];
                 connections.push(name);
-                
+
                 if (type === "802-11-wireless") {
                     wifiConnections.push(name);
                 }
             }
         }
-        
+
         root.savedConnections = connections;
-        
+
         // Second pass: get SSIDs for WiFi connections
         if (wifiConnections.length > 0) {
             root.wifiConnectionQueue = wifiConnections;
@@ -310,10 +310,10 @@ Singleton {
             root.wifiConnectionQueue = [];
         }
     }
-    
+
     Process {
         id: getSsidProc
-        
+
         environment: ({
                 LANG: "C.UTF-8",
                 LC_ALL: "C.UTF-8"
@@ -332,7 +332,7 @@ Singleton {
             }
         }
     }
-    
+
     function processSsidOutput(output: string): void {
         // Parse "802-11-wireless.ssid:SSID_NAME" format
         const lines = output.trim().split("\n");
@@ -351,11 +351,11 @@ Singleton {
                 }
             }
         }
-        
+
         // Query next connection
         queryNextSsid();
     }
-    
+
     function queryNextSsid(): void {
         if (root.currentSsidQueryIndex < root.wifiConnectionQueue.length) {
             const connectionName = root.wifiConnectionQueue[root.currentSsidQueryIndex];
@@ -368,13 +368,13 @@ Singleton {
             root.currentSsidQueryIndex = 0;
         }
     }
-    
+
     function hasSavedProfile(ssid: string): bool {
         if (!ssid || ssid.length === 0) {
             return false;
         }
         const ssidLower = ssid.toLowerCase().trim();
-        
+
         // If currently connected to this network, it definitely has a saved profile
         if (root.active && root.active.ssid) {
             const activeSsidLower = root.active.ssid.toLowerCase().trim();
@@ -382,21 +382,21 @@ Singleton {
                 return true;
             }
         }
-        
+
         // Check if SSID is in saved connections (case-insensitive comparison)
-        const hasSsid = root.savedConnectionSsids.some(savedSsid => 
+        const hasSsid = root.savedConnectionSsids.some(savedSsid =>
             savedSsid && savedSsid.toLowerCase().trim() === ssidLower
         );
-        
+
         if (hasSsid) {
             return true;
         }
-        
+
         // Fallback: also check if connection name matches SSID (some connections use SSID as name)
-        const hasConnectionName = root.savedConnections.some(connName => 
+        const hasConnectionName = root.savedConnections.some(connName =>
             connName && connName.toLowerCase().trim() === ssidLower
         );
-        
+
         return hasConnectionName;
     }
 
@@ -442,7 +442,7 @@ Singleton {
         if (isNaN(cidrNum) || cidrNum < 0 || cidrNum > 32) {
             return "";
         }
-        
+
         const mask = (0xffffffff << (32 - cidrNum)) >>> 0;
         const octets = [
             (mask >>> 24) & 0xff,
@@ -450,7 +450,7 @@ Singleton {
             (mask >>> 8) & 0xff,
             mask & 0xff
         ];
-        
+
         return octets.join(".");
     }
 
@@ -510,7 +510,7 @@ Singleton {
                 root.addDebugInfo(qsTr("  Pending SSID: %1").arg(root.pendingConnection.ssid));
                 root.addDebugInfo(qsTr("  Active SSID: %1").arg(root.active ? root.active.ssid : "None"));
                 root.addDebugInfo(qsTr("  Connected: %1").arg(connected));
-                
+
                 if (!connected && root.pendingConnection.callback) {
                     // Connection didn't succeed after multiple checks, show password dialog
                     root.addDebugInfo(qsTr("Connection failed - calling password dialog callback"));
@@ -543,19 +543,19 @@ Singleton {
         repeat: true
         triggeredOnStart: false
         property int checkCount: 0
-        
+
         onRunningChanged: {
             if (running) {
                 root.addDebugInfo(qsTr("Immediate check timer started (checks every 500ms)"));
             }
         }
-        
+
         onTriggered: {
             if (root.pendingConnection) {
                 checkCount++;
                 const connected = root.active && root.active.ssid === root.pendingConnection.ssid;
                 root.addDebugInfo(qsTr("Immediate check #%1: Connected=%2").arg(checkCount).arg(connected));
-                
+
                 if (connected) {
                     // Connection succeeded, stop timers and clear pending
                     root.addDebugInfo(qsTr("Connection succeeded on check #%1!").arg(checkCount));
@@ -586,32 +586,32 @@ Singleton {
         onRunningChanged: {
             root.addDebugInfo(qsTr("Process running changed to: %1").arg(running));
         }
-        
+
         onStarted: {
             root.addDebugInfo(qsTr("Process started successfully"));
         }
-        
+
         onExited: {
             root.addDebugInfo(qsTr("=== PROCESS EXITED ==="));
             root.addDebugInfo(qsTr("Exit code: %1").arg(exitCode));
             root.addDebugInfo(qsTr("(Exit code 0 = success, non-zero = error)"));
-            
+
             // Check if this was a "connection add" command - if so, we need to activate it
-            const wasConnectionAdd = connectProc.command && connectProc.command.length > 0 
-                                   && connectProc.command[0] === "nmcli" 
-                                   && connectProc.command[1] === "connection" 
+            const wasConnectionAdd = connectProc.command && connectProc.command.length > 0
+                                   && connectProc.command[0] === "nmcli"
+                                   && connectProc.command[1] === "connection"
                                    && connectProc.command[2] === "add";
-            
+
             if (wasConnectionAdd && root.pendingConnection) {
                 const ssid = root.pendingConnection.ssid;
-                
+
                 // Check for duplicate connection warning in stderr text
                 const stderrText = connectProc.stderr ? connectProc.stderr.text : "";
                 const hasDuplicateWarning = stderrText && (
                     stderrText.includes("another connection with the name") ||
                     stderrText.includes("Reference the connection by its uuid")
                 );
-                
+
                 // Even with duplicate warning (or if connection already exists), we should try to activate it
                 // Also try if exit code is non-zero but small (might be a warning, not a real error)
                 if (exitCode === 0 || hasDuplicateWarning || (exitCode > 0 && exitCode < 10)) {
@@ -622,10 +622,10 @@ Singleton {
                         root.addDebugInfo(qsTr("Connection profile created successfully, now activating: %1").arg(ssid));
                         root.setConnectionStatus(qsTr("Activating connection..."));
                     }
-                    
+
                     // Update saved connections list
                     listConnectionsProc.running = true;
-                    
+
                     // Try to activate the connection by SSID (connection name)
                     connectProc.command = ["nmcli", "connection", "up", ssid];
                     Qt.callLater(() => {
@@ -644,7 +644,7 @@ Singleton {
                             password = connectProc.command[pskIndex + 1];
                         }
                     }
-                    
+
                     if (password && password.length > 0) {
                         root.addDebugInfo(qsTr("Using device wifi connect with password as fallback"));
                         connectProc.command = ["nmcli", "device", "wifi", "connect", ssid, "password", password];
@@ -655,10 +655,10 @@ Singleton {
                     }
                 }
             }
-            
+
             // Refresh network list after connection attempt
             getNetworks.running = true;
-            
+
             // Check if connection succeeded after a short delay (network list needs to update)
             if (root.pendingConnection) {
                 if (exitCode === 0) {
@@ -704,10 +704,10 @@ Singleton {
                             root.addDebugInfo(qsTr("STDERR: %1").arg(line));
                         }
                     }
-                    
+
                     // Check for specific errors that indicate password is needed
                     // Be careful not to match success messages
-                    const needsPassword = (error.includes("Secrets were required") || 
+                    const needsPassword = (error.includes("Secrets were required") ||
                                         error.includes("No secrets provided") ||
                                         error.includes("802-11-wireless-security.psk") ||
                                         (error.includes("password") && !error.includes("Connection activated")) ||
@@ -715,7 +715,7 @@ Singleton {
                                         (error.includes("802.11") && !error.includes("Connection activated"))) &&
                                         !error.includes("Connection activated") &&
                                         !error.includes("successfully");
-                    
+
                     if (needsPassword && root.pendingConnection && root.pendingConnection.callback) {
                         // Connection failed because password is needed - show dialog immediately
                         connectionCheckTimer.stop();
@@ -784,7 +784,7 @@ Singleton {
 
     Process {
         id: deleteConnectionProc
-        
+
         // Delete connection profile - refresh network list and saved connections after deletion
         onExited: {
             // Refresh network list and saved connections after deletion
@@ -924,12 +924,12 @@ Singleton {
             onStreamFinished: {
                 const output = text.trim();
                 root.ethernetDebugInfo = "Output received in onStreamFinished! Length: " + output.length + ", First 100 chars: " + output.substring(0, 100);
-                
+
                 if (!output || output.length === 0) {
                     root.ethernetDebugInfo = "No output received (empty)";
                     return;
                 }
-                
+
                 root.processEthernetOutput(output);
             }
         }
@@ -942,7 +942,7 @@ Singleton {
 
         const lines = output.split("\n");
         root.ethernetDebugInfo = "Processing " + lines.length + " lines";
-        
+
         const allDevices = lines.map(d => {
             const dev = d.replace(rep, PLACEHOLDER).split(":");
             return {
@@ -952,9 +952,9 @@ Singleton {
                 connection: dev[3]?.replace(rep2, ":") ?? ""
             };
         });
-        
+
         root.ethernetDebugInfo = "All devices: " + allDevices.length + ", Types: " + allDevices.map(d => d.type).join(", ");
-        
+
         const ethernetOnly = allDevices.filter(d => d.type === "ethernet");
         root.ethernetDebugInfo = "Ethernet devices found: " + ethernetOnly.length;
 
@@ -975,7 +975,7 @@ Singleton {
                 speed: ""
             };
         });
-        
+
         root.ethernetDebugInfo = "Ethernet devices processed: " + ethernetDevices.length + ", First device: " + (ethernetDevices[0]?.interface || "none");
 
         // Update the list - replace the entire array to ensure QML detects the change
@@ -984,13 +984,13 @@ Singleton {
         for (let i = 0; i < ethernetDevices.length; i++) {
             newDevices.push(ethernetDevices[i]);
         }
-        
+
         // Replace the entire list
         root.ethernetDevices = newDevices;
-        
+
         // Force QML to detect the change by updating a property
         root.ethernetDeviceCount = ethernetDevices.length;
-        
+
         // Force QML to re-evaluate the list by accessing it
         Qt.callLater(() => {
             const count = root.ethernetDevices.length;
@@ -1130,7 +1130,7 @@ const line = lines[i];
                 // Find the connected wifi interface from device status
                 const lines = output.split("\n");
                 let wifiInterface = "";
-                
+
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i];
                     const parts = line.split(/\s+/);

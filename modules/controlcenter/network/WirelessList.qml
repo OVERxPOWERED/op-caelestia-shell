@@ -230,7 +230,7 @@ ColumnLayout {
         if (network.isSecure) {
             // Check if we have a saved connection profile for this network (by SSID)
             const hasSavedProfile = Network.hasSavedProfile(network.ssid);
-            
+
             if (hasSavedProfile) {
                 // Try connecting with saved password - don't show dialog if it fails
                 // The saved password should work, but if connection fails for other reasons,

@@ -53,7 +53,7 @@ RowLayout {
         try {
             const config = JSON.parse(configFile.text());
             const appId = root.selectedApp.id || root.selectedApp.entry?.id;
-            
+
             if (config.launcher && config.launcher.hiddenApps) {
                 root.hideFromLauncherChecked = config.launcher.hiddenApps.includes(appId);
             } else {
@@ -72,12 +72,12 @@ RowLayout {
         try {
             const config = JSON.parse(configFile.text());
             const appId = root.selectedApp.id || root.selectedApp.entry?.id;
-            
+
             if (!config.launcher) config.launcher = {};
             if (!config.launcher.hiddenApps) config.launcher.hiddenApps = [];
-            
+
             const hiddenApps = config.launcher.hiddenApps;
-            
+
             if (isHidden) {
                 // Add to hiddenApps if not already there
                 if (!hiddenApps.includes(appId)) {
@@ -90,7 +90,7 @@ RowLayout {
                     hiddenApps.splice(index, 1);
                 }
             }
-            
+
             const jsonString = JSON.stringify(config, null, 4);
             configFile.setText(jsonString);
         } catch (e) {

@@ -310,20 +310,20 @@ RowLayout {
                         StateLayer {
                             function onClicked(): void {
                                 const variant = modelData.variant;
-                                
+
                                 // Optimistic update - set immediately
                                 Schemes.currentVariant = variant;
-                                
+
                                 // Execute the command
                                 Quickshell.execDetached(["caelestia", "scheme", "set", "-v", variant]);
-                                
+
                                 // Reload after a delay to confirm
                                 Qt.callLater(() => {
                                     reloadTimer.restart();
                                 });
                             }
                         }
-                        
+
                         Timer {
                             id: reloadTimer
                             interval: 300
@@ -410,20 +410,20 @@ RowLayout {
                                 const name = modelData.name;
                                 const flavour = modelData.flavour;
                                 const schemeKey = `${name} ${flavour}`;
-                                
+
                                 // Optimistic update - set immediately
                                 Schemes.currentScheme = schemeKey;
-                                
+
                                 // Execute the command
                                 Quickshell.execDetached(["caelestia", "scheme", "set", "-n", name, "-f", flavour]);
-                                
+
                                 // Reload after a delay to confirm
                                 Qt.callLater(() => {
                                     reloadTimer.restart();
                                 });
                             }
                         }
-                        
+
                         Timer {
                             id: reloadTimer
                             interval: 300
@@ -1053,7 +1053,7 @@ RowLayout {
                     columns: Math.max(1, Math.floor(parent.width / 200))
                     rowSpacing: Appearance.spacing.normal
                     columnSpacing: Appearance.spacing.normal
-                    
+
                     // Center the grid content
                     Layout.maximumWidth: {
                         const cols = columns;
@@ -1100,16 +1100,16 @@ RowLayout {
 
                                     path: modelData.path
                                     anchors.fill: parent
-                                    
+
                                     // Ensure sourceSize is always set to valid dimensions
                                     sourceSize: Qt.size(
                                         Math.max(1, Math.floor(parent.width)),
                                         Math.max(1, Math.floor(parent.height))
                                     )
-                                    
+
                                     // Show when ready, hide if fallback is showing
                                     opacity: status === Image.Ready && !fallbackImage.visible ? 1 : 0
-                                    
+
                                     Behavior on opacity {
                                         NumberAnimation {
                                             duration: 200
@@ -1129,11 +1129,11 @@ RowLayout {
                                         Math.max(1, Math.floor(parent.width)),
                                         Math.max(1, Math.floor(parent.height))
                                     )
-                                    
+
                                     // Show if caching image hasn't loaded after a delay
                                     visible: opacity > 0
                                     opacity: 0
-                                    
+
                                     Timer {
                                         id: fallbackTimer
                                         interval: 500
@@ -1144,7 +1144,7 @@ RowLayout {
                                             }
                                         }
                                     }
-                                    
+
                                     // Also check status changes
                                     onStatusChanged: {
                                         if (status === Image.Ready && cachingImage.status !== Image.Ready) {
@@ -1155,7 +1155,7 @@ RowLayout {
                                             });
                                         }
                                     }
-                                    
+
                                     Behavior on opacity {
                                         NumberAnimation {
                                             duration: 200
@@ -1182,26 +1182,26 @@ RowLayout {
                                 anchors.right: parent.right
                                 anchors.bottom: parent.bottom
                                 height: filenameText.implicitHeight + Appearance.padding.normal * 2
-                                
+
                                 // Match the parent's rounded corners at the bottom
                                 radius: Appearance.rounding.normal
-                                
+
                                 gradient: Gradient {
                                     GradientStop { position: 0.0; color: Qt.rgba(0, 0, 0, 0) }
                                     GradientStop { position: 0.3; color: Qt.rgba(0, 0, 0, 0.3) }
                                     GradientStop { position: 0.7; color: Qt.rgba(0, 0, 0, 0.75) }
                                     GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.85) }
                                 }
-                                
+
                                 opacity: 0
-                                
+
                                 Behavior on opacity {
                                     NumberAnimation {
                                         duration: 200
                                         easing.type: Easing.OutCubic
                                     }
                                 }
-                                
+
                                 Component.onCompleted: {
                                     opacity = 1;
                                 }
@@ -1228,20 +1228,20 @@ RowLayout {
                                 color: isCurrent ? Colours.palette.m3primary : "#FFFFFF"
                                 elide: Text.ElideMiddle
                                 maximumLineCount: 1
-                                
+
                                 // Text shadow for better readability
                                 style: Text.Outline
                                 styleColor: Qt.rgba(0, 0, 0, 0.6)
-                                
+
                                 opacity: 0
-                                
+
                                 Behavior on opacity {
                                     NumberAnimation {
                                         duration: 200
                                         easing.type: Easing.OutCubic
                                     }
                                 }
-                                
+
                                 Component.onCompleted: {
                                     opacity = 1;
                                 }

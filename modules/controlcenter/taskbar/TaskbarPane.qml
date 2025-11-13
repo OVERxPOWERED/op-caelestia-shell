@@ -120,13 +120,13 @@ RowLayout {
         if (!configFile.loaded) {
             return;
         }
-        
+
         try {
             const config = JSON.parse(configFile.text());
-            
+
             // Ensure bar object exists
             if (!config.bar) config.bar = {};
-            
+
             // Update clock setting
             if (!config.bar.clock) config.bar.clock = {};
             config.bar.clock.showIcon = clockShowIconSwitch.checked;
@@ -163,7 +163,7 @@ RowLayout {
             // Update entries from the model (same approach as clock - use provided value if available)
             if (!config.bar.entries) config.bar.entries = [];
             config.bar.entries = [];
-            
+
             for (let i = 0; i < entriesModel.count; i++) {
                 const entry = entriesModel.get(i);
                 // If this is the entry being updated, use the provided value (same as clock toggle reads from switch)

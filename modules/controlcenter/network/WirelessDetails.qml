@@ -26,7 +26,7 @@ Item {
         updateDeviceDetails();
         checkSavedProfile();
     }
-    
+
     function checkSavedProfile(): void {
         // Refresh saved connections list to ensure it's up to date
         // This ensures the "Forget Network" button visibility is accurate
@@ -102,7 +102,7 @@ Item {
                     color: Colours.palette.m3errorContainer
                     onColor: Colours.palette.m3onErrorContainer
                     text: qsTr("Forget Network")
-                    
+
                     onClicked: {
                         if (root.network && root.network.ssid) {
                             // Disconnect first if connected
@@ -184,7 +184,7 @@ Item {
         if (root.network.isSecure) {
             // Check if we have a saved connection profile for this network (by SSID)
             const hasSavedProfile = Network.hasSavedProfile(root.network.ssid);
-            
+
             if (hasSavedProfile) {
                 // Try connecting with saved password - don't show dialog if it fails
                 // The saved password should work, but if connection fails for other reasons,

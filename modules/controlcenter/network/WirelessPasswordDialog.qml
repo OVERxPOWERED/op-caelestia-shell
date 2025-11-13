@@ -15,7 +15,7 @@ Item {
     id: root
 
     required property Session session
-    
+
     readonly property var network: {
         // Prefer pendingNetwork, then active network
         if (session.network.pendingNetwork) {
@@ -105,7 +105,7 @@ Item {
 
             StyledText {
                 id: statusText
-                
+
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Appearance.spacing.small
                 visible: Network.connectionStatus.length > 0 || connectButton.connecting
@@ -251,15 +251,15 @@ Item {
         // Check connection status message for success indicators
         const status = Network.connectionStatus;
         const statusLower = status.toLowerCase();
-        
+
         // Check for success indicators in status message
-        const hasSuccessIndicator = statusLower.includes("connection activated") || 
+        const hasSuccessIndicator = statusLower.includes("connection activated") ||
                                    statusLower.includes("successfully") ||
                                    statusLower.includes("connected successfully") ||
                                    (statusLower.includes("connected") && !statusLower.includes("error") && !statusLower.includes("failed"));
 
         // Check if we're connected to the target network (case-insensitive SSID comparison)
-        const isConnected = root.network && Network.active && Network.active.ssid && 
+        const isConnected = root.network && Network.active && Network.active.ssid &&
                            Network.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
 
         if (isConnected || hasSuccessIndicator) {

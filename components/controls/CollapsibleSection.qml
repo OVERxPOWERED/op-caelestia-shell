@@ -12,7 +12,7 @@ ColumnLayout {
     required property string title
     property string description: ""
     property bool expanded: false
-    
+
     signal toggleRequested
 
     spacing: Appearance.spacing.small / 2

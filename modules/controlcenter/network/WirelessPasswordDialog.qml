@@ -321,4 +321,3 @@ Item {
         Network.clearConnectionStatus();
     }
 }
-

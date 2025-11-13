@@ -152,4 +152,3 @@ RowLayout {
         easing.type: Easing.BezierSpline
     }
 }
-

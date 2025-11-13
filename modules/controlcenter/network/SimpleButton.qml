@@ -50,4 +50,3 @@ StyledRect {
 
     signal clicked
 }
-

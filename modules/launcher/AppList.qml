@@ -52,7 +52,7 @@ StyledListView {
         const text = search.text;
         const prefix = Config.launcher.actionPrefix;
         if (text.startsWith(prefix)) {
-            for (const action of ["calc", "python", "scheme", "variant"])
+            for (const action of ["calc", "scheme", "variant"])
                 if (text.startsWith(`${prefix}${action} `))
                     return action;
 
@@ -90,14 +90,6 @@ StyledListView {
             PropertyChanges {
                 model.values: [0]
                 root.delegate: calcItem
-            }
-        },
-        State {
-            name: "python"
-
-            PropertyChanges {
-                model.values: [0]
-                root.delegate: pythonItem
             }
         },
         State {
@@ -243,14 +235,6 @@ StyledListView {
         id: calcItem
 
         CalcItem {
-            list: root
-        }
-    }
-
-    Component {
-        id: pythonItem
-
-        PythonItem {
             list: root
         }
     }

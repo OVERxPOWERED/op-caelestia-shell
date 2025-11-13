@@ -171,7 +171,7 @@ ColumnLayout {
         color: Colours.palette.m3primaryContainer
         onColor: Colours.palette.m3onPrimaryContainer
         text: qsTr("Open Settings")
-        icon: "chevron_right"
+        icon: "settings"
 
         onClicked: {
             root.wrapper.detach("bluetooth");

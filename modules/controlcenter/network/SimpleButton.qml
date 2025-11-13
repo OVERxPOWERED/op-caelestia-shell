@@ -33,18 +33,18 @@ StyledRect {
         anchors.centerIn: parent
         spacing: Appearance.spacing.small
 
-        StyledText {
-            id: label
-            Layout.leftMargin: root.icon.length > 0 ? Appearance.padding.smaller : 0
-            color: parent.parent.onColor
-        }
-
         MaterialIcon {
             id: iconItem
             visible: root.icon.length > 0
             text: root.icon
             color: root.onColor
             font.pointSize: Appearance.font.size.large
+        }
+
+        StyledText {
+            id: label
+            Layout.leftMargin: root.icon.length > 0 ? Appearance.padding.smaller : 0
+            color: parent.parent.onColor
         }
     }
 

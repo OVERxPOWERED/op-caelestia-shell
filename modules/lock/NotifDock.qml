@@ -22,7 +22,7 @@ ColumnLayout {
 
     StyledText {
         Layout.fillWidth: true
-        text: Notifs.notClosed.length > 0 ? qsTr("%1 notification%2").arg(Notifs.notClosed.length).arg(Notifs.notClosed.length === 1 ? "" : "s") : qsTr("Notifications")
+        text: Notifs.list.length > 0 ? qsTr("%1 notification%2").arg(Notifs.list.length).arg(Notifs.list.length === 1 ? "" : "s") : qsTr("Notifications")
         color: Colours.palette.m3outline
         font.family: Appearance.font.family.mono
         font.weight: 500
@@ -42,7 +42,7 @@ ColumnLayout {
             anchors.centerIn: parent
             asynchronous: true
             active: opacity > 0
-            opacity: Notifs.notClosed.length > 0 ? 0 : 1
+            opacity: Notifs.list.length > 0 ? 0 : 1
 
             sourceComponent: ColumnLayout {
                 spacing: Appearance.spacing.large

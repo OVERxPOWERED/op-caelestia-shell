@@ -28,13 +28,14 @@ StyledRect {
 
     border.width: 1
     border.color: {
+        let colour = Colours.palette.m3outlineVariant;
         if (root.modelData.type === Toast.Success)
-            return Colours.palette.m3success;
+            colour = Colours.palette.m3success;
         if (root.modelData.type === Toast.Warning)
-            return Colours.palette.m3secondaryContainer;
+            colour = Colours.palette.m3secondaryContainer;
         if (root.modelData.type === Toast.Error)
-            return Colours.palette.m3error;
-        return Colours.palette.m3outlineVariant;
+            colour = Colours.palette.m3error;
+        return Qt.alpha(colour, 0.3);
     }
 
     Elevation {

@@ -13,8 +13,6 @@ Item {
     required property Item panels
     readonly property int padding: Appearance.padding.large
 
-    property bool shouldShow: false
-
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
@@ -22,15 +20,12 @@ Item {
     implicitWidth: Config.notifs.sizes.width + padding * 2
     implicitHeight: {
         const count = list.count;
-        if (count === 0 || !shouldShow)
+        if (count === 0)
             return 0;
 
         let height = (count - 1) * Appearance.spacing.smaller;
         for (let i = 0; i < count; i++)
             height += list.itemAtIndex(i)?.nonAnimHeight ?? 0;
-
-        const screenHeight = QsWindow.window?.screen?.height ?? 0;
-        const maxHeight = Math.floor(screenHeight * 0.45);
 
         if (visibilities && panels) {
             if (visibilities.osd) {
@@ -46,8 +41,7 @@ Item {
             }
         }
 
-        const availableHeight = Math.min(maxHeight, screenHeight - Config.border.thickness * 2);
-        return Math.min(availableHeight, height + padding * 2);
+        return Math.min((QsWindow.window?.screen?.height ?? 0) - Config.border.thickness * 2, height + padding * 2);
     }
 
     ClippingWrapperRectangle {
@@ -61,7 +55,7 @@ Item {
             id: list
 
             model: ScriptModel {
-                values: [...Notifs.notClosed]
+                values: Notifs.popups.filter(n => !n.closed)
             }
 
             anchors.fill: parent
@@ -194,52 +188,6 @@ Item {
 
                     return 0;
                 }
-            }
-        }
-    }
-
-    Timer {
-        id: hideTimer
-
-        interval: 5000
-        onTriggered: {
-            if (list.count > 0)
-                root.shouldShow = false;
-        }
-    }
-
-    function show(): void {
-        if (list.count > 0) {
-            shouldShow = true;
-            hideTimer.restart();
-        }
-    }
-
-    Connections {
-        target: list
-
-        function onCountChanged(): void {
-            if (list.count === 0) {
-                root.shouldShow = false;
-                hideTimer.stop();
-            }
-        }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        acceptedButtons: Qt.NoButton
-        onEntered: {
-            if (list.count > 0) {
-                root.shouldShow = true;
-                hideTimer.restart();
-            }
-        }
-        onExited: {
-            if (list.count > 0) {
-                root.shouldShow = false;
-                hideTimer.stop();
             }
         }
     }

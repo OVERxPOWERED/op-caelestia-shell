@@ -8,10 +8,6 @@ import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities as Utilities
 import qs.modules.utilities.toasts as Toasts
 import qs.modules.sidebar as Sidebar
-import qs.components
-import qs.components.controls
-import qs.components.effects
-import qs.services
 import Quickshell
 import QtQuick
 
@@ -31,7 +27,6 @@ Item {
     readonly property alias utilities: utilities
     readonly property alias toasts: toasts
     readonly property alias sidebar: sidebar
-    readonly property alias clearAllButton: clearAllButton
 
     anchors.fill: parent
     anchors.margins: Config.border.thickness
@@ -57,89 +52,6 @@ Item {
 
         anchors.top: parent.top
         anchors.right: parent.right
-    }
-
-    // Clear all notifications button - positioned to the left of the notification panel
-    Item {
-        id: clearAllButton
-
-        readonly property bool hasNotifications: Notifs.notClosed.length > 0
-        readonly property bool panelVisible: notifications.height > 0 || notifications.implicitHeight > 0
-        readonly property bool shouldShow: hasNotifications && panelVisible
-
-        anchors.top: notifications.top
-        anchors.right: notifications.left
-        anchors.rightMargin: Appearance.padding.normal
-        anchors.topMargin: Appearance.padding.large
-
-        width: button.implicitWidth
-        height: button.implicitHeight
-        enabled: shouldShow
-
-        IconButton {
-            id: button
-
-            icon: "clear_all"
-            radius: Appearance.rounding.normal
-            padding: Appearance.padding.normal
-            font.pointSize: Math.round(Appearance.font.size.large * 1.2)
-
-            onClicked: {
-                // Clear all notifications
-                for (const notif of Notifs.list.slice())
-                    notif.close();
-            }
-
-            Elevation {
-                anchors.fill: parent
-                radius: parent.radius
-                z: -1
-                level: button.stateLayer.containsMouse ? 4 : 3
-            }
-        }
-
-        // Keep notification panel visible when hovering over the button
-        MouseArea {
-            anchors.fill: button
-            hoverEnabled: true
-            acceptedButtons: Qt.NoButton
-            onEntered: {
-                if (notifications.content && Notifs.notClosed.length > 0) {
-                    notifications.content.show();
-                }
-            }
-            onExited: {
-                // Panel will be hidden by Interactions.qml if mouse is not over panel or button
-            }
-        }
-
-        Behavior on opacity {
-            Anim {
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-            }
-        }
-
-        Behavior on scale {
-            Anim {
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-            }
-        }
-
-        opacity: shouldShow ? 1 : 0
-        scale: shouldShow ? 1 : 0.5
-    }
-
-    Notifications.NotificationToasts {
-        id: notificationToasts
-
-        panels: root
-
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.topMargin: Config.border.thickness
-        anchors.rightMargin: Config.border.thickness
     }
 
     Session.Wrapper {

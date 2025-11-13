@@ -17,31 +17,22 @@ StyledRect {
     required property Notifs.Notif modelData
     readonly property bool hasImage: modelData.image.length > 0
     readonly property bool hasAppIcon: modelData.appIcon.length > 0
-    readonly property int nonAnimHeight: {
-        const baseHeight = summary.implicitHeight + inner.anchors.margins * 2;
-        return root.expanded 
-            ? baseHeight + appName.height + body.height + actions.height + actions.anchors.topMargin
-            : baseHeight + bodyPreview.height;
-    }
+    readonly property int nonAnimHeight: summary.implicitHeight + (root.expanded ? appName.height + body.height + actions.height + actions.anchors.topMargin : bodyPreview.height) + inner.anchors.margins * 2
     property bool expanded
-    property bool disableSlideIn: false
 
-    color: modelData.getBackgroundColor()
+    color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
     radius: Appearance.rounding.normal
     implicitWidth: Config.notifs.sizes.width
     implicitHeight: inner.implicitHeight
 
-    x: disableSlideIn ? 0 : Config.notifs.sizes.width
+    x: Config.notifs.sizes.width
     Component.onCompleted: {
-        if (!root.disableSlideIn) {
-            x = 0;
-        }
+        x = 0;
         modelData.lock(this);
     }
     Component.onDestruction: modelData.unlock(this)
 
     Behavior on x {
-        enabled: !disableSlideIn
         Anim {
             easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
         }
@@ -143,18 +134,53 @@ StyledRect {
             Loader {
                 id: appIcon
 
-                active: !root.hasImage || root.hasAppIcon
-                asynchronous: false
+                active: root.hasAppIcon || !root.hasImage
+                asynchronous: true
 
                 anchors.horizontalCenter: root.hasImage ? undefined : image.horizontalCenter
                 anchors.verticalCenter: root.hasImage ? undefined : image.verticalCenter
                 anchors.right: root.hasImage ? image.right : undefined
                 anchors.bottom: root.hasImage ? image.bottom : undefined
 
-                sourceComponent: AppIconBadge {
-                    modelData: root.modelData
-                    hasImage: root.hasImage
-                    hasAppIcon: root.hasAppIcon
+                sourceComponent: StyledRect {
+                    radius: Appearance.rounding.full
+                    color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.modelData.urgency === NotificationUrgency.Low ? Colours.layer(Colours.palette.m3surfaceContainerHighest, 2) : Colours.palette.m3secondaryContainer
+                    implicitWidth: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
+                    implicitHeight: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
+
+                    Loader {
+                        id: icon
+
+                        active: root.hasAppIcon
+                        asynchronous: true
+
+                        anchors.centerIn: parent
+
+                        width: Math.round(parent.width * 0.6)
+                        height: Math.round(parent.width * 0.6)
+
+                        sourceComponent: ColouredIcon {
+                            anchors.fill: parent
+                            source: Quickshell.iconPath(root.modelData.appIcon)
+                            colour: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.modelData.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
+                            layer.enabled: root.modelData.appIcon.endsWith("symbolic")
+                        }
+                    }
+
+                    Loader {
+                        active: !root.hasAppIcon
+                        asynchronous: true
+                        anchors.centerIn: parent
+                        anchors.horizontalCenterOffset: -Appearance.font.size.large * 0.02
+                        anchors.verticalCenterOffset: Appearance.font.size.large * 0.02
+
+                        sourceComponent: MaterialIcon {
+                            text: Icons.getNotifIcon(root.modelData.summary, root.modelData.urgency)
+
+                            color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.modelData.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
+                            font.pointSize: Appearance.font.size.large
+                        }
+                    }
                 }
             }
 
@@ -296,7 +322,7 @@ StyledRect {
 
                 StateLayer {
                     radius: Appearance.rounding.full
-                    color: root.modelData.getStateLayerColor()
+                    color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
 
                     function onClicked() {
                         root.expanded = !root.expanded;
@@ -417,7 +443,7 @@ StyledRect {
         required property var modelData
 
         radius: Appearance.rounding.full
-        color: root.modelData.getActionBackgroundColor()
+        color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
 
         Layout.preferredWidth: actionText.width + Appearance.padding.normal * 2
         Layout.preferredHeight: actionText.height + Appearance.padding.small * 2
@@ -426,7 +452,7 @@ StyledRect {
 
         StateLayer {
             radius: Appearance.rounding.full
-            color: root.modelData.getStateLayerColor()
+            color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurface
 
             function onClicked(): void {
                 action.modelData.invoke();
@@ -438,7 +464,7 @@ StyledRect {
 
             anchors.centerIn: parent
             text: actionTextMetrics.elidedText
-            color: root.modelData.getActionTextColor()
+            color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurfaceVariant
             font.pointSize: Appearance.font.size.small
         }
 

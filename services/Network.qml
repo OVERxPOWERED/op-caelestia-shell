@@ -90,19 +90,26 @@ Singleton {
             if (hasBssid) {
                 // Use BSSID when password is provided - ensure BSSID is uppercase
                 const bssidUpper = bssid.toUpperCase();
-                // Create connection profile with all required properties for BSSID + password
-                // First remove any existing connection with this name
-                cmd = ["nmcli", "connection", "add", 
-                       "type", "wifi", 
-                       "con-name", ssid,
-                       "ifname", "*",
-                       "ssid", ssid,
-                       "802-11-wireless.bssid", bssidUpper,
-                       "802-11-wireless-security.key-mgmt", "wpa-psk",
-                       "802-11-wireless-security.psk", password];
-                root.setConnectionStatus(qsTr("Connecting to %1 (BSSID: %2)...").arg(ssid).arg(bssidUpper));
-                root.addDebugInfo(qsTr("Using BSSID: %1 for SSID: %2").arg(bssidUpper).arg(ssid));
-                root.addDebugInfo(qsTr("Creating connection profile with password and key-mgmt"));
+                
+                // Check if a connection with this SSID already exists
+                const existingConnection = root.savedConnections.find(conn => 
+                    conn && conn.toLowerCase().trim() === ssid.toLowerCase().trim()
+                );
+                
+                if (existingConnection) {
+                    // Connection already exists - delete it first, then create new one with updated password
+                    root.addDebugInfo(qsTr("Connection '%1' already exists, deleting it first...").arg(existingConnection));
+                    deleteConnectionProc.exec(["nmcli", "connection", "delete", existingConnection]);
+                    // Wait a moment for deletion to complete, then create new connection
+                    Qt.callLater(() => {
+                        createConnectionWithPassword(ssid, bssidUpper, password);
+                    }, 300);
+                    return;
+                } else {
+                    // No existing connection, create new one
+                    createConnectionWithPassword(ssid, bssidUpper, password);
+                    return;
+                }
             } else {
                 // Fallback to SSID if BSSID not available - use device wifi connect
                 cmd = ["nmcli", "device", "wifi", "connect", ssid, "password", password];
@@ -164,6 +171,29 @@ Singleton {
             root.addDebugInfo(qsTr("No callback provided - not starting connection check timer"));
         }
     }
+    
+    function createConnectionWithPassword(ssid: string, bssidUpper: string, password: string): void {
+        // Create connection profile with all required properties for BSSID + password
+        const cmd = ["nmcli", "connection", "add", 
+                   "type", "wifi", 
+                   "con-name", ssid,
+                   "ifname", "*",
+                   "ssid", ssid,
+                   "802-11-wireless.bssid", bssidUpper,
+                   "802-11-wireless-security.key-mgmt", "wpa-psk",
+                   "802-11-wireless-security.psk", password];
+        
+        root.setConnectionStatus(qsTr("Connecting to %1 (BSSID: %2)...").arg(ssid).arg(bssidUpper));
+        root.addDebugInfo(qsTr("Using BSSID: %1 for SSID: %2").arg(bssidUpper).arg(ssid));
+        root.addDebugInfo(qsTr("Creating connection profile with password and key-mgmt"));
+        
+        // Set command and start process
+        connectProc.command = cmd;
+        
+        Qt.callLater(() => {
+            connectProc.running = true;
+        });
+    }
 
     function connectToNetworkWithPasswordCheck(ssid: string, isSecure: bool, callback: var, bssid: string): void {
         root.addDebugInfo(qsTr("=== connectToNetworkWithPasswordCheck ==="));
@@ -224,23 +254,150 @@ Singleton {
     }
     
     property list<string> savedConnections: []
+    property list<string> savedConnectionSsids: []
+    property var wifiConnectionQueue: []
+    property int currentSsidQueryIndex: 0
     
     Process {
         id: listConnectionsProc
-        command: ["nmcli", "-t", "-f", "NAME", "connection", "show"]
+        command: ["nmcli", "-t", "-f", "NAME,TYPE", "connection", "show"]
+        environment: ({
+                LANG: "C.UTF-8",
+                LC_ALL: "C.UTF-8"
+            })
         onExited: {
             if (exitCode === 0) {
-                // Parse connection names from output
-                const connections = stdout.text.trim().split("\n").filter(name => name.length > 0);
-                root.savedConnections = connections;
+                parseConnectionList(stdout.text);
             }
         }
         stdout: StdioCollector {
             onStreamFinished: {
-                const connections = text.trim().split("\n").filter(name => name.length > 0);
-                root.savedConnections = connections;
+                parseConnectionList(text);
             }
         }
+    }
+    
+    function parseConnectionList(output: string): void {
+        const lines = output.trim().split("\n").filter(line => line.length > 0);
+        const wifiConnections = [];
+        const connections = [];
+        
+        // First pass: identify WiFi connections
+        for (const line of lines) {
+            const parts = line.split(":");
+            if (parts.length >= 2) {
+                const name = parts[0];
+                const type = parts[1];
+                connections.push(name);
+                
+                if (type === "802-11-wireless") {
+                    wifiConnections.push(name);
+                }
+            }
+        }
+        
+        root.savedConnections = connections;
+        
+        // Second pass: get SSIDs for WiFi connections
+        if (wifiConnections.length > 0) {
+            root.wifiConnectionQueue = wifiConnections;
+            root.currentSsidQueryIndex = 0;
+            root.savedConnectionSsids = [];
+            // Start querying SSIDs one by one
+            queryNextSsid();
+        } else {
+            root.savedConnectionSsids = [];
+            root.wifiConnectionQueue = [];
+        }
+    }
+    
+    Process {
+        id: getSsidProc
+        
+        environment: ({
+                LANG: "C.UTF-8",
+                LC_ALL: "C.UTF-8"
+            })
+        onExited: {
+            if (exitCode === 0) {
+                processSsidOutput(stdout.text);
+            } else {
+                // Move to next connection even if this one failed
+                queryNextSsid();
+            }
+        }
+        stdout: StdioCollector {
+            onStreamFinished: {
+                processSsidOutput(text);
+            }
+        }
+    }
+    
+    function processSsidOutput(output: string): void {
+        // Parse "802-11-wireless.ssid:SSID_NAME" format
+        const lines = output.trim().split("\n");
+        for (const line of lines) {
+            if (line.startsWith("802-11-wireless.ssid:")) {
+                const ssid = line.substring("802-11-wireless.ssid:".length).trim();
+                if (ssid && ssid.length > 0) {
+                    // Add to list if not already present (case-insensitive)
+                    const ssidLower = ssid.toLowerCase();
+                    if (!root.savedConnectionSsids.some(s => s && s.toLowerCase() === ssidLower)) {
+                        // Create new array to trigger QML property change notification
+                        const newList = root.savedConnectionSsids.slice();
+                        newList.push(ssid);
+                        root.savedConnectionSsids = newList;
+                    }
+                }
+            }
+        }
+        
+        // Query next connection
+        queryNextSsid();
+    }
+    
+    function queryNextSsid(): void {
+        if (root.currentSsidQueryIndex < root.wifiConnectionQueue.length) {
+            const connectionName = root.wifiConnectionQueue[root.currentSsidQueryIndex];
+            root.currentSsidQueryIndex++;
+            getSsidProc.command = ["nmcli", "-t", "-f", "802-11-wireless.ssid", "connection", "show", connectionName];
+            getSsidProc.running = true;
+        } else {
+            // All SSIDs retrieved
+            root.wifiConnectionQueue = [];
+            root.currentSsidQueryIndex = 0;
+        }
+    }
+    
+    function hasSavedProfile(ssid: string): bool {
+        if (!ssid || ssid.length === 0) {
+            return false;
+        }
+        const ssidLower = ssid.toLowerCase().trim();
+        
+        // If currently connected to this network, it definitely has a saved profile
+        if (root.active && root.active.ssid) {
+            const activeSsidLower = root.active.ssid.toLowerCase().trim();
+            if (activeSsidLower === ssidLower) {
+                return true;
+            }
+        }
+        
+        // Check if SSID is in saved connections (case-insensitive comparison)
+        const hasSsid = root.savedConnectionSsids.some(savedSsid => 
+            savedSsid && savedSsid.toLowerCase().trim() === ssidLower
+        );
+        
+        if (hasSsid) {
+            return true;
+        }
+        
+        // Fallback: also check if connection name matches SSID (some connections use SSID as name)
+        const hasConnectionName = root.savedConnections.some(connName => 
+            connName && connName.toLowerCase().trim() === ssidLower
+        );
+        
+        return hasConnectionName;
     }
 
     function getWifiStatus(): void {
@@ -445,22 +602,58 @@ Singleton {
                                    && connectProc.command[1] === "connection" 
                                    && connectProc.command[2] === "add";
             
-            if (wasConnectionAdd && exitCode === 0 && root.pendingConnection) {
-                // Connection profile was created successfully, now activate it
+            if (wasConnectionAdd && root.pendingConnection) {
                 const ssid = root.pendingConnection.ssid;
-                root.addDebugInfo(qsTr("Connection profile created successfully, now activating: %1").arg(ssid));
-                root.setConnectionStatus(qsTr("Activating connection..."));
                 
-                // Update saved connections list since we just created one
-                listConnectionsProc.running = true;
+                // Check for duplicate connection warning in stderr text
+                const stderrText = connectProc.stderr ? connectProc.stderr.text : "";
+                const hasDuplicateWarning = stderrText && (
+                    stderrText.includes("another connection with the name") ||
+                    stderrText.includes("Reference the connection by its uuid")
+                );
                 
-                // Activate the connection we just created
-                connectProc.command = ["nmcli", "connection", "up", ssid];
-                Qt.callLater(() => {
-                    connectProc.running = true;
-                });
-                // Don't start timers yet - wait for activation to complete
-                return;
+                // Even with duplicate warning (or if connection already exists), we should try to activate it
+                // Also try if exit code is non-zero but small (might be a warning, not a real error)
+                if (exitCode === 0 || hasDuplicateWarning || (exitCode > 0 && exitCode < 10)) {
+                    if (hasDuplicateWarning) {
+                        root.addDebugInfo(qsTr("Connection with name '%1' already exists (warning), will try to activate it").arg(ssid));
+                        root.setConnectionStatus(qsTr("Activating existing connection..."));
+                    } else {
+                        root.addDebugInfo(qsTr("Connection profile created successfully, now activating: %1").arg(ssid));
+                        root.setConnectionStatus(qsTr("Activating connection..."));
+                    }
+                    
+                    // Update saved connections list
+                    listConnectionsProc.running = true;
+                    
+                    // Try to activate the connection by SSID (connection name)
+                    connectProc.command = ["nmcli", "connection", "up", ssid];
+                    Qt.callLater(() => {
+                        connectProc.running = true;
+                    });
+                    // Don't start timers yet - wait for activation to complete
+                    return;
+                } else {
+                    // Connection add failed - try using device wifi connect as fallback
+                    root.addDebugInfo(qsTr("Connection add failed (exit code %1), trying device wifi connect as fallback").arg(exitCode));
+                    // Extract password from the command if available
+                    let password = "";
+                    if (connectProc.command) {
+                        const pskIndex = connectProc.command.findIndex(arg => arg === "802-11-wireless-security.psk");
+                        if (pskIndex >= 0 && pskIndex + 1 < connectProc.command.length) {
+                            password = connectProc.command[pskIndex + 1];
+                        }
+                    }
+                    
+                    if (password && password.length > 0) {
+                        root.addDebugInfo(qsTr("Using device wifi connect with password as fallback"));
+                        connectProc.command = ["nmcli", "device", "wifi", "connect", ssid, "password", password];
+                        Qt.callLater(() => {
+                            connectProc.running = true;
+                        });
+                        return;
+                    }
+                }
             }
             
             // Refresh network list after connection attempt

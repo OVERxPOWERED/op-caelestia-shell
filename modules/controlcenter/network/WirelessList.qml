@@ -117,6 +117,10 @@ ColumnLayout {
             StateLayer {
                 function onClicked(): void {
                     root.session.network.active = modelData;
+                    // Check if we need to refresh saved connections when selecting a network
+                    if (modelData && modelData.ssid) {
+                        root.checkSavedProfileForNetwork(modelData.ssid);
+                    }
                 }
             }
 
@@ -200,6 +204,16 @@ ColumnLayout {
         }
     }
 
+    function checkSavedProfileForNetwork(ssid: string): void {
+        // Refresh saved connections list to ensure it's up to date
+        // This ensures accurate profile detection when selecting networks
+        if (ssid && ssid.length > 0) {
+            // Always refresh to ensure we have the latest saved connections
+            // This is important when a network is selected from the list
+            Network.listConnectionsProc.running = true;
+        }
+    }
+
     function handleConnect(network): void {
         // If already connected to a different network, disconnect first
         if (Network.active && Network.active.ssid !== network.ssid) {
@@ -214,8 +228,8 @@ ColumnLayout {
 
     function connectToNetwork(network): void {
         if (network.isSecure) {
-            // Check if we have a saved connection profile for this network
-            const hasSavedProfile = Network.savedConnections.includes(network.ssid);
+            // Check if we have a saved connection profile for this network (by SSID)
+            const hasSavedProfile = Network.hasSavedProfile(network.ssid);
             
             if (hasSavedProfile) {
                 // Try connecting with saved password - don't show dialog if it fails

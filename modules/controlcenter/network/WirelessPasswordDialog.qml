@@ -248,24 +248,47 @@ Item {
             return;
         }
 
-        // Check if we're connected to the target network
-        if (root.network && Network.active && Network.active.ssid === root.network.ssid) {
-            // Successfully connected
-            connectionMonitor.stop();
-            connectButton.connecting = false;
-            connectButton.text = qsTr("Connect");
-            closeDialog();
+        // Check connection status message for success indicators
+        const status = Network.connectionStatus;
+        const statusLower = status.toLowerCase();
+        
+        // Check for success indicators in status message
+        const hasSuccessIndicator = statusLower.includes("connection activated") || 
+                                   statusLower.includes("successfully") ||
+                                   statusLower.includes("connected successfully") ||
+                                   (statusLower.includes("connected") && !statusLower.includes("error") && !statusLower.includes("failed"));
+
+        // Check if we're connected to the target network (case-insensitive SSID comparison)
+        const isConnected = root.network && Network.active && Network.active.ssid && 
+                           Network.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
+
+        if (isConnected || hasSuccessIndicator) {
+            // Successfully connected - give it a moment for network list to update
+            Qt.callLater(() => {
+                // Double-check connection is still active
+                if (root.visible && Network.active && Network.active.ssid) {
+                    const stillConnected = Network.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
+                    if (stillConnected || hasSuccessIndicator) {
+                        connectionMonitor.stop();
+                        connectButton.connecting = false;
+                        connectButton.text = qsTr("Connect");
+                        closeDialog();
+                    }
+                }
+            }, 500);
             return;
         }
 
-        // Check for connection errors
-        const status = Network.connectionStatus;
-        if (status.includes("Error") || status.includes("error") || status.includes("failed")) {
-            // Connection failed
-            connectionMonitor.stop();
-            connectButton.connecting = false;
-            connectButton.enabled = true;
-            connectButton.text = qsTr("Connect");
+        // Check for connection errors (but not warnings about duplicate names)
+        if (status.includes("Error") || (status.includes("error") && !status.includes("Warning"))) {
+            // Only treat as error if it's not just a warning about duplicate names
+            if (!status.includes("another connection with the name") && !status.includes("Reference the connection by its uuid")) {
+                // Connection failed
+                connectionMonitor.stop();
+                connectButton.connecting = false;
+                connectButton.enabled = true;
+                connectButton.text = qsTr("Connect");
+            }
         }
     }
 

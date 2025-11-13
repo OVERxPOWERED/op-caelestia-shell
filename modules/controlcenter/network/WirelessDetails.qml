@@ -19,10 +19,22 @@ Item {
 
     Component.onCompleted: {
         updateDeviceDetails();
+        checkSavedProfile();
     }
 
     onNetworkChanged: {
         updateDeviceDetails();
+        checkSavedProfile();
+    }
+    
+    function checkSavedProfile(): void {
+        // Refresh saved connections list to ensure it's up to date
+        // This ensures the "Forget Network" button visibility is accurate
+        if (network && network.ssid) {
+            // Always refresh to ensure we have the latest saved connections
+            // This is important when networks are selected or changed
+            Network.listConnectionsProc.running = true;
+        }
     }
 
     Connections {
@@ -80,7 +92,13 @@ Item {
                 SimpleButton {
                     Layout.fillWidth: true
                     Layout.topMargin: Appearance.spacing.normal
-                    visible: root.network && root.network.ssid && Network.savedConnections.includes(root.network.ssid)
+                    visible: {
+                        if (!root.network || !root.network.ssid) {
+                            return false;
+                        }
+                        // Check if profile exists - this will update reactively when savedConnectionSsids changes
+                        return Network.hasSavedProfile(root.network.ssid);
+                    }
                     color: Colours.palette.m3errorContainer
                     onColor: Colours.palette.m3onErrorContainer
                     text: qsTr("Forget Network")
@@ -164,8 +182,8 @@ Item {
 
     function connectToNetwork(): void {
         if (root.network.isSecure) {
-            // Check if we have a saved connection profile for this network
-            const hasSavedProfile = Network.savedConnections.includes(root.network.ssid);
+            // Check if we have a saved connection profile for this network (by SSID)
+            const hasSavedProfile = Network.hasSavedProfile(root.network.ssid);
             
             if (hasSavedProfile) {
                 // Try connecting with saved password - don't show dialog if it fails

@@ -118,7 +118,7 @@ ColumnLayout {
                             Network.disconnectFromNetwork();
                         } else {
                             root.connectingToSsid = networkItem.modelData.ssid;
-                            Network.connectToNetwork(networkItem.modelData.ssid, "");
+                            Network.connectToNetwork(networkItem.modelData.ssid, "", networkItem.modelData.bssid, null);
                         }
                     }
                 }

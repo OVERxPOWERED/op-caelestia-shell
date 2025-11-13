@@ -95,10 +95,31 @@ Item {
                                     // Callback: connection failed, show password dialog
                                     root.session.network.showPasswordDialog = true;
                                     root.session.network.pendingNetwork = root.network;
-                                }
+                                },
+                                root.network.bssid
                             );
                         } else {
-                            Network.connectToNetwork(root.network.ssid, "");
+                            Network.connectToNetwork(root.network.ssid, "", root.network.bssid, null);
+                        }
+                    }
+                }
+
+                Button {
+                    Layout.fillWidth: true
+                    Layout.topMargin: Appearance.spacing.normal
+                    visible: root.network && root.network.ssid && Network.savedConnections.includes(root.network.ssid)
+                    color: Colours.palette.m3errorContainer
+                    onColor: Colours.palette.m3onErrorContainer
+                    text: qsTr("Forget Network")
+                    
+                    onClicked: {
+                        if (root.network && root.network.ssid) {
+                            // Disconnect first if connected
+                            if (root.network.active) {
+                                Network.disconnectFromNetwork();
+                            }
+                            // Delete the connection profile
+                            Network.forgetNetwork(root.network.ssid);
                         }
                     }
                 }
@@ -152,7 +173,37 @@ Item {
                     deviceDetails: Network.wirelessDeviceDetails
                 }
             }
+
         }
+    }
+
+    component Button: StyledRect {
+        property color onColor: Colours.palette.m3onSurface
+        property alias disabled: stateLayer.disabled
+        property alias text: label.text
+        property alias enabled: stateLayer.enabled
+
+        Layout.fillWidth: true
+        implicitHeight: label.implicitHeight + Appearance.padding.normal * 2
+        radius: Appearance.rounding.normal
+
+        StateLayer {
+            id: stateLayer
+            color: parent.onColor
+            function onClicked(): void {
+                if (parent.enabled !== false) {
+                    parent.clicked();
+                }
+            }
+        }
+
+        StyledText {
+            id: label
+            anchors.centerIn: parent
+            color: parent.onColor
+        }
+
+        signal clicked
     }
 
 }

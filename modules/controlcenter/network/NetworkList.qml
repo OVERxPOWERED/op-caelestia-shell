@@ -203,10 +203,11 @@ ColumnLayout {
                                         // Callback: connection failed, show password dialog
                                         root.session.network.showPasswordDialog = true;
                                         root.session.network.pendingNetwork = modelData;
-                                    }
+                                    },
+                                    modelData.bssid
                                 );
                             } else {
-                                Network.connectToNetwork(modelData.ssid, "");
+                                Network.connectToNetwork(modelData.ssid, "", modelData.bssid, null);
                             }
                         }
                     }

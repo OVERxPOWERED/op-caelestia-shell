@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "."
 import qs.components
 import qs.components.controls
 import qs.components.effects
@@ -15,6 +16,10 @@ Item {
 
     required property Session session
     readonly property var network: session.network.active
+    
+    readonly property var connectionHelper: WirelessConnectionHelper {
+        session: root.session
+    }
 
     Component.onCompleted: {
         if (network && network.active) {
@@ -70,41 +75,14 @@ Item {
                     checked: root.network?.active ?? false
                     toggle.onToggled: {
                         if (checked) {
-                            // If already connected to a different network, disconnect first
-                            if (Network.active && Network.active.ssid !== root.network.ssid) {
-                                Network.disconnectFromNetwork();
-                                // Wait a moment before connecting to new network
-                                Qt.callLater(() => {
-                                    connectToNetwork();
-                                });
-                            } else {
-                                connectToNetwork();
-                            }
+                            root.connectionHelper.connectToNetwork(root.network);
                         } else {
                             Network.disconnectFromNetwork();
                         }
                     }
-
-                    function connectToNetwork(): void {
-                        if (root.network.isSecure) {
-                            // Try connecting without password first (in case it's saved)
-                            Network.connectToNetworkWithPasswordCheck(
-                                root.network.ssid,
-                                root.network.isSecure,
-                                () => {
-                                    // Callback: connection failed, show password dialog
-                                    root.session.network.showPasswordDialog = true;
-                                    root.session.network.pendingNetwork = root.network;
-                                },
-                                root.network.bssid
-                            );
-                        } else {
-                            Network.connectToNetwork(root.network.ssid, "", root.network.bssid, null);
-                        }
-                    }
                 }
 
-                Button {
+                SimpleButton {
                     Layout.fillWidth: true
                     Layout.topMargin: Appearance.spacing.normal
                     visible: root.network && root.network.ssid && Network.savedConnections.includes(root.network.ssid)
@@ -176,38 +154,5 @@ Item {
 
         }
     }
-
-    component Button: StyledRect {
-        property color onColor: Colours.palette.m3onSurface
-        property alias disabled: stateLayer.disabled
-        property alias text: label.text
-        property alias enabled: stateLayer.enabled
-
-        Layout.fillWidth: true
-        implicitHeight: label.implicitHeight + Appearance.padding.normal * 2
-        radius: Appearance.rounding.normal
-
-        StateLayer {
-            id: stateLayer
-            color: parent.onColor
-            function onClicked(): void {
-                if (parent.enabled !== false) {
-                    parent.clicked();
-                }
-            }
-        }
-
-        StyledText {
-            id: label
-            anchors.centerIn: parent
-            color: parent.onColor
-        }
-
-        signal clicked
-    }
-
 }
-
-
-
 

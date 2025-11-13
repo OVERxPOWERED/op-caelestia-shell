@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "."
 import qs.components
 import qs.components.controls
 import qs.components.containers
@@ -13,6 +14,10 @@ ColumnLayout {
     id: root
 
     required property Session session
+
+    readonly property var connectionHelper: WirelessConnectionHelper {
+        session: root.session
+    }
 
     spacing: Appearance.spacing.small
 
@@ -180,34 +185,7 @@ ColumnLayout {
                             if (modelData.active) {
                                 Network.disconnectFromNetwork();
                             } else {
-                                // If already connected to a different network, disconnect first
-                                if (Network.active && Network.active.ssid !== modelData.ssid) {
-                                    Network.disconnectFromNetwork();
-                                    // Wait a moment before connecting to new network
-                                    Qt.callLater(() => {
-                                        connectToNetwork();
-                                    });
-                                } else {
-                                    connectToNetwork();
-                                }
-                            }
-                        }
-
-                        function connectToNetwork(): void {
-                            if (modelData.isSecure) {
-                                // Try connecting without password first (in case it's saved)
-                                Network.connectToNetworkWithPasswordCheck(
-                                    modelData.ssid,
-                                    modelData.isSecure,
-                                    () => {
-                                        // Callback: connection failed, show password dialog
-                                        root.session.network.showPasswordDialog = true;
-                                        root.session.network.pendingNetwork = modelData;
-                                    },
-                                    modelData.bssid
-                                );
-                            } else {
-                                Network.connectToNetwork(modelData.ssid, "", modelData.bssid, null);
+                                root.connectionHelper.connectToNetwork(modelData);
                             }
                         }
                     }
@@ -226,3 +204,4 @@ ColumnLayout {
         }
     }
 }
+

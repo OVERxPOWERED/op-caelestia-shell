@@ -36,7 +36,7 @@ ClippingRectangle {
 
         Pane {
             index: 1
-            sourceComponent: NetworkPane {
+            sourceComponent: WirelessPane {
                 session: root.session
             }
         }

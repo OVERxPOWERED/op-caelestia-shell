@@ -23,7 +23,7 @@ RowLayout {
         Layout.minimumWidth: 420
         Layout.fillHeight: true
 
-        NetworkList {
+        WirelessList {
             anchors.fill: parent
             anchors.margins: Appearance.padding.large + Appearance.padding.normal
             anchors.leftMargin: Appearance.padding.large
@@ -121,7 +121,7 @@ RowLayout {
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: settingsInner.height
 
-                Settings {
+                WirelessSettings {
                     id: settingsInner
 
                     anchors.left: parent.left
@@ -134,13 +134,13 @@ RowLayout {
         Component {
             id: details
 
-            Details {
+            WirelessDetails {
                 session: root.session
             }
         }
     }
 
-    PasswordDialog {
+    WirelessPasswordDialog {
         anchors.fill: parent
         session: root.session
         z: 1000
@@ -152,3 +152,4 @@ RowLayout {
         easing.type: Easing.BezierSpline
     }
 }
+

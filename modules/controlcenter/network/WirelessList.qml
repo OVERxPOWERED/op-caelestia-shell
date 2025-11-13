@@ -15,10 +15,6 @@ ColumnLayout {
 
     required property Session session
 
-    readonly property var connectionHelper: WirelessConnectionHelper {
-        session: root.session
-    }
-
     spacing: Appearance.spacing.small
 
     RowLayout {
@@ -185,7 +181,7 @@ ColumnLayout {
                             if (modelData.active) {
                                 Network.disconnectFromNetwork();
                             } else {
-                                root.connectionHelper.connectToNetwork(modelData);
+                                handleConnect(modelData);
                             }
                         }
                     }
@@ -201,6 +197,46 @@ ColumnLayout {
             }
 
             implicitHeight: rowLayout.implicitHeight + Appearance.padding.normal * 2
+        }
+    }
+
+    function handleConnect(network): void {
+        // If already connected to a different network, disconnect first
+        if (Network.active && Network.active.ssid !== network.ssid) {
+            Network.disconnectFromNetwork();
+            Qt.callLater(() => {
+                connectToNetwork(network);
+            });
+        } else {
+            connectToNetwork(network);
+        }
+    }
+
+    function connectToNetwork(network): void {
+        if (network.isSecure) {
+            // Check if we have a saved connection profile for this network
+            const hasSavedProfile = Network.savedConnections.includes(network.ssid);
+            
+            if (hasSavedProfile) {
+                // Try connecting with saved password - don't show dialog if it fails
+                // The saved password should work, but if connection fails for other reasons,
+                // we'll let the user try manually later
+                Network.connectToNetwork(network.ssid, "", network.bssid, null);
+            } else {
+                // No saved profile, try connecting without password first
+                Network.connectToNetworkWithPasswordCheck(
+                    network.ssid,
+                    network.isSecure,
+                    () => {
+                        // Callback: connection failed, show password dialog
+                        root.session.network.showPasswordDialog = true;
+                        root.session.network.pendingNetwork = network;
+                    },
+                    network.bssid
+                );
+            }
+        } else {
+            Network.connectToNetwork(network.ssid, "", network.bssid, null);
         }
     }
 }

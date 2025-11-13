@@ -243,6 +243,32 @@ Item {
         }
     }
 
+    function checkConnectionStatus(): void {
+        if (!root.visible || !connectButton.connecting) {
+            return;
+        }
+
+        // Check if we're connected to the target network
+        if (root.network && Network.active && Network.active.ssid === root.network.ssid) {
+            // Successfully connected
+            connectionMonitor.stop();
+            connectButton.connecting = false;
+            connectButton.text = qsTr("Connect");
+            closeDialog();
+            return;
+        }
+
+        // Check for connection errors
+        const status = Network.connectionStatus;
+        if (status.includes("Error") || status.includes("error") || status.includes("failed")) {
+            // Connection failed
+            connectionMonitor.stop();
+            connectButton.connecting = false;
+            connectButton.enabled = true;
+            connectButton.text = qsTr("Connect");
+        }
+    }
+
     Timer {
         id: connectionMonitor
         interval: 1000
@@ -250,39 +276,15 @@ Item {
         triggeredOnStart: false
 
         onTriggered: {
-            // Check if we're connected to the target network
-            if (root.network && Network.active && Network.active.ssid === root.network.ssid) {
-                // Successfully connected
-                stop();
-                connectButton.connecting = false;
-                connectButton.text = qsTr("Connect");
-                closeDialog();
-            } else if (connectButton.connecting) {
-                // Still connecting, check status
-                const status = Network.connectionStatus;
-                if (status.includes("Error") || status.includes("error") || status.includes("failed")) {
-                    // Connection failed
-                    stop();
-                    connectButton.connecting = false;
-                    connectButton.enabled = true;
-                    connectButton.text = qsTr("Connect");
-                }
-            } else {
-                // Not connecting anymore
-                stop();
-            }
+            checkConnectionStatus();
         }
     }
 
     Connections {
         target: Network
         function onActiveChanged() {
-            if (root.visible && root.network && Network.active && Network.active.ssid === root.network.ssid) {
-                // Connected successfully
-                connectionMonitor.stop();
-                connectButton.connecting = false;
-                connectButton.text = qsTr("Connect");
-                closeDialog();
+            if (root.visible) {
+                checkConnectionStatus();
             }
         }
     }

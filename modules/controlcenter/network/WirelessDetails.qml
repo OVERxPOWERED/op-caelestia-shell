@@ -16,33 +16,28 @@ Item {
 
     required property Session session
     readonly property var network: session.network.active
-    
-    readonly property var connectionHelper: WirelessConnectionHelper {
-        session: root.session
-    }
 
     Component.onCompleted: {
-        if (network && network.active) {
-            Network.updateWirelessDeviceDetails();
-        }
+        updateDeviceDetails();
     }
 
     onNetworkChanged: {
-        if (network && network.active) {
-            Network.updateWirelessDeviceDetails();
-        } else {
-            Network.wirelessDeviceDetails = null;
-        }
+        updateDeviceDetails();
     }
 
     Connections {
         target: Network
         function onActiveChanged() {
-            if (root.network && root.network.active && Network.active && Network.active.ssid === root.network.ssid) {
-                Network.updateWirelessDeviceDetails();
-            } else if (!root.network || !root.network.active) {
-                Network.wirelessDeviceDetails = null;
-            }
+            updateDeviceDetails();
+        }
+    }
+
+    function updateDeviceDetails(): void {
+        // Only update details if the selected network is currently active
+        if (network && Network.active && Network.active.ssid === network.ssid) {
+            Network.updateWirelessDeviceDetails();
+        } else {
+            Network.wirelessDeviceDetails = null;
         }
     }
 
@@ -75,7 +70,7 @@ Item {
                     checked: root.network?.active ?? false
                     toggle.onToggled: {
                         if (checked) {
-                            root.connectionHelper.connectToNetwork(root.network);
+                            handleConnect();
                         } else {
                             Network.disconnectFromNetwork();
                         }
@@ -152,6 +147,46 @@ Item {
                 }
             }
 
+        }
+    }
+
+    function handleConnect(): void {
+        // If already connected to a different network, disconnect first
+        if (Network.active && Network.active.ssid !== root.network.ssid) {
+            Network.disconnectFromNetwork();
+            Qt.callLater(() => {
+                connectToNetwork();
+            });
+        } else {
+            connectToNetwork();
+        }
+    }
+
+    function connectToNetwork(): void {
+        if (root.network.isSecure) {
+            // Check if we have a saved connection profile for this network
+            const hasSavedProfile = Network.savedConnections.includes(root.network.ssid);
+            
+            if (hasSavedProfile) {
+                // Try connecting with saved password - don't show dialog if it fails
+                // The saved password should work, but if connection fails for other reasons,
+                // we'll let the user try manually later
+                Network.connectToNetwork(root.network.ssid, "", root.network.bssid, null);
+            } else {
+                // No saved profile, try connecting without password first
+                Network.connectToNetworkWithPasswordCheck(
+                    root.network.ssid,
+                    root.network.isSecure,
+                    () => {
+                        // Callback: connection failed, show password dialog
+                        root.session.network.showPasswordDialog = true;
+                        root.session.network.pendingNetwork = root.network;
+                    },
+                    root.network.bssid
+                );
+            }
+        } else {
+            Network.connectToNetwork(root.network.ssid, "", root.network.bssid, null);
         }
     }
 }

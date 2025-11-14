@@ -372,7 +372,6 @@ default, you must create it manually.
             "showAudio": false,
             "showBattery": true,
             "showBluetooth": true,
-            "showEthernet": true,
             "showKbLayout": false,
             "showMicrophone": false,
             "showNetwork": true,

@@ -145,6 +145,7 @@ RowLayout {
 
                                 StateLayer {
                                     function onClicked(): void {
+                                        root.session.network.active = null;
                                         root.session.ethernet.active = modelData;
                                     }
                                 }
@@ -276,15 +277,16 @@ RowLayout {
                                 border.width: root.session.network.active === modelData ? 1 : 0
                                 border.color: Colours.palette.m3primary
 
-                                StateLayer {
-                                    function onClicked(): void {
-                                        root.session.network.active = modelData;
-                                        // Check if we need to refresh saved connections when selecting a network
-                                        if (modelData && modelData.ssid) {
-                                            checkSavedProfileForNetwork(modelData.ssid);
+                                    StateLayer {
+                                        function onClicked(): void {
+                                            root.session.ethernet.active = null;
+                                            root.session.network.active = modelData;
+                                            // Check if we need to refresh saved connections when selecting a network
+                                            if (modelData && modelData.ssid) {
+                                                checkSavedProfileForNetwork(modelData.ssid);
+                                            }
                                         }
                                     }
-                                }
 
                                 RowLayout {
                                     id: wirelessRowLayout

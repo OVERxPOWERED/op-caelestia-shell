@@ -191,6 +191,11 @@ Item {
             icon: "apps"
             label: "launcher"
         }
+
+        NavItem {
+            icon: "router"
+            label: "networking"
+        }
     }
 
     component NavItem: Item {

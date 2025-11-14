@@ -76,6 +76,13 @@ ClippingRectangle {
             }
         }
 
+        Pane {
+            index: 7
+            sourceComponent: NetworkingPane {
+                session: root.session
+            }
+        }
+
         Behavior on y {
             Anim {}
         }

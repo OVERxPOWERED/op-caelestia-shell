@@ -64,7 +64,7 @@ ColumnLayout {
             }
 
             StyledText {
-                text: qsTr("%1").arg(Network.ethernetDeviceCount || Network.ethernetDevices.length)
+                text: qsTr("%1").arg(Nmcli.ethernetDevices.length)
                 color: Colours.palette.m3outline
                 font.pointSize: Appearance.font.size.small
             }
@@ -75,7 +75,7 @@ ColumnLayout {
             }
 
             StyledText {
-                text: qsTr("%1").arg(Network.ethernetDevices.filter(d => d.connected).length)
+                text: qsTr("%1").arg(Nmcli.ethernetDevices.filter(d => d.connected).length)
                 color: Colours.palette.m3outline
                 font.pointSize: Appearance.font.size.small
             }

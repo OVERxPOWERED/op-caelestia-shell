@@ -49,7 +49,7 @@ ColumnLayout {
         spacing: Appearance.spacing.small
 
         StyledText {
-            text: qsTr("Devices (%1)").arg(Network.ethernetDeviceCount || Network.ethernetDevices.length)
+            text: qsTr("Devices (%1)").arg(Nmcli.ethernetDevices.length)
             font.pointSize: Appearance.font.size.large
             font.weight: 500
         }
@@ -66,7 +66,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        model: Network.ethernetDevices
+        model: Nmcli.ethernetDevices
 
         spacing: Appearance.spacing.small / 2
         clip: true
@@ -145,10 +145,9 @@ ColumnLayout {
                     StateLayer {
                         function onClicked(): void {
                             if (modelData.connected && modelData.connection) {
-                                Network.disconnectEthernet(modelData.connection);
+                                Nmcli.disconnectEthernet(modelData.connection, () => {});
                             } else {
-                                // Use connection name if available, otherwise use interface
-                                Network.connectEthernet(modelData.connection || "", modelData.interface || "");
+                                Nmcli.connectEthernet(modelData.connection || "", modelData.interface || "", () => {});
                             }
                         }
                     }

@@ -18,15 +18,15 @@ Item {
 
     Component.onCompleted: {
         if (device && device.interface) {
-            Network.updateEthernetDeviceDetails(device.interface);
+            Nmcli.getEthernetDeviceDetails(device.interface, () => {});
         }
     }
 
     onDeviceChanged: {
         if (device && device.interface) {
-            Network.updateEthernetDeviceDetails(device.interface);
+            Nmcli.getEthernetDeviceDetails(device.interface, () => {});
         } else {
-            Network.ethernetDeviceDetails = null;
+            Nmcli.ethernetDeviceDetails = null;
         }
     }
 
@@ -59,11 +59,10 @@ Item {
                     checked: root.device?.connected ?? false
                     toggle.onToggled: {
                         if (checked) {
-                            // Use connection name if available, otherwise use interface
-                            Network.connectEthernet(root.device?.connection || "", root.device?.interface || "");
+                            Nmcli.connectEthernet(root.device?.connection || "", root.device?.interface || "", () => {});
                         } else {
                             if (root.device?.connection) {
-                                Network.disconnectEthernet(root.device.connection);
+                                Nmcli.disconnectEthernet(root.device.connection, () => {});
                             }
                         }
                     }
@@ -103,7 +102,7 @@ Item {
 
             SectionContainer {
                 ConnectionInfoSection {
-                    deviceDetails: Network.ethernetDeviceDetails
+                    deviceDetails: Nmcli.ethernetDeviceDetails
                 }
             }
 

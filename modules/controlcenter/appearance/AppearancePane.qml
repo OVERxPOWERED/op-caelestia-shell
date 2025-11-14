@@ -1000,44 +1000,31 @@ RowLayout {
             StyledText {
                 Layout.topMargin: Appearance.spacing.large
                 Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Theme mode")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
-
-            StyledText {
-                Layout.alignment: Qt.AlignHCenter
-                text: Colours.currentLight ? qsTr("Light mode") : qsTr("Dark mode")
-                color: Colours.palette.m3outline
-            }
-
-            StyledText {
-                Layout.topMargin: Appearance.spacing.large
-                Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Wallpaper")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
+                font.pointSize: Appearance.font.size.extraLarge
+                font.weight: 600
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Select a wallpaper")
-                color: Colours.palette.m3outline
+                font.pointSize: Appearance.font.size.normal
+                color: Colours.palette.m3onSurfaceVariant
             }
 
                 GridLayout {
                     Layout.fillWidth: true
-                    Layout.topMargin: Appearance.spacing.normal
+                    Layout.topMargin: Appearance.spacing.large
                     Layout.alignment: Qt.AlignHCenter
 
-                    columns: Math.max(1, Math.floor(parent.width / 200))
+                    columns: Math.max(2, Math.floor(parent.width / 200))
                     rowSpacing: Appearance.spacing.normal
                     columnSpacing: Appearance.spacing.normal
 
                     // Center the grid content
                     Layout.maximumWidth: {
                         const cols = columns;
-                        const itemWidth = 180;
+                        const itemWidth = 200;
                         const spacing = columnSpacing;
                         return cols * itemWidth + (cols - 1) * spacing;
                     }
@@ -1048,10 +1035,10 @@ RowLayout {
                         delegate: Item {
                             required property var modelData
 
-                            Layout.preferredWidth: 180
-                            Layout.preferredHeight: 120
-                            Layout.minimumWidth: 180
-                            Layout.minimumHeight: 120
+                            Layout.preferredWidth: 200
+                            Layout.preferredHeight: 140
+                            Layout.minimumWidth: 200
+                            Layout.minimumHeight: 140
 
                             readonly property bool isCurrent: modelData.path === Wallpapers.actualCurrent
                             readonly property real imageWidth: Math.max(1, width)

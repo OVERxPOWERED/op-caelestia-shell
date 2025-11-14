@@ -20,27 +20,27 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Appearance.padding.normal
         Layout.rightMargin: Appearance.padding.small
-        text: qsTr("Wifi %1").arg(Network.wifiEnabled ? "enabled" : "disabled")
+        text: qsTr("Wifi %1").arg(Nmcli.wifiEnabled ? "enabled" : "disabled")
         font.weight: 500
     }
 
     Toggle {
         label: qsTr("Enabled")
-        checked: Network.wifiEnabled
-        toggle.onToggled: Network.enableWifi(checked)
+        checked: Nmcli.wifiEnabled
+        toggle.onToggled: Nmcli.enableWifi(checked)
     }
 
     StyledText {
         Layout.topMargin: Appearance.spacing.small
         Layout.rightMargin: Appearance.padding.small
-        text: qsTr("%1 networks available").arg(Network.networks.length)
+        text: qsTr("%1 networks available").arg(Nmcli.networks.length)
         color: Colours.palette.m3onSurfaceVariant
         font.pointSize: Appearance.font.size.small
     }
 
     Repeater {
         model: ScriptModel {
-            values: [...Network.networks].sort((a, b) => {
+            values: [...Nmcli.networks].sort((a, b) => {
                 if (a.active !== b.active)
                     return b.active - a.active;
                 return b.strength - a.strength;
@@ -50,7 +50,7 @@ ColumnLayout {
         RowLayout {
             id: networkItem
 
-            required property Network.AccessPoint modelData
+            required property Nmcli.AccessPoint modelData
             readonly property bool isConnecting: root.connectingToSsid === modelData.ssid
             readonly property bool loading: networkItem.isConnecting
 
@@ -111,14 +111,14 @@ ColumnLayout {
 
                 StateLayer {
                     color: networkItem.modelData.active ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
-                    disabled: networkItem.loading || !Network.wifiEnabled
+                    disabled: networkItem.loading || !Nmcli.wifiEnabled
 
                     function onClicked(): void {
                         if (networkItem.modelData.active) {
-                            Network.disconnectFromNetwork();
+                            Nmcli.disconnectFromNetwork();
                         } else {
                             root.connectingToSsid = networkItem.modelData.ssid;
-                            Network.connectToNetwork(networkItem.modelData.ssid, "", networkItem.modelData.bssid, null);
+                            Nmcli.connectToNetwork(networkItem.modelData.ssid, "", networkItem.modelData.bssid, null);
                         }
                     }
                 }
@@ -151,10 +151,10 @@ ColumnLayout {
 
         StateLayer {
             color: Colours.palette.m3onPrimaryContainer
-            disabled: Network.scanning || !Network.wifiEnabled
+            disabled: Nmcli.scanning || !Nmcli.wifiEnabled
 
             function onClicked(): void {
-                Network.rescanWifi();
+                Nmcli.rescanWifi();
             }
         }
 
@@ -163,7 +163,7 @@ ColumnLayout {
 
             anchors.centerIn: parent
             spacing: Appearance.spacing.small
-            opacity: Network.scanning ? 0 : 1
+            opacity: Nmcli.scanning ? 0 : 1
 
             MaterialIcon {
                 id: scanIcon
@@ -188,22 +188,21 @@ ColumnLayout {
             strokeWidth: Appearance.padding.small / 2
             bgColour: "transparent"
             implicitHeight: parent.implicitHeight - Appearance.padding.smaller * 2
-            running: Network.scanning
+            running: Nmcli.scanning
         }
     }
 
-    // Reset connecting state when network changes
     Connections {
-        target: Network
+        target: Nmcli
 
         function onActiveChanged(): void {
-            if (Network.active && root.connectingToSsid === Network.active.ssid) {
+            if (Nmcli.active && root.connectingToSsid === Nmcli.active.ssid) {
                 root.connectingToSsid = "";
             }
         }
 
         function onScanningChanged(): void {
-            if (!Network.scanning)
+            if (!Nmcli.scanning)
                 scanIcon.rotation = 0;
         }
     }

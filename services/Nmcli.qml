@@ -14,6 +14,7 @@ Singleton {
     property string activeInterface: ""
     property string activeConnection: ""
     property bool wifiEnabled: true
+    readonly property bool scanning: rescanProc.running
     readonly property list<AccessPoint> networks: []
     readonly property AccessPoint active: networks.find(n => n.active) ?? null
     property list<string> savedConnections: []
@@ -233,6 +234,10 @@ Singleton {
         } else {
             connectWireless(ssid, "", bssid, callback);
         }
+    }
+
+    function connectToNetwork(ssid: string, password: string, bssid: string, callback: var): void {
+        connectWireless(ssid, password, bssid, callback);
     }
 
     function connectWireless(ssid: string, password: string, bssid: string, callback: var, retryCount: int): void {
@@ -473,6 +478,22 @@ Singleton {
         }
     }
 
+    function disconnectFromNetwork(): void {
+        if (active && active.ssid) {
+            executeCommand(["connection", "down", active.ssid], (result) => {
+                if (result.success) {
+                    getNetworks(() => {});
+                }
+            });
+        } else {
+            executeCommand(["device", "disconnect", "wifi"], (result) => {
+                if (result.success) {
+                    getNetworks(() => {});
+                }
+            });
+        }
+    }
+
     function getDeviceDetails(interfaceName: string, callback: var): void {
         executeCommand(["device", "show", interfaceName], (result) => {
             if (callback) callback(result.output);
@@ -541,6 +562,10 @@ Singleton {
                 callback(result);
             }
         });
+    }
+
+    function rescanWifi(): void {
+        rescanProc.running = true;
     }
 
     function enableWifi(enabled: bool, callback: var): void {
@@ -1150,6 +1175,14 @@ Singleton {
         }
         
         return details;
+    }
+
+    Process {
+        id: rescanProc
+        command: ["nmcli", "dev", "wifi", "list", "--rescan", "yes"]
+        onExited: {
+            getNetworks(() => {});
+        }
     }
 
     Process {

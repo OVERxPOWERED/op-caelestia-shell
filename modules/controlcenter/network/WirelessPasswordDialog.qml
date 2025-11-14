@@ -29,9 +29,9 @@ Item {
     }
 
     property bool isClosing: false
-    visible: session.network.showPasswordDialog && !isClosing
-    enabled: visible
-    focus: visible
+    visible: session.network.showPasswordDialog || isClosing
+    enabled: session.network.showPasswordDialog && !isClosing
+    focus: enabled
 
     Keys.onEscapePressed: {
         closeDialog();
@@ -40,14 +40,10 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: Qt.rgba(0, 0, 0, 0.5)
-        opacity: root.visible && !root.isClosing ? 1 : 0
+        opacity: root.session.network.showPasswordDialog && !root.isClosing ? 1 : 0
 
         Behavior on opacity {
-            Anim {
-                property: "opacity"
-                duration: Appearance.anim.durations.normal
-                easing.bezierCurve: Appearance.anim.curves.standardDecel
-            }
+            Anim {}
         }
 
         MouseArea {
@@ -66,22 +62,35 @@ Item {
 
         radius: Appearance.rounding.normal
         color: Colours.tPalette.m3surface
-        opacity: root.visible && !root.isClosing ? 1 : 0
-        scale: root.visible && !root.isClosing ? 1 : 0.9
+        opacity: root.session.network.showPasswordDialog && !root.isClosing ? 1 : 0
+        scale: root.session.network.showPasswordDialog && !root.isClosing ? 1 : 0.7
 
         Behavior on opacity {
-            Anim {
-                property: "opacity"
-                duration: Appearance.anim.durations.normal
-                easing.bezierCurve: Appearance.anim.curves.standardDecel
-            }
+            Anim {}
         }
 
         Behavior on scale {
+            Anim {}
+        }
+
+        ParallelAnimation {
+            running: root.isClosing
+            onFinished: {
+                if (root.isClosing) {
+                    root.session.network.showPasswordDialog = false;
+                    root.isClosing = false;
+                }
+            }
+
             Anim {
+                target: dialog
+                property: "opacity"
+                to: 0
+            }
+            Anim {
+                target: dialog
                 property: "scale"
-                duration: Appearance.anim.durations.normal
-                easing.bezierCurve: Appearance.anim.curves.standardDecel
+                to: 0.7
             }
         }
 
@@ -441,11 +450,5 @@ Item {
         connectButton.connecting = false;
         connectButton.text = qsTr("Connect");
         connectionMonitor.stop();
-        
-        // Wait for fade-out animation to complete before actually hiding
-        Qt.callLater(() => {
-            session.network.showPasswordDialog = false;
-            isClosing = false;
-        }, Appearance.anim.durations.normal);
     }
 }

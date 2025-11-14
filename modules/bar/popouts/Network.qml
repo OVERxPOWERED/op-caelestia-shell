@@ -12,8 +12,12 @@ import QtQuick.Layouts
 ColumnLayout {
     id: root
 
+    required property Item wrapper
+
     property string connectingToSsid: ""
     property string view: "wireless" // "wireless" or "ethernet"
+    property var passwordNetwork: null
+    property bool showPasswordDialog: false
 
     spacing: Appearance.spacing.small
     width: Config.bar.sizes.networkWidth
@@ -129,7 +133,27 @@ ColumnLayout {
                             Nmcli.disconnectFromNetwork();
                         } else {
                             root.connectingToSsid = networkItem.modelData.ssid;
-                            Nmcli.connectToNetwork(networkItem.modelData.ssid, "", networkItem.modelData.bssid, null);
+                            // Check if network is secure
+                            if (networkItem.modelData.isSecure) {
+                                // Try to connect first - will show password dialog if password is needed
+                                Nmcli.connectToNetwork(networkItem.modelData.ssid, "", networkItem.modelData.bssid, (result) => {
+                                    if (result && result.needsPassword) {
+                                        // Password is required - show password dialog
+                                        root.passwordNetwork = networkItem.modelData;
+                                        root.showPasswordDialog = true;
+                                        root.wrapper.currentName = "wirelesspassword";
+                                    } else if (result && result.success) {
+                                        // Connection successful with saved password
+                                        root.connectingToSsid = "";
+                                    } else {
+                                        // Connection failed for other reasons
+                                        root.connectingToSsid = "";
+                                    }
+                                });
+                            } else {
+                                // Open network, no password needed
+                                Nmcli.connectToNetwork(networkItem.modelData.ssid, "", networkItem.modelData.bssid, null);
+                            }
                         }
                     }
                 }
@@ -329,12 +353,32 @@ ColumnLayout {
         function onActiveChanged(): void {
             if (Nmcli.active && root.connectingToSsid === Nmcli.active.ssid) {
                 root.connectingToSsid = "";
+                // Close password dialog if we successfully connected
+                if (root.showPasswordDialog && root.passwordNetwork && 
+                    Nmcli.active.ssid === root.passwordNetwork.ssid) {
+                    root.showPasswordDialog = false;
+                    root.passwordNetwork = null;
+                    if (root.wrapper.currentName === "wirelesspassword") {
+                        root.wrapper.currentName = "network";
+                    }
+                }
             }
         }
 
         function onScanningChanged(): void {
             if (!Nmcli.scanning)
                 scanIcon.rotation = 0;
+        }
+    }
+
+    Connections {
+        target: root.wrapper
+        function onCurrentNameChanged(): void {
+            // Clear password network when leaving password dialog
+            if (root.wrapper.currentName !== "wirelesspassword" && root.showPasswordDialog) {
+                root.showPasswordDialog = false;
+                root.passwordNetwork = null;
+            }
         }
     }
 

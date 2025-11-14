@@ -87,6 +87,7 @@ Item {
                 SimpleButton {
                     Layout.fillWidth: true
                     Layout.topMargin: Appearance.spacing.normal
+                    Layout.minimumHeight: Appearance.font.size.normal + Appearance.padding.normal * 2
                     visible: {
                         if (!root.network || !root.network.ssid) {
                             return false;

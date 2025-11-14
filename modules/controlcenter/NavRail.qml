@@ -158,13 +158,8 @@ Item {
 
         NavItem {
             Layout.topMargin: Appearance.spacing.large * 2
-            icon: "cable"
-            label: "ethernet"
-        }
-
-        NavItem {
-            icon: "wifi"
-            label: "wireless"
+            icon: "router"
+            label: "networking"
         }
 
         NavItem {
@@ -190,11 +185,6 @@ Item {
         NavItem {
             icon: "apps"
             label: "launcher"
-        }
-
-        NavItem {
-            icon: "router"
-            label: "networking"
         }
     }
 

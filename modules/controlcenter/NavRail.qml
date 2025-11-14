@@ -159,7 +159,7 @@ Item {
         NavItem {
             Layout.topMargin: Appearance.spacing.large * 2
             icon: "router"
-            label: "networking"
+            label: "network"
         }
 
         NavItem {

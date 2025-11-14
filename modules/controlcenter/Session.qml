@@ -6,8 +6,8 @@ QtObject {
 
     required property var root
     property bool floating: false
-    property string active: panes[0]
-    property int activeIndex: 0
+    property string active: "networking"
+    property int activeIndex: 7
     property bool navExpanded: false
 
     readonly property Bt bt: Bt {}

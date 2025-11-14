@@ -94,7 +94,15 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        model: Nmcli.networks
+        model: ScriptModel {
+            values: [...Nmcli.networks].sort((a, b) => {
+                // Put active/connected network first
+                if (a.active !== b.active)
+                    return b.active - a.active;
+                // Then sort by signal strength
+                return b.strength - a.strength;
+            })
+        }
 
         spacing: Appearance.spacing.small / 2
         clip: true

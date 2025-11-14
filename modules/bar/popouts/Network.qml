@@ -13,25 +13,33 @@ ColumnLayout {
     id: root
 
     property string connectingToSsid: ""
+    property string view: "wireless" // "wireless" or "ethernet"
 
     spacing: Appearance.spacing.small
     width: Config.bar.sizes.networkWidth
 
+    // Wireless section
     StyledText {
-        Layout.topMargin: Appearance.padding.normal
+        visible: root.view === "wireless"
+        Layout.preferredHeight: visible ? implicitHeight : 0
+        Layout.topMargin: visible ? Appearance.padding.normal : 0
         Layout.rightMargin: Appearance.padding.small
-        text: qsTr("Wifi %1").arg(Nmcli.wifiEnabled ? "enabled" : "disabled")
+        text: qsTr("Wireless")
         font.weight: 500
     }
 
     Toggle {
+        visible: root.view === "wireless"
+        Layout.preferredHeight: visible ? implicitHeight : 0
         label: qsTr("Enabled")
         checked: Nmcli.wifiEnabled
         toggle.onToggled: Nmcli.enableWifi(checked)
     }
 
     StyledText {
-        Layout.topMargin: Appearance.spacing.small
+        visible: root.view === "wireless"
+        Layout.preferredHeight: visible ? implicitHeight : 0
+        Layout.topMargin: visible ? Appearance.spacing.small : 0
         Layout.rightMargin: Appearance.padding.small
         text: qsTr("%1 networks available").arg(Nmcli.networks.length)
         color: Colours.palette.m3onSurfaceVariant
@@ -39,6 +47,7 @@ ColumnLayout {
     }
 
     Repeater {
+        visible: root.view === "wireless"
         model: ScriptModel {
             values: [...Nmcli.networks].sort((a, b) => {
                 if (a.active !== b.active)
@@ -54,6 +63,8 @@ ColumnLayout {
             readonly property bool isConnecting: root.connectingToSsid === modelData.ssid
             readonly property bool loading: networkItem.isConnecting
 
+            visible: root.view === "wireless"
+            Layout.preferredHeight: visible ? implicitHeight : 0
             Layout.fillWidth: true
             Layout.rightMargin: Appearance.padding.small
             spacing: Appearance.spacing.small
@@ -142,7 +153,9 @@ ColumnLayout {
     }
 
     StyledRect {
-        Layout.topMargin: Appearance.spacing.small
+        visible: root.view === "wireless"
+        Layout.preferredHeight: visible ? implicitHeight : 0
+        Layout.topMargin: visible ? Appearance.spacing.small : 0
         Layout.fillWidth: true
         implicitHeight: rescanBtn.implicitHeight + Appearance.padding.small * 2
 
@@ -192,15 +205,20 @@ ColumnLayout {
         }
     }
 
+    // Ethernet section
     StyledText {
-        Layout.topMargin: Appearance.spacing.normal
+        visible: root.view === "ethernet"
+        Layout.preferredHeight: visible ? implicitHeight : 0
+        Layout.topMargin: visible ? Appearance.padding.normal : 0
         Layout.rightMargin: Appearance.padding.small
         text: qsTr("Ethernet")
         font.weight: 500
     }
 
     StyledText {
-        Layout.topMargin: Appearance.spacing.small
+        visible: root.view === "ethernet"
+        Layout.preferredHeight: visible ? implicitHeight : 0
+        Layout.topMargin: visible ? Appearance.spacing.small : 0
         Layout.rightMargin: Appearance.padding.small
         text: qsTr("%1 devices available").arg(Nmcli.ethernetDevices.length)
         color: Colours.palette.m3onSurfaceVariant
@@ -208,6 +226,7 @@ ColumnLayout {
     }
 
     Repeater {
+        visible: root.view === "ethernet"
         model: ScriptModel {
             values: [...Nmcli.ethernetDevices].sort((a, b) => {
                 if (a.connected !== b.connected)
@@ -222,6 +241,8 @@ ColumnLayout {
             required property var modelData
             readonly property bool loading: false
 
+            visible: root.view === "ethernet"
+            Layout.preferredHeight: visible ? implicitHeight : 0
             Layout.fillWidth: true
             Layout.rightMargin: Appearance.padding.small
             spacing: Appearance.spacing.small

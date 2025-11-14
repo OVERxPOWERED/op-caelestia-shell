@@ -33,7 +33,16 @@ Item {
 
         Popout {
             name: "network"
-            sourceComponent: Network {}
+            sourceComponent: Network {
+                view: "wireless"
+            }
+        }
+
+        Popout {
+            name: "ethernet"
+            sourceComponent: Network {
+                view: "ethernet"
+            }
         }
 
         Popout {

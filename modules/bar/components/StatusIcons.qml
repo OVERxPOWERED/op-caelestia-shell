@@ -154,7 +154,7 @@ StyledRect {
 
         // Ethernet icon
         WrappedLoader {
-            name: "network"
+            name: "ethernet"
             active: Config.bar.status.showNetwork && Nmcli.activeEthernet
 
             sourceComponent: MaterialIcon {

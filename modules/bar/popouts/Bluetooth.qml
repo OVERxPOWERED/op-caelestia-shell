@@ -21,7 +21,7 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Appearance.padding.normal
         Layout.rightMargin: Appearance.padding.small
-        text: qsTr("Bluetooth %1").arg(BluetoothAdapterState.toString(Bluetooth.defaultAdapter?.state).toLowerCase())
+        text: qsTr("Bluetooth")
         font.weight: 500
     }
 

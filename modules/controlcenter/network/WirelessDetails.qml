@@ -28,28 +28,23 @@ Item {
     }
 
     function checkSavedProfile(): void {
-        // Refresh saved connections list to ensure it's up to date
-        // This ensures the "Forget Network" button visibility is accurate
         if (network && network.ssid) {
-            // Always refresh to ensure we have the latest saved connections
-            // This is important when networks are selected or changed
-            Network.listConnectionsProc.running = true;
+            Nmcli.loadSavedConnections(() => {});
         }
     }
 
     Connections {
-        target: Network
+        target: Nmcli
         function onActiveChanged() {
             updateDeviceDetails();
         }
     }
 
     function updateDeviceDetails(): void {
-        // Only update details if the selected network is currently active
-        if (network && Network.active && Network.active.ssid === network.ssid) {
-            Network.updateWirelessDeviceDetails();
+        if (network && Nmcli.active && Nmcli.active.ssid === network.ssid) {
+            Nmcli.getWirelessDeviceDetails("", () => {});
         } else {
-            Network.wirelessDeviceDetails = null;
+            Nmcli.wirelessDeviceDetails = null;
         }
     }
 
@@ -84,7 +79,7 @@ Item {
                         if (checked) {
                             handleConnect();
                         } else {
-                            Network.disconnectFromNetwork();
+                            Nmcli.disconnectFromNetwork();
                         }
                     }
                 }
@@ -96,8 +91,7 @@ Item {
                         if (!root.network || !root.network.ssid) {
                             return false;
                         }
-                        // Check if profile exists - this will update reactively when savedConnectionSsids changes
-                        return Network.hasSavedProfile(root.network.ssid);
+                        return Nmcli.hasSavedProfile(root.network.ssid);
                     }
                     color: Colours.palette.m3errorContainer
                     onColor: Colours.palette.m3onErrorContainer
@@ -105,12 +99,10 @@ Item {
 
                     onClicked: {
                         if (root.network && root.network.ssid) {
-                            // Disconnect first if connected
                             if (root.network.active) {
-                                Network.disconnectFromNetwork();
+                                Nmcli.disconnectFromNetwork();
                             }
-                            // Delete the connection profile
-                            Network.forgetNetwork(root.network.ssid);
+                            Nmcli.forgetNetwork(root.network.ssid, () => {});
                         }
                     }
                 }
@@ -161,7 +153,7 @@ Item {
 
             SectionContainer {
                 ConnectionInfoSection {
-                    deviceDetails: Network.wirelessDeviceDetails
+                    deviceDetails: Nmcli.wirelessDeviceDetails
                 }
             }
 
@@ -169,9 +161,8 @@ Item {
     }
 
     function handleConnect(): void {
-        // If already connected to a different network, disconnect first
-        if (Network.active && Network.active.ssid !== root.network.ssid) {
-            Network.disconnectFromNetwork();
+        if (Nmcli.active && Nmcli.active.ssid !== root.network.ssid) {
+            Nmcli.disconnectFromNetwork();
             Qt.callLater(() => {
                 connectToNetwork();
             });
@@ -182,29 +173,31 @@ Item {
 
     function connectToNetwork(): void {
         if (root.network.isSecure) {
-            // Check if we have a saved connection profile for this network (by SSID)
-            const hasSavedProfile = Network.hasSavedProfile(root.network.ssid);
+            const hasSavedProfile = Nmcli.hasSavedProfile(root.network.ssid);
 
             if (hasSavedProfile) {
-                // Try connecting with saved password - don't show dialog if it fails
-                // The saved password should work, but if connection fails for other reasons,
-                // we'll let the user try manually later
-                Network.connectToNetwork(root.network.ssid, "", root.network.bssid, null);
+                Nmcli.connectToNetwork(root.network.ssid, "", root.network.bssid, null);
             } else {
-                // No saved profile, try connecting without password first
-                Network.connectToNetworkWithPasswordCheck(
+                Nmcli.connectToNetworkWithPasswordCheck(
                     root.network.ssid,
                     root.network.isSecure,
-                    () => {
-                        // Callback: connection failed, show password dialog
-                        root.session.network.showPasswordDialog = true;
-                        root.session.network.pendingNetwork = root.network;
+                    (result) => {
+                        if (result.needsPassword) {
+                            if (Nmcli.pendingConnection) {
+                                Nmcli.connectionCheckTimer.stop();
+                                Nmcli.immediateCheckTimer.stop();
+                                Nmcli.immediateCheckTimer.checkCount = 0;
+                                Nmcli.pendingConnection = null;
+                            }
+                            root.session.network.showPasswordDialog = true;
+                            root.session.network.pendingNetwork = root.network;
+                        }
                     },
                     root.network.bssid
                 );
             }
         } else {
-            Network.connectToNetwork(root.network.ssid, "", root.network.bssid, null);
+            Nmcli.connectToNetwork(root.network.ssid, "", root.network.bssid, null);
         }
     }
 }

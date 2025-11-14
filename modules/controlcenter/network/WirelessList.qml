@@ -31,22 +31,22 @@ ColumnLayout {
         }
 
         ToggleButton {
-            toggled: Network.wifiEnabled
+            toggled: Nmcli.wifiEnabled
             icon: "wifi"
             accent: "Tertiary"
 
             onClicked: {
-                Network.toggleWifi();
+                Nmcli.toggleWifi(null);
             }
         }
 
         ToggleButton {
-            toggled: Network.scanning
+            toggled: Nmcli.scanning
             icon: "wifi_find"
             accent: "Secondary"
 
             onClicked: {
-                Network.rescanWifi();
+                Nmcli.rescanWifi();
             }
         }
 
@@ -70,13 +70,13 @@ ColumnLayout {
         spacing: Appearance.spacing.small
 
         StyledText {
-            text: qsTr("Networks (%1)").arg(Network.networks.length)
+            text: qsTr("Networks (%1)").arg(Nmcli.networks.length)
             font.pointSize: Appearance.font.size.large
             font.weight: 500
         }
 
         StyledText {
-            visible: Network.scanning
+            visible: Nmcli.scanning
             text: qsTr("Scanning...")
             color: Colours.palette.m3primary
             font.pointSize: Appearance.font.size.small
@@ -94,7 +94,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        model: Network.networks
+        model: Nmcli.networks
 
         spacing: Appearance.spacing.small / 2
         clip: true
@@ -183,7 +183,7 @@ ColumnLayout {
                     StateLayer {
                         function onClicked(): void {
                             if (modelData.active) {
-                                Network.disconnectFromNetwork();
+                                Nmcli.disconnectFromNetwork();
                             } else {
                                 handleConnect(modelData);
                             }
@@ -205,19 +205,14 @@ ColumnLayout {
     }
 
     function checkSavedProfileForNetwork(ssid: string): void {
-        // Refresh saved connections list to ensure it's up to date
-        // This ensures accurate profile detection when selecting networks
         if (ssid && ssid.length > 0) {
-            // Always refresh to ensure we have the latest saved connections
-            // This is important when a network is selected from the list
-            Network.listConnectionsProc.running = true;
+            Nmcli.loadSavedConnections(() => {});
         }
     }
 
     function handleConnect(network): void {
-        // If already connected to a different network, disconnect first
-        if (Network.active && Network.active.ssid !== network.ssid) {
-            Network.disconnectFromNetwork();
+        if (Nmcli.active && Nmcli.active.ssid !== network.ssid) {
+            Nmcli.disconnectFromNetwork();
             Qt.callLater(() => {
                 connectToNetwork(network);
             });
@@ -228,29 +223,31 @@ ColumnLayout {
 
     function connectToNetwork(network): void {
         if (network.isSecure) {
-            // Check if we have a saved connection profile for this network (by SSID)
-            const hasSavedProfile = Network.hasSavedProfile(network.ssid);
+            const hasSavedProfile = Nmcli.hasSavedProfile(network.ssid);
 
             if (hasSavedProfile) {
-                // Try connecting with saved password - don't show dialog if it fails
-                // The saved password should work, but if connection fails for other reasons,
-                // we'll let the user try manually later
-                Network.connectToNetwork(network.ssid, "", network.bssid, null);
+                Nmcli.connectToNetwork(network.ssid, "", network.bssid, null);
             } else {
-                // No saved profile, try connecting without password first
-                Network.connectToNetworkWithPasswordCheck(
+                Nmcli.connectToNetworkWithPasswordCheck(
                     network.ssid,
                     network.isSecure,
-                    () => {
-                        // Callback: connection failed, show password dialog
-                        root.session.network.showPasswordDialog = true;
-                        root.session.network.pendingNetwork = network;
+                    (result) => {
+                        if (result.needsPassword) {
+                            if (Nmcli.pendingConnection) {
+                                Nmcli.connectionCheckTimer.stop();
+                                Nmcli.immediateCheckTimer.stop();
+                                Nmcli.immediateCheckTimer.checkCount = 0;
+                                Nmcli.pendingConnection = null;
+                            }
+                            root.session.network.showPasswordDialog = true;
+                            root.session.network.pendingNetwork = network;
+                        }
                     },
                     network.bssid
                 );
             }
         } else {
-            Network.connectToNetwork(network.ssid, "", network.bssid, null);
+            Nmcli.connectToNetwork(network.ssid, "", network.bssid, null);
         }
     }
 }

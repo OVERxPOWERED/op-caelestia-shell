@@ -108,26 +108,16 @@ Item {
 
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Appearance.spacing.small
-                visible: Network.connectionStatus.length > 0 || connectButton.connecting
+                visible: connectButton.connecting
                 text: {
-                    if (Network.connectionStatus.length > 0) {
-                        return Network.connectionStatus;
-                    } else if (connectButton.connecting) {
+                    if (connectButton.connecting) {
                         return qsTr("Connecting...");
                     }
                     return "";
                 }
-                color: {
-                    const status = Network.connectionStatus;
-                    if (status.includes("Error") || status.includes("error") || status.includes("failed")) {
-                        return Colours.palette.m3error;
-                    } else if (status.includes("successful") || status.includes("Connected") || status.includes("success")) {
-                        return Colours.palette.m3primary;
-                    }
-                    return Colours.palette.m3onSurfaceVariant;
-                }
+                color: Colours.palette.m3onSurfaceVariant
                 font.pointSize: Appearance.font.size.small
-                font.weight: (Network.connectionStatus.includes("Error") || Network.connectionStatus.includes("error")) ? 500 : 400
+                font.weight: 400
                 wrapMode: Text.WordWrap
                 Layout.maximumWidth: parent.width - Appearance.padding.large * 2
             }
@@ -166,7 +156,6 @@ Item {
                             if (root.visible) {
                                 passwordField.forceActiveFocus();
                                 passwordField.text = "";
-                                Network.clearConnectionStatus();
                             }
                         }
                     }
@@ -225,10 +214,9 @@ Item {
                         connecting = true;
                         enabled = false;
                         text = qsTr("Connecting...");
-                        Network.clearConnectionStatus();
 
                         // Connect to network
-                        Network.connectToNetwork(
+                        Nmcli.connectToNetwork(
                             root.network.ssid,
                             password,
                             root.network.bssid || "",
@@ -248,27 +236,17 @@ Item {
             return;
         }
 
-        // Check connection status message for success indicators
-        const status = Network.connectionStatus;
-        const statusLower = status.toLowerCase();
-
-        // Check for success indicators in status message
-        const hasSuccessIndicator = statusLower.includes("connection activated") ||
-                                   statusLower.includes("successfully") ||
-                                   statusLower.includes("connected successfully") ||
-                                   (statusLower.includes("connected") && !statusLower.includes("error") && !statusLower.includes("failed"));
-
         // Check if we're connected to the target network (case-insensitive SSID comparison)
-        const isConnected = root.network && Network.active && Network.active.ssid &&
-                           Network.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
+        const isConnected = root.network && Nmcli.active && Nmcli.active.ssid &&
+                           Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
 
-        if (isConnected || hasSuccessIndicator) {
+        if (isConnected) {
             // Successfully connected - give it a moment for network list to update
             Qt.callLater(() => {
                 // Double-check connection is still active
-                if (root.visible && Network.active && Network.active.ssid) {
-                    const stillConnected = Network.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
-                    if (stillConnected || hasSuccessIndicator) {
+                if (root.visible && Nmcli.active && Nmcli.active.ssid) {
+                    const stillConnected = Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
+                    if (stillConnected) {
                         connectionMonitor.stop();
                         connectButton.connecting = false;
                         connectButton.text = qsTr("Connect");
@@ -279,11 +257,10 @@ Item {
             return;
         }
 
-        // Check for connection errors (but not warnings about duplicate names)
-        if (status.includes("Error") || (status.includes("error") && !status.includes("Warning"))) {
-            // Only treat as error if it's not just a warning about duplicate names
-            if (!status.includes("another connection with the name") && !status.includes("Reference the connection by its uuid")) {
-                // Connection failed
+        // Check for connection failures - if pending connection was cleared but we're not connected
+        if (Nmcli.pendingConnection === null && connectButton.connecting) {
+            // Wait a bit more before giving up (allow time for connection to establish)
+            if (connectionMonitor.repeatCount > 10) {
                 connectionMonitor.stop();
                 connectButton.connecting = false;
                 connectButton.enabled = true;
@@ -297,14 +274,22 @@ Item {
         interval: 1000
         repeat: true
         triggeredOnStart: false
+        property int repeatCount: 0
 
         onTriggered: {
+            repeatCount++;
             checkConnectionStatus();
+        }
+
+        onRunningChanged: {
+            if (!running) {
+                repeatCount = 0;
+            }
         }
     }
 
     Connections {
-        target: Network
+        target: Nmcli
         function onActiveChanged() {
             if (root.visible) {
                 checkConnectionStatus();
@@ -318,6 +303,5 @@ Item {
         connectButton.connecting = false;
         connectButton.text = qsTr("Connect");
         connectionMonitor.stop();
-        Network.clearConnectionStatus();
     }
 }

@@ -62,6 +62,13 @@ RowLayout {
                     title: qsTr("Output devices")
                     expanded: true
 
+                    onToggleRequested: {
+                        if (!expanded) {
+                            // Opening output devices, close input devices
+                            inputDevicesSection.expanded = false;
+                        }
+                    }
+
                     ColumnLayout {
                         Layout.fillWidth: true
                         spacing: Appearance.spacing.small
@@ -141,6 +148,13 @@ RowLayout {
                     Layout.fillWidth: true
                     title: qsTr("Input devices")
                     expanded: true
+
+                    onToggleRequested: {
+                        if (!expanded) {
+                            // Opening input devices, close output devices
+                            outputDevicesSection.expanded = false;
+                        }
+                    }
 
                     ColumnLayout {
                         Layout.fillWidth: true

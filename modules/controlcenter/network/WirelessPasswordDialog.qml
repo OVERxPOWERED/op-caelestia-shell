@@ -171,11 +171,26 @@ Item {
                 property string passwordBuffer: ""
 
                 Connections {
+                    target: root.session.network
+                    function onShowPasswordDialogChanged(): void {
+                        if (root.session.network.showPasswordDialog) {
+                            // Use callLater to ensure focus happens after dialog is fully rendered
+                            Qt.callLater(() => {
+                                passwordContainer.forceActiveFocus();
+                                passwordContainer.passwordBuffer = "";
+                            });
+                        }
+                    }
+                }
+
+                Connections {
                     target: root
                     function onVisibleChanged(): void {
                         if (root.visible) {
-                            passwordContainer.forceActiveFocus();
-                            passwordContainer.passwordBuffer = "";
+                            // Use callLater to ensure focus happens after dialog is fully rendered
+                            Qt.callLater(() => {
+                                passwordContainer.forceActiveFocus();
+                            });
                         }
                     }
                 }

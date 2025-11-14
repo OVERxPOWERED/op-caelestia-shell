@@ -294,6 +294,7 @@ Item {
                     id: cancelButton
 
                     Layout.fillWidth: true
+                    Layout.minimumHeight: Appearance.font.size.normal + Appearance.padding.normal * 2
                     color: Colours.palette.m3secondaryContainer
                     onColor: Colours.palette.m3onSecondaryContainer
                     text: qsTr("Cancel")
@@ -305,6 +306,7 @@ Item {
                     id: connectButton
 
                     Layout.fillWidth: true
+                    Layout.minimumHeight: Appearance.font.size.normal + Appearance.padding.normal * 2
                     color: Colours.palette.m3primary
                     onColor: Colours.palette.m3onPrimary
                     text: qsTr("Connect")

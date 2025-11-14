@@ -3,6 +3,7 @@ pragma Singleton
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import qs.services
 
 Singleton {
     id: root
@@ -13,13 +14,24 @@ Singleton {
             getEthernetDevices();
         });
         // Load saved connections on startup
-        listConnectionsProc.running = true;
+        Nmcli.loadSavedConnections(() => {
+            root.savedConnections = Nmcli.savedConnections;
+            root.savedConnectionSsids = Nmcli.savedConnectionSsids;
+        });
+        // Get initial WiFi status
+        Nmcli.getWifiStatus((enabled) => {
+            root.wifiEnabled = enabled;
+        });
+        // Sync networks from Nmcli on startup
+        Qt.callLater(() => {
+            syncNetworksFromNmcli();
+        }, 100);
     }
 
     readonly property list<AccessPoint> networks: []
     readonly property AccessPoint active: networks.find(n => n.active) ?? null
     property bool wifiEnabled: true
-    readonly property bool scanning: rescanProc.running
+    readonly property bool scanning: Nmcli.scanning
 
     property list<var> ethernetDevices: []
     readonly property var activeEthernet: ethernetDevices.find(d => d.connected) ?? null
@@ -29,334 +41,245 @@ Singleton {
     property var wirelessDeviceDetails: null
 
     function enableWifi(enabled: bool): void {
-        const cmd = enabled ? "on" : "off";
-        enableWifiProc.exec(["nmcli", "radio", "wifi", cmd]);
+        Nmcli.enableWifi(enabled, (result) => {
+            if (result.success) {
+                root.getWifiStatus();
+                Nmcli.getNetworks(() => {
+                    syncNetworksFromNmcli();
+                });
+            }
+        });
     }
 
     function toggleWifi(): void {
-        const cmd = wifiEnabled ? "off" : "on";
-        enableWifiProc.exec(["nmcli", "radio", "wifi", cmd]);
+        Nmcli.toggleWifi((result) => {
+            if (result.success) {
+                root.getWifiStatus();
+                Nmcli.getNetworks(() => {
+                    syncNetworksFromNmcli();
+                });
+            }
+        });
     }
 
     function rescanWifi(): void {
-        rescanProc.running = true;
+        Nmcli.rescanWifi();
     }
 
     property var pendingConnection: null
     signal connectionFailed(string ssid)
 
     function connectToNetwork(ssid: string, password: string, bssid: string, callback: var): void {
-        // When password is provided, use BSSID for more reliable connection
-        // When no password, use SSID (will use saved password if available)
-        const hasBssid = bssid !== undefined && bssid !== null && bssid.length > 0;
-        let cmd = [];
-
         // Set up pending connection tracking if callback provided
         if (callback) {
+            const hasBssid = bssid !== undefined && bssid !== null && bssid.length > 0;
             root.pendingConnection = { ssid: ssid, bssid: hasBssid ? bssid : "", callback: callback };
         }
-
-        if (password && password.length > 0) {
-            // When password is provided, try BSSID first if available, otherwise use SSID
-            if (hasBssid) {
-                // Use BSSID when password is provided - ensure BSSID is uppercase
-                const bssidUpper = bssid.toUpperCase();
-
-                // Check if a connection with this SSID already exists
-                const existingConnection = root.savedConnections.find(conn =>
-                    conn && conn.toLowerCase().trim() === ssid.toLowerCase().trim()
-                );
-
-                if (existingConnection) {
-                    // Connection already exists - delete it first, then create new one with updated password
-                    deleteConnectionProc.exec(["nmcli", "connection", "delete", existingConnection]);
-                    // Wait a moment for deletion to complete, then create new connection
-                    Qt.callLater(() => {
-                        createConnectionWithPassword(ssid, bssidUpper, password);
-                    }, 300);
-                    return;
-                } else {
-                    // No existing connection, create new one
-                    createConnectionWithPassword(ssid, bssidUpper, password);
-                    return;
-                }
+        
+        Nmcli.connectToNetwork(ssid, password, bssid, (result) => {
+            if (result && result.success) {
+                // Connection successful
+                if (callback) callback(result);
+                root.pendingConnection = null;
+            } else if (result && result.needsPassword) {
+                // Password needed - callback will handle showing dialog
+                if (callback) callback(result);
             } else {
-                // Fallback to SSID if BSSID not available - use device wifi connect
-                cmd = ["nmcli", "device", "wifi", "connect", ssid, "password", password];
+                // Connection failed
+                if (result && result.error) {
+                    root.connectionFailed(ssid);
+                }
+                if (callback) callback(result);
+                root.pendingConnection = null;
             }
-        } else {
-            // Try to connect to existing connection first (will use saved password if available)
-            cmd = ["nmcli", "device", "wifi", "connect", ssid];
-        }
-
-        // Set command and start process
-        connectProc.command = cmd;
-
-        // If we're creating a connection profile, we need to activate it after creation
-        const isConnectionAdd = cmd.length > 0 && cmd[0] === "nmcli" && cmd[1] === "connection" && cmd[2] === "add";
-
-        // Wait a moment before starting to ensure command is set
-        Qt.callLater(() => {
-            connectProc.running = true;
-        });
-
-        // Start connection check timer if we have a callback
-        if (callback) {
-            connectionCheckTimer.start();
-        }
-    }
-
-    function createConnectionWithPassword(ssid: string, bssidUpper: string, password: string): void {
-        // Create connection profile with all required properties for BSSID + password
-        const cmd = ["nmcli", "connection", "add",
-                   "type", "wifi",
-                   "con-name", ssid,
-                   "ifname", "*",
-                   "ssid", ssid,
-                   "802-11-wireless.bssid", bssidUpper,
-                   "802-11-wireless-security.key-mgmt", "wpa-psk",
-                   "802-11-wireless-security.psk", password];
-
-        // Set command and start process
-        connectProc.command = cmd;
-
-        Qt.callLater(() => {
-            connectProc.running = true;
         });
     }
 
     function connectToNetworkWithPasswordCheck(ssid: string, isSecure: bool, callback: var, bssid: string): void {
-        // For secure networks, try connecting without password first
-        // If connection succeeds (saved password exists), we're done
-        // If it fails with password error, callback will be called to show password dialog
-        if (isSecure) {
-            const hasBssid = bssid !== undefined && bssid !== null && bssid.length > 0;
-            root.pendingConnection = { ssid: ssid, bssid: hasBssid ? bssid : "", callback: callback };
-            // Try connecting without password - will use saved password if available
-            connectProc.exec(["nmcli", "device", "wifi", "connect", ssid]);
-            // Start timer to check if connection succeeded
-            connectionCheckTimer.start();
-        } else {
-            connectToNetwork(ssid, "", bssid, null);
-        }
+        // Set up pending connection tracking
+        const hasBssid = bssid !== undefined && bssid !== null && bssid.length > 0;
+        root.pendingConnection = { ssid: ssid, bssid: hasBssid ? bssid : "", callback: callback };
+        
+        Nmcli.connectToNetworkWithPasswordCheck(ssid, isSecure, (result) => {
+            if (result && result.success) {
+                // Connection successful
+                if (callback) callback(result);
+                root.pendingConnection = null;
+            } else if (result && result.needsPassword) {
+                // Password needed - callback will handle showing dialog
+                if (callback) callback(result);
+            } else {
+                // Connection failed
+                if (result && result.error) {
+                    root.connectionFailed(ssid);
+                }
+                if (callback) callback(result);
+                root.pendingConnection = null;
+            }
+        }, bssid);
     }
 
     function disconnectFromNetwork(): void {
         // Try to disconnect - use connection name if available, otherwise use device
-        if (active && active.ssid) {
-            // First try to disconnect by connection name (more reliable)
-            disconnectByConnectionProc.exec(["nmcli", "connection", "down", active.ssid]);
-        } else {
-            // Fallback: disconnect by device
-            disconnectProc.exec(["nmcli", "device", "disconnect", "wifi"]);
-        }
+        Nmcli.disconnectFromNetwork();
+        // Refresh network list after disconnection
+        Qt.callLater(() => {
+            Nmcli.getNetworks(() => {
+                syncNetworksFromNmcli();
+            });
+        }, 500);
     }
 
     function forgetNetwork(ssid: string): void {
         // Delete the connection profile for this network
         // This will remove the saved password and connection settings
-        if (ssid && ssid.length > 0) {
-            deleteConnectionProc.exec(["nmcli", "connection", "delete", ssid]);
-            // Also refresh network list after deletion
-            Qt.callLater(() => {
-                getNetworks.running = true;
-            }, 500);
-        }
+        Nmcli.forgetNetwork(ssid, (result) => {
+            if (result.success) {
+                // Refresh network list after deletion
+                Qt.callLater(() => {
+                    Nmcli.getNetworks(() => {
+                        syncNetworksFromNmcli();
+                    });
+                }, 500);
+            }
+        });
     }
 
-    function hasConnectionProfile(ssid: string): bool {
-        // Check if a connection profile exists for this SSID
-        // This is synchronous check - returns true if connection exists
-        if (!ssid || ssid.length === 0) {
-            return false;
-        }
-        // Use nmcli to check if connection exists
-        // We'll use a Process to check, but for now return false
-        // The actual check will be done asynchronously
-        return false;
-    }
 
     property list<string> savedConnections: []
     property list<string> savedConnectionSsids: []
-    property var wifiConnectionQueue: []
-    property int currentSsidQueryIndex: 0
 
-    Process {
-        id: listConnectionsProc
-        command: ["nmcli", "-t", "-f", "NAME,TYPE", "connection", "show"]
-        environment: ({
-                LANG: "C.UTF-8",
-                LC_ALL: "C.UTF-8"
-            })
-        onExited: {
-            if (exitCode === 0) {
-                parseConnectionList(stdout.text);
-            }
+    // Sync saved connections from Nmcli when they're updated
+    Connections {
+        target: Nmcli
+        function onSavedConnectionsChanged() {
+            root.savedConnections = Nmcli.savedConnections;
         }
-        stdout: StdioCollector {
-            onStreamFinished: {
-                parseConnectionList(text);
-            }
+        function onSavedConnectionSsidsChanged() {
+            root.savedConnectionSsids = Nmcli.savedConnectionSsids;
         }
     }
 
-    function parseConnectionList(output: string): void {
-        const lines = output.trim().split("\n").filter(line => line.length > 0);
-        const wifiConnections = [];
-        const connections = [];
-
-        // First pass: identify WiFi connections
-        for (const line of lines) {
-            const parts = line.split(":");
-            if (parts.length >= 2) {
-                const name = parts[0];
-                const type = parts[1];
-                connections.push(name);
-
-                if (type === "802-11-wireless") {
-                    wifiConnections.push(name);
+    function syncNetworksFromNmcli(): void {
+        const rNetworks = root.networks;
+        const nNetworks = Nmcli.networks;
+        
+        // Build a map of existing networks by key
+        const existingMap = new Map();
+        for (const rn of rNetworks) {
+            const key = `${rn.frequency}:${rn.ssid}:${rn.bssid}`;
+            existingMap.set(key, rn);
+        }
+        
+        // Build a map of new networks by key
+        const newMap = new Map();
+        for (const nn of nNetworks) {
+            const key = `${nn.frequency}:${nn.ssid}:${nn.bssid}`;
+            newMap.set(key, nn);
+        }
+        
+        // Remove networks that no longer exist
+        for (const [key, network] of existingMap) {
+            if (!newMap.has(key)) {
+                const index = rNetworks.indexOf(network);
+                if (index >= 0) {
+                    rNetworks.splice(index, 1);
+                    network.destroy();
                 }
             }
         }
-
-        root.savedConnections = connections;
-
-        // Second pass: get SSIDs for WiFi connections
-        if (wifiConnections.length > 0) {
-            root.wifiConnectionQueue = wifiConnections;
-            root.currentSsidQueryIndex = 0;
-            root.savedConnectionSsids = [];
-            // Start querying SSIDs one by one
-            queryNextSsid();
-        } else {
-            root.savedConnectionSsids = [];
-            root.wifiConnectionQueue = [];
-        }
-    }
-
-    Process {
-        id: getSsidProc
-
-        environment: ({
-                LANG: "C.UTF-8",
-                LC_ALL: "C.UTF-8"
-            })
-        onExited: {
-            if (exitCode === 0) {
-                processSsidOutput(stdout.text);
+        
+        // Add or update networks from Nmcli
+        for (const [key, nNetwork] of newMap) {
+            const existing = existingMap.get(key);
+            if (existing) {
+                // Update existing network's lastIpcObject
+                existing.lastIpcObject = nNetwork.lastIpcObject;
             } else {
-                // Move to next connection even if this one failed
-                queryNextSsid();
-            }
-        }
-        stdout: StdioCollector {
-            onStreamFinished: {
-                processSsidOutput(text);
+                // Create new AccessPoint from Nmcli's data
+                rNetworks.push(apComp.createObject(root, {
+                    lastIpcObject: nNetwork.lastIpcObject
+                }));
             }
         }
     }
 
-    function processSsidOutput(output: string): void {
-        // Parse "802-11-wireless.ssid:SSID_NAME" format
-        const lines = output.trim().split("\n");
-        for (const line of lines) {
-            if (line.startsWith("802-11-wireless.ssid:")) {
-                const ssid = line.substring("802-11-wireless.ssid:".length).trim();
-                if (ssid && ssid.length > 0) {
-                    // Add to list if not already present (case-insensitive)
-                    const ssidLower = ssid.toLowerCase();
-                    if (!root.savedConnectionSsids.some(s => s && s.toLowerCase() === ssidLower)) {
-                        // Create new array to trigger QML property change notification
-                        const newList = root.savedConnectionSsids.slice();
-                        newList.push(ssid);
-                        root.savedConnectionSsids = newList;
-                    }
-                }
-            }
-        }
-
-        // Query next connection
-        queryNextSsid();
+    component AccessPoint: QtObject {
+        required property var lastIpcObject
+        readonly property string ssid: lastIpcObject.ssid
+        readonly property string bssid: lastIpcObject.bssid
+        readonly property int strength: lastIpcObject.strength
+        readonly property int frequency: lastIpcObject.frequency
+        readonly property bool active: lastIpcObject.active
+        readonly property string security: lastIpcObject.security
+        readonly property bool isSecure: security.length > 0
     }
 
-    function queryNextSsid(): void {
-        if (root.currentSsidQueryIndex < root.wifiConnectionQueue.length) {
-            const connectionName = root.wifiConnectionQueue[root.currentSsidQueryIndex];
-            root.currentSsidQueryIndex++;
-            getSsidProc.command = ["nmcli", "-t", "-f", "802-11-wireless.ssid", "connection", "show", connectionName];
-            getSsidProc.running = true;
-        } else {
-            // All SSIDs retrieved
-            root.wifiConnectionQueue = [];
-            root.currentSsidQueryIndex = 0;
-        }
+    Component {
+        id: apComp
+        AccessPoint {}
     }
 
     function hasSavedProfile(ssid: string): bool {
-        if (!ssid || ssid.length === 0) {
-            return false;
-        }
-        const ssidLower = ssid.toLowerCase().trim();
-
-        // If currently connected to this network, it definitely has a saved profile
-        if (root.active && root.active.ssid) {
-            const activeSsidLower = root.active.ssid.toLowerCase().trim();
-            if (activeSsidLower === ssidLower) {
-                return true;
-            }
-        }
-
-        // Check if SSID is in saved connections (case-insensitive comparison)
-        const hasSsid = root.savedConnectionSsids.some(savedSsid =>
-            savedSsid && savedSsid.toLowerCase().trim() === ssidLower
-        );
-
-        if (hasSsid) {
-            return true;
-        }
-
-        // Fallback: also check if connection name matches SSID (some connections use SSID as name)
-        const hasConnectionName = root.savedConnections.some(connName =>
-            connName && connName.toLowerCase().trim() === ssidLower
-        );
-
-        return hasConnectionName;
+        // Use Nmcli's hasSavedProfile which has the same logic
+        return Nmcli.hasSavedProfile(ssid);
     }
 
     function getWifiStatus(): void {
-        wifiStatusProc.running = true;
+        Nmcli.getWifiStatus((enabled) => {
+            root.wifiEnabled = enabled;
+        });
     }
 
     function getEthernetDevices(): void {
-        getEthernetDevicesProc.running = true;
+        root.ethernetProcessRunning = true;
+        Nmcli.getEthernetInterfaces((interfaces) => {
+            root.ethernetDevices = Nmcli.ethernetDevices;
+            root.ethernetDeviceCount = Nmcli.ethernetDevices.length;
+            root.ethernetProcessRunning = false;
+        });
     }
 
 
     function connectEthernet(connectionName: string, interfaceName: string): void {
-        if (connectionName && connectionName.length > 0) {
-            // Use connection name if available
-            connectEthernetProc.exec(["nmcli", "connection", "up", connectionName]);
-        } else if (interfaceName && interfaceName.length > 0) {
-            // Fallback to device interface if no connection name
-            connectEthernetProc.exec(["nmcli", "device", "connect", interfaceName]);
-        }
+        Nmcli.connectEthernet(connectionName, interfaceName, (result) => {
+            if (result.success) {
+                getEthernetDevices();
+                // Refresh device details after connection
+                Qt.callLater(() => {
+                    const activeDevice = root.ethernetDevices.find(function(d) { return d.connected; });
+                    if (activeDevice && activeDevice.interface) {
+                        updateEthernetDeviceDetails(activeDevice.interface);
+                    }
+                }, 1000);
+            }
+        });
     }
 
     function disconnectEthernet(connectionName: string): void {
-        disconnectEthernetProc.exec(["nmcli", "connection", "down", connectionName]);
+        Nmcli.disconnectEthernet(connectionName, (result) => {
+            if (result.success) {
+                getEthernetDevices();
+                // Clear device details after disconnection
+                Qt.callLater(() => {
+                    root.ethernetDeviceDetails = null;
+                });
+            }
+        });
     }
 
     function updateEthernetDeviceDetails(interfaceName: string): void {
-        if (interfaceName && interfaceName.length > 0) {
-            getEthernetDetailsProc.exec(["nmcli", "device", "show", interfaceName]);
-        } else {
-            ethernetDeviceDetails = null;
-        }
+        Nmcli.getEthernetDeviceDetails(interfaceName, (details) => {
+            root.ethernetDeviceDetails = details;
+        });
     }
 
     function updateWirelessDeviceDetails(): void {
         // Find the wireless interface by looking for wifi devices
-        findWirelessInterfaceProc.exec(["nmcli", "device", "status"]);
+        // Pass empty string to let Nmcli find the active interface automatically
+        Nmcli.getWirelessDeviceDetails("", (details) => {
+            root.wirelessDeviceDetails = details;
+        });
     }
 
     function cidrToSubnetMask(cidr: string): string {
@@ -382,649 +305,12 @@ Singleton {
         command: ["nmcli", "m"]
         stdout: SplitParser {
             onRead: {
-                getNetworks.running = true;
+                Nmcli.getNetworks(() => {
+                    syncNetworksFromNmcli();
+                });
                 getEthernetDevices();
             }
         }
     }
 
-    Process {
-        id: wifiStatusProc
-
-        running: true
-        command: ["nmcli", "radio", "wifi"]
-        environment: ({
-                LANG: "C.UTF-8",
-                LC_ALL: "C.UTF-8"
-            })
-        stdout: StdioCollector {
-            onStreamFinished: {
-                root.wifiEnabled = text.trim() === "enabled";
-            }
-        }
-    }
-
-    Process {
-        id: enableWifiProc
-
-        onExited: {
-            root.getWifiStatus();
-            getNetworks.running = true;
-        }
-    }
-
-    Process {
-        id: rescanProc
-
-        command: ["nmcli", "dev", "wifi", "list", "--rescan", "yes"]
-        onExited: {
-            getNetworks.running = true;
-        }
-    }
-
-    Timer {
-        id: connectionCheckTimer
-        interval: 4000
-        onTriggered: {
-            if (root.pendingConnection) {
-                const connected = root.active && root.active.ssid === root.pendingConnection.ssid;
-
-                if (!connected && root.pendingConnection.callback) {
-                    // Connection didn't succeed after multiple checks, show password dialog
-                    const pending = root.pendingConnection;
-                    root.pendingConnection = null;
-                    immediateCheckTimer.stop();
-                    immediateCheckTimer.checkCount = 0;
-                    pending.callback();
-                } else if (connected) {
-                    // Connection succeeded, clear pending
-                    root.pendingConnection = null;
-                    immediateCheckTimer.stop();
-                    immediateCheckTimer.checkCount = 0;
-                }
-            }
-        }
-    }
-
-    Timer {
-        id: immediateCheckTimer
-        interval: 500
-        repeat: true
-        triggeredOnStart: false
-        property int checkCount: 0
-
-        onTriggered: {
-            if (root.pendingConnection) {
-                checkCount++;
-                const connected = root.active && root.active.ssid === root.pendingConnection.ssid;
-
-                if (connected) {
-                    // Connection succeeded, stop timers and clear pending
-                    connectionCheckTimer.stop();
-                    immediateCheckTimer.stop();
-                    immediateCheckTimer.checkCount = 0;
-                    root.pendingConnection = null;
-                } else if (checkCount >= 6) {
-                    // Checked 6 times (3 seconds total), connection likely failed
-                    // Stop immediate check, let the main timer handle it
-                    immediateCheckTimer.stop();
-                    immediateCheckTimer.checkCount = 0;
-                }
-            } else {
-                immediateCheckTimer.stop();
-                immediateCheckTimer.checkCount = 0;
-            }
-        }
-    }
-
-    Process {
-        id: connectProc
-
-        onExited: {
-
-            // Check if this was a "connection add" command - if so, we need to activate it
-            const wasConnectionAdd = connectProc.command && connectProc.command.length > 0
-                                   && connectProc.command[0] === "nmcli"
-                                   && connectProc.command[1] === "connection"
-                                   && connectProc.command[2] === "add";
-
-            if (wasConnectionAdd && root.pendingConnection) {
-                const ssid = root.pendingConnection.ssid;
-
-                // Check for duplicate connection warning in stderr text
-                const stderrText = connectProc.stderr ? connectProc.stderr.text : "";
-                const hasDuplicateWarning = stderrText && (
-                    stderrText.includes("another connection with the name") ||
-                    stderrText.includes("Reference the connection by its uuid")
-                );
-
-                // Even with duplicate warning (or if connection already exists), we should try to activate it
-                // Also try if exit code is non-zero but small (might be a warning, not a real error)
-                if (exitCode === 0 || hasDuplicateWarning || (exitCode > 0 && exitCode < 10)) {
-
-                    // Update saved connections list
-                    listConnectionsProc.running = true;
-
-                    // Try to activate the connection by SSID (connection name)
-                    connectProc.command = ["nmcli", "connection", "up", ssid];
-                    Qt.callLater(() => {
-                        connectProc.running = true;
-                    });
-                    // Don't start timers yet - wait for activation to complete
-                    return;
-                } else {
-                    // Connection add failed - try using device wifi connect as fallback
-                    // Extract password from the command if available
-                    let password = "";
-                    if (connectProc.command) {
-                        const pskIndex = connectProc.command.findIndex(arg => arg === "802-11-wireless-security.psk");
-                        if (pskIndex >= 0 && pskIndex + 1 < connectProc.command.length) {
-                            password = connectProc.command[pskIndex + 1];
-                        }
-                    }
-
-                    if (password && password.length > 0) {
-                        connectProc.command = ["nmcli", "device", "wifi", "connect", ssid, "password", password];
-                        Qt.callLater(() => {
-                            connectProc.running = true;
-                        });
-                        return;
-                    }
-                }
-            }
-
-            // Refresh network list after connection attempt
-            getNetworks.running = true;
-
-            // Check if connection succeeded after a short delay (network list needs to update)
-            if (root.pendingConnection) {
-                immediateCheckTimer.start();
-            }
-        }
-        stdout: SplitParser {
-            onRead: {
-                getNetworks.running = true;
-            }
-        }
-        stderr: StdioCollector {
-            onStreamFinished: {
-                const error = text.trim();
-                if (error && error.length > 0) {
-                    // Check for specific errors that indicate password is needed
-                    // Be careful not to match success messages
-                    const needsPassword = (error.includes("Secrets were required") ||
-                                        error.includes("No secrets provided") ||
-                                        error.includes("802-11-wireless-security.psk") ||
-                                        (error.includes("password") && !error.includes("Connection activated")) ||
-                                        (error.includes("Secrets") && !error.includes("Connection activated")) ||
-                                        (error.includes("802.11") && !error.includes("Connection activated"))) &&
-                                        !error.includes("Connection activated") &&
-                                        !error.includes("successfully");
-
-                    if (needsPassword && root.pendingConnection && root.pendingConnection.callback) {
-                        // Connection failed because password is needed - show dialog immediately
-                        connectionCheckTimer.stop();
-                        immediateCheckTimer.stop();
-                        const pending = root.pendingConnection;
-                        root.pendingConnection = null;
-                        pending.callback();
-                    } else if (error && error.length > 0 && !error.includes("Connection activated") && !error.includes("successfully")) {
-                        // Emit signal for UI to handle
-                        root.connectionFailed(root.pendingConnection ? root.pendingConnection.ssid : "");
-                    }
-                }
-            }
-        }
-    }
-
-    Process {
-        id: disconnectProc
-
-        onExited: {
-            // Refresh network list after disconnection
-            getNetworks.running = true;
-        }
-        stdout: SplitParser {
-            onRead: getNetworks.running = true
-        }
-        stderr: StdioCollector {
-            onStreamFinished: {
-            }
-        }
-    }
-
-    Process {
-        id: disconnectByConnectionProc
-
-        onExited: {
-            // Refresh network list after disconnection
-            getNetworks.running = true;
-        }
-        stdout: SplitParser {
-            onRead: getNetworks.running = true
-        }
-        stderr: StdioCollector {
-            onStreamFinished: {
-                const error = text.trim();
-                if (error && error.length > 0 && !error.includes("successfully") && !error.includes("disconnected")) {
-                    // If connection down failed, try device disconnect as fallback
-                    disconnectProc.exec(["nmcli", "device", "disconnect", "wifi"]);
-                }
-            }
-        }
-    }
-
-    Process {
-        id: deleteConnectionProc
-
-        // Delete connection profile - refresh network list and saved connections after deletion
-        onExited: {
-            // Refresh network list and saved connections after deletion
-            getNetworks.running = true;
-            listConnectionsProc.running = true;
-        }
-        stderr: StdioCollector {
-            onStreamFinished: {
-            }
-        }
-    }
-
-    Process {
-        id: getNetworks
-
-        running: true
-        command: ["nmcli", "-g", "ACTIVE,SIGNAL,FREQ,SSID,BSSID,SECURITY", "d", "w"]
-        environment: ({
-                LANG: "C.UTF-8",
-                LC_ALL: "C.UTF-8"
-            })
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const PLACEHOLDER = "STRINGWHICHHOPEFULLYWONTBEUSED";
-                const rep = new RegExp("\\\\:", "g");
-                const rep2 = new RegExp(PLACEHOLDER, "g");
-
-                const allNetworks = text.trim().split("\n").map(n => {
-                    const net = n.replace(rep, PLACEHOLDER).split(":");
-                    return {
-                        active: net[0] === "yes",
-                        strength: parseInt(net[1]),
-                        frequency: parseInt(net[2]),
-                        ssid: net[3]?.replace(rep2, ":") ?? "",
-                        bssid: net[4]?.replace(rep2, ":") ?? "",
-                        security: net[5] ?? ""
-                    };
-                }).filter(n => n.ssid && n.ssid.length > 0);
-
-                // Group networks by SSID and prioritize connected ones
-                const networkMap = new Map();
-                for (const network of allNetworks) {
-                    const existing = networkMap.get(network.ssid);
-                    if (!existing) {
-                        networkMap.set(network.ssid, network);
-                    } else {
-                        // Prioritize active/connected networks
-                        if (network.active && !existing.active) {
-                            networkMap.set(network.ssid, network);
-                        } else if (!network.active && !existing.active) {
-                            // If both are inactive, keep the one with better signal
-                            if (network.strength > existing.strength) {
-                                networkMap.set(network.ssid, network);
-                            }
-                        }
-                        // If existing is active and new is not, keep existing
-                    }
-                }
-
-                const networks = Array.from(networkMap.values());
-
-                const rNetworks = root.networks;
-
-                const destroyed = rNetworks.filter(rn => !networks.find(n => n.frequency === rn.frequency && n.ssid === rn.ssid && n.bssid === rn.bssid));
-                for (const network of destroyed)
-                    rNetworks.splice(rNetworks.indexOf(network), 1).forEach(n => n.destroy());
-
-                for (const network of networks) {
-                    const match = rNetworks.find(n => n.frequency === network.frequency && n.ssid === network.ssid && n.bssid === network.bssid);
-                    if (match) {
-                        match.lastIpcObject = network;
-                    } else {
-                        rNetworks.push(apComp.createObject(root, {
-                            lastIpcObject: network
-                        }));
-                    }
-                }
-
-                // Check if pending connection succeeded after network list is fully updated
-                if (root.pendingConnection) {
-                    Qt.callLater(() => {
-                        const connected = root.active && root.active.ssid === root.pendingConnection.ssid;
-                        if (connected) {
-                            // Connection succeeded, stop timers and clear pending
-                            connectionCheckTimer.stop();
-                            immediateCheckTimer.stop();
-                            immediateCheckTimer.checkCount = 0;
-                            root.pendingConnection = null;
-                        }
-                    });
-                }
-            }
-        }
-    }
-
-    Process {
-        id: getEthernetDevicesProc
-
-        running: false
-        command: ["nmcli", "-g", "DEVICE,TYPE,STATE,CONNECTION", "device", "status"]
-        environment: ({
-                LANG: "C.UTF-8",
-                LC_ALL: "C.UTF-8"
-            })
-        onRunningChanged: {
-            root.ethernetProcessRunning = running;
-        }
-        onExited: {
-            Qt.callLater(() => {
-                const outputLength = ethernetStdout.text ? ethernetStdout.text.length : 0;
-                if (outputLength > 0) {
-                    // Output was captured, process it
-                    const output = ethernetStdout.text.trim();
-                    root.processEthernetOutput(output);
-                }
-            });
-        }
-        stdout: StdioCollector {
-            id: ethernetStdout
-            onStreamFinished: {
-                const output = text.trim();
-
-                if (!output || output.length === 0) {
-                    return;
-                }
-
-                root.processEthernetOutput(output);
-            }
-        }
-    }
-
-    function processEthernetOutput(output: string): void {
-        const PLACEHOLDER = "STRINGWHICHHOPEFULLYWONTBEUSED";
-        const rep = new RegExp("\\\\:", "g");
-        const rep2 = new RegExp(PLACEHOLDER, "g");
-
-        const lines = output.split("\n");
-
-        const allDevices = lines.map(d => {
-            const dev = d.replace(rep, PLACEHOLDER).split(":");
-            return {
-                interface: dev[0]?.replace(rep2, ":") ?? "",
-                type: dev[1]?.replace(rep2, ":") ?? "",
-                state: dev[2]?.replace(rep2, ":") ?? "",
-                connection: dev[3]?.replace(rep2, ":") ?? ""
-            };
-        });
-
-        const ethernetOnly = allDevices.filter(d => d.type === "ethernet");
-
-        const ethernetDevices = ethernetOnly.map(d => {
-            const state = d.state || "";
-            const connected = state === "100 (connected)" || state === "connected" || state.startsWith("connected");
-            return {
-                interface: d.interface,
-                type: d.type,
-                state: state,
-                connection: d.connection,
-                connected: connected,
-                ipAddress: "",
-                gateway: "",
-                dns: [],
-                subnet: "",
-                macAddress: "",
-                speed: ""
-            };
-        });
-
-        // Update the list - replace the entire array to ensure QML detects the change
-        // Create a new array and assign it to the property
-        const newDevices = [];
-        for (let i = 0; i < ethernetDevices.length; i++) {
-            newDevices.push(ethernetDevices[i]);
-        }
-
-        // Replace the entire list
-        root.ethernetDevices = newDevices;
-
-        // Force QML to detect the change by updating a property
-        root.ethernetDeviceCount = ethernetDevices.length;
-    }
-
-
-    Process {
-        id: connectEthernetProc
-
-        onExited: {
-            getEthernetDevices();
-            // Refresh device details after connection
-            Qt.callLater(() => {
-                const activeDevice = root.ethernetDevices.find(function(d) { return d.connected; });
-                if (activeDevice && activeDevice.interface) {
-                    updateEthernetDeviceDetails(activeDevice.interface);
-                }
-            });
-        }
-        stdout: SplitParser {
-            onRead: getEthernetDevices()
-        }
-        stderr: StdioCollector {
-            onStreamFinished: {
-            }
-        }
-    }
-
-    Process {
-        id: disconnectEthernetProc
-
-        onExited: {
-            getEthernetDevices();
-            // Clear device details after disconnection
-            Qt.callLater(() => {
-                root.ethernetDeviceDetails = null;
-            });
-        }
-        stdout: SplitParser {
-            onRead: getEthernetDevices()
-        }
-        stderr: StdioCollector {
-            onStreamFinished: {
-            }
-        }
-    }
-
-    Process {
-        id: getEthernetDetailsProc
-
-        environment: ({
-                LANG: "C.UTF-8",
-                LC_ALL: "C.UTF-8"
-            })
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const output = text.trim();
-                if (!output || output.length === 0) {
-                    root.ethernetDeviceDetails = null;
-                    return;
-                }
-
-                const lines = output.split("\n");
-                const details = {
-                    ipAddress: "",
-                    gateway: "",
-                    dns: [],
-                    subnet: "",
-                    macAddress: "",
-                    speed: ""
-                };
-
-                for (let i = 0; i < lines.length; i++) {
-const line = lines[i];
-                    const parts = line.split(":");
-                    if (parts.length >= 2) {
-                        const key = parts[0].trim();
-                        const value = parts.slice(1).join(":").trim();
-
-                        if (key.startsWith("IP4.ADDRESS")) {
-                            // Extract IP and subnet from format like "10.13.1.45/24"
-                            const ipParts = value.split("/");
-                            details.ipAddress = ipParts[0] || "";
-                            if (ipParts[1]) {
-                                // Convert CIDR notation to subnet mask
-                                details.subnet = root.cidrToSubnetMask(ipParts[1]);
-                            } else {
-                                details.subnet = "";
-                            }
-                        } else if (key === "IP4.GATEWAY") {
-                            details.gateway = value;
-                        } else if (key.startsWith("IP4.DNS")) {
-                            details.dns.push(value);
-                        } else if (key === "WIRED-PROPERTIES.MAC") {
-                            details.macAddress = value;
-                        } else if (key === "WIRED-PROPERTIES.SPEED") {
-                            details.speed = value;
-                        }
-                    }
-                }
-
-                root.ethernetDeviceDetails = details;
-            }
-        }
-        onExited: {
-            if (exitCode !== 0) {
-                root.ethernetDeviceDetails = null;
-            }
-        }
-    }
-
-    Process {
-        id: findWirelessInterfaceProc
-
-        environment: ({
-                LANG: "C.UTF-8",
-                LC_ALL: "C.UTF-8"
-            })
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const output = text.trim();
-                if (!output || output.length === 0) {
-                    root.wirelessDeviceDetails = null;
-                    return;
-                }
-
-                // Find the connected wifi interface from device status
-                const lines = output.split("\n");
-                let wifiInterface = "";
-
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i];
-                    const parts = line.split(/\s+/);
-                    // Format: DEVICE TYPE STATE CONNECTION
-                    // Look for wifi devices that are connected
-                    if (parts.length >= 3 && parts[1] === "wifi" && parts[2] === "connected") {
-                        wifiInterface = parts[0];
-                        break;
-                    }
-                }
-
-                if (wifiInterface && wifiInterface.length > 0) {
-                    getWirelessDetailsProc.exec(["nmcli", "device", "show", wifiInterface]);
-                } else {
-                    root.wirelessDeviceDetails = null;
-                }
-            }
-        }
-        onExited: {
-            if (exitCode !== 0) {
-                root.wirelessDeviceDetails = null;
-            }
-        }
-    }
-
-    Process {
-        id: getWirelessDetailsProc
-
-        environment: ({
-                LANG: "C.UTF-8",
-                LC_ALL: "C.UTF-8"
-            })
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const output = text.trim();
-                if (!output || output.length === 0) {
-                    root.wirelessDeviceDetails = null;
-                    return;
-                }
-
-                const lines = output.split("\n");
-                const details = {
-                    ipAddress: "",
-                    gateway: "",
-                    dns: [],
-                    subnet: "",
-                    macAddress: "",
-                    speed: ""
-                };
-
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i];
-                    const parts = line.split(":");
-                    if (parts.length >= 2) {
-                        const key = parts[0].trim();
-                        const value = parts.slice(1).join(":").trim();
-
-                        if (key.startsWith("IP4.ADDRESS")) {
-                            // Extract IP and subnet from format like "10.13.1.45/24"
-                            const ipParts = value.split("/");
-                            details.ipAddress = ipParts[0] || "";
-                            if (ipParts[1]) {
-                                // Convert CIDR notation to subnet mask
-                                details.subnet = root.cidrToSubnetMask(ipParts[1]);
-                            } else {
-                                details.subnet = "";
-                            }
-                        } else if (key === "IP4.GATEWAY") {
-                            details.gateway = value;
-                        } else if (key.startsWith("IP4.DNS")) {
-                            details.dns.push(value);
-                        } else if (key === "GENERAL.HWADDR") {
-                            details.macAddress = value;
-                        }
-                    }
-                }
-
-                root.wirelessDeviceDetails = details;
-            }
-        }
-        onExited: {
-            if (exitCode !== 0) {
-                root.wirelessDeviceDetails = null;
-            }
-        }
-    }
-
-    component AccessPoint: QtObject {
-        required property var lastIpcObject
-        readonly property string ssid: lastIpcObject.ssid
-        readonly property string bssid: lastIpcObject.bssid
-        readonly property int strength: lastIpcObject.strength
-        readonly property int frequency: lastIpcObject.frequency
-        readonly property bool active: lastIpcObject.active
-        readonly property string security: lastIpcObject.security
-        readonly property bool isSecure: security.length > 0
-    }
-
-    Component {
-        id: apComp
-
-        AccessPoint {}
-    }
 }

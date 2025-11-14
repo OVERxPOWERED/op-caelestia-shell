@@ -284,10 +284,6 @@ RowLayout {
                     Layout.fillWidth: true
                     implicitHeight: colorVariantSection.expanded ? Math.min(400, M3Variants.list.length * 60) : 0
 
-                    Behavior on implicitHeight {
-                        Anim {}
-                    }
-
                     model: M3Variants.list
                     spacing: Appearance.spacing.small / 2
                     clip: true
@@ -378,10 +374,6 @@ RowLayout {
                 StyledListView {
                     Layout.fillWidth: true
                     implicitHeight: colorSchemeSection.expanded ? Math.min(400, Schemes.list.length * 80) : 0
-
-                    Behavior on implicitHeight {
-                        Anim {}
-                    }
 
                     model: Schemes.list
                     spacing: Appearance.spacing.small / 2
@@ -556,10 +548,6 @@ RowLayout {
                     Layout.fillWidth: true
                     implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
 
-                    Behavior on implicitHeight {
-                        Anim {}
-                    }
-
                     model: Qt.fontFamilies()
                     spacing: Appearance.spacing.small / 2
                     clip: true
@@ -633,10 +621,6 @@ RowLayout {
                     Layout.fillWidth: true
                     implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
 
-                    Behavior on implicitHeight {
-                        Anim {}
-                    }
-
                     model: Qt.fontFamilies()
                     spacing: Appearance.spacing.small / 2
                     clip: true
@@ -709,10 +693,6 @@ RowLayout {
                 StyledListView {
                     Layout.fillWidth: true
                     implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
-
-                    Behavior on implicitHeight {
-                        Anim {}
-                    }
 
                     model: Qt.fontFamilies()
                     spacing: Appearance.spacing.small / 2

@@ -15,71 +15,96 @@ ColumnLayout {
 
     signal toggleRequested
 
-    spacing: Appearance.spacing.small / 2
+    spacing: 0
     Layout.fillWidth: true
 
     Item {
         id: sectionHeaderItem
         Layout.fillWidth: true
-        Layout.preferredHeight: sectionHeader.implicitHeight
+        Layout.preferredHeight: Math.max(titleRow.implicitHeight + Appearance.padding.normal * 2, 48)
 
-        ColumnLayout {
-            id: sectionHeader
+        RowLayout {
+            id: titleRow
             anchors.left: parent.left
             anchors.right: parent.right
-            spacing: Appearance.spacing.small
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: Appearance.padding.normal
+            anchors.rightMargin: Appearance.padding.normal
+            spacing: Appearance.spacing.normal
 
-            RowLayout {
+            StyledText {
+                text: root.title
+                font.pointSize: Appearance.font.size.normal
+                font.weight: 500
+            }
+
+            Item {
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.small
+            }
 
-                StyledText {
-                    Layout.topMargin: Appearance.spacing.large
-                    text: root.title
-                    font.pointSize: Appearance.font.size.larger
-                    font.weight: 500
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
-
-                MaterialIcon {
-                    text: "expand_more"
-                    rotation: root.expanded ? 180 : 0
-                    color: Colours.palette.m3onSurface
-                    Behavior on rotation {
-                        Anim {}
+            MaterialIcon {
+                text: "expand_more"
+                rotation: root.expanded ? 180 : 0
+                color: Colours.palette.m3onSurfaceVariant
+                font.pointSize: Appearance.font.size.normal
+                Behavior on rotation {
+                    Anim {
+                        duration: Appearance.anim.durations.short
+                        easing.bezierCurve: Appearance.anim.curves.standard
                     }
                 }
             }
+        }
 
-            StateLayer {
-                anchors.fill: parent
-                anchors.leftMargin: -Appearance.padding.normal
-                anchors.rightMargin: -Appearance.padding.normal
-                function onClicked(): void {
-                    root.toggleRequested();
-                    root.expanded = !root.expanded;
-                }
-            }
-
-            StyledText {
-                visible: root.expanded && root.description !== ""
-                text: root.description
-                color: Colours.palette.m3outline
-                Layout.fillWidth: true
+        StateLayer {
+            anchors.fill: parent
+            color: Colours.palette.m3onSurface
+            radius: Appearance.rounding.normal
+            showHoverBackground: false
+            function onClicked(): void {
+                root.toggleRequested();
+                root.expanded = !root.expanded;
             }
         }
     }
 
+    StyledText {
+        visible: root.expanded && root.description !== ""
+        Layout.fillWidth: true
+        Layout.leftMargin: Appearance.padding.normal
+        Layout.rightMargin: Appearance.padding.normal
+        Layout.topMargin: Appearance.spacing.smaller
+        Layout.bottomMargin: Appearance.spacing.small
+        text: root.description
+        color: Colours.palette.m3onSurfaceVariant
+        font.pointSize: Appearance.font.size.small
+    }
+
     default property alias content: contentColumn.data
 
-    ColumnLayout {
-        id: contentColumn
+    Item {
+        id: contentWrapper
         Layout.fillWidth: true
-        visible: root.expanded
-        spacing: Appearance.spacing.small / 2
+        Layout.preferredHeight: root.expanded ? (contentColumn.implicitHeight + Appearance.spacing.small * 2) : 0
+        clip: true
+
+        Behavior on Layout.preferredHeight {
+            Anim {
+                easing.bezierCurve: Appearance.anim.curves.standard
+            }
+        }
+
+        ColumnLayout {
+            id: contentColumn
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.leftMargin: Appearance.padding.normal
+            anchors.rightMargin: Appearance.padding.normal
+            anchors.topMargin: Appearance.spacing.small
+            anchors.bottomMargin: Appearance.spacing.small
+            spacing: Appearance.spacing.small
+        }
     }
 }
 

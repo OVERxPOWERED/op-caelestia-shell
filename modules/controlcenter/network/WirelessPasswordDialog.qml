@@ -8,6 +8,7 @@ import qs.components.effects
 import qs.components.containers
 import qs.services
 import qs.config
+import Quickshell
 import QtQuick
 import QtQuick.Layouts
 
@@ -27,7 +28,8 @@ Item {
         return null;
     }
 
-    visible: session.network.showPasswordDialog
+    property bool isClosing: false
+    visible: session.network.showPasswordDialog && !isClosing
     enabled: visible
     focus: visible
 
@@ -38,10 +40,14 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: Qt.rgba(0, 0, 0, 0.5)
-        opacity: root.visible ? 1 : 0
+        opacity: root.visible && !root.isClosing ? 1 : 0
 
         Behavior on opacity {
-            NumberAnimation { duration: 200 }
+            Anim {
+                property: "opacity"
+                duration: Appearance.anim.durations.normal
+                easing.bezierCurve: Appearance.anim.curves.standardDecel
+            }
         }
 
         MouseArea {
@@ -60,15 +66,23 @@ Item {
 
         radius: Appearance.rounding.normal
         color: Colours.tPalette.m3surface
-        opacity: root.visible ? 1 : 0
-        scale: root.visible ? 1 : 0.9
+        opacity: root.visible && !root.isClosing ? 1 : 0
+        scale: root.visible && !root.isClosing ? 1 : 0.9
 
         Behavior on opacity {
-            NumberAnimation { duration: 200 }
+            Anim {
+                property: "opacity"
+                duration: Appearance.anim.durations.normal
+                easing.bezierCurve: Appearance.anim.curves.standardDecel
+            }
         }
 
         Behavior on scale {
-            NumberAnimation { duration: 200 }
+            Anim {
+                property: "scale"
+                duration: Appearance.anim.durations.normal
+                easing.bezierCurve: Appearance.anim.curves.standardDecel
+            }
         }
 
         Keys.onEscapePressed: closeDialog();
@@ -123,52 +137,150 @@ Item {
             }
 
             Item {
+                id: passwordContainer
                 Layout.topMargin: Appearance.spacing.large
                 Layout.fillWidth: true
-                implicitHeight: passwordField.implicitHeight + Appearance.padding.normal * 2
+                implicitHeight: Math.max(48, charList.implicitHeight + Appearance.padding.normal * 2)
+
+                focus: true
+                Keys.onPressed: event => {
+                    if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
+                        if (connectButton.enabled) {
+                            connectButton.clicked();
+                        }
+                    } else if (event.key === Qt.Key_Backspace) {
+                        if (event.modifiers & Qt.ControlModifier) {
+                            passwordBuffer = "";
+                        } else {
+                            passwordBuffer = passwordBuffer.slice(0, -1);
+                        }
+                    } else if (event.text && event.text.length > 0) {
+                        passwordBuffer += event.text;
+                    }
+                }
+
+                property string passwordBuffer: ""
+
+                Connections {
+                    target: root
+                    function onVisibleChanged(): void {
+                        if (root.visible) {
+                            passwordContainer.forceActiveFocus();
+                            passwordContainer.passwordBuffer = "";
+                        }
+                    }
+                }
 
                 StyledRect {
                     anchors.fill: parent
                     radius: Appearance.rounding.normal
                     color: Colours.tPalette.m3surfaceContainer
-                    border.width: passwordField.activeFocus ? 2 : 1
-                    border.color: passwordField.activeFocus ? Colours.palette.m3primary : Colours.palette.m3outline
+                    border.width: passwordContainer.activeFocus ? 2 : 1
+                    border.color: passwordContainer.activeFocus ? Colours.palette.m3primary : Colours.palette.m3outline
 
                     Behavior on border.color {
                         CAnim {}
                     }
                 }
 
-                StyledTextField {
-                    id: passwordField
+                StateLayer {
+                    hoverEnabled: false
+                    cursorShape: Qt.IBeamCursor
 
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.normal
+                    function onClicked(): void {
+                        passwordContainer.forceActiveFocus();
+                    }
+                }
 
-                    echoMode: TextField.Password
-                    placeholderText: qsTr("Password")
+                StyledText {
+                    id: placeholder
+                    anchors.centerIn: parent
+                    text: qsTr("Password")
+                    color: Colours.palette.m3outline
+                    font.pointSize: Appearance.font.size.normal
+                    font.family: Appearance.font.family.mono
+                    opacity: passwordContainer.passwordBuffer ? 0 : 1
 
-                    Connections {
-                        target: root
-                        function onVisibleChanged(): void {
-                            if (root.visible) {
-                                passwordField.forceActiveFocus();
-                                passwordField.text = "";
+                    Behavior on opacity {
+                        Anim {}
+                    }
+                }
+
+                ListView {
+                    id: charList
+
+                    readonly property int fullWidth: count * (implicitHeight + spacing) - spacing
+
+                    anchors.centerIn: parent
+                    implicitWidth: fullWidth
+                    implicitHeight: Appearance.font.size.normal
+
+                    orientation: Qt.Horizontal
+                    spacing: Appearance.spacing.small / 2
+                    interactive: false
+
+                    model: ScriptModel {
+                        values: passwordContainer.passwordBuffer.split("")
+                    }
+
+                    delegate: StyledRect {
+                        id: ch
+
+                        implicitWidth: implicitHeight
+                        implicitHeight: charList.implicitHeight
+
+                        color: Colours.palette.m3onSurface
+                        radius: Appearance.rounding.small / 2
+
+                        opacity: 0
+                        scale: 0
+                        Component.onCompleted: {
+                            opacity = 1;
+                            scale = 1;
+                        }
+                        ListView.onRemove: removeAnim.start()
+
+                        SequentialAnimation {
+                            id: removeAnim
+
+                            PropertyAction {
+                                target: ch
+                                property: "ListView.delayRemove"
+                                value: true
+                            }
+                            ParallelAnimation {
+                                Anim {
+                                    target: ch
+                                    property: "opacity"
+                                    to: 0
+                                }
+                                Anim {
+                                    target: ch
+                                    property: "scale"
+                                    to: 0.5
+                                }
+                            }
+                            PropertyAction {
+                                target: ch
+                                property: "ListView.delayRemove"
+                                value: false
+                            }
+                        }
+
+                        Behavior on opacity {
+                            Anim {}
+                        }
+
+                        Behavior on scale {
+                            Anim {
+                                duration: Appearance.anim.durations.expressiveFastSpatial
+                                easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
                             }
                         }
                     }
 
-                    Keys.onReturnPressed: {
-                        if (connectButton.enabled) {
-                            connectButton.clicked();
-                        }
-                    }
-                    Keys.onEnterPressed: {
-                        if (connectButton.enabled) {
-                            connectButton.clicked();
-                        }
+                    Behavior on implicitWidth {
+                        Anim {}
                     }
                 }
             }
@@ -196,7 +308,7 @@ Item {
                     color: Colours.palette.m3primary
                     onColor: Colours.palette.m3onPrimary
                     text: qsTr("Connect")
-                    enabled: passwordField.text.length > 0 && !connecting
+                    enabled: passwordContainer.passwordBuffer.length > 0 && !connecting
 
                     property bool connecting: false
 
@@ -205,7 +317,7 @@ Item {
                             return;
                         }
 
-                        const password = passwordField.text;
+                        const password = passwordContainer.passwordBuffer;
                         if (!password || password.length === 0) {
                             return;
                         }
@@ -220,7 +332,19 @@ Item {
                             root.network.ssid,
                             password,
                             root.network.bssid || "",
-                            null
+                            (result) => {
+                                if (result && result.success) {
+                                    // Connection successful, monitor will handle the rest
+                                } else if (result && result.needsPassword) {
+                                    // Shouldn't happen since we provided password
+                                    connectionMonitor.stop();
+                                    connecting = false;
+                                    enabled = true;
+                                    text = qsTr("Connect");
+                                } else {
+                                    // Connection failed, monitor will handle timeout
+                                }
+                            }
                         );
 
                         // Start monitoring connection
@@ -295,13 +419,31 @@ Item {
                 checkConnectionStatus();
             }
         }
+        function onConnectionFailed(ssid: string) {
+            if (root.visible && root.network && root.network.ssid === ssid && connectButton.connecting) {
+                connectionMonitor.stop();
+                connectButton.connecting = false;
+                connectButton.enabled = true;
+                connectButton.text = qsTr("Connect");
+            }
+        }
     }
 
     function closeDialog(): void {
-        session.network.showPasswordDialog = false;
-        passwordField.text = "";
+        if (isClosing) {
+            return;
+        }
+        
+        isClosing = true;
+        passwordContainer.passwordBuffer = "";
         connectButton.connecting = false;
         connectButton.text = qsTr("Connect");
         connectionMonitor.stop();
+        
+        // Wait for fade-out animation to complete before actually hiding
+        Qt.callLater(() => {
+            session.network.showPasswordDialog = false;
+            isClosing = false;
+        }, Appearance.anim.durations.normal);
     }
 }

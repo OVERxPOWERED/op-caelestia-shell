@@ -256,7 +256,7 @@ RowLayout {
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Audio settings")
+                text: qsTr("Audio Settings")
                 font.pointSize: Appearance.font.size.large
                 font.bold: true
             }

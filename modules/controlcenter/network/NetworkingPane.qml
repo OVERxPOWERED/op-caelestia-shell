@@ -478,7 +478,7 @@ RowLayout {
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: settingsInner.height
 
-                NetworkingSettings {
+                NetworkSettings {
                     id: settingsInner
 
                     anchors.left: parent.left

@@ -992,7 +992,7 @@ RowLayout {
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Appearance settings")
+                text: qsTr("Appearance Settings")
                 font.pointSize: Appearance.font.size.large
                 font.bold: true
             }

@@ -25,7 +25,7 @@ ColumnLayout {
 
     StyledText {
         Layout.alignment: Qt.AlignHCenter
-        text: qsTr("Networking settings")
+        text: qsTr("Network Settings")
         font.pointSize: Appearance.font.size.large
         font.bold: true
     }

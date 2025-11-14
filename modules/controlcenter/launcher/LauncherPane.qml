@@ -139,7 +139,7 @@ RowLayout {
             StyledText {
                 Layout.topMargin: Appearance.spacing.large
                 text: qsTr("Applications (%1)").arg(allAppsDb.apps.length)
-                font.pointSize: Appearance.font.size.larger
+                font.pointSize: Appearance.font.size.normal
                 font.weight: 500
             }
 

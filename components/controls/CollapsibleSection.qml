@@ -34,7 +34,7 @@ ColumnLayout {
 
             StyledText {
                 text: root.title
-                font.pointSize: Appearance.font.size.normal
+                font.pointSize: Appearance.font.size.larger
                 font.weight: 500
             }
 

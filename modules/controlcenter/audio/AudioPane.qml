@@ -48,7 +48,7 @@ RowLayout {
 
             StyledText {
                 text: qsTr("Output devices (%1)").arg(Audio.sinks.length)
-                font.pointSize: Appearance.font.size.large
+                font.pointSize: Appearance.font.size.normal
                 font.weight: 500
             }
 
@@ -119,7 +119,7 @@ RowLayout {
             StyledText {
                 Layout.topMargin: Appearance.spacing.large
                 text: qsTr("Input devices (%1)").arg(Audio.sources.length)
-                font.pointSize: Appearance.font.size.large
+                font.pointSize: Appearance.font.size.normal
                 font.weight: 500
             }
 

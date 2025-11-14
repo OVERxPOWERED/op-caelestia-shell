@@ -116,7 +116,7 @@ RowLayout {
 
                             StyledText {
                                 text: qsTr("Devices (%1)").arg(Nmcli.ethernetDevices.length)
-                                font.pointSize: Appearance.font.size.large
+                                font.pointSize: Appearance.font.size.normal
                                 font.weight: 500
                             }
                         }
@@ -243,7 +243,7 @@ RowLayout {
 
                             StyledText {
                                 text: qsTr("Networks (%1)").arg(Nmcli.networks.length)
-                                font.pointSize: Appearance.font.size.large
+                                font.pointSize: Appearance.font.size.normal
                                 font.weight: 500
                             }
 

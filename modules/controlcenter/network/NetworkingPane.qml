@@ -106,6 +106,13 @@ RowLayout {
                     title: qsTr("Ethernet")
                     expanded: true
 
+                    onToggleRequested: {
+                        if (!expanded) {
+                            // Opening ethernet, close wireless
+                            wirelessListSection.expanded = false;
+                        }
+                    }
+
                     ColumnLayout {
                         Layout.fillWidth: true
                         spacing: Appearance.spacing.small
@@ -232,6 +239,13 @@ RowLayout {
                     Layout.fillWidth: true
                     title: qsTr("Wireless")
                     expanded: true
+
+                    onToggleRequested: {
+                        if (!expanded) {
+                            // Opening wireless, close ethernet
+                            ethernetListSection.expanded = false;
+                        }
+                    }
 
                     ColumnLayout {
                         Layout.fillWidth: true

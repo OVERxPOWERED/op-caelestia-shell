@@ -24,166 +24,195 @@ RowLayout {
         Layout.minimumWidth: 420
         Layout.fillHeight: true
 
-        ColumnLayout {
+        StyledFlickable {
             anchors.fill: parent
             anchors.margins: Appearance.padding.large + Appearance.padding.normal
             anchors.leftMargin: Appearance.padding.large
             anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: leftContent.height
 
-            spacing: Appearance.spacing.small
+            ColumnLayout {
+                id: leftContent
 
-            RowLayout {
-                spacing: Appearance.spacing.smaller
+                anchors.left: parent.left
+                anchors.right: parent.right
+                spacing: Appearance.spacing.normal
 
-                StyledText {
-                    text: qsTr("Settings")
-                    font.pointSize: Appearance.font.size.large
-                    font.weight: 500
-                }
-
-                Item {
+                // Settings header above the collapsible sections
+                RowLayout {
                     Layout.fillWidth: true
-                }
-            }
+                    spacing: Appearance.spacing.smaller
 
-            StyledText {
-                text: qsTr("Output devices (%1)").arg(Audio.sinks.length)
-                font.pointSize: Appearance.font.size.normal
-                font.weight: 500
-            }
-
-            StyledText {
-                text: qsTr("All available output devices")
-                color: Colours.palette.m3outline
-            }
-
-            StyledListView {
-                id: outputView
-
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                model: Audio.sinks
-                spacing: Appearance.spacing.small / 2
-                clip: true
-
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: outputView
-                }
-
-                delegate: StyledRect {
-                    required property var modelData
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Audio.sink?.id === modelData.id ? Colours.tPalette.m3surfaceContainer.a : 0)
-                    radius: Appearance.rounding.normal
-                    border.width: Audio.sink?.id === modelData.id ? 1 : 0
-                    border.color: Colours.palette.m3primary
-
-                    StateLayer {
-                        function onClicked(): void {
-                            Audio.setAudioSink(modelData);
-                        }
+                    StyledText {
+                        text: qsTr("Settings")
+                        font.pointSize: Appearance.font.size.large
+                        font.weight: 500
                     }
 
-                    RowLayout {
-                        id: outputRowLayout
+                    Item {
+                        Layout.fillWidth: true
+                    }
+                }
 
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.normal
+                CollapsibleSection {
+                    id: outputDevicesSection
 
-                        spacing: Appearance.spacing.normal
+                    Layout.fillWidth: true
+                    title: qsTr("Output devices")
+                    expanded: true
 
-                        MaterialIcon {
-                            text: Audio.sink?.id === modelData.id ? "speaker" : "speaker_group"
-                            font.pointSize: Appearance.font.size.large
-                            fill: Audio.sink?.id === modelData.id ? 1 : 0
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: Appearance.spacing.small
+
+                            StyledText {
+                                text: qsTr("Devices (%1)").arg(Audio.sinks.length)
+                                font.pointSize: Appearance.font.size.normal
+                                font.weight: 500
+                            }
                         }
 
                         StyledText {
                             Layout.fillWidth: true
+                            text: qsTr("All available output devices")
+                            color: Colours.palette.m3outline
+                        }
 
-                            text: modelData.description || qsTr("Unknown")
-                            font.weight: Audio.sink?.id === modelData.id ? 500 : 400
+                        Repeater {
+                            Layout.fillWidth: true
+                            model: Audio.sinks
+
+                            delegate: StyledRect {
+                                required property var modelData
+
+                                Layout.fillWidth: true
+
+                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Audio.sink?.id === modelData.id ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                radius: Appearance.rounding.normal
+                                border.width: Audio.sink?.id === modelData.id ? 1 : 0
+                                border.color: Colours.palette.m3primary
+
+                                StateLayer {
+                                    function onClicked(): void {
+                                        Audio.setAudioSink(modelData);
+                                    }
+                                }
+
+                                RowLayout {
+                                    id: outputRowLayout
+
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.margins: Appearance.padding.normal
+
+                                    spacing: Appearance.spacing.normal
+
+                                    MaterialIcon {
+                                        text: Audio.sink?.id === modelData.id ? "speaker" : "speaker_group"
+                                        font.pointSize: Appearance.font.size.large
+                                        fill: Audio.sink?.id === modelData.id ? 1 : 0
+                                    }
+
+                                    StyledText {
+                                        Layout.fillWidth: true
+                                        elide: Text.ElideRight
+                                        maximumLineCount: 1
+
+                                        text: modelData.description || qsTr("Unknown")
+                                        font.weight: Audio.sink?.id === modelData.id ? 500 : 400
+                                    }
+                                }
+
+                                implicitHeight: outputRowLayout.implicitHeight + Appearance.padding.normal * 2
+                            }
                         }
                     }
-
-                    implicitHeight: outputRowLayout.implicitHeight + Appearance.padding.normal * 2
-                }
-            }
-
-            StyledText {
-                Layout.topMargin: Appearance.spacing.large
-                text: qsTr("Input devices (%1)").arg(Audio.sources.length)
-                font.pointSize: Appearance.font.size.normal
-                font.weight: 500
-            }
-
-            StyledText {
-                text: qsTr("All available input devices")
-                color: Colours.palette.m3outline
-            }
-
-            StyledListView {
-                id: inputView
-
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                model: Audio.sources
-                spacing: Appearance.spacing.small / 2
-                clip: true
-
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: inputView
                 }
 
-                delegate: StyledRect {
-                    required property var modelData
+                CollapsibleSection {
+                    id: inputDevicesSection
 
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    Layout.fillWidth: true
+                    title: qsTr("Input devices")
+                    expanded: true
 
-                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Audio.source?.id === modelData.id ? Colours.tPalette.m3surfaceContainer.a : 0)
-                    radius: Appearance.rounding.normal
-                    border.width: Audio.source?.id === modelData.id ? 1 : 0
-                    border.color: Colours.palette.m3primary
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
 
-                    StateLayer {
-                        function onClicked(): void {
-                            Audio.setAudioSource(modelData);
-                        }
-                    }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: Appearance.spacing.small
 
-                    RowLayout {
-                        id: inputRowLayout
-
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.normal
-
-                        spacing: Appearance.spacing.normal
-
-                        MaterialIcon {
-                            text: Audio.source?.id === modelData.id ? "mic" : "mic_external_on"
-                            font.pointSize: Appearance.font.size.large
-                            fill: Audio.source?.id === modelData.id ? 1 : 0
+                            StyledText {
+                                text: qsTr("Devices (%1)").arg(Audio.sources.length)
+                                font.pointSize: Appearance.font.size.normal
+                                font.weight: 500
+                            }
                         }
 
                         StyledText {
                             Layout.fillWidth: true
+                            text: qsTr("All available input devices")
+                            color: Colours.palette.m3outline
+                        }
 
-                            text: modelData.description || qsTr("Unknown")
-                            font.weight: Audio.source?.id === modelData.id ? 500 : 400
+                        Repeater {
+                            Layout.fillWidth: true
+                            model: Audio.sources
+
+                            delegate: StyledRect {
+                                required property var modelData
+
+                                Layout.fillWidth: true
+
+                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Audio.source?.id === modelData.id ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                radius: Appearance.rounding.normal
+                                border.width: Audio.source?.id === modelData.id ? 1 : 0
+                                border.color: Colours.palette.m3primary
+
+                                StateLayer {
+                                    function onClicked(): void {
+                                        Audio.setAudioSource(modelData);
+                                    }
+                                }
+
+                                RowLayout {
+                                    id: inputRowLayout
+
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.margins: Appearance.padding.normal
+
+                                    spacing: Appearance.spacing.normal
+
+                                    MaterialIcon {
+                                        text: "mic"
+                                        font.pointSize: Appearance.font.size.large
+                                        fill: Audio.source?.id === modelData.id ? 1 : 0
+                                    }
+
+                                    StyledText {
+                                        Layout.fillWidth: true
+                                        elide: Text.ElideRight
+                                        maximumLineCount: 1
+
+                                        text: modelData.description || qsTr("Unknown")
+                                        font.weight: Audio.source?.id === modelData.id ? 500 : 400
+                                    }
+                                }
+
+                                implicitHeight: inputRowLayout.implicitHeight + Appearance.padding.normal * 2
+                            }
                         }
                     }
-
-                    implicitHeight: inputRowLayout.implicitHeight + Appearance.padding.normal * 2
                 }
             }
         }

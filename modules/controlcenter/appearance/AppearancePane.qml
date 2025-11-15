@@ -12,6 +12,7 @@ import qs.config
 import qs.utils
 import Caelestia.Models
 import Quickshell
+import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
 
@@ -47,26 +48,6 @@ RowLayout {
 
     spacing: 0
 
-    function collapseAllSections(exceptSection) {
-        if (exceptSection !== themeModeSection)
-            themeModeSection.expanded = false;
-        if (exceptSection !== colorVariantSection)
-            colorVariantSection.expanded = false;
-        if (exceptSection !== colorSchemeSection)
-            colorSchemeSection.expanded = false;
-        if (exceptSection !== animationsSection)
-            animationsSection.expanded = false;
-        if (exceptSection !== fontsSection)
-            fontsSection.expanded = false;
-        if (exceptSection !== scalesSection)
-            scalesSection.expanded = false;
-        if (exceptSection !== transparencySection)
-            transparencySection.expanded = false;
-        if (exceptSection !== borderSection)
-            borderSection.expanded = false;
-        if (exceptSection !== backgroundSection)
-            backgroundSection.expanded = false;
-    }
 
     function saveConfig() {
         // Update animations
@@ -110,26 +91,72 @@ RowLayout {
         Layout.minimumWidth: 420
         Layout.fillHeight: true
 
-        StyledFlickable {
-            id: sidebarFlickable
+        ClippingRectangle {
+            id: leftAppearanceClippingRect
             anchors.fill: parent
-            flickableDirection: Flickable.VerticalFlick
-            contentHeight: sidebarLayout.height
+            anchors.margins: Appearance.padding.normal
+            anchors.leftMargin: 0
+            anchors.rightMargin: Appearance.padding.normal / 2
+            radius: leftAppearanceBorder.innerRadius
+            color: "transparent"
 
-            StyledScrollBar.vertical: StyledScrollBar {
-                flickable: sidebarFlickable
-            }
-
-            ColumnLayout {
-                id: sidebarLayout
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
+            Loader {
+                id: leftAppearanceLoader
+                anchors.fill: parent
                 anchors.margins: Appearance.padding.large + Appearance.padding.normal
                 anchors.leftMargin: Appearance.padding.large
                 anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
+                asynchronous: true
+                sourceComponent: appearanceLeftContentComponent
+                property var rootPane: root
+            }
+        }
 
-                spacing: Appearance.spacing.small
+        InnerBorder {
+            id: leftAppearanceBorder
+            leftThickness: 0
+            rightThickness: Appearance.padding.normal / 2
+        }
+
+        Component {
+            id: appearanceLeftContentComponent
+
+            StyledFlickable {
+                id: sidebarFlickable
+                readonly property var rootPane: leftAppearanceLoader.rootPane
+                flickableDirection: Flickable.VerticalFlick
+                contentHeight: sidebarLayout.height
+
+                function collapseAllSections(exceptSection) {
+                    if (exceptSection !== themeModeSection)
+                        themeModeSection.expanded = false;
+                    if (exceptSection !== colorVariantSection)
+                        colorVariantSection.expanded = false;
+                    if (exceptSection !== colorSchemeSection)
+                        colorSchemeSection.expanded = false;
+                    if (exceptSection !== animationsSection)
+                        animationsSection.expanded = false;
+                    if (exceptSection !== fontsSection)
+                        fontsSection.expanded = false;
+                    if (exceptSection !== scalesSection)
+                        scalesSection.expanded = false;
+                    if (exceptSection !== transparencySection)
+                        transparencySection.expanded = false;
+                    if (exceptSection !== borderSection)
+                        borderSection.expanded = false;
+                    if (exceptSection !== backgroundSection)
+                        backgroundSection.expanded = false;
+                }
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: sidebarFlickable
+                }
+
+                ColumnLayout {
+                    id: sidebarLayout
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.small
 
                 RowLayout {
                     spacing: Appearance.spacing.smaller
@@ -150,7 +177,7 @@ RowLayout {
                     title: qsTr("Theme mode")
                     description: qsTr("Light or dark theme")
                     onToggleRequested: {
-                        root.collapseAllSections(themeModeSection);
+                        sidebarFlickable.collapseAllSections(themeModeSection);
                     }
 
                     SwitchRow {
@@ -167,7 +194,7 @@ RowLayout {
                     title: qsTr("Color variant")
                     description: qsTr("Material theme variant")
                     onToggleRequested: {
-                        root.collapseAllSections(colorVariantSection);
+                        sidebarFlickable.collapseAllSections(colorVariantSection);
                     }
 
                     StyledListView {
@@ -257,7 +284,7 @@ RowLayout {
                     title: qsTr("Color scheme")
                     description: qsTr("Available color schemes")
                     onToggleRequested: {
-                        root.collapseAllSections(colorSchemeSection);
+                        sidebarFlickable.collapseAllSections(colorSchemeSection);
                     }
 
                     StyledListView {
@@ -401,7 +428,7 @@ RowLayout {
                     id: animationsSection
                     title: qsTr("Animations")
                     onToggleRequested: {
-                        root.collapseAllSections(animationsSection);
+                        sidebarFlickable.collapseAllSections(animationsSection);
                     }
 
                     SpinBoxRow {
@@ -409,10 +436,10 @@ RowLayout {
                         min: 0.1
                         max: 5
                         step: 0.1
-                        value: root.animDurationsScale
+                        value: rootPane.animDurationsScale
                         onValueModified: value => {
-                            root.animDurationsScale = value;
-                            root.saveConfig();
+                            rootPane.animDurationsScale = value;
+                            rootPane.saveConfig();
                         }
                     }
                 }
@@ -421,7 +448,7 @@ RowLayout {
                     id: fontsSection
                     title: qsTr("Fonts")
                     onToggleRequested: {
-                        root.collapseAllSections(fontsSection);
+                        sidebarFlickable.collapseAllSections(fontsSection);
                     }
 
                     StyledText {
@@ -449,7 +476,7 @@ RowLayout {
                             anchors.left: parent.left
                             anchors.right: parent.right
 
-                            readonly property bool isCurrent: modelData === root.fontFamilyMaterial
+                            readonly property bool isCurrent: modelData === rootPane.fontFamilyMaterial
                             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
                             radius: Appearance.rounding.normal
                             border.width: isCurrent ? 1 : 0
@@ -457,8 +484,8 @@ RowLayout {
 
                             StateLayer {
                                 function onClicked(): void {
-                                    root.fontFamilyMaterial = modelData;
-                                    root.saveConfig();
+                                    rootPane.fontFamilyMaterial = modelData;
+                                    rootPane.saveConfig();
                                 }
                             }
 
@@ -522,7 +549,7 @@ RowLayout {
                             anchors.left: parent.left
                             anchors.right: parent.right
 
-                            readonly property bool isCurrent: modelData === root.fontFamilyMono
+                            readonly property bool isCurrent: modelData === rootPane.fontFamilyMono
                             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
                             radius: Appearance.rounding.normal
                             border.width: isCurrent ? 1 : 0
@@ -530,8 +557,8 @@ RowLayout {
 
                             StateLayer {
                                 function onClicked(): void {
-                                    root.fontFamilyMono = modelData;
-                                    root.saveConfig();
+                                    rootPane.fontFamilyMono = modelData;
+                                    rootPane.saveConfig();
                                 }
                             }
 
@@ -595,7 +622,7 @@ RowLayout {
                             anchors.left: parent.left
                             anchors.right: parent.right
 
-                            readonly property bool isCurrent: modelData === root.fontFamilySans
+                            readonly property bool isCurrent: modelData === rootPane.fontFamilySans
                             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
                             radius: Appearance.rounding.normal
                             border.width: isCurrent ? 1 : 0
@@ -603,8 +630,8 @@ RowLayout {
 
                             StateLayer {
                                 function onClicked(): void {
-                                    root.fontFamilySans = modelData;
-                                    root.saveConfig();
+                                    rootPane.fontFamilySans = modelData;
+                                    rootPane.saveConfig();
                                 }
                             }
 
@@ -648,10 +675,10 @@ RowLayout {
                         min: 0.1
                         max: 5
                         step: 0.1
-                        value: root.fontSizeScale
+                        value: rootPane.fontSizeScale
                         onValueModified: value => {
-                            root.fontSizeScale = value;
-                            root.saveConfig();
+                            rootPane.fontSizeScale = value;
+                            rootPane.saveConfig();
                         }
                     }
                 }
@@ -660,7 +687,7 @@ RowLayout {
                     id: scalesSection
                     title: qsTr("Scales")
                     onToggleRequested: {
-                        root.collapseAllSections(scalesSection);
+                        sidebarFlickable.collapseAllSections(scalesSection);
                     }
 
                     SpinBoxRow {
@@ -668,10 +695,10 @@ RowLayout {
                         min: 0.1
                         max: 5
                         step: 0.1
-                        value: root.paddingScale
+                        value: rootPane.paddingScale
                         onValueModified: value => {
-                            root.paddingScale = value;
-                            root.saveConfig();
+                            rootPane.paddingScale = value;
+                            rootPane.saveConfig();
                         }
                     }
 
@@ -680,10 +707,10 @@ RowLayout {
                         min: 0.1
                         max: 5
                         step: 0.1
-                        value: root.roundingScale
+                        value: rootPane.roundingScale
                         onValueModified: value => {
-                            root.roundingScale = value;
-                            root.saveConfig();
+                            rootPane.roundingScale = value;
+                            rootPane.saveConfig();
                         }
                     }
 
@@ -692,10 +719,10 @@ RowLayout {
                         min: 0.1
                         max: 5
                         step: 0.1
-                        value: root.spacingScale
+                        value: rootPane.spacingScale
                         onValueModified: value => {
-                            root.spacingScale = value;
-                            root.saveConfig();
+                            rootPane.spacingScale = value;
+                            rootPane.saveConfig();
                         }
                     }
                 }
@@ -704,15 +731,15 @@ RowLayout {
                     id: transparencySection
                     title: qsTr("Transparency")
                     onToggleRequested: {
-                        root.collapseAllSections(transparencySection);
+                        sidebarFlickable.collapseAllSections(transparencySection);
                     }
 
                     SwitchRow {
                         label: qsTr("Transparency enabled")
-                        checked: root.transparencyEnabled
+                        checked: rootPane.transparencyEnabled
                         onToggled: checked => {
-                            root.transparencyEnabled = checked;
-                            root.saveConfig();
+                            rootPane.transparencyEnabled = checked;
+                            rootPane.saveConfig();
                         }
                     }
 
@@ -737,7 +764,7 @@ RowLayout {
                                 }
 
                                 StyledText {
-                                    text: qsTr("%1%").arg(Math.round(root.transparencyBase * 100))
+                                    text: qsTr("%1%").arg(Math.round(rootPane.transparencyBase * 100))
                                     color: Colours.palette.m3outline
                                     font.pointSize: Appearance.font.size.normal
                                 }
@@ -751,10 +778,10 @@ RowLayout {
 
                                 from: 0
                                 to: 100
-                                value: root.transparencyBase * 100
+                                value: rootPane.transparencyBase * 100
                                 onMoved: {
-                                    root.transparencyBase = baseSlider.value / 100;
-                                    root.saveConfig();
+                                    rootPane.transparencyBase = baseSlider.value / 100;
+                                    rootPane.saveConfig();
                                 }
                             }
                         }
@@ -781,7 +808,7 @@ RowLayout {
                                 }
 
                                 StyledText {
-                                    text: qsTr("%1%").arg(Math.round(root.transparencyLayers * 100))
+                                    text: qsTr("%1%").arg(Math.round(rootPane.transparencyLayers * 100))
                                     color: Colours.palette.m3outline
                                     font.pointSize: Appearance.font.size.normal
                                 }
@@ -795,10 +822,10 @@ RowLayout {
 
                                 from: 0
                                 to: 100
-                                value: root.transparencyLayers * 100
+                                value: rootPane.transparencyLayers * 100
                                 onMoved: {
-                                    root.transparencyLayers = layersSlider.value / 100;
-                                    root.saveConfig();
+                                    rootPane.transparencyLayers = layersSlider.value / 100;
+                                    rootPane.saveConfig();
                                 }
                             }
                         }
@@ -809,7 +836,7 @@ RowLayout {
                     id: borderSection
                     title: qsTr("Border")
                     onToggleRequested: {
-                        root.collapseAllSections(borderSection);
+                        sidebarFlickable.collapseAllSections(borderSection);
                     }
 
                     SpinBoxRow {
@@ -817,10 +844,10 @@ RowLayout {
                         min: 0.1
                         max: 100
                         step: 0.1
-                        value: root.borderRounding
+                        value: rootPane.borderRounding
                         onValueModified: value => {
-                            root.borderRounding = value;
-                            root.saveConfig();
+                            rootPane.borderRounding = value;
+                            rootPane.saveConfig();
                         }
                     }
 
@@ -829,10 +856,10 @@ RowLayout {
                         min: 0.1
                         max: 100
                         step: 0.1
-                        value: root.borderThickness
+                        value: rootPane.borderThickness
                         onValueModified: value => {
-                            root.borderThickness = value;
-                            root.saveConfig();
+                            rootPane.borderThickness = value;
+                            rootPane.saveConfig();
                         }
                     }
                 }
@@ -841,24 +868,24 @@ RowLayout {
                     id: backgroundSection
                     title: qsTr("Background")
                     onToggleRequested: {
-                        root.collapseAllSections(backgroundSection);
+                        sidebarFlickable.collapseAllSections(backgroundSection);
                     }
 
                     SwitchRow {
                         label: qsTr("Desktop clock")
-                        checked: root.desktopClockEnabled
+                        checked: rootPane.desktopClockEnabled
                         onToggled: checked => {
-                            root.desktopClockEnabled = checked;
-                            root.saveConfig();
+                            rootPane.desktopClockEnabled = checked;
+                            rootPane.saveConfig();
                         }
                     }
 
                     SwitchRow {
                         label: qsTr("Background enabled")
-                        checked: root.backgroundEnabled
+                        checked: rootPane.backgroundEnabled
                         onToggled: checked => {
-                            root.backgroundEnabled = checked;
-                            root.saveConfig();
+                            rootPane.backgroundEnabled = checked;
+                            rootPane.saveConfig();
                         }
                     }
 
@@ -871,19 +898,19 @@ RowLayout {
 
                     SwitchRow {
                         label: qsTr("Visualiser enabled")
-                        checked: root.visualiserEnabled
+                        checked: rootPane.visualiserEnabled
                         onToggled: checked => {
-                            root.visualiserEnabled = checked;
-                            root.saveConfig();
+                            rootPane.visualiserEnabled = checked;
+                            rootPane.saveConfig();
                         }
                     }
 
                     SwitchRow {
                         label: qsTr("Visualiser auto hide")
-                        checked: root.visualiserAutoHide
+                        checked: rootPane.visualiserAutoHide
                         onToggled: checked => {
-                            root.visualiserAutoHide = checked;
-                            root.saveConfig();
+                            rootPane.visualiserAutoHide = checked;
+                            rootPane.saveConfig();
                         }
                     }
 
@@ -891,10 +918,10 @@ RowLayout {
                         label: qsTr("Visualiser rounding")
                         min: 0
                         max: 10
-                        value: Math.round(root.visualiserRounding)
+                        value: Math.round(rootPane.visualiserRounding)
                         onValueModified: value => {
-                            root.visualiserRounding = value;
-                            root.saveConfig();
+                            rootPane.visualiserRounding = value;
+                            rootPane.saveConfig();
                         }
                     }
 
@@ -902,19 +929,15 @@ RowLayout {
                         label: qsTr("Visualiser spacing")
                         min: 0
                         max: 10
-                        value: Math.round(root.visualiserSpacing)
+                        value: Math.round(rootPane.visualiserSpacing)
                         onValueModified: value => {
-                            root.visualiserSpacing = value;
-                            root.saveConfig();
+                            rootPane.visualiserSpacing = value;
+                            rootPane.saveConfig();
                         }
                     }
                 }
             }
-        }
-
-        InnerBorder {
-            leftThickness: 0
-            rightThickness: Appearance.padding.normal / 2
+            }
         }
     }
 
@@ -922,30 +945,53 @@ RowLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        StyledFlickable {
+        ClippingRectangle {
+            id: rightAppearanceClippingRect
             anchors.fill: parent
             anchors.margins: Appearance.padding.normal
             anchors.leftMargin: 0
             anchors.rightMargin: Appearance.padding.normal / 2
+            radius: rightAppearanceBorder.innerRadius
+            color: "transparent"
 
-            flickableDirection: Flickable.VerticalFlick
-            contentHeight: contentLayout.height
-
-            StyledScrollBar.vertical: StyledScrollBar {
-                flickable: parent
-            }
-
-            ColumnLayout {
-                id: contentLayout
-
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.leftMargin: Appearance.padding.large * 2
-                anchors.rightMargin: Appearance.padding.large * 2
+            Loader {
+                id: rightAppearanceLoader
+                anchors.fill: parent
                 anchors.topMargin: Appearance.padding.large * 2
+                anchors.bottomMargin: Appearance.padding.large * 2
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                asynchronous: true
+                sourceComponent: appearanceRightContentComponent
+                property var rootPane: root
+            }
+        }
 
-                spacing: Appearance.spacing.normal
+        InnerBorder {
+            id: rightAppearanceBorder
+            leftThickness: Appearance.padding.normal / 2
+        }
+
+        Component {
+            id: appearanceRightContentComponent
+
+            StyledFlickable {
+                id: rightAppearanceFlickable
+                flickableDirection: Flickable.VerticalFlick
+                contentHeight: contentLayout.height
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: rightAppearanceFlickable
+                }
+
+                ColumnLayout {
+                    id: contentLayout
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.leftMargin: Appearance.padding.large * 2
+                    anchors.rightMargin: Appearance.padding.large * 2
+                    spacing: Appearance.spacing.normal
 
                 MaterialIcon {
                     Layout.alignment: Qt.AlignHCenter
@@ -1182,10 +1228,7 @@ RowLayout {
                     }
                 }
             }
-        }
-
-        InnerBorder {
-            leftThickness: Appearance.padding.normal / 2
+            }
         }
     }
 }

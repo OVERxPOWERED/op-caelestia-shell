@@ -144,20 +144,50 @@ RowLayout {
     }
 
     Item {
+        id: leftLauncherItem
         Layout.preferredWidth: Math.floor(parent.width * 0.4)
         Layout.minimumWidth: 420
         Layout.fillHeight: true
 
-        ColumnLayout {
+        ClippingRectangle {
+            id: leftLauncherClippingRect
             anchors.fill: parent
-            anchors.margins: Appearance.padding.large + Appearance.padding.normal
-            anchors.leftMargin: Appearance.padding.large
-            anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
-            anchors.bottomMargin: 0
+            anchors.margins: Appearance.padding.normal
+            anchors.leftMargin: 0
+            anchors.rightMargin: Appearance.padding.normal / 2
 
-            spacing: Appearance.spacing.small
+            radius: leftLauncherBorder.innerRadius
+            color: "transparent"
 
-            RowLayout {
+            Loader {
+                id: leftLauncherLoader
+
+                anchors.fill: parent
+                anchors.margins: Appearance.padding.large + Appearance.padding.normal
+                anchors.leftMargin: Appearance.padding.large
+                anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
+                anchors.bottomMargin: 0
+
+                asynchronous: true
+                sourceComponent: leftContentComponent
+            }
+        }
+
+        InnerBorder {
+            id: leftLauncherBorder
+            leftThickness: 0
+            rightThickness: Appearance.padding.normal / 2
+        }
+
+        Component {
+            id: leftContentComponent
+
+            ColumnLayout {
+                anchors.fill: parent
+
+                spacing: Appearance.spacing.small
+
+                RowLayout {
                 spacing: Appearance.spacing.smaller
 
                 StyledText {
@@ -268,6 +298,7 @@ RowLayout {
             }
 
             StyledListView {
+                id: appsListView
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
@@ -323,26 +354,50 @@ RowLayout {
                 }
             }
         }
-
-        InnerBorder {
-            leftThickness: 0
-            rightThickness: Appearance.padding.normal / 2
         }
     }
 
     Item {
+        id: rightLauncherItem
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        ColumnLayout {
+        ClippingRectangle {
+            id: rightLauncherClippingRect
             anchors.fill: parent
             anchors.margins: Appearance.padding.normal
             anchors.leftMargin: 0
             anchors.rightMargin: Appearance.padding.normal / 2
 
-            spacing: Appearance.spacing.normal
+            radius: rightLauncherBorder.innerRadius
+            color: "transparent"
 
-            Item {
+            Loader {
+                id: rightLauncherLoader
+
+                anchors.fill: parent
+                anchors.margins: Appearance.padding.large * 2
+
+                asynchronous: true
+                sourceComponent: rightContentComponent
+            }
+        }
+
+        InnerBorder {
+            id: rightLauncherBorder
+
+            leftThickness: Appearance.padding.normal / 2
+        }
+
+        Component {
+            id: rightContentComponent
+
+            ColumnLayout {
+                anchors.fill: parent
+
+                spacing: Appearance.spacing.normal
+
+                Item {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.leftMargin: Appearance.padding.large * 2
                 Layout.rightMargin: Appearance.padding.large * 2
@@ -397,6 +452,7 @@ RowLayout {
                 Layout.rightMargin: Appearance.padding.large * 2
 
                 StyledFlickable {
+                    id: detailsFlickable
                     anchors.fill: parent
                     flickableDirection: Flickable.VerticalFlick
                     contentHeight: debugLayout.height
@@ -428,9 +484,6 @@ RowLayout {
                 }
             }
         }
-
-        InnerBorder {
-            leftThickness: Appearance.padding.normal / 2
         }
     }
 }

@@ -9,6 +9,7 @@ import qs.services
 import qs.config
 import qs.utils
 import Quickshell
+import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
 
@@ -16,6 +17,9 @@ RowLayout {
     id: root
 
     required property Session session
+
+    // Clock
+    property bool clockShowIcon: Config.bar.clock.showIcon ?? true
 
     // Bar Behavior
     property bool persistent: Config.bar.persistent ?? true
@@ -48,9 +52,6 @@ RowLayout {
     spacing: 0
 
     Component.onCompleted: {
-        // Update clock toggle
-        clockShowIconSwitch.checked = Config.bar.clock.showIcon ?? true;
-
         // Update entries
         if (Config.bar.entries) {
             entriesModel.clear();
@@ -66,7 +67,7 @@ RowLayout {
 
     function saveConfig(entryIndex, entryEnabled) {
         // Update clock setting
-        Config.bar.clock.showIcon = clockShowIconSwitch.checked;
+        Config.bar.clock.showIcon = root.clockShowIcon;
 
         // Update bar behavior
         Config.bar.persistent = root.persistent;
@@ -116,42 +117,62 @@ RowLayout {
         id: entriesModel
     }
 
-
-    function collapseAllSections(exceptSection) {
-        if (exceptSection !== clockSection) clockSection.expanded = false;
-        if (exceptSection !== barBehaviorSection) barBehaviorSection.expanded = false;
-        if (exceptSection !== statusIconsSection) statusIconsSection.expanded = false;
-        if (exceptSection !== traySettingsSection) traySettingsSection.expanded = false;
-        if (exceptSection !== workspacesSection) workspacesSection.expanded = false;
-    }
-
     Item {
+        id: leftTaskbarItem
         Layout.preferredWidth: Math.floor(parent.width * 0.4)
         Layout.minimumWidth: 420
         Layout.fillHeight: true
 
-        StyledFlickable {
-            id: sidebarFlickable
+        ClippingRectangle {
+            id: leftTaskbarClippingRect
             anchors.fill: parent
-            flickableDirection: Flickable.VerticalFlick
-            contentHeight: sidebarLayout.height
+            anchors.margins: Appearance.padding.normal
+            anchors.leftMargin: 0
+            anchors.rightMargin: Appearance.padding.normal / 2
 
-            StyledScrollBar.vertical: StyledScrollBar {
-                flickable: sidebarFlickable
-            }
+            radius: leftTaskbarBorder.innerRadius
+            color: "transparent"
 
-            ColumnLayout {
-                id: sidebarLayout
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
+            Loader {
+                id: leftTaskbarLoader
+
+                anchors.fill: parent
                 anchors.margins: Appearance.padding.large + Appearance.padding.normal
                 anchors.leftMargin: Appearance.padding.large
                 anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
 
-                spacing: Appearance.spacing.small
+                asynchronous: true
+                sourceComponent: leftTaskbarContentComponent
+            }
+        }
 
-            RowLayout {
+        InnerBorder {
+            id: leftTaskbarBorder
+            leftThickness: 0
+            rightThickness: Appearance.padding.normal / 2
+        }
+
+        Component {
+            id: leftTaskbarContentComponent
+
+            StyledFlickable {
+                id: sidebarFlickable
+                flickableDirection: Flickable.VerticalFlick
+                contentHeight: sidebarLayout.height
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: sidebarFlickable
+                }
+
+                ColumnLayout {
+                    id: sidebarLayout
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+
+                    spacing: Appearance.spacing.small
+
+                    RowLayout {
                 spacing: Appearance.spacing.smaller
 
                 StyledText {
@@ -169,9 +190,6 @@ RowLayout {
                 id: clockSection
                 title: qsTr("Clock")
                 description: qsTr("Clock display settings")
-                onToggleRequested: {
-                    root.collapseAllSections(clockSection);
-                }
 
                 RowLayout {
                     id: clockRow
@@ -190,8 +208,9 @@ RowLayout {
 
                     StyledSwitch {
                         id: clockShowIconSwitch
-                        checked: true
+                        checked: root.clockShowIcon
                         onToggled: {
+                            root.clockShowIcon = checked;
                             root.saveConfig();
                         }
                     }
@@ -201,9 +220,6 @@ RowLayout {
             CollapsibleSection {
                 id: barBehaviorSection
                 title: qsTr("Bar Behavior")
-                onToggleRequested: {
-                    root.collapseAllSections(barBehaviorSection);
-                }
 
                 SwitchRow {
                     label: qsTr("Persistent")
@@ -238,9 +254,6 @@ RowLayout {
             CollapsibleSection {
                 id: statusIconsSection
                 title: qsTr("Status Icons")
-                onToggleRequested: {
-                    root.collapseAllSections(statusIconsSection);
-                }
 
                 SwitchRow {
                     label: qsTr("Show audio")
@@ -309,9 +322,6 @@ RowLayout {
             CollapsibleSection {
                 id: traySettingsSection
                 title: qsTr("Tray Settings")
-                onToggleRequested: {
-                    root.collapseAllSections(traySettingsSection);
-                }
 
                 SwitchRow {
                     label: qsTr("Background")
@@ -344,9 +354,6 @@ RowLayout {
             CollapsibleSection {
                 id: workspacesSection
                 title: qsTr("Workspaces")
-                onToggleRequested: {
-                    root.collapseAllSections(workspacesSection);
-                }
 
                 StyledRect {
                     Layout.fillWidth: true
@@ -517,43 +524,62 @@ RowLayout {
             }
         }
         }
-
-        InnerBorder {
-            leftThickness: 0
-            rightThickness: Appearance.padding.normal / 2
         }
     }
 
     Item {
+        id: rightTaskbarItem
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        StyledFlickable {
+        ClippingRectangle {
+            id: rightTaskbarClippingRect
             anchors.fill: parent
             anchors.margins: Appearance.padding.normal
             anchors.leftMargin: 0
             anchors.rightMargin: Appearance.padding.normal / 2
 
-            flickableDirection: Flickable.VerticalFlick
-            contentHeight: contentLayout.height
+            radius: rightTaskbarBorder.innerRadius
+            color: "transparent"
 
-            StyledScrollBar.vertical: StyledScrollBar {
-                flickable: parent
+            Loader {
+                id: rightTaskbarLoader
+
+                anchors.fill: parent
+                anchors.margins: Appearance.padding.large * 2
+
+                asynchronous: true
+                sourceComponent: rightTaskbarContentComponent
             }
+        }
 
-            ColumnLayout {
-                id: contentLayout
+        InnerBorder {
+            id: rightTaskbarBorder
 
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.leftMargin: Appearance.padding.large * 2
-                anchors.rightMargin: Appearance.padding.large * 2
-                anchors.topMargin: Appearance.padding.large * 2
+            leftThickness: Appearance.padding.normal / 2
+        }
 
-                spacing: Appearance.spacing.normal
+        Component {
+            id: rightTaskbarContentComponent
 
-                MaterialIcon {
+            StyledFlickable {
+                flickableDirection: Flickable.VerticalFlick
+                contentHeight: contentLayout.height
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: parent
+                }
+
+                ColumnLayout {
+                    id: contentLayout
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+
+                    spacing: Appearance.spacing.normal
+
+                    MaterialIcon {
                     Layout.alignment: Qt.AlignHCenter
                     text: "task_alt"
                     font.pointSize: Appearance.font.size.extraLarge * 3
@@ -577,7 +603,7 @@ RowLayout {
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: clockShowIconSwitch.checked ? qsTr("Clock icon enabled") : qsTr("Clock icon disabled")
+                    text: root.clockShowIcon ? qsTr("Clock icon enabled") : qsTr("Clock icon disabled")
                     color: Colours.palette.m3outline
                 }
 
@@ -597,9 +623,6 @@ RowLayout {
 
             }
         }
-
-        InnerBorder {
-            leftThickness: Appearance.padding.normal / 2
         }
     }
 }

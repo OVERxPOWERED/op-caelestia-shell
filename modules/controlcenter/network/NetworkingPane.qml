@@ -29,32 +29,59 @@ Item {
         spacing: 0
 
         Item {
+            id: leftNetworkItem
             Layout.preferredWidth: Math.floor(parent.width * 0.4)
             Layout.minimumWidth: 420
             Layout.fillHeight: true
 
-            // Left pane - networking list with collapsible sections
-            StyledFlickable {
-                id: leftFlickable
-
+            ClippingRectangle {
+                id: leftNetworkClippingRect
                 anchors.fill: parent
-                flickableDirection: Flickable.VerticalFlick
-                contentHeight: leftContent.height
+                anchors.margins: Appearance.padding.normal
+                anchors.leftMargin: 0
+                anchors.rightMargin: Appearance.padding.normal / 2
 
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: leftFlickable
-                }
+                radius: leftNetworkBorder.innerRadius
+                color: "transparent"
 
-                ColumnLayout {
-                    id: leftContent
+                Loader {
+                    id: leftNetworkLoader
 
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
+                    anchors.fill: parent
                     anchors.margins: Appearance.padding.large + Appearance.padding.normal
                     anchors.leftMargin: Appearance.padding.large
                     anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
-                    spacing: Appearance.spacing.normal
+
+                    asynchronous: true
+                    sourceComponent: networkListComponent
+                }
+            }
+
+            InnerBorder {
+                id: leftNetworkBorder
+                leftThickness: 0
+                rightThickness: Appearance.padding.normal / 2
+            }
+
+            Component {
+                id: networkListComponent
+
+                StyledFlickable {
+                    id: leftFlickable
+
+                    flickableDirection: Flickable.VerticalFlick
+                    contentHeight: leftContent.height
+
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: leftFlickable
+                    }
+
+                    ColumnLayout {
+                        id: leftContent
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        spacing: Appearance.spacing.normal
 
                     // Settings header above the collapsible sections
                     RowLayout {
@@ -385,18 +412,16 @@ Item {
                     }
                 }
             }
-
-            InnerBorder {
-                leftThickness: 0
-                rightThickness: Appearance.padding.normal / 2
             }
         }
 
         Item {
+            id: rightNetworkItem
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             ClippingRectangle {
+                id: networkClippingRect
                 anchors.fill: parent
                 anchors.margins: Appearance.padding.normal
                 anchors.leftMargin: 0

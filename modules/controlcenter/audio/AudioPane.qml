@@ -7,6 +7,7 @@ import qs.components.effects
 import qs.components.containers
 import qs.services
 import qs.config
+import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
 
@@ -20,28 +21,58 @@ RowLayout {
     spacing: 0
 
     Item {
+        id: leftAudioItem
         Layout.preferredWidth: Math.floor(parent.width * 0.4)
         Layout.minimumWidth: 420
         Layout.fillHeight: true
 
-        StyledFlickable {
+        ClippingRectangle {
+            id: leftAudioClippingRect
             anchors.fill: parent
-            anchors.margins: Appearance.padding.large + Appearance.padding.normal
-            anchors.leftMargin: Appearance.padding.large
-            anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
-            flickableDirection: Flickable.VerticalFlick
-            contentHeight: leftContent.height
+            anchors.margins: Appearance.padding.normal
+            anchors.leftMargin: 0
+            anchors.rightMargin: Appearance.padding.normal / 2
 
-            StyledScrollBar.vertical: StyledScrollBar {
-                flickable: parent
+            radius: leftAudioBorder.innerRadius
+            color: "transparent"
+
+            Loader {
+                id: leftAudioLoader
+
+                anchors.fill: parent
+                anchors.margins: Appearance.padding.large + Appearance.padding.normal
+                anchors.leftMargin: Appearance.padding.large
+                anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
+
+                asynchronous: true
+                sourceComponent: audioLeftContentComponent
             }
+        }
 
-            ColumnLayout {
-                id: leftContent
+        InnerBorder {
+            id: leftAudioBorder
+            leftThickness: 0
+            rightThickness: Appearance.padding.normal / 2
+        }
 
-                anchors.left: parent.left
-                anchors.right: parent.right
-                spacing: Appearance.spacing.normal
+        Component {
+            id: audioLeftContentComponent
+
+            StyledFlickable {
+                id: leftAudioFlickable
+                flickableDirection: Flickable.VerticalFlick
+                contentHeight: leftContent.height
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: leftAudioFlickable
+                }
+
+                ColumnLayout {
+                    id: leftContent
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.normal
 
                 // Settings header above the collapsible sections
                 RowLayout {
@@ -215,42 +246,64 @@ RowLayout {
                     }
                 }
             }
-        }
-
-        InnerBorder {
-            leftThickness: 0
-            rightThickness: Appearance.padding.normal / 2
+            }
         }
     }
 
     Item {
+        id: rightAudioItem
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        StyledFlickable {
+        ClippingRectangle {
+            id: rightAudioClippingRect
             anchors.fill: parent
             anchors.margins: Appearance.padding.normal
             anchors.leftMargin: 0
             anchors.rightMargin: Appearance.padding.normal / 2
 
-            flickableDirection: Flickable.VerticalFlick
-            contentHeight: contentLayout.height
+            radius: rightAudioBorder.innerRadius
+            color: "transparent"
 
-            StyledScrollBar.vertical: StyledScrollBar {
-                flickable: parent
-            }
+            Loader {
+                id: rightAudioLoader
 
-            ColumnLayout {
-                id: contentLayout
-
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.leftMargin: Appearance.padding.large * 2
-                anchors.rightMargin: Appearance.padding.large * 2
+                anchors.fill: parent
                 anchors.topMargin: Appearance.padding.large * 2
+                anchors.bottomMargin: Appearance.padding.large * 2
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
 
-                spacing: Appearance.spacing.normal
+                asynchronous: true
+                sourceComponent: audioRightContentComponent
+            }
+        }
+
+        InnerBorder {
+            id: rightAudioBorder
+            leftThickness: Appearance.padding.normal / 2
+        }
+
+        Component {
+            id: audioRightContentComponent
+
+            StyledFlickable {
+                id: rightAudioFlickable
+                flickableDirection: Flickable.VerticalFlick
+                contentHeight: contentLayout.height
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: rightAudioFlickable
+                }
+
+                ColumnLayout {
+                    id: contentLayout
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.leftMargin: Appearance.padding.large * 2
+                    anchors.rightMargin: Appearance.padding.large * 2
+                    spacing: Appearance.spacing.normal
 
                 ConnectionHeader {
                     icon: "volume_up"
@@ -397,10 +450,7 @@ RowLayout {
                     }
                 }
             }
-        }
-
-        InnerBorder {
-            leftThickness: Appearance.padding.normal / 2
+            }
         }
     }
 }

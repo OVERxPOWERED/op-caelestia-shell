@@ -15,6 +15,7 @@ import Quickshell.Io
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
+import "../../../utils/scripts/fuzzysort.js" as Fuzzy
 
 RowLayout {
     id: root
@@ -109,6 +110,68 @@ RowLayout {
         entries: DesktopEntries.applications.values  // No filter - show all apps
     }
 
+    property string searchText: ""
+
+    function filterApps(search: string): list<var> {
+        // If search is empty, return all apps directly
+        if (!search || search.trim() === "") {
+            // Convert QQmlListProperty to array
+            const apps = [];
+            for (let i = 0; i < allAppsDb.apps.length; i++) {
+                apps.push(allAppsDb.apps[i]);
+            }
+            return apps;
+        }
+
+        if (!allAppsDb.apps || allAppsDb.apps.length === 0) {
+            return [];
+        }
+
+        // Prepare apps for fuzzy search
+        const preparedApps = [];
+        for (let i = 0; i < allAppsDb.apps.length; i++) {
+            const app = allAppsDb.apps[i];
+            const name = app.name || app.entry?.name || "";
+            preparedApps.push({
+                _item: app,
+                name: Fuzzy.prepare(name)
+            });
+        }
+
+        // Perform fuzzy search
+        const results = Fuzzy.go(search, preparedApps, {
+            all: true,
+            keys: ["name"],
+            scoreFn: r => r[0].score
+        });
+
+        // Return sorted by score (highest first)
+        return results
+            .sort((a, b) => b._score - a._score)
+            .map(r => r.obj._item);
+    }
+
+    property list<var> filteredApps: []
+
+    function updateFilteredApps() {
+        filteredApps = filterApps(searchText);
+    }
+
+    onSearchTextChanged: {
+        updateFilteredApps();
+    }
+
+    Component.onCompleted: {
+        updateFilteredApps();
+    }
+
+    Connections {
+        target: allAppsDb
+        function onAppsChanged() {
+            updateFilteredApps();
+        }
+    }
+
     Item {
         Layout.preferredWidth: Math.floor(parent.width * 0.4)
         Layout.minimumWidth: 420
@@ -138,7 +201,7 @@ RowLayout {
 
             StyledText {
                 Layout.topMargin: Appearance.spacing.large
-                text: qsTr("Applications (%1)").arg(allAppsDb.apps.length)
+                text: qsTr("Applications (%1)").arg(root.searchText ? root.filteredApps.length : allAppsDb.apps.length)
                 font.pointSize: Appearance.font.size.normal
                 font.weight: 500
             }
@@ -148,12 +211,95 @@ RowLayout {
                 color: Colours.palette.m3outline
             }
 
+            StyledRect {
+                Layout.fillWidth: true
+                Layout.topMargin: Appearance.spacing.normal
+                Layout.bottomMargin: Appearance.spacing.small
+
+                color: Colours.tPalette.m3surfaceContainer
+                radius: Appearance.rounding.full
+
+                implicitHeight: Math.max(searchIcon.implicitHeight, searchField.implicitHeight, clearIcon.implicitHeight)
+
+                MaterialIcon {
+                    id: searchIcon
+
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: Appearance.padding.normal
+
+                    text: "search"
+                    color: Colours.palette.m3onSurfaceVariant
+                }
+
+                StyledTextField {
+                    id: searchField
+
+                    anchors.left: searchIcon.right
+                    anchors.right: clearIcon.left
+                    anchors.leftMargin: Appearance.spacing.small
+                    anchors.rightMargin: Appearance.spacing.small
+
+                    topPadding: Appearance.padding.normal
+                    bottomPadding: Appearance.padding.normal
+
+                    placeholderText: qsTr("Search applications...")
+
+                    onTextChanged: {
+                        root.searchText = text;
+                    }
+                }
+
+                MaterialIcon {
+                    id: clearIcon
+
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: Appearance.padding.normal
+
+                    width: searchField.text ? implicitWidth : implicitWidth / 2
+                    opacity: {
+                        if (!searchField.text)
+                            return 0;
+                        if (clearMouse.pressed)
+                            return 0.7;
+                        if (clearMouse.containsMouse)
+                            return 0.8;
+                        return 1;
+                    }
+
+                    text: "close"
+                    color: Colours.palette.m3onSurfaceVariant
+
+                    MouseArea {
+                        id: clearMouse
+
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: searchField.text ? Qt.PointingHandCursor : undefined
+
+                        onClicked: searchField.text = ""
+                    }
+
+                    Behavior on width {
+                        Anim {
+                            duration: Appearance.anim.durations.small
+                        }
+                    }
+
+                    Behavior on opacity {
+                        Anim {
+                            duration: Appearance.anim.durations.small
+                        }
+                    }
+                }
+            }
+
             StyledListView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.topMargin: Appearance.spacing.normal
 
-                model: allAppsDb.apps
+                model: root.filteredApps
                 spacing: Appearance.spacing.small / 2
                 clip: true
 

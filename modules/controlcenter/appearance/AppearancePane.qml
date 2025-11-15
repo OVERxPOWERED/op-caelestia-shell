@@ -1049,10 +1049,10 @@ RowLayout {
                             Layout.preferredHeight: 140
                             Layout.minimumWidth: 200
                             Layout.minimumHeight: 140
+                            Layout.maximumWidth: 200
+                            Layout.maximumHeight: 140
 
                             readonly property bool isCurrent: modelData.path === Wallpapers.actualCurrent
-                            readonly property real imageWidth: Math.max(1, width)
-                            readonly property real imageHeight: Math.max(1, height)
 
                             StateLayer {
                                 radius: Appearance.rounding.normal
@@ -1069,68 +1069,69 @@ RowLayout {
                                 color: Colours.tPalette.m3surfaceContainer
                                 radius: Appearance.rounding.normal
 
-                                border.width: isCurrent ? 2 : 0
-                                border.color: Colours.palette.m3primary
-
                                 CachingImage {
                                     id: cachingImage
 
                                     path: modelData.path
                                     anchors.fill: parent
+                                    cache: true
+                                    visible: opacity > 0
 
-                                    // Ensure sourceSize is always set to valid dimensions
-                                    sourceSize: Qt.size(Math.max(1, Math.floor(parent.width)), Math.max(1, Math.floor(parent.height)))
-
-                                    // Show when ready, hide if fallback is showing
-                                    opacity: status === Image.Ready && !fallbackImage.visible ? 1 : 0
+                                    // Show when ready
+                                    opacity: status === Image.Ready ? 1 : 0
 
                                     Behavior on opacity {
                                         NumberAnimation {
-                                            duration: 200
+                                            duration: 150
+                                            easing.type: Easing.OutQuad
                                         }
                                     }
                                 }
 
-                                // Fallback: Direct image load if caching fails or is slow
+                                // Fallback image for when caching fails
                                 Image {
                                     id: fallbackImage
 
                                     anchors.fill: parent
-                                    source: modelData.path
+                                    source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? modelData.path : ""
                                     asynchronous: true
                                     fillMode: Image.PreserveAspectCrop
-                                    sourceSize: Qt.size(Math.max(1, Math.floor(parent.width)), Math.max(1, Math.floor(parent.height)))
-
-                                    // Show if caching image hasn't loaded after a delay
+                                    cache: true
                                     visible: opacity > 0
-                                    opacity: 0
 
-                                    Timer {
-                                        id: fallbackTimer
-                                        interval: 500
-                                        running: cachingImage.status === Image.Loading || (cachingImage.status !== Image.Ready && cachingImage.status !== Image.Null)
-                                        onTriggered: {
-                                            if (cachingImage.status !== Image.Ready && fallbackImage.status === Image.Ready) {
-                                                fallbackImage.opacity = 1;
-                                            }
-                                        }
-                                    }
-
-                                    // Also check status changes
-                                    onStatusChanged: {
-                                        if (status === Image.Ready && cachingImage.status !== Image.Ready) {
-                                            Qt.callLater(() => {
-                                                if (cachingImage.status !== Image.Ready) {
-                                                    fallbackImage.opacity = 1;
-                                                }
-                                            });
-                                        }
-                                    }
+                                    opacity: status === Image.Ready && cachingImage.status !== Image.Ready ? 1 : 0
 
                                     Behavior on opacity {
                                         NumberAnimation {
-                                            duration: 200
+                                            duration: 150
+                                            easing.type: Easing.OutQuad
                                         }
+                                    }
+                                }
+
+                                // Timer to trigger fallback only if caching hasn't loaded
+                                Timer {
+                                    id: fallbackTimer
+
+                                    property bool triggered: false
+                                    interval: 800
+                                    running: cachingImage.status === Image.Loading || cachingImage.status === Image.Null
+                                    onTriggered: triggered = true
+                                }
+                            }
+
+                            // Border overlay that doesn't affect image size
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "transparent"
+                                radius: Appearance.rounding.normal
+                                border.width: isCurrent ? 2 : 0
+                                border.color: Colours.palette.m3primary
+
+                                Behavior on border.width {
+                                    NumberAnimation {
+                                        duration: 150
+                                        easing.type: Easing.OutQuad
                                     }
                                 }
 

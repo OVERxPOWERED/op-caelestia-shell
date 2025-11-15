@@ -9,6 +9,7 @@ import qs.components.effects
 import qs.components.containers
 import qs.services
 import qs.config
+import Quickshell
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
@@ -279,7 +280,15 @@ RowLayout {
                             id: wirelessRepeater
 
                             Layout.fillWidth: true
-                            model: Nmcli.networks
+                            model: ScriptModel {
+                                values: [...Nmcli.networks].sort((a, b) => {
+                                    // Put active/connected network first
+                                    if (a.active !== b.active)
+                                        return b.active - a.active;
+                                    // Then sort by signal strength
+                                    return b.strength - a.strength;
+                                })
+                            }
 
                             delegate: StyledRect {
                                 required property var modelData

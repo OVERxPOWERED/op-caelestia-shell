@@ -1272,7 +1272,15 @@ Singleton {
         stdout: SplitParser {
             onRead: root.refreshOnConnectionChange()
         }
-        onExited: Qt.callLater(() => monitorProc.running = true, 2000)
+        onExited: monitorRestartTimer.start()
+    }
+
+    Timer {
+        id: monitorRestartTimer
+        interval: 2000
+        onTriggered: {
+            monitorProc.running = true;
+        }
     }
 
     function refreshOnConnectionChange(): void {

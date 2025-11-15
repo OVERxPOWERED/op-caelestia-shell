@@ -15,500 +15,507 @@ import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
 
-RowLayout {
+Item {
     id: root
 
     required property Session session
 
     anchors.fill: parent
 
-    spacing: 0
+    RowLayout {
+        id: contentLayout
 
-    Item {
-        Layout.preferredWidth: Math.floor(parent.width * 0.4)
-        Layout.minimumWidth: 420
-        Layout.fillHeight: true
+        anchors.fill: parent
+        spacing: 0
 
-        // Left pane - networking list with collapsible sections
-        StyledFlickable {
-            id: leftFlickable
+        Item {
+            Layout.preferredWidth: Math.floor(parent.width * 0.4)
+            Layout.minimumWidth: 420
+            Layout.fillHeight: true
 
-            anchors.fill: parent
-            anchors.margins: Appearance.padding.large + Appearance.padding.normal
-            anchors.leftMargin: Appearance.padding.large
-            anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
-            flickableDirection: Flickable.VerticalFlick
-            contentHeight: leftContent.height
-            clip: true
+            // Left pane - networking list with collapsible sections
+            StyledFlickable {
+                id: leftFlickable
 
-            StyledScrollBar.vertical: StyledScrollBar {
-                flickable: leftFlickable
-            }
+                anchors.fill: parent
+                anchors.margins: Appearance.padding.large + Appearance.padding.normal
+                anchors.leftMargin: Appearance.padding.large
+                anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
+                flickableDirection: Flickable.VerticalFlick
+                contentHeight: leftContent.height
+                clip: true
 
-            ColumnLayout {
-                id: leftContent
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: leftFlickable
+                }
 
-                anchors.left: parent.left
-                anchors.right: parent.right
-                spacing: Appearance.spacing.normal
+                ColumnLayout {
+                    id: leftContent
 
-                // Settings header above the collapsible sections
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Appearance.spacing.smaller
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: Appearance.spacing.normal
 
-                    StyledText {
-                        text: qsTr("Settings")
-                        font.pointSize: Appearance.font.size.large
-                        font.weight: 500
-                    }
-
-                    Item {
+                    // Settings header above the collapsible sections
+                    RowLayout {
                         Layout.fillWidth: true
-                    }
+                        spacing: Appearance.spacing.smaller
 
-                    ToggleButton {
-                        toggled: Nmcli.wifiEnabled
-                        icon: "wifi"
-                        accent: "Tertiary"
-
-                        onClicked: {
-                            Nmcli.toggleWifi(null);
+                        StyledText {
+                            text: qsTr("Settings")
+                            font.pointSize: Appearance.font.size.large
+                            font.weight: 500
                         }
-                    }
 
-                    ToggleButton {
-                        toggled: Nmcli.scanning
-                        icon: "wifi_find"
-                        accent: "Secondary"
-
-                        onClicked: {
-                            Nmcli.rescanWifi();
+                        Item {
+                            Layout.fillWidth: true
                         }
-                    }
 
-                    ToggleButton {
-                        toggled: !root.session.ethernet.active && !root.session.network.active
-                        icon: "settings"
-                        accent: "Primary"
+                        ToggleButton {
+                            toggled: Nmcli.wifiEnabled
+                            icon: "wifi"
+                            accent: "Tertiary"
 
-                        onClicked: {
-                            if (root.session.ethernet.active || root.session.network.active) {
-                                root.session.ethernet.active = null;
-                                root.session.network.active = null;
-                            } else {
-                                // Toggle to show settings - prefer ethernet if available, otherwise wireless
-                                if (Nmcli.ethernetDevices.length > 0) {
-                                    root.session.ethernet.active = Nmcli.ethernetDevices[0];
-                                } else if (Nmcli.networks.length > 0) {
-                                    root.session.network.active = Nmcli.networks[0];
+                            onClicked: {
+                                Nmcli.toggleWifi(null);
+                            }
+                        }
+
+                        ToggleButton {
+                            toggled: Nmcli.scanning
+                            icon: "wifi_find"
+                            accent: "Secondary"
+
+                            onClicked: {
+                                Nmcli.rescanWifi();
+                            }
+                        }
+
+                        ToggleButton {
+                            toggled: !root.session.ethernet.active && !root.session.network.active
+                            icon: "settings"
+                            accent: "Primary"
+
+                            onClicked: {
+                                if (root.session.ethernet.active || root.session.network.active) {
+                                    root.session.ethernet.active = null;
+                                    root.session.network.active = null;
+                                } else {
+                                    // Toggle to show settings - prefer ethernet if available, otherwise wireless
+                                    if (Nmcli.ethernetDevices.length > 0) {
+                                        root.session.ethernet.active = Nmcli.ethernetDevices[0];
+                                    } else if (Nmcli.networks.length > 0) {
+                                        root.session.network.active = Nmcli.networks[0];
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                CollapsibleSection {
-                    id: ethernetListSection
+                    CollapsibleSection {
+                        id: ethernetListSection
 
-                    Layout.fillWidth: true
-                    title: qsTr("Ethernet")
-                    expanded: true
-
-                    ColumnLayout {
                         Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
+                        title: qsTr("Ethernet")
+                        expanded: true
 
-                        RowLayout {
+                        ColumnLayout {
                             Layout.fillWidth: true
                             spacing: Appearance.spacing.small
 
-                            StyledText {
-                                text: qsTr("Devices (%1)").arg(Nmcli.ethernetDevices.length)
-                                font.pointSize: Appearance.font.size.normal
-                                font.weight: 500
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: Appearance.spacing.small
+
+                                StyledText {
+                                    text: qsTr("Devices (%1)").arg(Nmcli.ethernetDevices.length)
+                                    font.pointSize: Appearance.font.size.normal
+                                    font.weight: 500
+                                }
                             }
-                        }
 
-                        StyledText {
-                            Layout.fillWidth: true
-                            text: qsTr("All available ethernet devices")
-                            color: Colours.palette.m3outline
-                        }
+                            StyledText {
+                                Layout.fillWidth: true
+                                text: qsTr("All available ethernet devices")
+                                color: Colours.palette.m3outline
+                            }
 
-                        Repeater {
-                            id: ethernetRepeater
-
-                            Layout.fillWidth: true
-                            model: Nmcli.ethernetDevices
-
-                            delegate: StyledRect {
-                                required property var modelData
+                            Repeater {
+                                id: ethernetRepeater
 
                                 Layout.fillWidth: true
+                                model: Nmcli.ethernetDevices
 
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.session.ethernet.active === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
-                                radius: Appearance.rounding.normal
+                                delegate: StyledRect {
+                                    required property var modelData
 
-                                StateLayer {
-                                    function onClicked(): void {
-                                        root.session.network.active = null;
-                                        root.session.ethernet.active = modelData;
-                                    }
-                                }
+                                    Layout.fillWidth: true
 
-                                RowLayout {
-                                    id: rowLayout
-
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.margins: Appearance.padding.normal
-
-                                    spacing: Appearance.spacing.normal
-
-                                    StyledRect {
-                                        implicitWidth: implicitHeight
-                                        implicitHeight: icon.implicitHeight + Appearance.padding.normal * 2
-
-                                        radius: Appearance.rounding.normal
-                                        color: modelData.connected ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
-
-                                        MaterialIcon {
-                                            id: icon
-
-                                            anchors.centerIn: parent
-                                            text: "cable"
-                                            font.pointSize: Appearance.font.size.large
-                                            fill: modelData.connected ? 1 : 0
-                                            color: modelData.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
-                                        }
-                                    }
-
-                                    StyledText {
-                                        Layout.fillWidth: true
-                                        elide: Text.ElideRight
-                                        maximumLineCount: 1
-
-                                        text: modelData.interface || qsTr("Unknown")
-                                    }
-
-                                    StyledText {
-                                        text: modelData.connected ? qsTr("Connected") : qsTr("Disconnected")
-                                        color: modelData.connected ? Colours.palette.m3primary : Colours.palette.m3outline
-                                        font.pointSize: Appearance.font.size.small
-                                        font.weight: modelData.connected ? 500 : 400
-                                    }
-
-                                    StyledRect {
-                                        implicitWidth: implicitHeight
-                                        implicitHeight: connectIcon.implicitHeight + Appearance.padding.smaller * 2
-
-                                        radius: Appearance.rounding.full
-                                        color: Qt.alpha(Colours.palette.m3primaryContainer, modelData.connected ? 1 : 0)
-
-                                        StateLayer {
-                                            function onClicked(): void {
-                                                if (modelData.connected && modelData.connection) {
-                                                    Nmcli.disconnectEthernet(modelData.connection, () => {});
-                                                } else {
-                                                    Nmcli.connectEthernet(modelData.connection || "", modelData.interface || "", () => {});
-                                                }
-                                            }
-                                        }
-
-                                        MaterialIcon {
-                                            id: connectIcon
-
-                                            anchors.centerIn: parent
-                                            text: modelData.connected ? "link_off" : "link"
-                                            color: modelData.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
-                                        }
-                                    }
-                                }
-
-                                implicitHeight: rowLayout.implicitHeight + Appearance.padding.normal * 2
-                            }
-                        }
-                    }
-                }
-
-                CollapsibleSection {
-                    id: wirelessListSection
-
-                    Layout.fillWidth: true
-                    title: qsTr("Wireless")
-                    expanded: true
-
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            StyledText {
-                                text: qsTr("Networks (%1)").arg(Nmcli.networks.length)
-                                font.pointSize: Appearance.font.size.normal
-                                font.weight: 500
-                            }
-
-                            StyledText {
-                                visible: Nmcli.scanning
-                                text: qsTr("Scanning...")
-                                color: Colours.palette.m3primary
-                                font.pointSize: Appearance.font.size.small
-                            }
-                        }
-
-                        StyledText {
-                            Layout.fillWidth: true
-                            text: qsTr("All available WiFi networks")
-                            color: Colours.palette.m3outline
-                        }
-
-                        Repeater {
-                            id: wirelessRepeater
-
-                            Layout.fillWidth: true
-                            model: ScriptModel {
-                                values: [...Nmcli.networks].sort((a, b) => {
-                                    // Put active/connected network first
-                                    if (a.active !== b.active)
-                                        return b.active - a.active;
-                                    // Then sort by signal strength
-                                    return b.strength - a.strength;
-                                })
-                            }
-
-                            delegate: StyledRect {
-                                required property var modelData
-
-                                Layout.fillWidth: true
-
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.session.network.active === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
-                                radius: Appearance.rounding.normal
+                                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.session.ethernet.active === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                    radius: Appearance.rounding.normal
 
                                     StateLayer {
                                         function onClicked(): void {
+                                            root.session.network.active = null;
+                                            root.session.ethernet.active = modelData;
+                                        }
+                                    }
+
+                                    RowLayout {
+                                        id: rowLayout
+
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.margins: Appearance.padding.normal
+
+                                        spacing: Appearance.spacing.normal
+
+                                        StyledRect {
+                                            implicitWidth: implicitHeight
+                                            implicitHeight: icon.implicitHeight + Appearance.padding.normal * 2
+
+                                            radius: Appearance.rounding.normal
+                                            color: modelData.connected ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
+
+                                            MaterialIcon {
+                                                id: icon
+
+                                                anchors.centerIn: parent
+                                                text: "cable"
+                                                font.pointSize: Appearance.font.size.large
+                                                fill: modelData.connected ? 1 : 0
+                                                color: modelData.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
+                                            }
+                                        }
+
+                                        StyledText {
+                                            Layout.fillWidth: true
+                                            elide: Text.ElideRight
+                                            maximumLineCount: 1
+
+                                            text: modelData.interface || qsTr("Unknown")
+                                        }
+
+                                        StyledText {
+                                            text: modelData.connected ? qsTr("Connected") : qsTr("Disconnected")
+                                            color: modelData.connected ? Colours.palette.m3primary : Colours.palette.m3outline
+                                            font.pointSize: Appearance.font.size.small
+                                            font.weight: modelData.connected ? 500 : 400
+                                        }
+
+                                        StyledRect {
+                                            implicitWidth: implicitHeight
+                                            implicitHeight: connectIcon.implicitHeight + Appearance.padding.smaller * 2
+
+                                            radius: Appearance.rounding.full
+                                            color: Qt.alpha(Colours.palette.m3primaryContainer, modelData.connected ? 1 : 0)
+
+                                            StateLayer {
+                                                function onClicked(): void {
+                                                    if (modelData.connected && modelData.connection) {
+                                                        Nmcli.disconnectEthernet(modelData.connection, () => {});
+                                                    } else {
+                                                        Nmcli.connectEthernet(modelData.connection || "", modelData.interface || "", () => {});
+                                                    }
+                                                }
+                                            }
+
+                                            MaterialIcon {
+                                                id: connectIcon
+
+                                                anchors.centerIn: parent
+                                                text: modelData.connected ? "link_off" : "link"
+                                                color: modelData.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
+                                            }
+                                        }
+                                    }
+
+                                    implicitHeight: rowLayout.implicitHeight + Appearance.padding.normal * 2
+                                }
+                            }
+                        }
+                    }
+
+                    CollapsibleSection {
+                        id: wirelessListSection
+
+                        Layout.fillWidth: true
+                        title: qsTr("Wireless")
+                        expanded: true
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: Appearance.spacing.small
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: Appearance.spacing.small
+
+                                StyledText {
+                                    text: qsTr("Networks (%1)").arg(Nmcli.networks.length)
+                                    font.pointSize: Appearance.font.size.normal
+                                    font.weight: 500
+                                }
+
+                                StyledText {
+                                    visible: Nmcli.scanning
+                                    text: qsTr("Scanning...")
+                                    color: Colours.palette.m3primary
+                                    font.pointSize: Appearance.font.size.small
+                                }
+                            }
+
+                            StyledText {
+                                Layout.fillWidth: true
+                                text: qsTr("All available WiFi networks")
+                                color: Colours.palette.m3outline
+                            }
+
+                            Repeater {
+                                id: wirelessRepeater
+
+                                Layout.fillWidth: true
+                                model: ScriptModel {
+                                    values: [...Nmcli.networks].sort((a, b) => {
+                                        // Put active/connected network first
+                                        if (a.active !== b.active)
+                                            return b.active - a.active;
+                                        // Then sort by signal strength
+                                        return b.strength - a.strength;
+                                    })
+                                }
+
+                                delegate: StyledRect {
+                                    required property var modelData
+
+                                    Layout.fillWidth: true
+
+                                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, (modelData && root.session.network.active === modelData) ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                    radius: Appearance.rounding.normal
+
+                                    StateLayer {
+                                        function onClicked(): void {
+                                            if (!modelData) {
+                                                return;
+                                            }
                                             root.session.ethernet.active = null;
                                             root.session.network.active = modelData;
                                             // Check if we need to refresh saved connections when selecting a network
-                                            if (modelData && modelData.ssid) {
+                                            if (modelData.ssid) {
                                                 checkSavedProfileForNetwork(modelData.ssid);
                                             }
                                         }
                                     }
 
-                                RowLayout {
-                                    id: wirelessRowLayout
+                                    RowLayout {
+                                        id: wirelessRowLayout
 
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.margins: Appearance.padding.normal
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.margins: Appearance.padding.normal
 
-                                    spacing: Appearance.spacing.normal
+                                        spacing: Appearance.spacing.normal
 
-                                    StyledRect {
-                                        implicitWidth: implicitHeight
-                                        implicitHeight: wirelessIcon.implicitHeight + Appearance.padding.normal * 2
+                                        StyledRect {
+                                            implicitWidth: implicitHeight
+                                            implicitHeight: wirelessIcon.implicitHeight + Appearance.padding.normal * 2
 
-                                        radius: Appearance.rounding.normal
-                                        color: modelData.active ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
+                                            radius: Appearance.rounding.normal
+                                            color: (modelData && modelData.active) ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
 
-                                        MaterialIcon {
-                                            id: wirelessIcon
+                                            MaterialIcon {
+                                                id: wirelessIcon
 
-                                            anchors.centerIn: parent
-                                            text: Icons.getNetworkIcon(modelData.strength)
-                                            font.pointSize: Appearance.font.size.large
-                                            fill: modelData.active ? 1 : 0
-                                            color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
-                                        }
-                                    }
-
-                                    StyledText {
-                                        Layout.fillWidth: true
-                                        elide: Text.ElideRight
-                                        maximumLineCount: 1
-
-                                        text: modelData.ssid || qsTr("Unknown")
-                                    }
-
-                                    StyledText {
-                                        text: modelData.active ? qsTr("Connected") : (modelData.isSecure ? qsTr("Secured") : qsTr("Open"))
-                                        color: modelData.active ? Colours.palette.m3primary : Colours.palette.m3outline
-                                        font.pointSize: Appearance.font.size.small
-                                        font.weight: modelData.active ? 500 : 400
-                                    }
-
-                                    StyledRect {
-                                        implicitWidth: implicitHeight
-                                        implicitHeight: wirelessConnectIcon.implicitHeight + Appearance.padding.smaller * 2
-
-                                        radius: Appearance.rounding.full
-                                        color: Qt.alpha(Colours.palette.m3primaryContainer, modelData.active ? 1 : 0)
-
-                                        StateLayer {
-                                            function onClicked(): void {
-                                                if (modelData.active) {
-                                                    Nmcli.disconnectFromNetwork();
-                                                } else {
-                                                    handleWirelessConnect(modelData);
-                                                }
+                                                anchors.centerIn: parent
+                                                text: Icons.getNetworkIcon(modelData && modelData.strength !== undefined ? modelData.strength : 0)
+                                                font.pointSize: Appearance.font.size.large
+                                                fill: (modelData && modelData.active) ? 1 : 0
+                                                color: (modelData && modelData.active) ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                                             }
                                         }
 
-                                        MaterialIcon {
-                                            id: wirelessConnectIcon
+                                        StyledText {
+                                            Layout.fillWidth: true
+                                            elide: Text.ElideRight
+                                            maximumLineCount: 1
 
-                                            anchors.centerIn: parent
-                                            text: modelData.active ? "link_off" : "link"
-                                            color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
+                                            text: (modelData && modelData.ssid) ? modelData.ssid : qsTr("Unknown")
+                                        }
+
+                                        StyledText {
+                                            text: (modelData && modelData.active) ? qsTr("Connected") : ((modelData && modelData.isSecure) ? qsTr("Secured") : qsTr("Open"))
+                                            color: (modelData && modelData.active) ? Colours.palette.m3primary : Colours.palette.m3outline
+                                            font.pointSize: Appearance.font.size.small
+                                            font.weight: (modelData && modelData.active) ? 500 : 400
+                                        }
+
+                                        StyledRect {
+                                            implicitWidth: implicitHeight
+                                            implicitHeight: wirelessConnectIcon.implicitHeight + Appearance.padding.smaller * 2
+
+                                            radius: Appearance.rounding.full
+                                            color: Qt.alpha(Colours.palette.m3primaryContainer, (modelData && modelData.active) ? 1 : 0)
+
+                                            StateLayer {
+                                                function onClicked(): void {
+                                                    if (modelData && modelData.active) {
+                                                        Nmcli.disconnectFromNetwork();
+                                                    } else if (modelData) {
+                                                        handleWirelessConnect(modelData);
+                                                    }
+                                                }
+                                            }
+
+                                            MaterialIcon {
+                                                id: wirelessConnectIcon
+
+                                                anchors.centerIn: parent
+                                                text: (modelData && modelData.active) ? "link_off" : "link"
+                                                color: (modelData && modelData.active) ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
+                                            }
                                         }
                                     }
+
+                                    implicitHeight: wirelessRowLayout.implicitHeight + Appearance.padding.normal * 2
                                 }
-
-                                implicitHeight: wirelessRowLayout.implicitHeight + Appearance.padding.normal * 2
                             }
                         }
                     }
                 }
             }
+
+            InnerBorder {
+                leftThickness: 0
+                rightThickness: Appearance.padding.normal / 2
+            }
         }
 
-        InnerBorder {
-            leftThickness: 0
-            rightThickness: Appearance.padding.normal / 2
-        }
-    }
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-    Item {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        ClippingRectangle {
-            anchors.fill: parent
-            anchors.margins: Appearance.padding.normal
-            anchors.leftMargin: 0
-            anchors.rightMargin: Appearance.padding.normal / 2
-
-            radius: rightBorder.innerRadius
-            color: "transparent"
-            clip: true
-
-            // Right pane - networking details/settings
-            Loader {
-                id: loader
-
-                property var ethernetPane: root.session.ethernet.active
-                property var wirelessPane: root.session.network.active
-                property var pane: ethernetPane || wirelessPane
-                property string paneId: ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "")
-
+            ClippingRectangle {
                 anchors.fill: parent
-                anchors.margins: Appearance.padding.large * 2
+                anchors.margins: Appearance.padding.normal
+                anchors.leftMargin: 0
+                anchors.rightMargin: Appearance.padding.normal / 2
 
-                opacity: 1
-                scale: 1
-                transformOrigin: Item.Center
-
+                radius: rightBorder.innerRadius
+                color: "transparent"
                 clip: true
-                asynchronous: true
-                sourceComponent: pane ? (ethernetPane ? ethernetDetails : wirelessDetails) : settings
 
-                Behavior on paneId {
-                    SequentialAnimation {
-                        ParallelAnimation {
-                            Anim {
-                                target: loader
-                                property: "opacity"
-                                to: 0
-                                easing.bezierCurve: Appearance.anim.curves.standardAccel
+                // Right pane - networking details/settings
+                Loader {
+                    id: loader
+
+                    property var ethernetPane: root.session.ethernet.active
+                    property var wirelessPane: root.session.network.active
+                    property var pane: ethernetPane || wirelessPane
+                    property string paneId: ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "")
+
+                    anchors.fill: parent
+                    anchors.margins: Appearance.padding.large * 2
+
+                    opacity: 1
+                    scale: 1
+                    transformOrigin: Item.Center
+
+                    clip: true
+                    asynchronous: true
+                    sourceComponent: pane ? (ethernetPane ? ethernetDetails : wirelessDetails) : settings
+
+                    Behavior on paneId {
+                        SequentialAnimation {
+                            ParallelAnimation {
+                                Anim {
+                                    target: loader
+                                    property: "opacity"
+                                    to: 0
+                                    easing.bezierCurve: Appearance.anim.curves.standardAccel
+                                }
+                                Anim {
+                                    target: loader
+                                    property: "scale"
+                                    to: 0.8
+                                    easing.bezierCurve: Appearance.anim.curves.standardAccel
+                                }
                             }
-                            Anim {
-                                target: loader
-                                property: "scale"
-                                to: 0.8
-                                easing.bezierCurve: Appearance.anim.curves.standardAccel
-                            }
-                        }
-                        PropertyAction {}
-                        ParallelAnimation {
-                            Anim {
-                                target: loader
-                                property: "opacity"
-                                to: 1
-                                easing.bezierCurve: Appearance.anim.curves.standardDecel
-                            }
-                            Anim {
-                                target: loader
-                                property: "scale"
-                                to: 1
-                                easing.bezierCurve: Appearance.anim.curves.standardDecel
+                            PropertyAction {}
+                            ParallelAnimation {
+                                Anim {
+                                    target: loader
+                                    property: "opacity"
+                                    to: 1
+                                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                                }
+                                Anim {
+                                    target: loader
+                                    property: "scale"
+                                    to: 1
+                                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                                }
                             }
                         }
                     }
-                }
 
-                onPaneChanged: {
-                    paneId = ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "");
+                    onPaneChanged: {
+                        paneId = ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "");
+                    }
                 }
             }
-        }
 
-        InnerBorder {
-            id: rightBorder
+            InnerBorder {
+                id: rightBorder
 
-            leftThickness: Appearance.padding.normal / 2
-        }
+                leftThickness: Appearance.padding.normal / 2
+            }
 
-        Component {
-            id: settings
+            Component {
+                id: settings
 
-            StyledFlickable {
-                id: settingsFlickable
+                StyledFlickable {
+                    id: settingsFlickable
 
-                flickableDirection: Flickable.VerticalFlick
-                contentHeight: settingsInner.height
-                clip: true
+                    flickableDirection: Flickable.VerticalFlick
+                    contentHeight: settingsInner.height
+                    clip: true
 
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: settingsFlickable
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: settingsFlickable
+                    }
+
+                    NetworkSettings {
+                        id: settingsInner
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        session: root.session
+                    }
                 }
+            }
 
-                NetworkSettings {
-                    id: settingsInner
+            Component {
+                id: ethernetDetails
 
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                EthernetDetails {
                     session: root.session
                 }
             }
-        }
 
-        Component {
-            id: ethernetDetails
+            Component {
+                id: wirelessDetails
 
-            EthernetDetails {
-                session: root.session
-            }
-        }
-
-        Component {
-            id: wirelessDetails
-
-            WirelessDetails {
-                session: root.session
+                WirelessDetails {
+                    session: root.session
+                }
             }
         }
     }
 
     WirelessPasswordDialog {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        anchors.fill: parent
         session: root.session
         z: 1000
     }

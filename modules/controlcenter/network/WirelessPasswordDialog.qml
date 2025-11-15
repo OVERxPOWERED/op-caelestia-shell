@@ -131,14 +131,17 @@ Item {
 
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Appearance.spacing.small
-                visible: connectButton.connecting
+                visible: connectButton.connecting || connectButton.hasError
                 text: {
+                    if (connectButton.hasError) {
+                        return qsTr("Connection failed. Please check your password and try again.");
+                    }
                     if (connectButton.connecting) {
                         return qsTr("Connecting...");
                     }
                     return "";
                 }
-                color: Colours.palette.m3onSurfaceVariant
+                color: connectButton.hasError ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
                 font.pointSize: Appearance.font.size.small
                 font.weight: 400
                 wrapMode: Text.WordWrap
@@ -153,18 +156,31 @@ Item {
 
                 focus: true
                 Keys.onPressed: event => {
+                    // Ensure we have focus when receiving keyboard input
+                    if (!activeFocus) {
+                        forceActiveFocus();
+                    }
+
+                    // Clear error when user starts typing
+                    if (connectButton.hasError && event.text && event.text.length > 0) {
+                        connectButton.hasError = false;
+                    }
+
                     if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
                         if (connectButton.enabled) {
                             connectButton.clicked();
                         }
+                        event.accepted = true;
                     } else if (event.key === Qt.Key_Backspace) {
                         if (event.modifiers & Qt.ControlModifier) {
                             passwordBuffer = "";
                         } else {
                             passwordBuffer = passwordBuffer.slice(0, -1);
                         }
+                        event.accepted = true;
                     } else if (event.text && event.text.length > 0) {
                         passwordBuffer += event.text;
+                        event.accepted = true;
                     }
                 }
 
@@ -178,6 +194,7 @@ Item {
                             Qt.callLater(() => {
                                 passwordContainer.forceActiveFocus();
                                 passwordContainer.passwordBuffer = "";
+                                connectButton.hasError = false;
                             });
                         }
                     }
@@ -198,11 +215,27 @@ Item {
                 StyledRect {
                     anchors.fill: parent
                     radius: Appearance.rounding.normal
-                    color: Colours.tPalette.m3surfaceContainer
-                    border.width: passwordContainer.activeFocus ? 2 : 1
-                    border.color: passwordContainer.activeFocus ? Colours.palette.m3primary : Colours.palette.m3outline
+                    color: passwordContainer.activeFocus ? Qt.lighter(Colours.tPalette.m3surfaceContainer, 1.05) : Colours.tPalette.m3surfaceContainer
+                    border.width: passwordContainer.activeFocus || connectButton.hasError ? 4 : (root.visible ? 1 : 0)
+                    border.color: {
+                        if (connectButton.hasError) {
+                            return Colours.palette.m3error;
+                        }
+                        if (passwordContainer.activeFocus) {
+                            return Colours.palette.m3primary;
+                        }
+                        return root.visible ? Colours.palette.m3outline : "transparent";
+                    }
 
                     Behavior on border.color {
+                        CAnim {}
+                    }
+
+                    Behavior on border.width {
+                        CAnim {}
+                    }
+
+                    Behavior on color {
                         CAnim {}
                     }
                 }
@@ -329,14 +362,15 @@ Item {
                 TextButton {
                     id: connectButton
 
+                    property bool connecting: false
+                    property bool hasError: false
+
                     Layout.fillWidth: true
                     Layout.minimumHeight: Appearance.font.size.normal + Appearance.padding.normal * 2
                     inactiveColour: Colours.palette.m3primary
                     inactiveOnColour: Colours.palette.m3onPrimary
                     text: qsTr("Connect")
                     enabled: passwordContainer.passwordBuffer.length > 0 && !connecting
-
-                    property bool connecting: false
 
                     onClicked: {
                         if (!root.network || connecting) {
@@ -347,6 +381,9 @@ Item {
                         if (!password || password.length === 0) {
                             return;
                         }
+
+                        // Clear any previous error
+                        hasError = false;
 
                         // Set connecting state
                         connecting = true;
@@ -361,11 +398,27 @@ Item {
                                 // Shouldn't happen since we provided password
                                 connectionMonitor.stop();
                                 connecting = false;
+                                hasError = true;
                                 enabled = true;
                                 text = qsTr("Connect");
-                            } else
-                            // Connection failed, monitor will handle timeout
-                            {}
+                                passwordContainer.passwordBuffer = "";
+                                // Delete the failed connection
+                                if (root.network && root.network.ssid) {
+                                    Nmcli.forgetNetwork(root.network.ssid);
+                                }
+                            } else {
+                                // Connection failed immediately - show error
+                                connectionMonitor.stop();
+                                connecting = false;
+                                hasError = true;
+                                enabled = true;
+                                text = qsTr("Connect");
+                                passwordContainer.passwordBuffer = "";
+                                // Delete the failed connection
+                                if (root.network && root.network.ssid) {
+                                    Nmcli.forgetNetwork(root.network.ssid);
+                                }
+                            }
                         });
 
                         // Start monitoring connection
@@ -386,18 +439,8 @@ Item {
 
         if (isConnected) {
             // Successfully connected - give it a moment for network list to update
-            Qt.callLater(() => {
-                // Double-check connection is still active
-                if (root.visible && Nmcli.active && Nmcli.active.ssid) {
-                    const stillConnected = Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
-                    if (stillConnected) {
-                        connectionMonitor.stop();
-                        connectButton.connecting = false;
-                        connectButton.text = qsTr("Connect");
-                        closeDialog();
-                    }
-                }
-            }, 500);
+            // Use Timer for actual delay
+            connectionSuccessTimer.start();
             return;
         }
 
@@ -407,8 +450,14 @@ Item {
             if (connectionMonitor.repeatCount > 10) {
                 connectionMonitor.stop();
                 connectButton.connecting = false;
+                connectButton.hasError = true;
                 connectButton.enabled = true;
                 connectButton.text = qsTr("Connect");
+                passwordContainer.passwordBuffer = "";
+                // Delete the failed connection
+                if (root.network && root.network.ssid) {
+                    Nmcli.forgetNetwork(root.network.ssid);
+                }
             }
         }
     }
@@ -432,6 +481,23 @@ Item {
         }
     }
 
+    Timer {
+        id: connectionSuccessTimer
+        interval: 500
+        onTriggered: {
+            // Double-check connection is still active
+            if (root.visible && Nmcli.active && Nmcli.active.ssid) {
+                const stillConnected = Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
+                if (stillConnected) {
+                    connectionMonitor.stop();
+                    connectButton.connecting = false;
+                    connectButton.text = qsTr("Connect");
+                    closeDialog();
+                }
+            }
+        }
+    }
+
     Connections {
         target: Nmcli
         function onActiveChanged() {
@@ -443,8 +509,12 @@ Item {
             if (root.visible && root.network && root.network.ssid === ssid && connectButton.connecting) {
                 connectionMonitor.stop();
                 connectButton.connecting = false;
+                connectButton.hasError = true;
                 connectButton.enabled = true;
                 connectButton.text = qsTr("Connect");
+                passwordContainer.passwordBuffer = "";
+                // Delete the failed connection
+                Nmcli.forgetNetwork(ssid);
             }
         }
     }
@@ -457,6 +527,7 @@ Item {
         isClosing = true;
         passwordContainer.passwordBuffer = "";
         connectButton.connecting = false;
+        connectButton.hasError = false;
         connectButton.text = qsTr("Connect");
         connectionMonitor.stop();
     }

@@ -32,11 +32,19 @@ ColumnLayout {
                         }
                     }
                     // Force focus to password container when popout becomes active
-                    Qt.callLater(() => {
-                        passwordContainer.forceActiveFocus();
-                    }, 100);
-                }, 100);
+                    // Use Timer for actual delay to ensure dialog is fully rendered
+                    focusTimer.start();
+                });
             }
+        }
+    }
+
+    Timer {
+        id: focusTimer
+        interval: 150
+        onTriggered: {
+            root.forceActiveFocus();
+            passwordContainer.forceActiveFocus();
         }
     }
 
@@ -51,19 +59,15 @@ ColumnLayout {
 
     Component.onCompleted: {
         if (shouldBeVisible) {
-            Qt.callLater(() => {
-                root.forceActiveFocus();
-                passwordContainer.forceActiveFocus();
-            }, 150);
+            // Use Timer for actual delay to ensure dialog is fully rendered
+            focusTimer.start();
         }
     }
 
     onShouldBeVisibleChanged: {
         if (shouldBeVisible) {
-            Qt.callLater(() => {
-                root.forceActiveFocus();
-                passwordContainer.forceActiveFocus();
-            }, 150);
+            // Use Timer for actual delay to ensure dialog is fully rendered
+            focusTimer.start();
         }
     }
 
@@ -243,20 +247,26 @@ ColumnLayout {
                     target: root
                     function onShouldBeVisibleChanged(): void {
                         if (root.shouldBeVisible) {
-                            Qt.callLater(() => {
-                                passwordContainer.forceActiveFocus();
-                            }, 50);
+                            // Use Timer for actual delay to ensure focus works correctly
+                            passwordFocusTimer.start();
                             passwordContainer.passwordBuffer = "";
                             connectButton.hasError = false;
                         }
                     }
                 }
 
+                Timer {
+                    id: passwordFocusTimer
+                    interval: 50
+                    onTriggered: {
+                        passwordContainer.forceActiveFocus();
+                    }
+                }
+
                 Component.onCompleted: {
                     if (root.shouldBeVisible) {
-                        Qt.callLater(() => {
-                            passwordContainer.forceActiveFocus();
-                        }, 100);
+                        // Use Timer for actual delay to ensure focus works correctly
+                        passwordFocusTimer.start();
                     }
                 }
 
@@ -489,22 +499,8 @@ ColumnLayout {
 
         if (isConnected) {
             // Successfully connected - give it a moment for network list to update
-            Qt.callLater(() => {
-                // Double-check connection is still active
-                if (root.shouldBeVisible && Nmcli.active && Nmcli.active.ssid) {
-                    const stillConnected = Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
-                    if (stillConnected) {
-                        connectionMonitor.stop();
-                        connectButton.connecting = false;
-                        connectButton.text = qsTr("Connect");
-                        // Return to network popout on successful connection
-                        if (root.wrapper.currentName === "wirelesspassword") {
-                            root.wrapper.currentName = "network";
-                        }
-                        closeDialog();
-                    }
-                }
-            }, 500);
+            // Use Timer for actual delay
+            connectionSuccessTimer.start();
             return;
         }
 
@@ -541,6 +537,27 @@ ColumnLayout {
         onRunningChanged: {
             if (!running) {
                 repeatCount = 0;
+            }
+        }
+    }
+
+    Timer {
+        id: connectionSuccessTimer
+        interval: 500
+        onTriggered: {
+            // Double-check connection is still active
+            if (root.shouldBeVisible && Nmcli.active && Nmcli.active.ssid) {
+                const stillConnected = Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
+                if (stillConnected) {
+                    connectionMonitor.stop();
+                    connectButton.connecting = false;
+                    connectButton.text = qsTr("Connect");
+                    // Return to network popout on successful connection
+                    if (root.wrapper.currentName === "wirelesspassword") {
+                        root.wrapper.currentName = "network";
+                    }
+                    closeDialog();
+                }
             }
         }
     }

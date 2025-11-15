@@ -41,14 +41,14 @@ ColumnLayout {
     }
 
     spacing: Appearance.spacing.normal
-    
+
     implicitWidth: 400
     implicitHeight: content.implicitHeight + Appearance.padding.large * 2
 
     visible: shouldBeVisible || isClosing
     enabled: shouldBeVisible && !isClosing
     focus: enabled
-    
+
     Component.onCompleted: {
         if (shouldBeVisible) {
             Qt.callLater(() => {
@@ -57,7 +57,7 @@ ColumnLayout {
             }, 150);
         }
     }
-    
+
     onShouldBeVisibleChanged: {
         if (shouldBeVisible) {
             Qt.callLater(() => {
@@ -67,9 +67,7 @@ ColumnLayout {
         }
     }
 
-    Keys.onEscapePressed: {
-        closeDialog();
-    }
+    Keys.onEscapePressed: closeDialog()
 
     StyledRect {
         Layout.fillWidth: true
@@ -109,7 +107,7 @@ ColumnLayout {
             }
         }
 
-        Keys.onEscapePressed: closeDialog();
+        Keys.onEscapePressed: root.closeDialog()
 
         ColumnLayout {
             id: content
@@ -149,7 +147,7 @@ ColumnLayout {
                 color: Colours.palette.m3outline
                 font.pointSize: Appearance.font.size.small
             }
-            
+
             Timer {
                 interval: 50
                 running: root.shouldBeVisible && (!root.network || !root.network.ssid)
@@ -217,12 +215,12 @@ ColumnLayout {
                     if (!activeFocus) {
                         forceActiveFocus();
                     }
-                    
+
                     // Clear error when user starts typing
                     if (connectButton.hasError && event.text && event.text.length > 0) {
                         connectButton.hasError = false;
                     }
-                    
+
                     if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
                         if (connectButton.enabled) {
                             connectButton.clicked();
@@ -253,7 +251,7 @@ ColumnLayout {
                         }
                     }
                 }
-                
+
                 Component.onCompleted: {
                     if (root.shouldBeVisible) {
                         Qt.callLater(() => {
@@ -265,9 +263,7 @@ ColumnLayout {
                 StyledRect {
                     anchors.fill: parent
                     radius: Appearance.rounding.normal
-                    color: passwordContainer.activeFocus 
-                        ? Qt.lighter(Colours.tPalette.m3surfaceContainer, 1.05)
-                        : Colours.tPalette.m3surfaceContainer
+                    color: passwordContainer.activeFocus ? Qt.lighter(Colours.tPalette.m3surfaceContainer, 1.05) : Colours.tPalette.m3surfaceContainer
                     border.width: passwordContainer.activeFocus || connectButton.hasError ? 4 : (root.shouldBeVisible ? 1 : 0)
                     border.color: {
                         if (connectButton.hasError) {
@@ -401,30 +397,30 @@ ColumnLayout {
                 Layout.fillWidth: true
                 spacing: Appearance.spacing.normal
 
-                SimpleButton {
+                TextButton {
                     id: cancelButton
 
                     Layout.fillWidth: true
                     Layout.minimumHeight: Appearance.font.size.normal + Appearance.padding.normal * 2
-                    color: Colours.palette.m3secondaryContainer
-                    onColor: Colours.palette.m3onSecondaryContainer
+                    inactiveColour: Colours.palette.m3secondaryContainer
+                    inactiveOnColour: Colours.palette.m3onSecondaryContainer
                     text: qsTr("Cancel")
 
-                    onClicked: closeDialog();
+                    onClicked: root.closeDialog()
                 }
 
-                SimpleButton {
+                TextButton {
                     id: connectButton
-
-                    Layout.fillWidth: true
-                    Layout.minimumHeight: Appearance.font.size.normal + Appearance.padding.normal * 2
-                    color: Colours.palette.m3primary
-                    onColor: Colours.palette.m3onPrimary
-                    text: qsTr("Connect")
-                    enabled: passwordContainer.passwordBuffer.length > 0 && !connecting
 
                     property bool connecting: false
                     property bool hasError: false
+
+                    Layout.fillWidth: true
+                    Layout.minimumHeight: Appearance.font.size.normal + Appearance.padding.normal * 2
+                    inactiveColour: Colours.palette.m3primary
+                    inactiveOnColour: Colours.palette.m3onPrimary
+                    text: qsTr("Connect")
+                    enabled: passwordContainer.passwordBuffer.length > 0 && !connecting
 
                     onClicked: {
                         if (!root.network || connecting) {
@@ -445,40 +441,35 @@ ColumnLayout {
                         text = qsTr("Connecting...");
 
                         // Connect to network
-                        Nmcli.connectToNetwork(
-                            root.network.ssid,
-                            password,
-                            root.network.bssid || "",
-                            (result) => {
-                                if (result && result.success) {
-                                    // Connection successful, monitor will handle the rest
-                                } else if (result && result.needsPassword) {
-                                    // Shouldn't happen since we provided password
-                                    connectionMonitor.stop();
-                                    connecting = false;
-                                    hasError = true;
-                                    enabled = true;
-                                    text = qsTr("Connect");
-                                    passwordContainer.passwordBuffer = "";
-                                    // Delete the failed connection
-                                    if (root.network && root.network.ssid) {
-                                        Nmcli.forgetNetwork(root.network.ssid, () => {});
-                                    }
-                                } else {
-                                    // Connection failed immediately - show error
-                                    connectionMonitor.stop();
-                                    connecting = false;
-                                    hasError = true;
-                                    enabled = true;
-                                    text = qsTr("Connect");
-                                    passwordContainer.passwordBuffer = "";
-                                    // Delete the failed connection
-                                    if (root.network && root.network.ssid) {
-                                        Nmcli.forgetNetwork(root.network.ssid, () => {});
-                                    }
+                        Nmcli.connectToNetwork(root.network.ssid, password, root.network.bssid || "", result => {
+                            if (result && result.success)
+                            // Connection successful, monitor will handle the rest
+                            {} else if (result && result.needsPassword) {
+                                // Shouldn't happen since we provided password
+                                connectionMonitor.stop();
+                                connecting = false;
+                                hasError = true;
+                                enabled = true;
+                                text = qsTr("Connect");
+                                passwordContainer.passwordBuffer = "";
+                                // Delete the failed connection
+                                if (root.network && root.network.ssid) {
+                                    Nmcli.forgetNetwork(root.network.ssid);
+                                }
+                            } else {
+                                // Connection failed immediately - show error
+                                connectionMonitor.stop();
+                                connecting = false;
+                                hasError = true;
+                                enabled = true;
+                                text = qsTr("Connect");
+                                passwordContainer.passwordBuffer = "";
+                                // Delete the failed connection
+                                if (root.network && root.network.ssid) {
+                                    Nmcli.forgetNetwork(root.network.ssid);
                                 }
                             }
-                        );
+                        });
 
                         // Start monitoring connection
                         connectionMonitor.start();
@@ -494,8 +485,7 @@ ColumnLayout {
         }
 
         // Check if we're connected to the target network (case-insensitive SSID comparison)
-        const isConnected = root.network && Nmcli.active && Nmcli.active.ssid &&
-                           Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
+        const isConnected = root.network && Nmcli.active && Nmcli.active.ssid && Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
 
         if (isConnected) {
             // Successfully connected - give it a moment for network list to update
@@ -530,7 +520,7 @@ ColumnLayout {
                 passwordContainer.passwordBuffer = "";
                 // Delete the failed connection
                 if (root.network && root.network.ssid) {
-                    Nmcli.forgetNetwork(root.network.ssid, () => {});
+                    Nmcli.forgetNetwork(root.network.ssid);
                 }
             }
         }
@@ -545,7 +535,7 @@ ColumnLayout {
 
         onTriggered: {
             repeatCount++;
-            checkConnectionStatus();
+            root.checkConnectionStatus();
         }
 
         onRunningChanged: {
@@ -559,7 +549,7 @@ ColumnLayout {
         target: Nmcli
         function onActiveChanged() {
             if (root.shouldBeVisible) {
-                checkConnectionStatus();
+                root.checkConnectionStatus();
             }
         }
         function onConnectionFailed(ssid: string) {
@@ -571,7 +561,7 @@ ColumnLayout {
                 connectButton.text = qsTr("Connect");
                 passwordContainer.passwordBuffer = "";
                 // Delete the failed connection
-                Nmcli.forgetNetwork(ssid, () => {});
+                Nmcli.forgetNetwork(ssid);
             }
         }
     }
@@ -580,64 +570,17 @@ ColumnLayout {
         if (isClosing) {
             return;
         }
-        
+
         isClosing = true;
         passwordContainer.passwordBuffer = "";
         connectButton.connecting = false;
         connectButton.hasError = false;
         connectButton.text = qsTr("Connect");
         connectionMonitor.stop();
-        
+
         // Return to network popout
         if (root.wrapper.currentName === "wirelesspassword") {
             root.wrapper.currentName = "network";
         }
     }
-
-    component SimpleButton: StyledRect {
-        id: button
-
-        property color onColor: Colours.palette.m3onSurface
-        property alias disabled: stateLayer.disabled
-        property alias text: label.text
-        property alias enabled: stateLayer.enabled
-        property string icon: ""
-
-        implicitWidth: rowLayout.implicitWidth + Appearance.padding.normal * 2
-        implicitHeight: rowLayout.implicitHeight + Appearance.padding.small
-        radius: Appearance.rounding.small
-
-        StateLayer {
-            id: stateLayer
-            color: parent.onColor
-            function onClicked(): void {
-                if (parent.enabled !== false) {
-                    parent.clicked();
-                }
-            }
-        }
-
-        RowLayout {
-            id: rowLayout
-            anchors.centerIn: parent
-            spacing: Appearance.spacing.small
-
-            MaterialIcon {
-                id: iconItem
-                visible: button.icon.length > 0
-                text: button.icon
-                color: button.onColor
-                font.pointSize: Appearance.font.size.large
-            }
-
-            StyledText {
-                id: label
-                Layout.leftMargin: button.icon.length > 0 ? Appearance.padding.smaller : 0
-                color: parent.parent.onColor
-            }
-        }
-
-        signal clicked
-    }
 }
-

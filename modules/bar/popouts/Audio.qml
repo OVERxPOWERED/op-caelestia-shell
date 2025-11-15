@@ -105,17 +105,16 @@ Item {
             }
         }
 
-        SimpleButton {
+        IconTextButton {
             Layout.fillWidth: true
             Layout.topMargin: Appearance.spacing.normal
-            color: Colours.palette.m3primaryContainer
-            onColor: Colours.palette.m3onPrimaryContainer
+            inactiveColour: Colours.palette.m3primaryContainer
+            inactiveOnColour: Colours.palette.m3onPrimaryContainer
+            verticalPadding: Appearance.padding.small
             text: qsTr("Open settings")
             icon: "settings"
 
-            onClicked: {
-                root.wrapper.detach("audio");
-            }
+            onClicked: root.wrapper.detach("audio")
         }
     }
 }

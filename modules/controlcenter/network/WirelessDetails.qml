@@ -69,7 +69,7 @@ Item {
                     if (!Nmcli.wirelessDeviceDetails || Nmcli.wirelessDeviceDetails === null) {
                         // Network is active but we don't have details yet, fetch them
                         Nmcli.getWirelessDeviceDetails("", () => {
-                            // After fetching, check if we got details - if not, timer will try again
+                        // After fetching, check if we got details - if not, timer will try again
                         });
                     } else {
                         // We have details, can stop the timer
@@ -89,7 +89,7 @@ Item {
         if (network && network.ssid) {
             const isActive = network.active || (Nmcli.active && Nmcli.active.ssid === network.ssid);
             if (isActive) {
-                Nmcli.getWirelessDeviceDetails("", () => {});
+                Nmcli.getWirelessDeviceDetails("");
             } else {
                 Nmcli.wirelessDeviceDetails = null;
             }
@@ -134,14 +134,14 @@ Item {
                     checked: root.network?.active ?? false
                     toggle.onToggled: {
                         if (checked) {
-                            handleConnect();
+                            root.handleConnect();
                         } else {
                             Nmcli.disconnectFromNetwork();
                         }
                     }
                 }
 
-                SimpleButton {
+                TextButton {
                     Layout.fillWidth: true
                     Layout.topMargin: Appearance.spacing.normal
                     Layout.minimumHeight: Appearance.font.size.normal + Appearance.padding.normal * 2
@@ -151,8 +151,8 @@ Item {
                         }
                         return Nmcli.hasSavedProfile(root.network.ssid);
                     }
-                    color: Colours.palette.m3errorContainer
-                    onColor: Colours.palette.m3onErrorContainer
+                    inactiveColour: Colours.palette.m3errorContainer
+                    inactiveOnColour: Colours.palette.m3onErrorContainer
                     text: qsTr("Forget Network")
 
                     onClicked: {
@@ -160,7 +160,7 @@ Item {
                             if (root.network.active) {
                                 Nmcli.disconnectFromNetwork();
                             }
-                            Nmcli.forgetNetwork(root.network.ssid, () => {});
+                            Nmcli.forgetNetwork(root.network.ssid);
                         }
                     }
                 }
@@ -214,7 +214,6 @@ Item {
                     deviceDetails: Nmcli.wirelessDeviceDetails
                 }
             }
-
         }
     }
 
@@ -236,23 +235,18 @@ Item {
             if (hasSavedProfile) {
                 Nmcli.connectToNetwork(root.network.ssid, "", root.network.bssid, null);
             } else {
-                Nmcli.connectToNetworkWithPasswordCheck(
-                    root.network.ssid,
-                    root.network.isSecure,
-                    (result) => {
-                        if (result.needsPassword) {
-                            if (Nmcli.pendingConnection) {
-                                Nmcli.connectionCheckTimer.stop();
-                                Nmcli.immediateCheckTimer.stop();
-                                Nmcli.immediateCheckTimer.checkCount = 0;
-                                Nmcli.pendingConnection = null;
-                            }
-                            root.session.network.showPasswordDialog = true;
-                            root.session.network.pendingNetwork = root.network;
+                Nmcli.connectToNetworkWithPasswordCheck(root.network.ssid, root.network.isSecure, result => {
+                    if (result.needsPassword) {
+                        if (Nmcli.pendingConnection) {
+                            Nmcli.connectionCheckTimer.stop();
+                            Nmcli.immediateCheckTimer.stop();
+                            Nmcli.immediateCheckTimer.checkCount = 0;
+                            Nmcli.pendingConnection = null;
                         }
-                    },
-                    root.network.bssid
-                );
+                        root.session.network.showPasswordDialog = true;
+                        root.session.network.pendingNetwork = root.network;
+                    }
+                }, root.network.bssid);
             }
         } else {
             Nmcli.connectToNetwork(root.network.ssid, "", root.network.bssid, null);

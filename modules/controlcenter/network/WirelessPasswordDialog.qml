@@ -48,7 +48,7 @@ Item {
 
         MouseArea {
             anchors.fill: parent
-            onClicked: closeDialog();
+            onClicked: closeDialog()
         }
     }
 
@@ -94,7 +94,7 @@ Item {
             }
         }
 
-        Keys.onEscapePressed: closeDialog();
+        Keys.onEscapePressed: closeDialog()
 
         ColumnLayout {
             id: content
@@ -314,25 +314,25 @@ Item {
                 Layout.fillWidth: true
                 spacing: Appearance.spacing.normal
 
-                SimpleButton {
+                TextButton {
                     id: cancelButton
 
                     Layout.fillWidth: true
                     Layout.minimumHeight: Appearance.font.size.normal + Appearance.padding.normal * 2
-                    color: Colours.palette.m3secondaryContainer
-                    onColor: Colours.palette.m3onSecondaryContainer
+                    inactiveColour: Colours.palette.m3secondaryContainer
+                    inactiveOnColour: Colours.palette.m3onSecondaryContainer
                     text: qsTr("Cancel")
 
-                    onClicked: closeDialog();
+                    onClicked: root.closeDialog()
                 }
 
-                SimpleButton {
+                TextButton {
                     id: connectButton
 
                     Layout.fillWidth: true
                     Layout.minimumHeight: Appearance.font.size.normal + Appearance.padding.normal * 2
-                    color: Colours.palette.m3primary
-                    onColor: Colours.palette.m3onPrimary
+                    inactiveColour: Colours.palette.m3primary
+                    inactiveOnColour: Colours.palette.m3onPrimary
                     text: qsTr("Connect")
                     enabled: passwordContainer.passwordBuffer.length > 0 && !connecting
 
@@ -354,24 +354,19 @@ Item {
                         text = qsTr("Connecting...");
 
                         // Connect to network
-                        Nmcli.connectToNetwork(
-                            root.network.ssid,
-                            password,
-                            root.network.bssid || "",
-                            (result) => {
-                                if (result && result.success) {
-                                    // Connection successful, monitor will handle the rest
-                                } else if (result && result.needsPassword) {
-                                    // Shouldn't happen since we provided password
-                                    connectionMonitor.stop();
-                                    connecting = false;
-                                    enabled = true;
-                                    text = qsTr("Connect");
-                                } else {
-                                    // Connection failed, monitor will handle timeout
-                                }
-                            }
-                        );
+                        Nmcli.connectToNetwork(root.network.ssid, password, root.network.bssid || "", result => {
+                            if (result && result.success)
+                            // Connection successful, monitor will handle the rest
+                            {} else if (result && result.needsPassword) {
+                                // Shouldn't happen since we provided password
+                                connectionMonitor.stop();
+                                connecting = false;
+                                enabled = true;
+                                text = qsTr("Connect");
+                            } else
+                            // Connection failed, monitor will handle timeout
+                            {}
+                        });
 
                         // Start monitoring connection
                         connectionMonitor.start();
@@ -387,8 +382,7 @@ Item {
         }
 
         // Check if we're connected to the target network (case-insensitive SSID comparison)
-        const isConnected = root.network && Nmcli.active && Nmcli.active.ssid &&
-                           Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
+        const isConnected = root.network && Nmcli.active && Nmcli.active.ssid && Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
 
         if (isConnected) {
             // Successfully connected - give it a moment for network list to update
@@ -459,7 +453,7 @@ Item {
         if (isClosing) {
             return;
         }
-        
+
         isClosing = true;
         passwordContainer.passwordBuffer = "";
         connectButton.connecting = false;

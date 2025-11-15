@@ -111,10 +111,8 @@ ColumnLayout {
             }
 
             StyledRect {
-                id: connectBtn
-
                 implicitWidth: implicitHeight
-                implicitHeight: connectIcon.implicitHeight + Appearance.padding.small
+                implicitHeight: wirelessConnectIcon.implicitHeight + Appearance.padding.small
 
                 radius: Appearance.rounding.full
                 color: Qt.alpha(Colours.palette.m3primary, networkItem.modelData.active ? 1 : 0)
@@ -136,7 +134,7 @@ ColumnLayout {
                             // Check if network is secure
                             if (networkItem.modelData.isSecure) {
                                 // Try to connect first - will show password dialog if password is needed
-                                Nmcli.connectToNetwork(networkItem.modelData.ssid, "", networkItem.modelData.bssid, (result) => {
+                                Nmcli.connectToNetwork(networkItem.modelData.ssid, "", networkItem.modelData.bssid, result => {
                                     if (result && result.needsPassword) {
                                         // Password is required - show password dialog
                                         root.passwordNetwork = networkItem.modelData;
@@ -159,7 +157,7 @@ ColumnLayout {
                 }
 
                 MaterialIcon {
-                    id: connectIcon
+                    id: wirelessConnectIcon
 
                     anchors.centerIn: parent
                     animate: true
@@ -205,12 +203,14 @@ ColumnLayout {
             MaterialIcon {
                 id: scanIcon
 
+                Layout.topMargin: Math.round(fontInfo.pointSize * 0.0575)
                 animate: true
                 text: "wifi_find"
                 color: Colours.palette.m3onPrimaryContainer
             }
 
             StyledText {
+                Layout.topMargin: -Math.round(scanIcon.fontInfo.pointSize * 0.0575)
                 text: qsTr("Rescan networks")
                 color: Colours.palette.m3onPrimaryContainer
             }
@@ -303,8 +303,6 @@ ColumnLayout {
             }
 
             StyledRect {
-                id: connectBtn
-
                 implicitWidth: implicitHeight
                 implicitHeight: connectIcon.implicitHeight + Appearance.padding.small
 
@@ -354,8 +352,7 @@ ColumnLayout {
             if (Nmcli.active && root.connectingToSsid === Nmcli.active.ssid) {
                 root.connectingToSsid = "";
                 // Close password dialog if we successfully connected
-                if (root.showPasswordDialog && root.passwordNetwork && 
-                    Nmcli.active.ssid === root.passwordNetwork.ssid) {
+                if (root.showPasswordDialog && root.passwordNetwork && Nmcli.active.ssid === root.passwordNetwork.ssid) {
                     root.showPasswordDialog = false;
                     root.passwordNetwork = null;
                     if (root.wrapper.currentName === "wirelesspassword") {

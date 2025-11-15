@@ -228,11 +228,28 @@ RowLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        ColumnLayout {
+        StyledFlickable {
+            id: rightFlickable
+
             anchors.fill: parent
             anchors.margins: Appearance.padding.large * 2
 
-            spacing: Appearance.spacing.normal
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: contentLayout.implicitHeight
+            clip: true
+
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: rightFlickable
+            }
+
+            ColumnLayout {
+                id: contentLayout
+
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+
+                spacing: Appearance.spacing.normal
 
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
@@ -369,6 +386,7 @@ RowLayout {
                 opacity: enabled ? 1 : 0.5
                 onMoved: Audio.setSourceVolume(value)
             }
+        }
         }
 
         InnerBorder {

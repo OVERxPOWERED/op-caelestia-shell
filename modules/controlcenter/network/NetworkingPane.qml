@@ -414,12 +414,8 @@ Item {
                     property var pane: ethernetPane || wirelessPane
                     property string paneId: ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "")
 
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.leftMargin: Appearance.padding.large * 2
-                    anchors.rightMargin: Appearance.padding.large * 2
+                    anchors.fill: parent
+                    anchors.margins: Appearance.padding.large * 2
 
                     opacity: 1
                     scale: 1

@@ -316,8 +316,6 @@ RowLayout {
 
                     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isSelected ? Colours.tPalette.m3surfaceContainer.a : 0)
                     radius: Appearance.rounding.normal
-                    border.width: isSelected ? 1 : 0
-                    border.color: Colours.palette.m3primary
 
                     StateLayer {
                         function onClicked(): void {

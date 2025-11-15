@@ -304,7 +304,7 @@ RowLayout {
                                     id: muteIcon
 
                                     anchors.centerIn: parent
-                                    text: Audio.muted ? "volume_off" : "volume_up"
+                                    text: Audio.muted ? "volume_off" : "volume_mute"
                                     color: Audio.muted ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
                                 }
                             }
@@ -374,7 +374,7 @@ RowLayout {
                                     id: muteInputIcon
 
                                     anchors.centerIn: parent
-                                    text: Audio.sourceMuted ? "mic_off" : "mic"
+                                    text: "mic_off"
                                     color: Audio.sourceMuted ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
                                 }
                             }

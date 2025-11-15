@@ -9,7 +9,6 @@ import qs.services
 import qs.config
 import qs.utils
 import Quickshell
-import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 
@@ -19,171 +18,98 @@ RowLayout {
     required property Session session
 
     // Bar Behavior
-    property bool persistent: true
-    property bool showOnHover: true
-    property int dragThreshold: 20
+    property bool persistent: Config.bar.persistent ?? true
+    property bool showOnHover: Config.bar.showOnHover ?? true
+    property int dragThreshold: Config.bar.dragThreshold ?? 20
 
     // Status Icons
-    property bool showAudio: true
-    property bool showMicrophone: true
-    property bool showKbLayout: false
-    property bool showNetwork: true
-    property bool showBluetooth: true
-    property bool showBattery: true
-    property bool showLockStatus: true
+    property bool showAudio: Config.bar.status.showAudio ?? true
+    property bool showMicrophone: Config.bar.status.showMicrophone ?? true
+    property bool showKbLayout: Config.bar.status.showKbLayout ?? false
+    property bool showNetwork: Config.bar.status.showNetwork ?? true
+    property bool showBluetooth: Config.bar.status.showBluetooth ?? true
+    property bool showBattery: Config.bar.status.showBattery ?? true
+    property bool showLockStatus: Config.bar.status.showLockStatus ?? true
 
     // Tray Settings
-    property bool trayBackground: false
-    property bool trayCompact: false
-    property bool trayRecolour: false
+    property bool trayBackground: Config.bar.tray.background ?? false
+    property bool trayCompact: Config.bar.tray.compact ?? false
+    property bool trayRecolour: Config.bar.tray.recolour ?? false
 
     // Workspaces
-    property int workspacesShown: 5
-    property bool workspacesActiveIndicator: true
-    property bool workspacesOccupiedBg: false
-    property bool workspacesShowWindows: false
-    property bool workspacesPerMonitor: true
+    property int workspacesShown: Config.bar.workspaces.shown ?? 5
+    property bool workspacesActiveIndicator: Config.bar.workspaces.activeIndicator ?? true
+    property bool workspacesOccupiedBg: Config.bar.workspaces.occupiedBg ?? false
+    property bool workspacesShowWindows: Config.bar.workspaces.showWindows ?? false
+    property bool workspacesPerMonitor: Config.bar.workspaces.perMonitorWorkspaces ?? true
 
     anchors.fill: parent
 
     spacing: 0
 
-    FileView {
-        id: configFile
-
-        path: `${Paths.config}/shell.json`
-        watchChanges: true
-
-        onLoaded: {
-            try {
-                const config = JSON.parse(text());
-                updateFromConfig(config);
-            } catch (e) {
-                console.error("Failed to parse config:", e);
-            }
-        }
-    }
-
-    function updateFromConfig(config) {
+    Component.onCompleted: {
         // Update clock toggle
-        if (config.bar && config.bar.clock) {
-            clockShowIconSwitch.checked = config.bar.clock.showIcon !== false;
-        }
+        clockShowIconSwitch.checked = Config.bar.clock.showIcon ?? true;
 
         // Update entries
-        if (config.bar && config.bar.entries) {
+        if (Config.bar.entries) {
             entriesModel.clear();
-            for (const entry of config.bar.entries) {
+            for (let i = 0; i < Config.bar.entries.length; i++) {
+                const entry = Config.bar.entries[i];
                 entriesModel.append({
                     id: entry.id,
                     enabled: entry.enabled !== false
                 });
             }
         }
-
-        // Update bar behavior
-        if (config.bar) {
-            root.persistent = config.bar.persistent !== false;
-            root.showOnHover = config.bar.showOnHover !== false;
-            root.dragThreshold = config.bar.dragThreshold || 20;
-        }
-
-        // Update status icons
-        if (config.bar && config.bar.status) {
-            root.showAudio = config.bar.status.showAudio !== false;
-            root.showMicrophone = config.bar.status.showMicrophone !== false;
-            root.showKbLayout = config.bar.status.showKbLayout === true;
-            root.showNetwork = config.bar.status.showNetwork !== false;
-            root.showBluetooth = config.bar.status.showBluetooth !== false;
-            root.showBattery = config.bar.status.showBattery !== false;
-            root.showLockStatus = config.bar.status.showLockStatus !== false;
-        }
-
-        // Update tray settings
-        if (config.bar && config.bar.tray) {
-            root.trayBackground = config.bar.tray.background === true;
-            root.trayCompact = config.bar.tray.compact === true;
-            root.trayRecolour = config.bar.tray.recolour === true;
-        }
-
-        // Update workspaces
-        if (config.bar && config.bar.workspaces) {
-            root.workspacesShown = config.bar.workspaces.shown || 5;
-            root.workspacesActiveIndicator = config.bar.workspaces.activeIndicator !== false;
-            root.workspacesOccupiedBg = config.bar.workspaces.occupiedBg === true;
-            root.workspacesShowWindows = config.bar.workspaces.showWindows === true;
-            root.workspacesPerMonitor = config.bar.workspaces.perMonitorWorkspaces !== false;
-        }
     }
 
     function saveConfig(entryIndex, entryEnabled) {
-        if (!configFile.loaded) {
-            return;
-        }
+        // Update clock setting
+        Config.bar.clock.showIcon = clockShowIconSwitch.checked;
 
-        try {
-            const config = JSON.parse(configFile.text());
+        // Update bar behavior
+        Config.bar.persistent = root.persistent;
+        Config.bar.showOnHover = root.showOnHover;
+        Config.bar.dragThreshold = root.dragThreshold;
 
-            // Ensure bar object exists
-            if (!config.bar) config.bar = {};
+        // Update status icons
+        Config.bar.status.showAudio = root.showAudio;
+        Config.bar.status.showMicrophone = root.showMicrophone;
+        Config.bar.status.showKbLayout = root.showKbLayout;
+        Config.bar.status.showNetwork = root.showNetwork;
+        Config.bar.status.showBluetooth = root.showBluetooth;
+        Config.bar.status.showBattery = root.showBattery;
+        Config.bar.status.showLockStatus = root.showLockStatus;
 
-            // Update clock setting
-            if (!config.bar.clock) config.bar.clock = {};
-            config.bar.clock.showIcon = clockShowIconSwitch.checked;
+        // Update tray settings
+        Config.bar.tray.background = root.trayBackground;
+        Config.bar.tray.compact = root.trayCompact;
+        Config.bar.tray.recolour = root.trayRecolour;
 
-            // Update bar behavior
-            config.bar.persistent = root.persistent;
-            config.bar.showOnHover = root.showOnHover;
-            config.bar.dragThreshold = root.dragThreshold;
+        // Update workspaces
+        Config.bar.workspaces.shown = root.workspacesShown;
+        Config.bar.workspaces.activeIndicator = root.workspacesActiveIndicator;
+        Config.bar.workspaces.occupiedBg = root.workspacesOccupiedBg;
+        Config.bar.workspaces.showWindows = root.workspacesShowWindows;
+        Config.bar.workspaces.perMonitorWorkspaces = root.workspacesPerMonitor;
 
-            // Update status icons
-            if (!config.bar.status) config.bar.status = {};
-            config.bar.status.showAudio = root.showAudio;
-            config.bar.status.showMicrophone = root.showMicrophone;
-            config.bar.status.showKbLayout = root.showKbLayout;
-            config.bar.status.showNetwork = root.showNetwork;
-            config.bar.status.showBluetooth = root.showBluetooth;
-            config.bar.status.showBattery = root.showBattery;
-            config.bar.status.showLockStatus = root.showLockStatus;
-
-            // Update tray settings
-            if (!config.bar.tray) config.bar.tray = {};
-            config.bar.tray.background = root.trayBackground;
-            config.bar.tray.compact = root.trayCompact;
-            config.bar.tray.recolour = root.trayRecolour;
-
-            // Update workspaces
-            if (!config.bar.workspaces) config.bar.workspaces = {};
-            config.bar.workspaces.shown = root.workspacesShown;
-            config.bar.workspaces.activeIndicator = root.workspacesActiveIndicator;
-            config.bar.workspaces.occupiedBg = root.workspacesOccupiedBg;
-            config.bar.workspaces.showWindows = root.workspacesShowWindows;
-            config.bar.workspaces.perMonitorWorkspaces = root.workspacesPerMonitor;
-
-            // Update entries from the model (same approach as clock - use provided value if available)
-            if (!config.bar.entries) config.bar.entries = [];
-            config.bar.entries = [];
-
-            for (let i = 0; i < entriesModel.count; i++) {
-                const entry = entriesModel.get(i);
-                // If this is the entry being updated, use the provided value (same as clock toggle reads from switch)
-                // Otherwise use the value from the model
-                let enabled = entry.enabled;
-                if (entryIndex !== undefined && i === entryIndex) {
-                    enabled = entryEnabled;
-                }
-                config.bar.entries.push({
-                    id: entry.id,
-                    enabled: enabled
-                });
+        // Update entries from the model (same approach as clock - use provided value if available)
+        const entries = [];
+        for (let i = 0; i < entriesModel.count; i++) {
+            const entry = entriesModel.get(i);
+            // If this is the entry being updated, use the provided value (same as clock toggle reads from switch)
+            // Otherwise use the value from the model
+            let enabled = entry.enabled;
+            if (entryIndex !== undefined && i === entryIndex) {
+                enabled = entryEnabled;
             }
-
-            // Write back to file using setText (same simple approach that worked for clock)
-            const jsonString = JSON.stringify(config, null, 4);
-            configFile.setText(jsonString);
-        } catch (e) {
-            console.error("Failed to save config:", e);
+            entries.push({
+                id: entry.id,
+                enabled: enabled
+            });
         }
+        Config.bar.entries = entries;
     }
 
     ListModel {

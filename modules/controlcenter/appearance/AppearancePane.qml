@@ -12,7 +12,6 @@ import qs.config
 import qs.utils
 import Caelestia.Models
 import Quickshell
-import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 
@@ -22,116 +21,31 @@ RowLayout {
     required property Session session
 
     // Appearance settings
-    property real animDurationsScale: 1
-    property string fontFamilyMaterial: "Material Symbols Rounded"
-    property string fontFamilyMono: "CaskaydiaCove NF"
-    property string fontFamilySans: "Rubik"
-    property real fontSizeScale: 1
-    property real paddingScale: 1
-    property real roundingScale: 1
-    property real spacingScale: 1
-    property bool transparencyEnabled: false
-    property real transparencyBase: 0.85
-    property real transparencyLayers: 0.4
-    property real borderRounding: 1
-    property real borderThickness: 1
+    property real animDurationsScale: Config.appearance.anim.durations.scale ?? 1
+    property string fontFamilyMaterial: Config.appearance.font.family.material ?? "Material Symbols Rounded"
+    property string fontFamilyMono: Config.appearance.font.family.mono ?? "CaskaydiaCove NF"
+    property string fontFamilySans: Config.appearance.font.family.sans ?? "Rubik"
+    property real fontSizeScale: Config.appearance.font.size.scale ?? 1
+    property real paddingScale: Config.appearance.padding.scale ?? 1
+    property real roundingScale: Config.appearance.rounding.scale ?? 1
+    property real spacingScale: Config.appearance.spacing.scale ?? 1
+    property bool transparencyEnabled: Config.appearance.transparency.enabled ?? false
+    property real transparencyBase: Config.appearance.transparency.base ?? 0.85
+    property real transparencyLayers: Config.appearance.transparency.layers ?? 0.4
+    property real borderRounding: Config.border.rounding ?? 1
+    property real borderThickness: Config.border.thickness ?? 1
 
     // Background settings
-    property bool desktopClockEnabled: true
-    property bool backgroundEnabled: true
-    property bool visualiserEnabled: true
-    property bool visualiserAutoHide: true
-    property real visualiserRounding: 1
-    property real visualiserSpacing: 1
+    property bool desktopClockEnabled: Config.background.desktopClock.enabled ?? false
+    property bool backgroundEnabled: Config.background.enabled ?? true
+    property bool visualiserEnabled: Config.background.visualiser.enabled ?? false
+    property bool visualiserAutoHide: Config.background.visualiser.autoHide ?? true
+    property real visualiserRounding: Config.background.visualiser.rounding ?? 1
+    property real visualiserSpacing: Config.background.visualiser.spacing ?? 1
 
     anchors.fill: parent
 
     spacing: 0
-
-    FileView {
-        id: configFile
-
-        path: `${Paths.config}/shell.json`
-        watchChanges: true
-
-        onLoaded: {
-            try {
-                const config = JSON.parse(text());
-                updateFromConfig(config);
-            } catch (e) {
-                console.error("Failed to parse config:", e);
-            }
-        }
-
-        onSaveFailed: err => {
-            console.error("Failed to save config file:", err);
-        }
-    }
-
-    function updateFromConfig(config) {
-        // Update appearance settings
-        if (config.appearance) {
-            if (config.appearance.anim && config.appearance.anim.durations) {
-                root.animDurationsScale = config.appearance.anim.durations.scale ?? 1;
-            }
-            if (config.appearance.font) {
-                if (config.appearance.font.family) {
-                    root.fontFamilyMaterial = config.appearance.font.family.material ?? "Material Symbols Rounded";
-                    root.fontFamilyMono = config.appearance.font.family.mono ?? "CaskaydiaCove NF";
-                    root.fontFamilySans = config.appearance.font.family.sans ?? "Rubik";
-                }
-                if (config.appearance.font.size) {
-                    root.fontSizeScale = config.appearance.font.size.scale ?? 1;
-                }
-            }
-            if (config.appearance.padding) {
-                root.paddingScale = config.appearance.padding.scale ?? 1;
-            }
-            if (config.appearance.rounding) {
-                root.roundingScale = config.appearance.rounding.scale ?? 1;
-            }
-            if (config.appearance.spacing) {
-                root.spacingScale = config.appearance.spacing.scale ?? 1;
-            }
-            if (config.appearance.transparency) {
-                root.transparencyEnabled = config.appearance.transparency.enabled ?? false;
-                root.transparencyBase = config.appearance.transparency.base ?? 0.85;
-                root.transparencyLayers = config.appearance.transparency.layers ?? 0.4;
-            }
-        }
-
-        // Update border settings
-        if (config.border) {
-            root.borderRounding = config.border.rounding ?? 1;
-            root.borderThickness = config.border.thickness ?? 1;
-        }
-
-        // Update background settings
-        if (config.background) {
-            root.desktopClockEnabled = config.background.desktopClock?.enabled !== undefined ? config.background.desktopClock.enabled : false;
-            root.backgroundEnabled = config.background.enabled !== undefined ? config.background.enabled : true;
-            if (config.background.visualiser) {
-                root.visualiserEnabled = config.background.visualiser.enabled !== undefined ? config.background.visualiser.enabled : false;
-                root.visualiserAutoHide = config.background.visualiser.autoHide !== undefined ? config.background.visualiser.autoHide : true;
-                root.visualiserRounding = config.background.visualiser.rounding !== undefined ? config.background.visualiser.rounding : 1;
-                root.visualiserSpacing = config.background.visualiser.spacing !== undefined ? config.background.visualiser.spacing : 1;
-            } else {
-                // Set defaults if visualiser object doesn't exist (matching BackgroundConfig defaults)
-                root.visualiserEnabled = false;
-                root.visualiserAutoHide = true;
-                root.visualiserRounding = 1;
-                root.visualiserSpacing = 1;
-            }
-        } else {
-            // Set defaults if background object doesn't exist (matching BackgroundConfig defaults)
-            root.desktopClockEnabled = false;
-            root.backgroundEnabled = true;
-            root.visualiserEnabled = false;
-            root.visualiserAutoHide = true;
-            root.visualiserRounding = 1;
-            root.visualiserSpacing = 1;
-        }
-    }
 
     function collapseAllSections(exceptSection) {
         if (exceptSection !== themeModeSection) themeModeSection.expanded = false;
@@ -146,73 +60,40 @@ RowLayout {
     }
 
     function saveConfig() {
-        if (!configFile.loaded) {
-            console.error("Config file not loaded yet");
-            return;
-        }
+        // Update animations
+        Config.appearance.anim.durations.scale = root.animDurationsScale;
 
-        try {
-            const config = JSON.parse(configFile.text());
+        // Update fonts
+        Config.appearance.font.family.material = root.fontFamilyMaterial;
+        Config.appearance.font.family.mono = root.fontFamilyMono;
+        Config.appearance.font.family.sans = root.fontFamilySans;
+        Config.appearance.font.size.scale = root.fontSizeScale;
 
-            // Ensure appearance object exists
-            if (!config.appearance) config.appearance = {};
+        // Update scales
+        Config.appearance.padding.scale = root.paddingScale;
+        Config.appearance.rounding.scale = root.roundingScale;
+        Config.appearance.spacing.scale = root.spacingScale;
 
-            // Update animations
-            if (!config.appearance.anim) config.appearance.anim = {};
-            if (!config.appearance.anim.durations) config.appearance.anim.durations = {};
-            config.appearance.anim.durations.scale = root.animDurationsScale;
+        // Update transparency
+        Config.appearance.transparency.enabled = root.transparencyEnabled;
+        Config.appearance.transparency.base = root.transparencyBase;
+        Config.appearance.transparency.layers = root.transparencyLayers;
 
-            // Update fonts
-            if (!config.appearance.font) config.appearance.font = {};
-            if (!config.appearance.font.family) config.appearance.font.family = {};
-            config.appearance.font.family.material = root.fontFamilyMaterial;
-            config.appearance.font.family.mono = root.fontFamilyMono;
-            config.appearance.font.family.sans = root.fontFamilySans;
-            if (!config.appearance.font.size) config.appearance.font.size = {};
-            config.appearance.font.size.scale = root.fontSizeScale;
+        // Update desktop clock
+        Config.background.desktopClock.enabled = root.desktopClockEnabled;
 
-            // Update scales
-            if (!config.appearance.padding) config.appearance.padding = {};
-            config.appearance.padding.scale = root.paddingScale;
-            if (!config.appearance.rounding) config.appearance.rounding = {};
-            config.appearance.rounding.scale = root.roundingScale;
-            if (!config.appearance.spacing) config.appearance.spacing = {};
-            config.appearance.spacing.scale = root.spacingScale;
+        // Update background enabled
+        Config.background.enabled = root.backgroundEnabled;
 
-            // Update transparency
-            if (!config.appearance.transparency) config.appearance.transparency = {};
-            config.appearance.transparency.enabled = root.transparencyEnabled;
-            config.appearance.transparency.base = root.transparencyBase;
-            config.appearance.transparency.layers = root.transparencyLayers;
+        // Update visualiser
+        Config.background.visualiser.enabled = root.visualiserEnabled;
+        Config.background.visualiser.autoHide = root.visualiserAutoHide;
+        Config.background.visualiser.rounding = root.visualiserRounding;
+        Config.background.visualiser.spacing = root.visualiserSpacing;
 
-            // Ensure background object exists
-            if (!config.background) config.background = {};
-
-            // Update desktop clock
-            if (!config.background.desktopClock) config.background.desktopClock = {};
-            config.background.desktopClock.enabled = root.desktopClockEnabled;
-
-            // Update background enabled
-            config.background.enabled = root.backgroundEnabled;
-
-            // Update visualiser
-            if (!config.background.visualiser) config.background.visualiser = {};
-            config.background.visualiser.enabled = root.visualiserEnabled;
-            config.background.visualiser.autoHide = root.visualiserAutoHide;
-            config.background.visualiser.rounding = root.visualiserRounding;
-            config.background.visualiser.spacing = root.visualiserSpacing;
-
-            // Update border
-            if (!config.border) config.border = {};
-            config.border.rounding = root.borderRounding;
-            config.border.thickness = root.borderThickness;
-
-            // Write back to file using setText (same simple approach that worked for taskbar)
-            const jsonString = JSON.stringify(config, null, 4);
-            configFile.setText(jsonString);
-        } catch (e) {
-            console.error("Failed to save config:", e);
-        }
+        // Update border
+        Config.border.rounding = root.borderRounding;
+        Config.border.thickness = root.borderThickness;
     }
 
     Item {

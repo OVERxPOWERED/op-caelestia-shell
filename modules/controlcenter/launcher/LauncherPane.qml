@@ -11,7 +11,6 @@ import qs.config
 import qs.utils
 import Caelestia
 import Quickshell
-import Quickshell.Io
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
@@ -29,74 +28,46 @@ RowLayout {
 
     spacing: 0
 
-    FileView {
-        id: configFile
-
-        path: `${Paths.config}/shell.json`
-        watchChanges: true
-
-        onLoaded: {
-            try {
-                const config = JSON.parse(text());
-                updateToggleState();
-            } catch (e) {
-                console.error("Failed to parse config:", e);
-            }
-        }
-    }
-
     function updateToggleState() {
-        if (!root.selectedApp || !configFile.loaded) {
+        if (!root.selectedApp) {
             root.hideFromLauncherChecked = false;
             return;
         }
 
-        try {
-            const config = JSON.parse(configFile.text());
-            const appId = root.selectedApp.id || root.selectedApp.entry?.id;
+        const appId = root.selectedApp.id || root.selectedApp.entry?.id;
 
-            if (config.launcher && config.launcher.hiddenApps) {
-                root.hideFromLauncherChecked = config.launcher.hiddenApps.includes(appId);
-            } else {
-                root.hideFromLauncherChecked = false;
-            }
-        } catch (e) {
-            console.error("Failed to update toggle state:", e);
+        if (Config.launcher.hiddenApps && Config.launcher.hiddenApps.length > 0) {
+            root.hideFromLauncherChecked = Config.launcher.hiddenApps.includes(appId);
+        } else {
+            root.hideFromLauncherChecked = false;
         }
     }
 
     function saveHiddenApps(isHidden) {
-        if (!configFile.loaded || !root.selectedApp) {
+        if (!root.selectedApp) {
             return;
         }
 
-        try {
-            const config = JSON.parse(configFile.text());
-            const appId = root.selectedApp.id || root.selectedApp.entry?.id;
+        const appId = root.selectedApp.id || root.selectedApp.entry?.id;
 
-            if (!config.launcher) config.launcher = {};
-            if (!config.launcher.hiddenApps) config.launcher.hiddenApps = [];
+        // Create a new array to ensure change detection
+        const hiddenApps = Config.launcher.hiddenApps ? [...Config.launcher.hiddenApps] : [];
 
-            const hiddenApps = config.launcher.hiddenApps;
-
-            if (isHidden) {
-                // Add to hiddenApps if not already there
-                if (!hiddenApps.includes(appId)) {
-                    hiddenApps.push(appId);
-                }
-            } else {
-                // Remove from hiddenApps
-                const index = hiddenApps.indexOf(appId);
-                if (index !== -1) {
-                    hiddenApps.splice(index, 1);
-                }
+        if (isHidden) {
+            // Add to hiddenApps if not already there
+            if (!hiddenApps.includes(appId)) {
+                hiddenApps.push(appId);
             }
-
-            const jsonString = JSON.stringify(config, null, 4);
-            configFile.setText(jsonString);
-        } catch (e) {
-            console.error("Failed to save config:", e);
+        } else {
+            // Remove from hiddenApps
+            const index = hiddenApps.indexOf(appId);
+            if (index !== -1) {
+                hiddenApps.splice(index, 1);
+            }
         }
+
+        // Update Config to trigger save
+        Config.launcher.hiddenApps = hiddenApps;
     }
 
     onSelectedAppChanged: {
@@ -437,7 +408,7 @@ RowLayout {
                             visible: root.selectedApp !== null
                             label: qsTr("Hide from launcher")
                             checked: root.hideFromLauncherChecked
-                            enabled: root.selectedApp !== null && configFile.loaded
+                            enabled: root.selectedApp !== null
                             onToggled: checked => {
                                 root.hideFromLauncherChecked = checked;
                                 root.saveHiddenApps(checked);

@@ -9,6 +9,7 @@ import qs.components.effects
 import qs.components.containers
 import qs.services
 import qs.config
+import qs.utils
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
@@ -321,7 +322,7 @@ RowLayout {
                                             id: wirelessIcon
 
                                             anchors.centerIn: parent
-                                            text: modelData.isSecure ? "lock" : "wifi"
+                                            text: Icons.getNetworkIcon(modelData.strength)
                                             font.pointSize: Appearance.font.size.large
                                             fill: modelData.active ? 1 : 0
                                             color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface

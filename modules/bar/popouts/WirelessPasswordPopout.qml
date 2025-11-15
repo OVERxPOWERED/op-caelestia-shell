@@ -206,7 +206,15 @@ ColumnLayout {
 
                 focus: true
                 activeFocusOnTab: true
+
+                property string passwordBuffer: ""
+
                 Keys.onPressed: event => {
+                    // Ensure we have focus when receiving keyboard input
+                    if (!activeFocus) {
+                        forceActiveFocus();
+                    }
+                    
                     if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
                         if (connectButton.enabled) {
                             connectButton.clicked();
@@ -224,8 +232,6 @@ ColumnLayout {
                         event.accepted = true;
                     }
                 }
-
-                property string passwordBuffer: ""
 
                 Connections {
                     target: root
@@ -250,11 +256,23 @@ ColumnLayout {
                 StyledRect {
                     anchors.fill: parent
                     radius: Appearance.rounding.normal
-                    color: Colours.tPalette.m3surfaceContainer
-                    border.width: passwordContainer.activeFocus ? 2 : 1
-                    border.color: passwordContainer.activeFocus ? Colours.palette.m3primary : Colours.palette.m3outline
+                    color: passwordContainer.activeFocus 
+                        ? Qt.lighter(Colours.tPalette.m3surfaceContainer, 1.05)
+                        : Colours.tPalette.m3surfaceContainer
+                    border.width: passwordContainer.activeFocus ? 4 : (root.shouldBeVisible ? 1 : 0)
+                    border.color: passwordContainer.activeFocus 
+                        ? Colours.palette.m3primary 
+                        : (root.shouldBeVisible ? Colours.palette.m3outline : "transparent")
 
                     Behavior on border.color {
+                        CAnim {}
+                    }
+
+                    Behavior on border.width {
+                        CAnim {}
+                    }
+
+                    Behavior on color {
                         CAnim {}
                     }
                 }
@@ -262,6 +280,7 @@ ColumnLayout {
                 StateLayer {
                     hoverEnabled: false
                     cursorShape: Qt.IBeamCursor
+                    radius: Appearance.rounding.normal
 
                     function onClicked(): void {
                         passwordContainer.forceActiveFocus();

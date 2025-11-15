@@ -183,14 +183,17 @@ ColumnLayout {
 
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Appearance.spacing.small
-                visible: connectButton.connecting
+                visible: connectButton.connecting || connectButton.hasError
                 text: {
+                    if (connectButton.hasError) {
+                        return qsTr("Connection failed. Please check your password and try again.");
+                    }
                     if (connectButton.connecting) {
                         return qsTr("Connecting...");
                     }
                     return "";
                 }
-                color: Colours.palette.m3onSurfaceVariant
+                color: connectButton.hasError ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
                 font.pointSize: Appearance.font.size.small
                 font.weight: 400
                 wrapMode: Text.WordWrap
@@ -213,6 +216,11 @@ ColumnLayout {
                     // Ensure we have focus when receiving keyboard input
                     if (!activeFocus) {
                         forceActiveFocus();
+                    }
+                    
+                    // Clear error when user starts typing
+                    if (connectButton.hasError && event.text && event.text.length > 0) {
+                        connectButton.hasError = false;
                     }
                     
                     if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
@@ -241,6 +249,7 @@ ColumnLayout {
                                 passwordContainer.forceActiveFocus();
                             }, 50);
                             passwordContainer.passwordBuffer = "";
+                            connectButton.hasError = false;
                         }
                     }
                 }
@@ -259,10 +268,16 @@ ColumnLayout {
                     color: passwordContainer.activeFocus 
                         ? Qt.lighter(Colours.tPalette.m3surfaceContainer, 1.05)
                         : Colours.tPalette.m3surfaceContainer
-                    border.width: passwordContainer.activeFocus ? 4 : (root.shouldBeVisible ? 1 : 0)
-                    border.color: passwordContainer.activeFocus 
-                        ? Colours.palette.m3primary 
-                        : (root.shouldBeVisible ? Colours.palette.m3outline : "transparent")
+                    border.width: passwordContainer.activeFocus || connectButton.hasError ? 4 : (root.shouldBeVisible ? 1 : 0)
+                    border.color: {
+                        if (connectButton.hasError) {
+                            return Colours.palette.m3error;
+                        }
+                        if (passwordContainer.activeFocus) {
+                            return Colours.palette.m3primary;
+                        }
+                        return root.shouldBeVisible ? Colours.palette.m3outline : "transparent";
+                    }
 
                     Behavior on border.color {
                         CAnim {}
@@ -409,6 +424,7 @@ ColumnLayout {
                     enabled: passwordContainer.passwordBuffer.length > 0 && !connecting
 
                     property bool connecting: false
+                    property bool hasError: false
 
                     onClicked: {
                         if (!root.network || connecting) {
@@ -419,6 +435,9 @@ ColumnLayout {
                         if (!password || password.length === 0) {
                             return;
                         }
+
+                        // Clear any previous error
+                        hasError = false;
 
                         // Set connecting state
                         connecting = true;
@@ -437,19 +456,26 @@ ColumnLayout {
                                     // Shouldn't happen since we provided password
                                     connectionMonitor.stop();
                                     connecting = false;
+                                    hasError = true;
                                     enabled = true;
                                     text = qsTr("Connect");
+                                    passwordContainer.passwordBuffer = "";
+                                    // Delete the failed connection
+                                    if (root.network && root.network.ssid) {
+                                        Nmcli.forgetNetwork(root.network.ssid, () => {});
+                                    }
                                 } else {
-                                    // Connection failed immediately - return to network popout
+                                    // Connection failed immediately - show error
                                     connectionMonitor.stop();
                                     connecting = false;
+                                    hasError = true;
                                     enabled = true;
                                     text = qsTr("Connect");
-                                    Qt.callLater(() => {
-                                        if (root.wrapper.currentName === "wirelesspassword") {
-                                            root.wrapper.currentName = "network";
-                                        }
-                                    }, 500);
+                                    passwordContainer.passwordBuffer = "";
+                                    // Delete the failed connection
+                                    if (root.network && root.network.ssid) {
+                                        Nmcli.forgetNetwork(root.network.ssid, () => {});
+                                    }
                                 }
                             }
                         );
@@ -498,14 +524,14 @@ ColumnLayout {
             if (connectionMonitor.repeatCount > 10) {
                 connectionMonitor.stop();
                 connectButton.connecting = false;
+                connectButton.hasError = true;
                 connectButton.enabled = true;
                 connectButton.text = qsTr("Connect");
-                // Return to network popout on timeout failure
-                Qt.callLater(() => {
-                    if (root.wrapper.currentName === "wirelesspassword") {
-                        root.wrapper.currentName = "network";
-                    }
-                }, 500);
+                passwordContainer.passwordBuffer = "";
+                // Delete the failed connection
+                if (root.network && root.network.ssid) {
+                    Nmcli.forgetNetwork(root.network.ssid, () => {});
+                }
             }
         }
     }
@@ -540,14 +566,12 @@ ColumnLayout {
             if (root.shouldBeVisible && root.network && root.network.ssid === ssid && connectButton.connecting) {
                 connectionMonitor.stop();
                 connectButton.connecting = false;
+                connectButton.hasError = true;
                 connectButton.enabled = true;
                 connectButton.text = qsTr("Connect");
-                // Return to network popout on connection failure
-                Qt.callLater(() => {
-                    if (root.wrapper.currentName === "wirelesspassword") {
-                        root.wrapper.currentName = "network";
-                    }
-                }, 500);
+                passwordContainer.passwordBuffer = "";
+                // Delete the failed connection
+                Nmcli.forgetNetwork(ssid, () => {});
             }
         }
     }
@@ -560,6 +584,7 @@ ColumnLayout {
         isClosing = true;
         passwordContainer.passwordBuffer = "";
         connectButton.connecting = false;
+        connectButton.hasError = false;
         connectButton.text = qsTr("Connect");
         connectionMonitor.stop();
         

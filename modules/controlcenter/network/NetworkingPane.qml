@@ -30,6 +30,8 @@ RowLayout {
 
         // Left pane - networking list with collapsible sections
         StyledFlickable {
+            id: leftFlickable
+
             anchors.fill: parent
             anchors.margins: Appearance.padding.large + Appearance.padding.normal
             anchors.leftMargin: Appearance.padding.large
@@ -37,6 +39,10 @@ RowLayout {
             flickableDirection: Flickable.VerticalFlick
             contentHeight: leftContent.height
             clip: true
+
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: leftFlickable
+            }
 
             ColumnLayout {
                 id: leftContent
@@ -472,9 +478,15 @@ RowLayout {
             id: settings
 
             StyledFlickable {
+                id: settingsFlickable
+
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: settingsInner.height
                 clip: true
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: settingsFlickable
+                }
 
                 NetworkSettings {
                     id: settingsInner

@@ -605,7 +605,7 @@ ColumnLayout {
 
         implicitWidth: rowLayout.implicitWidth + Appearance.padding.normal * 2
         implicitHeight: rowLayout.implicitHeight + Appearance.padding.small
-        radius: Appearance.rounding.normal
+        radius: Appearance.rounding.small
 
         StateLayer {
             id: stateLayer

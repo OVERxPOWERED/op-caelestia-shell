@@ -110,7 +110,7 @@ Item {
             Layout.topMargin: Appearance.spacing.normal
             color: Colours.palette.m3primaryContainer
             onColor: Colours.palette.m3onPrimaryContainer
-            text: qsTr("Open Settings")
+            text: qsTr("Open settings")
             icon: "settings"
 
             onClicked: {

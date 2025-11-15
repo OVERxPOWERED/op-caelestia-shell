@@ -15,7 +15,7 @@ StyledRect {
     property string icon: ""
 
     implicitWidth: rowLayout.implicitWidth + Appearance.padding.normal * 2
-    implicitHeight: rowLayout.implicitHeight + Appearance.padding.small
+    implicitHeight: rowLayout.implicitHeight + Appearance.padding.small * 2
     radius: Appearance.rounding.normal
 
     StateLayer {
@@ -38,12 +38,10 @@ StyledRect {
             visible: root.icon.length > 0
             text: root.icon
             color: root.onColor
-            font.pointSize: Appearance.font.size.large
         }
 
         StyledText {
             id: label
-            Layout.leftMargin: root.icon.length > 0 ? Appearance.padding.smaller : 0
             color: parent.parent.onColor
         }
     }

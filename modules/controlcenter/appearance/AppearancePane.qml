@@ -711,25 +711,91 @@ RowLayout {
                         }
                     }
 
-                    SpinBoxRow {
-                        label: qsTr("Transparency base")
-                        min: 0
-                        max: 1
-                        value: root.transparencyBase
-                        onValueModified: value => {
-                            root.transparencyBase = value;
-                            root.saveConfig();
+                    SectionContainer {
+                        contentSpacing: Appearance.spacing.normal
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: Appearance.spacing.small
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: Appearance.spacing.normal
+
+                                StyledText {
+                                    text: qsTr("Transparency base")
+                                    font.pointSize: Appearance.font.size.normal
+                                }
+
+                                Item {
+                                    Layout.fillWidth: true
+                                }
+
+                                StyledText {
+                                    text: qsTr("%1%").arg(Math.round(root.transparencyBase * 100))
+                                    color: Colours.palette.m3outline
+                                    font.pointSize: Appearance.font.size.normal
+                                }
+                            }
+
+                            StyledSlider {
+                                id: baseSlider
+
+                                Layout.fillWidth: true
+                                implicitHeight: Appearance.padding.normal * 3
+
+                                from: 0
+                                to: 100
+                                value: root.transparencyBase * 100
+                                onMoved: {
+                                    root.transparencyBase = baseSlider.value / 100;
+                                    root.saveConfig();
+                                }
+                            }
                         }
                     }
 
-                    SpinBoxRow {
-                        label: qsTr("Transparency layers")
-                        min: 0
-                        max: 1
-                        value: root.transparencyLayers
-                        onValueModified: value => {
-                            root.transparencyLayers = value;
-                            root.saveConfig();
+                    SectionContainer {
+                        contentSpacing: Appearance.spacing.normal
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: Appearance.spacing.small
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: Appearance.spacing.normal
+
+                                StyledText {
+                                    text: qsTr("Transparency layers")
+                                    font.pointSize: Appearance.font.size.normal
+                                }
+
+                                Item {
+                                    Layout.fillWidth: true
+                                }
+
+                                StyledText {
+                                    text: qsTr("%1%").arg(Math.round(root.transparencyLayers * 100))
+                                    color: Colours.palette.m3outline
+                                    font.pointSize: Appearance.font.size.normal
+                                }
+                            }
+
+                            StyledSlider {
+                                id: layersSlider
+
+                                Layout.fillWidth: true
+                                implicitHeight: Appearance.padding.normal * 3
+
+                                from: 0
+                                to: 100
+                                value: root.transparencyLayers * 100
+                                onMoved: {
+                                    root.transparencyLayers = layersSlider.value / 100;
+                                    root.saveConfig();
+                                }
+                            }
                         }
                     }
                 }

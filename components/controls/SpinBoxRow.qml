@@ -13,6 +13,7 @@ StyledRect {
     required property real value
     required property real min
     required property real max
+    property real step: 1
     property var onValueModified: function(value) {}
 
     Layout.fillWidth: true
@@ -41,6 +42,7 @@ StyledRect {
         CustomSpinBox {
             min: root.min
             max: root.max
+            step: root.step
             value: root.value
             onValueModified: value => {
                 root.onValueModified(value);

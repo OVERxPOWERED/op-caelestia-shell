@@ -408,6 +408,7 @@ RowLayout {
                         label: qsTr("Animation duration scale")
                         min: 0.1
                         max: 5
+                        step: 0.1
                         value: root.animDurationsScale
                         onValueModified: value => {
                             root.animDurationsScale = value;
@@ -646,6 +647,7 @@ RowLayout {
                         label: qsTr("Font size scale")
                         min: 0.1
                         max: 5
+                        step: 0.1
                         value: root.fontSizeScale
                         onValueModified: value => {
                             root.fontSizeScale = value;
@@ -665,6 +667,7 @@ RowLayout {
                         label: qsTr("Padding scale")
                         min: 0.1
                         max: 5
+                        step: 0.1
                         value: root.paddingScale
                         onValueModified: value => {
                             root.paddingScale = value;
@@ -676,6 +679,7 @@ RowLayout {
                         label: qsTr("Rounding scale")
                         min: 0.1
                         max: 5
+                        step: 0.1
                         value: root.roundingScale
                         onValueModified: value => {
                             root.roundingScale = value;
@@ -687,6 +691,7 @@ RowLayout {
                         label: qsTr("Spacing scale")
                         min: 0.1
                         max: 5
+                        step: 0.1
                         value: root.spacingScale
                         onValueModified: value => {
                             root.spacingScale = value;
@@ -810,7 +815,8 @@ RowLayout {
                     SpinBoxRow {
                         label: qsTr("Border rounding")
                         min: 0.1
-                        max: 5
+                        max: 100
+                        step: 0.1
                         value: root.borderRounding
                         onValueModified: value => {
                             root.borderRounding = value;
@@ -821,7 +827,8 @@ RowLayout {
                     SpinBoxRow {
                         label: qsTr("Border thickness")
                         min: 0.1
-                        max: 5
+                        max: 100
+                        step: 0.1
                         value: root.borderThickness
                         onValueModified: value => {
                             root.borderThickness = value;

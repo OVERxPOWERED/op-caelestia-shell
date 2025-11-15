@@ -134,8 +134,7 @@ RowLayout {
             id: sidebarFlickable
             anchors.fill: parent
             flickableDirection: Flickable.VerticalFlick
-            contentHeight: sidebarLayout.implicitHeight + Appearance.padding.large * 2
-            clip: true
+            contentHeight: sidebarLayout.height
 
             StyledScrollBar.vertical: StyledScrollBar {
                 flickable: sidebarFlickable
@@ -531,11 +530,12 @@ RowLayout {
 
         StyledFlickable {
             anchors.fill: parent
-            anchors.margins: Appearance.padding.large * 2
+            anchors.margins: Appearance.padding.normal
+            anchors.leftMargin: 0
+            anchors.rightMargin: Appearance.padding.normal / 2
 
             flickableDirection: Flickable.VerticalFlick
-            contentHeight: contentLayout.implicitHeight
-            clip: true
+            contentHeight: contentLayout.height
 
             StyledScrollBar.vertical: StyledScrollBar {
                 flickable: parent
@@ -547,6 +547,8 @@ RowLayout {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
+                anchors.leftMargin: Appearance.padding.large * 2
+                anchors.rightMargin: Appearance.padding.large * 2
 
                 spacing: Appearance.spacing.normal
 

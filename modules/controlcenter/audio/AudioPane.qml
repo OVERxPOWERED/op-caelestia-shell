@@ -31,7 +31,10 @@ RowLayout {
             anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
             flickableDirection: Flickable.VerticalFlick
             contentHeight: leftContent.height
-            clip: true
+
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: parent
+            }
 
             ColumnLayout {
                 id: leftContent
@@ -225,17 +228,16 @@ RowLayout {
         Layout.fillHeight: true
 
         StyledFlickable {
-            id: rightFlickable
-
             anchors.fill: parent
-            anchors.margins: Appearance.padding.large * 2
+            anchors.margins: Appearance.padding.normal
+            anchors.leftMargin: 0
+            anchors.rightMargin: Appearance.padding.normal / 2
 
             flickableDirection: Flickable.VerticalFlick
-            contentHeight: contentLayout.implicitHeight
-            clip: true
+            contentHeight: contentLayout.height
 
             StyledScrollBar.vertical: StyledScrollBar {
-                flickable: rightFlickable
+                flickable: parent
             }
 
             ColumnLayout {
@@ -244,6 +246,8 @@ RowLayout {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
+                anchors.leftMargin: Appearance.padding.large * 2
+                anchors.rightMargin: Appearance.padding.large * 2
 
                 spacing: Appearance.spacing.normal
 

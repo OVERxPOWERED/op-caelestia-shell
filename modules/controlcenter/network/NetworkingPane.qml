@@ -38,12 +38,8 @@ Item {
                 id: leftFlickable
 
                 anchors.fill: parent
-                anchors.margins: Appearance.padding.large + Appearance.padding.normal
-                anchors.leftMargin: Appearance.padding.large
-                anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: leftContent.height
-                clip: true
 
                 StyledScrollBar.vertical: StyledScrollBar {
                     flickable: leftFlickable
@@ -54,6 +50,10 @@ Item {
 
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.margins: Appearance.padding.large + Appearance.padding.normal
+                    anchors.leftMargin: Appearance.padding.large
+                    anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
                     spacing: Appearance.spacing.normal
 
                     // Settings header above the collapsible sections
@@ -404,7 +404,6 @@ Item {
 
                 radius: rightBorder.innerRadius
                 color: "transparent"
-                clip: true
 
                 // Right pane - networking details/settings
                 Loader {
@@ -415,14 +414,17 @@ Item {
                     property var pane: ethernetPane || wirelessPane
                     property string paneId: ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "")
 
-                    anchors.fill: parent
-                    anchors.margins: Appearance.padding.large * 2
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.leftMargin: Appearance.padding.large * 2
+                    anchors.rightMargin: Appearance.padding.large * 2
 
                     opacity: 1
                     scale: 1
                     transformOrigin: Item.Center
 
-                    clip: true
                     asynchronous: true
                     sourceComponent: pane ? (ethernetPane ? ethernetDetails : wirelessDetails) : settings
 
@@ -476,15 +478,8 @@ Item {
                 id: settings
 
                 StyledFlickable {
-                    id: settingsFlickable
-
                     flickableDirection: Flickable.VerticalFlick
                     contentHeight: settingsInner.height
-                    clip: true
-
-                    StyledScrollBar.vertical: StyledScrollBar {
-                        flickable: settingsFlickable
-                    }
 
                     NetworkSettings {
                         id: settingsInner

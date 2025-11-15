@@ -153,6 +153,7 @@ RowLayout {
             anchors.margins: Appearance.padding.large + Appearance.padding.normal
             anchors.leftMargin: Appearance.padding.large
             anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
+            anchors.bottomMargin: 0
 
             spacing: Appearance.spacing.small
 
@@ -335,12 +336,16 @@ RowLayout {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: Appearance.padding.large * 2
+            anchors.margins: Appearance.padding.normal
+            anchors.leftMargin: 0
+            anchors.rightMargin: Appearance.padding.normal / 2
 
             spacing: Appearance.spacing.normal
 
             Item {
                 Layout.alignment: Qt.AlignHCenter
+                Layout.leftMargin: Appearance.padding.large * 2
+                Layout.rightMargin: Appearance.padding.large * 2
                 implicitWidth: iconLoader.implicitWidth
                 implicitHeight: iconLoader.implicitHeight
 
@@ -376,6 +381,8 @@ RowLayout {
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
+                Layout.leftMargin: Appearance.padding.large * 2
+                Layout.rightMargin: Appearance.padding.large * 2
                 text: root.selectedApp ? (root.selectedApp.name || root.selectedApp.entry?.name || qsTr("Application Details")) : qsTr("Launcher Applications")
                 font.pointSize: Appearance.font.size.large
                 font.bold: true
@@ -385,12 +392,13 @@ RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.topMargin: Appearance.spacing.large
+                Layout.leftMargin: Appearance.padding.large * 2
+                Layout.rightMargin: Appearance.padding.large * 2
 
                 StyledFlickable {
                     anchors.fill: parent
                     flickableDirection: Flickable.VerticalFlick
-                    contentHeight: debugLayout.implicitHeight
-                    clip: true
+                    contentHeight: debugLayout.height
 
                     StyledScrollBar.vertical: StyledScrollBar {
                         flickable: parent

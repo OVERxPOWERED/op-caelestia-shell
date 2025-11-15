@@ -549,6 +549,7 @@ RowLayout {
                 anchors.top: parent.top
                 anchors.leftMargin: Appearance.padding.large * 2
                 anchors.rightMargin: Appearance.padding.large * 2
+                anchors.topMargin: Appearance.padding.large * 2
 
                 spacing: Appearance.spacing.normal
 

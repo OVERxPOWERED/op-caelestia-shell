@@ -346,6 +346,7 @@ RowLayout {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.leftMargin: Appearance.padding.large * 2
                 Layout.rightMargin: Appearance.padding.large * 2
+                Layout.topMargin: Appearance.padding.large * 2
                 implicitWidth: iconLoader.implicitWidth
                 implicitHeight: iconLoader.implicitHeight
 

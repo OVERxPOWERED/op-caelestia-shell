@@ -344,12 +344,6 @@ RowLayout {
                                         font.weight: modelData.active ? 500 : 400
                                     }
 
-                                    StyledText {
-                                        text: qsTr("%1%").arg(modelData.strength)
-                                        color: Colours.palette.m3outline
-                                        font.pointSize: Appearance.font.size.small
-                                    }
-
                                     StyledRect {
                                         implicitWidth: implicitHeight
                                         implicitHeight: wirelessConnectIcon.implicitHeight + Appearance.padding.smaller * 2

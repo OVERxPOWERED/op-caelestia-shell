@@ -247,142 +247,151 @@ RowLayout {
 
                 spacing: Appearance.spacing.normal
 
-            MaterialIcon {
-                Layout.alignment: Qt.AlignHCenter
-                text: "volume_up"
-                font.pointSize: Appearance.font.size.extraLarge * 3
-                font.bold: true
-            }
-
-            StyledText {
-                Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Audio Settings")
-                font.pointSize: Appearance.font.size.large
-                font.bold: true
-            }
-
-            StyledText {
-                Layout.topMargin: Appearance.spacing.large
-                Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Output volume")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
-
-            RowLayout {
-                spacing: Appearance.spacing.smaller
-
-                StyledText {
-                    text: qsTr("Volume")
-                    font.pointSize: Appearance.font.size.large
-                    font.weight: 500
+                ConnectionHeader {
+                    icon: "volume_up"
+                    title: qsTr("Audio Settings")
                 }
 
-                Item {
-                    Layout.fillWidth: true
+                SectionHeader {
+                    title: qsTr("Output volume")
+                    description: qsTr("Control the volume of your output device")
                 }
 
-                StyledRect {
-                    implicitWidth: implicitHeight
-                    implicitHeight: muteIcon.implicitHeight + Appearance.padding.normal * 2
+                SectionContainer {
+                    contentSpacing: Appearance.spacing.normal
 
-                    radius: Appearance.rounding.normal
-                    color: Audio.muted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
 
-                    StateLayer {
-                        function onClicked(): void {
-                            if (Audio.sink?.audio) {
-                                Audio.sink.audio.muted = !Audio.sink.audio.muted;
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: Appearance.spacing.normal
+
+                            StyledText {
+                                text: qsTr("Volume")
+                                font.pointSize: Appearance.font.size.normal
+                                font.weight: 500
+                            }
+
+                            Item {
+                                Layout.fillWidth: true
+                            }
+
+                            StyledText {
+                                text: Audio.muted ? qsTr("Muted") : qsTr("%1%").arg(Math.round(Audio.volume * 100))
+                                color: Audio.muted ? Colours.palette.m3primary : Colours.palette.m3outline
+                                font.pointSize: Appearance.font.size.normal
+                                font.weight: 500
+                            }
+
+                            StyledRect {
+                                implicitWidth: implicitHeight
+                                implicitHeight: muteIcon.implicitHeight + Appearance.padding.normal * 2
+
+                                radius: Appearance.rounding.normal
+                                color: Audio.muted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
+
+                                StateLayer {
+                                    function onClicked(): void {
+                                        if (Audio.sink?.audio) {
+                                            Audio.sink.audio.muted = !Audio.sink.audio.muted;
+                                        }
+                                    }
+                                }
+
+                                MaterialIcon {
+                                    id: muteIcon
+
+                                    anchors.centerIn: parent
+                                    text: Audio.muted ? "volume_off" : "volume_up"
+                                    color: Audio.muted ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
+                                }
                             }
                         }
-                    }
 
-                    MaterialIcon {
-                        id: muteIcon
+                        StyledSlider {
+                            Layout.fillWidth: true
+                            implicitHeight: Appearance.padding.normal * 3
 
-                        anchors.centerIn: parent
-                        text: Audio.muted ? "volume_off" : "volume_up"
-                        color: Audio.muted ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
-                    }
-                }
-            }
-
-            StyledText {
-                text: Audio.muted ? qsTr("Muted") : qsTr("%1%").arg(Math.round(Audio.volume * 100))
-                color: Audio.muted ? Colours.palette.m3primary : Colours.palette.m3outline
-            }
-
-            StyledSlider {
-                Layout.fillWidth: true
-                implicitHeight: Appearance.padding.normal * 3
-
-                value: Audio.volume
-                enabled: !Audio.muted
-                opacity: enabled ? 1 : 0.5
-                onMoved: Audio.setVolume(value)
-            }
-
-            StyledText {
-                Layout.topMargin: Appearance.spacing.large
-                Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Input volume")
-                font.pointSize: Appearance.font.size.larger
-                font.weight: 500
-            }
-
-            RowLayout {
-                spacing: Appearance.spacing.smaller
-
-                StyledText {
-                    text: qsTr("Volume")
-                    font.pointSize: Appearance.font.size.large
-                    font.weight: 500
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
-
-                StyledRect {
-                    implicitWidth: implicitHeight
-                    implicitHeight: muteInputIcon.implicitHeight + Appearance.padding.normal * 2
-
-                    radius: Appearance.rounding.normal
-                    color: Audio.sourceMuted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
-
-                    StateLayer {
-                        function onClicked(): void {
-                            if (Audio.source?.audio) {
-                                Audio.source.audio.muted = !Audio.source.audio.muted;
-                            }
+                            value: Audio.volume
+                            enabled: !Audio.muted
+                            opacity: enabled ? 1 : 0.5
+                            onMoved: Audio.setVolume(value)
                         }
                     }
+                }
 
-                    MaterialIcon {
-                        id: muteInputIcon
+                SectionHeader {
+                    title: qsTr("Input volume")
+                    description: qsTr("Control the volume of your input device")
+                }
 
-                        anchors.centerIn: parent
-                        text: Audio.sourceMuted ? "mic_off" : "mic"
-                        color: Audio.sourceMuted ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
+                SectionContainer {
+                    contentSpacing: Appearance.spacing.normal
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.small
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: Appearance.spacing.normal
+
+                            StyledText {
+                                text: qsTr("Volume")
+                                font.pointSize: Appearance.font.size.normal
+                                font.weight: 500
+                            }
+
+                            Item {
+                                Layout.fillWidth: true
+                            }
+
+                            StyledText {
+                                text: Audio.sourceMuted ? qsTr("Muted") : qsTr("%1%").arg(Math.round(Audio.sourceVolume * 100))
+                                color: Audio.sourceMuted ? Colours.palette.m3primary : Colours.palette.m3outline
+                                font.pointSize: Appearance.font.size.normal
+                                font.weight: 500
+                            }
+
+                            StyledRect {
+                                implicitWidth: implicitHeight
+                                implicitHeight: muteInputIcon.implicitHeight + Appearance.padding.normal * 2
+
+                                radius: Appearance.rounding.normal
+                                color: Audio.sourceMuted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
+
+                                StateLayer {
+                                    function onClicked(): void {
+                                        if (Audio.source?.audio) {
+                                            Audio.source.audio.muted = !Audio.source.audio.muted;
+                                        }
+                                    }
+                                }
+
+                                MaterialIcon {
+                                    id: muteInputIcon
+
+                                    anchors.centerIn: parent
+                                    text: Audio.sourceMuted ? "mic_off" : "mic"
+                                    color: Audio.sourceMuted ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
+                                }
+                            }
+                        }
+
+                        StyledSlider {
+                            Layout.fillWidth: true
+                            implicitHeight: Appearance.padding.normal * 3
+
+                            value: Audio.sourceVolume
+                            enabled: !Audio.sourceMuted
+                            opacity: enabled ? 1 : 0.5
+                            onMoved: Audio.setSourceVolume(value)
+                        }
                     }
                 }
             }
-
-            StyledText {
-                text: Audio.sourceMuted ? qsTr("Muted") : qsTr("%1%").arg(Math.round(Audio.sourceVolume * 100))
-                color: Audio.sourceMuted ? Colours.palette.m3primary : Colours.palette.m3outline
-            }
-
-            StyledSlider {
-                Layout.fillWidth: true
-                implicitHeight: Appearance.padding.normal * 3
-
-                value: Audio.sourceVolume
-                enabled: !Audio.sourceMuted
-                opacity: enabled ? 1 : 0.5
-                onMoved: Audio.setSourceVolume(value)
-            }
-        }
         }
 
         InnerBorder {

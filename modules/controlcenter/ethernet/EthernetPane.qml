@@ -50,6 +50,7 @@ RowLayout {
 
             radius: rightBorder.innerRadius
             color: "transparent"
+            clip: true
 
             Loader {
                 id: loader
@@ -64,7 +65,7 @@ RowLayout {
                 scale: 1
                 transformOrigin: Item.Center
 
-                clip: false
+                clip: true
                 asynchronous: true
                 sourceComponent: pane ? details : settings
 
@@ -120,6 +121,7 @@ RowLayout {
             StyledFlickable {
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: settingsInner.height
+                clip: true
 
                 EthernetSettings {
                     id: settingsInner

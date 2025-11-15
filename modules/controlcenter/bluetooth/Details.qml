@@ -22,6 +22,7 @@ Item {
         anchors.fill: parent
 
         flickableDirection: Flickable.VerticalFlick
+        clip: true
         contentHeight: layout.height
 
         ColumnLayout {

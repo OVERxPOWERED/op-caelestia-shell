@@ -50,6 +50,7 @@ RowLayout {
 
             radius: rightBorder.innerRadius
             color: "transparent"
+            clip: true
 
             Loader {
                 id: loader
@@ -59,6 +60,7 @@ RowLayout {
                 anchors.fill: parent
                 anchors.margins: Appearance.padding.large * 2
 
+                clip: true
                 asynchronous: true
                 sourceComponent: pane ? details : settings
 
@@ -106,6 +108,7 @@ RowLayout {
             StyledFlickable {
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: settingsInner.height
+                clip: true
 
                 Settings {
                     id: settingsInner

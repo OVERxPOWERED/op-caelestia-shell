@@ -31,6 +31,7 @@ RowLayout {
             anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
             flickableDirection: Flickable.VerticalFlick
             contentHeight: leftContent.height
+            clip: true
 
             ColumnLayout {
                 id: leftContent

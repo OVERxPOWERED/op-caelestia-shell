@@ -19,12 +19,14 @@ ClippingRectangle {
     required property Session session
 
     color: "transparent"
+    clip: true
 
     ColumnLayout {
         id: layout
 
         spacing: 0
         y: -root.session.activeIndex * root.height
+        clip: true
 
         Pane {
             index: 0

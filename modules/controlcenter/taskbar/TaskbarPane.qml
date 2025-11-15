@@ -209,6 +209,7 @@ RowLayout {
             anchors.fill: parent
             flickableDirection: Flickable.VerticalFlick
             contentHeight: sidebarLayout.implicitHeight + Appearance.padding.large * 2
+            clip: true
 
             StyledScrollBar.vertical: StyledScrollBar {
                 flickable: sidebarFlickable
@@ -608,6 +609,7 @@ RowLayout {
 
             flickableDirection: Flickable.VerticalFlick
             contentHeight: contentLayout.implicitHeight
+            clip: true
 
             StyledScrollBar.vertical: StyledScrollBar {
                 flickable: parent

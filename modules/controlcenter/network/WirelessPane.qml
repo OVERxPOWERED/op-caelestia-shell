@@ -120,6 +120,7 @@ RowLayout {
             StyledFlickable {
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: settingsInner.height
+                clip: true
 
                 WirelessSettings {
                     id: settingsInner

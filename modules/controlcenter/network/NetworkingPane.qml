@@ -36,6 +36,7 @@ RowLayout {
             anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
             flickableDirection: Flickable.VerticalFlick
             contentHeight: leftContent.height
+            clip: true
 
             ColumnLayout {
                 id: leftContent
@@ -399,6 +400,7 @@ RowLayout {
 
             radius: rightBorder.innerRadius
             color: "transparent"
+            clip: true
 
             // Right pane - networking details/settings
             Loader {
@@ -416,7 +418,7 @@ RowLayout {
                 scale: 1
                 transformOrigin: Item.Center
 
-                clip: false
+                clip: true
                 asynchronous: true
                 sourceComponent: pane ? (ethernetPane ? ethernetDetails : wirelessDetails) : settings
 
@@ -472,6 +474,7 @@ RowLayout {
             StyledFlickable {
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: settingsInner.height
+                clip: true
 
                 NetworkSettings {
                     id: settingsInner

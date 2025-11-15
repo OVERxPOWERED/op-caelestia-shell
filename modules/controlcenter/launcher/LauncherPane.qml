@@ -421,6 +421,7 @@ RowLayout {
                     anchors.fill: parent
                     flickableDirection: Flickable.VerticalFlick
                     contentHeight: debugLayout.implicitHeight
+                    clip: true
 
                     StyledScrollBar.vertical: StyledScrollBar {
                         flickable: parent

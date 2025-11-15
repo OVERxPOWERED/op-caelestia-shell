@@ -434,6 +434,7 @@ RowLayout {
 
                         SwitchRow {
                             Layout.topMargin: Appearance.spacing.normal
+                            visible: root.selectedApp !== null
                             label: qsTr("Hide from launcher")
                             checked: root.hideFromLauncherChecked
                             enabled: root.selectedApp !== null && configFile.loaded

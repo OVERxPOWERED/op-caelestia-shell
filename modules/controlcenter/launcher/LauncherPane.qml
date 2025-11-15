@@ -218,7 +218,7 @@ RowLayout {
                 Layout.topMargin: Appearance.spacing.normal
                 Layout.bottomMargin: Appearance.spacing.small
 
-                color: Colours.tPalette.m3surfaceContainer
+                color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
                 radius: Appearance.rounding.full
 
                 implicitHeight: Math.max(searchIcon.implicitHeight, searchField.implicitHeight, clearIcon.implicitHeight)
@@ -317,7 +317,7 @@ RowLayout {
 
                     readonly property bool isSelected: root.selectedApp === modelData
 
-                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isSelected ? Colours.tPalette.m3surfaceContainer.a : 0)
+                    color: isSelected ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
                     radius: Appearance.rounding.normal
 
                     StateLayer {

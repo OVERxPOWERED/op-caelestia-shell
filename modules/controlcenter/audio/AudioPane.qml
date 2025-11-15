@@ -127,7 +127,7 @@ RowLayout {
 
                                 Layout.fillWidth: true
 
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Audio.sink?.id === modelData.id ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                color: Audio.sink?.id === modelData.id ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
                                 radius: Appearance.rounding.normal
 
                                 StateLayer {
@@ -205,7 +205,7 @@ RowLayout {
 
                                 Layout.fillWidth: true
 
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Audio.source?.id === modelData.id ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                color: Audio.source?.id === modelData.id ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
                                 radius: Appearance.rounding.normal
 
                                 StateLayer {

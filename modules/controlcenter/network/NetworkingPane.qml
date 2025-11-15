@@ -501,7 +501,8 @@ RowLayout {
     }
 
     WirelessPasswordDialog {
-        anchors.fill: parent
+        Layout.fillWidth: true
+        Layout.fillHeight: true
         session: root.session
         z: 1000
     }

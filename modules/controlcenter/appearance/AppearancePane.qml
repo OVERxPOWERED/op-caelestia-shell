@@ -295,8 +295,7 @@ RowLayout {
                     delegate: StyledRect {
                         required property var modelData
 
-                        anchors.left: parent.left
-                        anchors.right: parent.right
+                        width: parent ? parent.width : 0
 
                         color: Qt.alpha(Colours.tPalette.m3surfaceContainer, modelData.variant === Schemes.currentVariant ? Colours.tPalette.m3surfaceContainer.a : 0)
                         radius: Appearance.rounding.normal
@@ -386,8 +385,7 @@ RowLayout {
                     delegate: StyledRect {
                         required property var modelData
 
-                        anchors.left: parent.left
-                        anchors.right: parent.right
+                        width: parent ? parent.width : 0
 
                         readonly property string schemeKey: `${modelData.name} ${modelData.flavour}`
                         readonly property bool isCurrent: schemeKey === Schemes.currentScheme
@@ -427,9 +425,7 @@ RowLayout {
                         RowLayout {
                             id: schemeRow
 
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.fill: parent
                             anchors.margins: Appearance.padding.normal
 
                             spacing: Appearance.spacing.normal
@@ -437,7 +433,7 @@ RowLayout {
                             StyledRect {
                                 id: preview
 
-                                anchors.verticalCenter: parent.verticalCenter
+                                Layout.alignment: Qt.AlignVCenter
 
                                 border.width: 1
                                 border.color: Qt.alpha(`#${modelData.colours?.outline}`, 0.5)

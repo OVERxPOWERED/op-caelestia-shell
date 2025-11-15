@@ -310,8 +310,7 @@ RowLayout {
                 delegate: StyledRect {
                     required property var modelData
 
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    width: parent ? parent.width : 0
 
                     readonly property bool isSelected: root.selectedApp === modelData
 

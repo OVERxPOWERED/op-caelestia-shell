@@ -49,7 +49,7 @@ ColumnLayout {
                 font.pointSize: Appearance.font.size.normal
                 Behavior on rotation {
                     Anim {
-                        duration: Appearance.anim.durations.short
+                        duration: Appearance.anim.durations.small
                         easing.bezierCurve: Appearance.anim.curves.standard
                     }
                 }

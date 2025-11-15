@@ -250,10 +250,10 @@ RowLayout {
                 RowLayout {
                     id: clockRow
 
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.large
+                    Layout.fillWidth: true
+                    Layout.leftMargin: Appearance.padding.large
+                    Layout.rightMargin: Appearance.padding.large
+                    Layout.alignment: Qt.AlignVCenter
 
                     spacing: Appearance.spacing.normal
 

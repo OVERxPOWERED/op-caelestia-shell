@@ -540,64 +540,65 @@ RowLayout {
                         font.weight: 500
                     }
 
-                    ColumnLayout {
+                    StyledListView {
                         Layout.fillWidth: true
+                        Layout.preferredHeight: Math.min(contentHeight, 300)
+                        
+                        clip: true
                         spacing: Appearance.spacing.small / 2
+                        model: Qt.fontFamilies()
 
-                        Repeater {
-                            model: Qt.fontFamilies()
+                        delegate: StyledRect {
+                            required property string modelData
+                            required property int index
 
-                            delegate: StyledRect {
-                                required property string modelData
+                            width: ListView.view.width
 
-                                Layout.fillWidth: true
+                            readonly property bool isCurrent: modelData === rootPane.fontFamilyMaterial
+                            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                            radius: Appearance.rounding.normal
+                            border.width: isCurrent ? 1 : 0
+                            border.color: Colours.palette.m3primary
 
-                                readonly property bool isCurrent: modelData === rootPane.fontFamilyMaterial
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                                radius: Appearance.rounding.normal
-                                border.width: isCurrent ? 1 : 0
-                                border.color: Colours.palette.m3primary
-
-                                StateLayer {
-                                    function onClicked(): void {
-                                        rootPane.fontFamilyMaterial = modelData;
-                                        rootPane.saveConfig();
-                                    }
+                            StateLayer {
+                                function onClicked(): void {
+                                    rootPane.fontFamilyMaterial = modelData;
+                                    rootPane.saveConfig();
                                 }
-
-                                RowLayout {
-                                    id: fontFamilyMaterialRow
-
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.margins: Appearance.padding.normal
-
-                                    spacing: Appearance.spacing.normal
-
-                                    StyledText {
-                                        text: modelData
-                                        font.pointSize: Appearance.font.size.normal
-                                    }
-
-                                    Item {
-                                        Layout.fillWidth: true
-                                    }
-
-                                    Loader {
-                                        active: isCurrent
-                                        asynchronous: true
-
-                                        sourceComponent: MaterialIcon {
-                                            text: "check"
-                                            color: Colours.palette.m3onSurfaceVariant
-                                            font.pointSize: Appearance.font.size.large
-                                        }
-                                    }
-                                }
-
-                                implicitHeight: fontFamilyMaterialRow.implicitHeight + Appearance.padding.normal * 2
                             }
+
+                            RowLayout {
+                                id: fontFamilyMaterialRow
+
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.margins: Appearance.padding.normal
+
+                                spacing: Appearance.spacing.normal
+
+                                StyledText {
+                                    text: modelData
+                                    font.pointSize: Appearance.font.size.normal
+                                }
+
+                                Item {
+                                    Layout.fillWidth: true
+                                }
+
+                                Loader {
+                                    active: isCurrent
+                                    asynchronous: true
+
+                                    sourceComponent: MaterialIcon {
+                                        text: "check"
+                                        color: Colours.palette.m3onSurfaceVariant
+                                        font.pointSize: Appearance.font.size.large
+                                    }
+                                }
+                            }
+
+                            implicitHeight: fontFamilyMaterialRow.implicitHeight + Appearance.padding.normal * 2
                         }
                     }
 
@@ -608,64 +609,65 @@ RowLayout {
                         font.weight: 500
                     }
 
-                    ColumnLayout {
+                    StyledListView {
                         Layout.fillWidth: true
+                        Layout.preferredHeight: Math.min(contentHeight, 300)
+                        
+                        clip: true
                         spacing: Appearance.spacing.small / 2
+                        model: Qt.fontFamilies()
 
-                        Repeater {
-                            model: Qt.fontFamilies()
+                        delegate: StyledRect {
+                            required property string modelData
+                            required property int index
 
-                            delegate: StyledRect {
-                                required property string modelData
+                            width: ListView.view.width
 
-                                Layout.fillWidth: true
+                            readonly property bool isCurrent: modelData === rootPane.fontFamilyMono
+                            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                            radius: Appearance.rounding.normal
+                            border.width: isCurrent ? 1 : 0
+                            border.color: Colours.palette.m3primary
 
-                                readonly property bool isCurrent: modelData === rootPane.fontFamilyMono
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                                radius: Appearance.rounding.normal
-                                border.width: isCurrent ? 1 : 0
-                                border.color: Colours.palette.m3primary
-
-                                StateLayer {
-                                    function onClicked(): void {
-                                        rootPane.fontFamilyMono = modelData;
-                                        rootPane.saveConfig();
-                                    }
+                            StateLayer {
+                                function onClicked(): void {
+                                    rootPane.fontFamilyMono = modelData;
+                                    rootPane.saveConfig();
                                 }
-
-                                RowLayout {
-                                    id: fontFamilyMonoRow
-
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.margins: Appearance.padding.normal
-
-                                    spacing: Appearance.spacing.normal
-
-                                    StyledText {
-                                        text: modelData
-                                        font.pointSize: Appearance.font.size.normal
-                                    }
-
-                                    Item {
-                                        Layout.fillWidth: true
-                                    }
-
-                                    Loader {
-                                        active: isCurrent
-                                        asynchronous: true
-
-                                        sourceComponent: MaterialIcon {
-                                            text: "check"
-                                            color: Colours.palette.m3onSurfaceVariant
-                                            font.pointSize: Appearance.font.size.large
-                                        }
-                                    }
-                                }
-
-                                implicitHeight: fontFamilyMonoRow.implicitHeight + Appearance.padding.normal * 2
                             }
+
+                            RowLayout {
+                                id: fontFamilyMonoRow
+
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.margins: Appearance.padding.normal
+
+                                spacing: Appearance.spacing.normal
+
+                                StyledText {
+                                    text: modelData
+                                    font.pointSize: Appearance.font.size.normal
+                                }
+
+                                Item {
+                                    Layout.fillWidth: true
+                                }
+
+                                Loader {
+                                    active: isCurrent
+                                    asynchronous: true
+
+                                    sourceComponent: MaterialIcon {
+                                        text: "check"
+                                        color: Colours.palette.m3onSurfaceVariant
+                                        font.pointSize: Appearance.font.size.large
+                                    }
+                                }
+                            }
+
+                            implicitHeight: fontFamilyMonoRow.implicitHeight + Appearance.padding.normal * 2
                         }
                     }
 
@@ -676,64 +678,65 @@ RowLayout {
                         font.weight: 500
                     }
 
-                    ColumnLayout {
+                    StyledListView {
                         Layout.fillWidth: true
+                        Layout.preferredHeight: Math.min(contentHeight, 300)
+                        
+                        clip: true
                         spacing: Appearance.spacing.small / 2
+                        model: Qt.fontFamilies()
 
-                        Repeater {
-                            model: Qt.fontFamilies()
+                        delegate: StyledRect {
+                            required property string modelData
+                            required property int index
 
-                            delegate: StyledRect {
-                                required property string modelData
+                            width: ListView.view.width
 
-                                Layout.fillWidth: true
+                            readonly property bool isCurrent: modelData === rootPane.fontFamilySans
+                            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                            radius: Appearance.rounding.normal
+                            border.width: isCurrent ? 1 : 0
+                            border.color: Colours.palette.m3primary
 
-                                readonly property bool isCurrent: modelData === rootPane.fontFamilySans
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                                radius: Appearance.rounding.normal
-                                border.width: isCurrent ? 1 : 0
-                                border.color: Colours.palette.m3primary
-
-                                StateLayer {
-                                    function onClicked(): void {
-                                        rootPane.fontFamilySans = modelData;
-                                        rootPane.saveConfig();
-                                    }
+                            StateLayer {
+                                function onClicked(): void {
+                                    rootPane.fontFamilySans = modelData;
+                                    rootPane.saveConfig();
                                 }
-
-                                RowLayout {
-                                    id: fontFamilySansRow
-
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.margins: Appearance.padding.normal
-
-                                    spacing: Appearance.spacing.normal
-
-                                    StyledText {
-                                        text: modelData
-                                        font.pointSize: Appearance.font.size.normal
-                                    }
-
-                                    Item {
-                                        Layout.fillWidth: true
-                                    }
-
-                                    Loader {
-                                        active: isCurrent
-                                        asynchronous: true
-
-                                        sourceComponent: MaterialIcon {
-                                            text: "check"
-                                            color: Colours.palette.m3onSurfaceVariant
-                                            font.pointSize: Appearance.font.size.large
-                                        }
-                                    }
-                                }
-
-                                implicitHeight: fontFamilySansRow.implicitHeight + Appearance.padding.normal * 2
                             }
+
+                            RowLayout {
+                                id: fontFamilySansRow
+
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.margins: Appearance.padding.normal
+
+                                spacing: Appearance.spacing.normal
+
+                                StyledText {
+                                    text: modelData
+                                    font.pointSize: Appearance.font.size.normal
+                                }
+
+                                Item {
+                                    Layout.fillWidth: true
+                                }
+
+                                Loader {
+                                    active: isCurrent
+                                    asynchronous: true
+
+                                    sourceComponent: MaterialIcon {
+                                        text: "check"
+                                        color: Colours.palette.m3onSurfaceVariant
+                                        font.pointSize: Appearance.font.size.large
+                                    }
+                                }
+                            }
+
+                            implicitHeight: fontFamilySansRow.implicitHeight + Appearance.padding.normal * 2
                         }
                     }
 
@@ -1874,210 +1877,209 @@ RowLayout {
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
-                GridLayout {
+                GridView {
+                    id: wallpaperGrid
                     Layout.fillWidth: true
                     Layout.topMargin: Appearance.spacing.large
+                    Layout.preferredHeight: Math.min(600, Math.ceil(count / Math.floor(width / cellWidth)) * cellHeight)
                     Layout.alignment: Qt.AlignHCenter
 
-                    columns: Math.max(2, Math.floor(parent.width / 200))
-                    rowSpacing: Appearance.spacing.normal
-                    columnSpacing: Appearance.spacing.normal
+                    cellWidth: 200 + Appearance.spacing.normal
+                    cellHeight: 140 + Appearance.spacing.normal
 
-                    // Center the grid content
-                    Layout.maximumWidth: {
-                        const cols = columns;
-                        const itemWidth = 200;
-                        const spacing = columnSpacing;
-                        return cols * itemWidth + (cols - 1) * spacing;
+                    model: Wallpapers.list
+                    clip: true
+
+                    // Enable caching for better performance
+                    cacheBuffer: cellHeight * 2
+
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: wallpaperGrid
                     }
 
-                    Repeater {
-                        model: Wallpapers.list
+                    delegate: Item {
+                        required property var modelData
 
-                        delegate: Item {
-                            required property var modelData
+                        width: 200
+                        height: 140
 
-                            Layout.preferredWidth: 200
-                            Layout.preferredHeight: 140
-                            Layout.minimumWidth: 200
-                            Layout.minimumHeight: 140
-                            Layout.maximumWidth: 200
-                            Layout.maximumHeight: 140
+                        // Center in cell
+                        x: (wallpaperGrid.cellWidth - width) / 2
+                        y: (wallpaperGrid.cellHeight - height) / 2
 
-                            readonly property bool isCurrent: modelData.path === Wallpapers.actualCurrent
+                        readonly property bool isCurrent: modelData.path === Wallpapers.actualCurrent
 
-                            StateLayer {
-                                radius: Appearance.rounding.normal
+                        StateLayer {
+                            radius: Appearance.rounding.normal
 
-                                function onClicked(): void {
-                                    Wallpapers.setWallpaper(modelData.path);
-                                }
+                            function onClicked(): void {
+                                Wallpapers.setWallpaper(modelData.path);
                             }
+                        }
 
-                            StyledClippingRect {
-                                id: image
+                        StyledClippingRect {
+                            id: image
 
+                            anchors.fill: parent
+                            color: Colours.tPalette.m3surfaceContainer
+                            radius: Appearance.rounding.normal
+
+                            CachingImage {
+                                id: cachingImage
+
+                                path: modelData.path
                                 anchors.fill: parent
-                                color: Colours.tPalette.m3surfaceContainer
-                                radius: Appearance.rounding.normal
+                                cache: true
+                                visible: opacity > 0
 
-                                CachingImage {
-                                    id: cachingImage
+                                // Show when ready
+                                opacity: status === Image.Ready ? 1 : 0
 
-                                    path: modelData.path
-                                    anchors.fill: parent
-                                    cache: true
-                                    visible: opacity > 0
-
-                                    // Show when ready
-                                    opacity: status === Image.Ready ? 1 : 0
-
-                                    Behavior on opacity {
-                                        NumberAnimation {
-                                            duration: 1000
-                                            easing.type: Easing.OutQuad
-                                        }
-                                    }
-                                }
-
-                                // Fallback image for when caching fails
-                                Image {
-                                    id: fallbackImage
-
-                                    anchors.fill: parent
-                                    source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? modelData.path : ""
-                                    asynchronous: true
-                                    fillMode: Image.PreserveAspectCrop
-                                    cache: true
-                                    visible: opacity > 0
-
-                                    opacity: status === Image.Ready && cachingImage.status !== Image.Ready ? 1 : 0
-
-                                    Behavior on opacity {
-                                        NumberAnimation {
-                                            duration: 1000
-                                            easing.type: Easing.OutQuad
-                                        }
-                                    }
-                                }
-
-                                // Timer to trigger fallback only if caching hasn't loaded
-                                Timer {
-                                    id: fallbackTimer
-
-                                    property bool triggered: false
-                                    interval: 800
-                                    running: cachingImage.status === Image.Loading || cachingImage.status === Image.Null
-                                    onTriggered: triggered = true
-                                }
-                            }
-
-                            // Border overlay that doesn't affect image size
-                            Rectangle {
-                                anchors.fill: parent
-                                color: "transparent"
-                                radius: Appearance.rounding.normal
-                                border.width: isCurrent ? 2 : 0
-                                border.color: Colours.palette.m3primary
-
-                                Behavior on border.width {
+                                Behavior on opacity {
                                     NumberAnimation {
-                                        duration: 150
+                                        duration: 1000
                                         easing.type: Easing.OutQuad
                                     }
                                 }
+                            }
 
-                                MaterialIcon {
-                                    anchors.right: parent.right
-                                    anchors.top: parent.top
-                                    anchors.margins: Appearance.padding.small
+                            // Fallback image for when caching fails
+                            Image {
+                                id: fallbackImage
 
-                                    visible: isCurrent
-                                    text: "check_circle"
-                                    color: Colours.palette.m3primary
-                                    font.pointSize: Appearance.font.size.large
-                                }
+                                anchors.fill: parent
+                                source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? modelData.path : ""
+                                asynchronous: true
+                                fillMode: Image.PreserveAspectCrop
+                                cache: true
+                                visible: opacity > 0
 
-                                // Gradient overlay for filename with rounded bottom corners
-                                Rectangle {
-                                    id: filenameOverlay
-
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.bottom: parent.bottom
-
-                                    implicitHeight: filenameText.implicitHeight + Appearance.padding.normal * 2
-
-                                    radius: Appearance.rounding.normal
-
-                                    gradient: Gradient {
-                                        GradientStop {
-                                            position: 0.0
-                                            color: Qt.rgba(0, 0, 0, 0)
-                                        }
-                                        GradientStop {
-                                            position: 0.3
-                                            color: Qt.rgba(0, 0, 0, 0.3)
-                                        }
-                                        GradientStop {
-                                            position: 0.7
-                                            color: Qt.rgba(0, 0, 0, 0.75)
-                                        }
-                                        GradientStop {
-                                            position: 1.0
-                                            color: Qt.rgba(0, 0, 0, 0.85)
-                                        }
-                                    }
-                                }
-
-                                opacity: 0
+                                opacity: status === Image.Ready && cachingImage.status !== Image.Ready ? 1 : 0
 
                                 Behavior on opacity {
                                     NumberAnimation {
                                         duration: 1000
-                                        easing.type: Easing.OutCubic
+                                        easing.type: Easing.OutQuad
                                     }
-                                }
-
-                                Component.onCompleted: {
-                                    opacity = 1;
                                 }
                             }
 
-                            StyledText {
-                                id: filenameText
+                            // Timer to trigger fallback only if caching hasn't loaded
+                            Timer {
+                                id: fallbackTimer
+
+                                property bool triggered: false
+                                interval: 800
+                                running: cachingImage.status === Image.Loading || cachingImage.status === Image.Null
+                                onTriggered: triggered = true
+                            }
+                        }
+
+                        // Border overlay that doesn't affect image size
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "transparent"
+                            radius: Appearance.rounding.normal
+                            border.width: isCurrent ? 2 : 0
+                            border.color: Colours.palette.m3primary
+
+                            Behavior on border.width {
+                                NumberAnimation {
+                                    duration: 150
+                                    easing.type: Easing.OutQuad
+                                }
+                            }
+
+                            MaterialIcon {
+                                anchors.right: parent.right
+                                anchors.top: parent.top
+                                anchors.margins: Appearance.padding.small
+
+                                visible: isCurrent
+                                text: "check_circle"
+                                color: Colours.palette.m3primary
+                                font.pointSize: Appearance.font.size.large
+                            }
+
+                            // Gradient overlay for filename with rounded bottom corners
+                            Rectangle {
+                                id: filenameOverlay
+
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 anchors.bottom: parent.bottom
-                                anchors.leftMargin: Appearance.padding.normal
-                                anchors.rightMargin: Appearance.padding.normal
-                                anchors.bottomMargin: Appearance.padding.normal
 
-                                readonly property string fileName: {
-                                    const path = modelData.relativePath || "";
-                                    const parts = path.split("/");
-                                    return parts.length > 0 ? parts[parts.length - 1] : path;
-                                }
+                                implicitHeight: filenameText.implicitHeight + Appearance.padding.normal * 2
 
-                                text: fileName
-                                font.pointSize: Appearance.font.size.smaller
-                                font.weight: 500
-                                color: isCurrent ? Colours.palette.m3primary : "#FFFFFF"
-                                elide: Text.ElideMiddle
-                                maximumLineCount: 1
+                                radius: Appearance.rounding.normal
 
-                                opacity: 0
-
-                                Behavior on opacity {
-                                    NumberAnimation {
-                                        duration: 1000
-                                        easing.type: Easing.OutCubic
+                                gradient: Gradient {
+                                    GradientStop {
+                                        position: 0.0
+                                        color: Qt.rgba(0, 0, 0, 0)
+                                    }
+                                    GradientStop {
+                                        position: 0.3
+                                        color: Qt.rgba(0, 0, 0, 0.3)
+                                    }
+                                    GradientStop {
+                                        position: 0.7
+                                        color: Qt.rgba(0, 0, 0, 0.75)
+                                    }
+                                    GradientStop {
+                                        position: 1.0
+                                        color: Qt.rgba(0, 0, 0, 0.85)
                                     }
                                 }
+                            }
 
-                                Component.onCompleted: {
-                                    opacity = 1;
+                            opacity: 0
+
+                            Behavior on opacity {
+                                NumberAnimation {
+                                    duration: 1000
+                                    easing.type: Easing.OutCubic
                                 }
+                            }
+
+                            Component.onCompleted: {
+                                opacity = 1;
+                            }
+                        }
+
+                        StyledText {
+                            id: filenameText
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            anchors.leftMargin: Appearance.padding.normal
+                            anchors.rightMargin: Appearance.padding.normal
+                            anchors.bottomMargin: Appearance.padding.normal
+
+                            readonly property string fileName: {
+                                const path = modelData.relativePath || "";
+                                const parts = path.split("/");
+                                return parts.length > 0 ? parts[parts.length - 1] : path;
+                            }
+
+                            text: fileName
+                            font.pointSize: Appearance.font.size.smaller
+                            font.weight: 500
+                            color: isCurrent ? Colours.palette.m3primary : "#FFFFFF"
+                            elide: Text.ElideMiddle
+                            maximumLineCount: 1
+
+                            opacity: 0
+
+                            Behavior on opacity {
+                                NumberAnimation {
+                                    duration: 1000
+                                    easing.type: Easing.OutCubic
+                                }
+                            }
+
+                            Component.onCompleted: {
+                                opacity = 1;
                             }
                         }
                     }

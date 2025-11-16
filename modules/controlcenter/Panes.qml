@@ -20,6 +20,27 @@ ClippingRectangle {
 
     color: "transparent"
     clip: true
+    focus: false
+    activeFocusOnTab: false
+
+    // Clear focus when clicking anywhere in the panes area
+    MouseArea {
+        anchors.fill: parent
+        z: -1
+        onPressed: function(mouse) {
+            root.focus = true;
+            mouse.accepted = false;
+        }
+    }
+
+    // Clear focus when switching panes
+    Connections {
+        target: root.session
+
+        function onActiveIndexChanged(): void {
+            root.focus = true;
+        }
+    }
 
     ColumnLayout {
         id: layout

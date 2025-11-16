@@ -324,7 +324,7 @@ RowLayout {
 
                     Behavior on opacity {
                         NumberAnimation {
-                            duration: 200
+                            duration: 1000
                             easing.type: Easing.OutCubic
                         }
                     }

@@ -518,13 +518,13 @@ RowLayout {
 
                                 from: 0.1
                                 to: 5.0
-                                value: rootPane.animDurationsScale
+                        value: rootPane.animDurationsScale
                                 onMoved: {
                                     rootPane.animDurationsScale = animDurationsSlider.value;
                                     if (!animDurationsInput.activeFocus) {
                                         animDurationsInput.text = (animDurationsSlider.value).toFixed(1);
                                     }
-                                    rootPane.saveConfig();
+                            rootPane.saveConfig();
                                 }
                             }
                         }
@@ -841,13 +841,13 @@ RowLayout {
 
                                 from: 0.1
                                 to: 5.0
-                                value: rootPane.fontSizeScale
+                        value: rootPane.fontSizeScale
                                 onMoved: {
                                     rootPane.fontSizeScale = fontSizeSlider.value;
                                     if (!fontSizeInput.activeFocus) {
                                         fontSizeInput.text = (fontSizeSlider.value).toFixed(1);
                                     }
-                                    rootPane.saveConfig();
+                            rootPane.saveConfig();
                                 }
                             }
                         }
@@ -948,13 +948,13 @@ RowLayout {
 
                                 from: 0.1
                                 to: 5.0
-                                value: rootPane.paddingScale
+                        value: rootPane.paddingScale
                                 onMoved: {
                                     rootPane.paddingScale = paddingSlider.value;
                                     if (!paddingInput.activeFocus) {
                                         paddingInput.text = (paddingSlider.value).toFixed(1);
                                     }
-                                    rootPane.saveConfig();
+                            rootPane.saveConfig();
                                 }
                             }
                         }
@@ -1047,13 +1047,13 @@ RowLayout {
 
                                 from: 0.1
                                 to: 5.0
-                                value: rootPane.roundingScale
+                        value: rootPane.roundingScale
                                 onMoved: {
                                     rootPane.roundingScale = roundingSlider.value;
                                     if (!roundingInput.activeFocus) {
                                         roundingInput.text = (roundingSlider.value).toFixed(1);
                                     }
-                                    rootPane.saveConfig();
+                            rootPane.saveConfig();
                                 }
                             }
                         }
@@ -1146,13 +1146,13 @@ RowLayout {
 
                                 from: 0.1
                                 to: 5.0
-                                value: rootPane.spacingScale
+                        value: rootPane.spacingScale
                                 onMoved: {
                                     rootPane.spacingScale = spacingSlider.value;
                                     if (!spacingInput.activeFocus) {
                                         spacingInput.text = (spacingSlider.value).toFixed(1);
                                     }
-                                    rootPane.saveConfig();
+                            rootPane.saveConfig();
                                 }
                             }
                         }
@@ -1462,13 +1462,13 @@ RowLayout {
 
                                 from: 0.1
                                 to: 100
-                                value: rootPane.borderRounding
+                        value: rootPane.borderRounding
                                 onMoved: {
                                     rootPane.borderRounding = borderRoundingSlider.value;
                                     if (!borderRoundingInput.activeFocus) {
                                         borderRoundingInput.text = (borderRoundingSlider.value).toFixed(1);
                                     }
-                                    rootPane.saveConfig();
+                            rootPane.saveConfig();
                                 }
                             }
                         }
@@ -1555,13 +1555,13 @@ RowLayout {
 
                                 from: 0.1
                                 to: 100
-                                value: rootPane.borderThickness
+                        value: rootPane.borderThickness
                                 onMoved: {
                                     rootPane.borderThickness = borderThicknessSlider.value;
                                     if (!borderThicknessInput.activeFocus) {
                                         borderThicknessInput.text = (borderThicknessSlider.value).toFixed(1);
                                     }
-                                    rootPane.saveConfig();
+                            rootPane.saveConfig();
                                 }
                             }
                         }
@@ -1677,7 +1677,7 @@ RowLayout {
                                                 const val = parseInt(text);
                                                 if (!isNaN(val) && val >= 0 && val <= 10) {
                                                     rootPane.visualiserRounding = val;
-                                                    rootPane.saveConfig();
+                            rootPane.saveConfig();
                                                 }
                                             }
                                         }
@@ -1706,11 +1706,11 @@ RowLayout {
                                     if (!visualiserRoundingInput.activeFocus) {
                                         visualiserRoundingInput.text = Math.round(visualiserRoundingSlider.value).toString();
                                     }
-                                    rootPane.saveConfig();
-                                }
-                            }
+                            rootPane.saveConfig();
                         }
                     }
+                }
+            }
 
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
@@ -1951,7 +1951,7 @@ RowLayout {
 
                                     Behavior on opacity {
                                         NumberAnimation {
-                                            duration: 150
+                                            duration: 1000
                                             easing.type: Easing.OutQuad
                                         }
                                     }
@@ -1972,7 +1972,7 @@ RowLayout {
 
                                     Behavior on opacity {
                                         NumberAnimation {
-                                            duration: 150
+                                            duration: 1000
                                             easing.type: Easing.OutQuad
                                         }
                                     }
@@ -2049,7 +2049,7 @@ RowLayout {
 
                                 Behavior on opacity {
                                     NumberAnimation {
-                                        duration: 200
+                                        duration: 1000
                                         easing.type: Easing.OutCubic
                                     }
                                 }
@@ -2085,7 +2085,7 @@ RowLayout {
 
                                 Behavior on opacity {
                                     NumberAnimation {
-                                        duration: 200
+                                        duration: 1000
                                         easing.type: Easing.OutCubic
                                     }
                                 }

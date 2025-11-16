@@ -2112,8 +2112,8 @@ RowLayout {
                             anchors.left: parent.left
                             anchors.right: parent.right
                             anchors.bottom: parent.bottom
-                            anchors.leftMargin: Appearance.padding.normal
-                            anchors.rightMargin: Appearance.padding.normal
+                            anchors.leftMargin: Appearance.padding.normal + Appearance.spacing.normal / 2
+                            anchors.rightMargin: Appearance.padding.normal + Appearance.spacing.normal / 2
                             anchors.bottomMargin: Appearance.padding.normal
 
                             readonly property string fileName: {

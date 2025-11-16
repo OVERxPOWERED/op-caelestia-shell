@@ -88,15 +88,13 @@ ClippingRectangle {
             id: loader
 
             anchors.fill: parent
-            clip: true
+            clip: false
             asynchronous: true
             active: {
-                if (root.session.activeIndex === pane.index)
-                    return true;
-
-                const ly = -layout.y;
-                const ty = pane.index * root.height;
-                return ly + root.height > ty && ly < ty + root.height;
+                // Keep loaders active for current and adjacent panels
+                // This prevents content from disappearing during panel transitions
+                const diff = Math.abs(root.session.activeIndex - pane.index);
+                return diff <= 1;
             }
         }
     }

@@ -1899,7 +1899,6 @@ RowLayout {
                         bottomMargin: 0
 
                         model: Wallpapers.list
-                        clip: true
                         
                         // Disable GridView's own scrolling - let parent handle it
                         interactive: false
@@ -1914,14 +1913,16 @@ RowLayout {
                         height: wallpaperGrid.cellHeight
 
                         readonly property bool isCurrent: modelData.path === Wallpapers.actualCurrent
+                        readonly property real itemMargin: Appearance.spacing.normal / 2
+                        readonly property real itemRadius: Appearance.rounding.normal
 
                         StateLayer {
                             anchors.fill: parent
-                            anchors.leftMargin: Appearance.spacing.normal / 2
-                            anchors.rightMargin: Appearance.spacing.normal / 2
-                            anchors.topMargin: Appearance.spacing.normal / 2
-                            anchors.bottomMargin: Appearance.spacing.normal / 2
-                            radius: Appearance.rounding.normal
+                            anchors.leftMargin: itemMargin
+                            anchors.rightMargin: itemMargin
+                            anchors.topMargin: itemMargin
+                            anchors.bottomMargin: itemMargin
+                            radius: itemRadius
 
                             function onClicked(): void {
                                 Wallpapers.setWallpaper(modelData.path);
@@ -1932,13 +1933,15 @@ RowLayout {
                             id: image
 
                             anchors.fill: parent
-                            anchors.leftMargin: Appearance.spacing.normal / 2
-                            anchors.rightMargin: Appearance.spacing.normal / 2
-                            anchors.topMargin: Appearance.spacing.normal / 2
-                            anchors.bottomMargin: Appearance.spacing.normal / 2
+                            anchors.leftMargin: itemMargin
+                            anchors.rightMargin: itemMargin
+                            anchors.topMargin: itemMargin
+                            anchors.bottomMargin: itemMargin
                             color: Colours.tPalette.m3surfaceContainer
-                            radius: Appearance.rounding.normal
+                            radius: itemRadius
                             antialiasing: true
+                            layer.enabled: true
+                            layer.smooth: true
 
                             CachingImage {
                                 id: cachingImage
@@ -1949,6 +1952,7 @@ RowLayout {
                                 cache: true
                                 visible: opacity > 0
                                 antialiasing: true
+                                smooth: true
 
                                 // Show when ready
                                 opacity: status === Image.Ready ? 1 : 0
@@ -1972,6 +1976,7 @@ RowLayout {
                                 cache: true
                                 visible: opacity > 0
                                 antialiasing: true
+                                smooth: true
 
                                 opacity: status === Image.Ready && cachingImage.status !== Image.Ready ? 1 : 0
 
@@ -1992,79 +1997,20 @@ RowLayout {
                                 running: cachingImage.status === Image.Loading || cachingImage.status === Image.Null
                                 onTriggered: triggered = true
                             }
-                        }
 
-                        // Border overlay that doesn't affect image size
-                        Rectangle {
-                            anchors.fill: parent
-                            anchors.leftMargin: Appearance.spacing.normal / 2
-                            anchors.rightMargin: Appearance.spacing.normal / 2
-                            anchors.topMargin: Appearance.spacing.normal / 2
-                            anchors.bottomMargin: Appearance.spacing.normal / 2
-                            color: "transparent"
-                            radius: Appearance.rounding.normal
-                            border.width: isCurrent ? 2 : 0
-                            border.color: Colours.palette.m3primary
-                            antialiasing: true
-
-                            Behavior on border.width {
-                                NumberAnimation {
-                                    duration: 150
-                                    easing.type: Easing.OutQuad
-                                }
-                            }
-
-                            MaterialIcon {
-                                anchors.right: parent.right
-                                anchors.top: parent.top
-                                anchors.margins: Appearance.padding.small
-
-                                visible: isCurrent
-                                text: "check_circle"
-                                color: Colours.palette.m3primary
-                                font.pointSize: Appearance.font.size.large
-                            }
-
-                            // Gradient overlay for filename with rounded bottom corners
+                            // Gradient overlay for filename - positioned inside image container for perfect alignment
                             Rectangle {
                                 id: filenameOverlay
 
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 anchors.bottom: parent.bottom
-                                anchors.leftMargin: isCurrent ? 2 : 0
-                                anchors.rightMargin: isCurrent ? 2 : 0
-                                anchors.bottomMargin: isCurrent ? 2 : 0
 
                                 implicitHeight: filenameText.implicitHeight + Appearance.padding.normal * 1.5
 
-                                // Only round bottom corners
-                                topLeftRadius: 0
-                                topRightRadius: 0
-                                bottomLeftRadius: Appearance.rounding.normal
-                                bottomRightRadius: Appearance.rounding.normal
-
-                                Behavior on anchors.leftMargin {
-                                    NumberAnimation {
-                                        duration: 150
-                                        easing.type: Easing.OutQuad
-                                    }
-                                }
+                                // No rounded corners - clipped by parent's rounded corners
+                                radius: 0
                                 
-                                Behavior on anchors.rightMargin {
-                                    NumberAnimation {
-                                        duration: 150
-                                        easing.type: Easing.OutQuad
-                                    }
-                                }
-                                
-                                Behavior on anchors.bottomMargin {
-                                    NumberAnimation {
-                                        duration: 150
-                                        easing.type: Easing.OutQuad
-                                    }
-                                }
-
                                 gradient: Gradient {
                                     GradientStop {
                                         position: 0.0
@@ -2091,19 +2037,52 @@ RowLayout {
                                                       Colours.palette.m3surfaceContainer.b, 0.95)
                                     }
                                 }
+
+                                opacity: 0
+
+                                Behavior on opacity {
+                                    NumberAnimation {
+                                        duration: 1000
+                                        easing.type: Easing.OutCubic
+                                    }
+                                }
+
+                                Component.onCompleted: {
+                                    opacity = 1;
+                                }
                             }
+                        }
 
-                            opacity: 0
+                        // Border overlay that doesn't affect image size
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.leftMargin: itemMargin
+                            anchors.rightMargin: itemMargin
+                            anchors.topMargin: itemMargin
+                            anchors.bottomMargin: itemMargin
+                            color: "transparent"
+                            radius: itemRadius + border.width
+                            border.width: isCurrent ? 2 : 0
+                            border.color: Colours.palette.m3primary
+                            antialiasing: true
+                            smooth: true
 
-                            Behavior on opacity {
+                            Behavior on border.width {
                                 NumberAnimation {
-                                    duration: 1000
-                                    easing.type: Easing.OutCubic
+                                    duration: 150
+                                    easing.type: Easing.OutQuad
                                 }
                             }
 
-                            Component.onCompleted: {
-                                opacity = 1;
+                            MaterialIcon {
+                                anchors.right: parent.right
+                                anchors.top: parent.top
+                                anchors.margins: Appearance.padding.small
+
+                                visible: isCurrent
+                                text: "check_circle"
+                                color: Colours.palette.m3primary
+                                font.pointSize: Appearance.font.size.large
                             }
                         }
 

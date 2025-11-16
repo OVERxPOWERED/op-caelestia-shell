@@ -21,7 +21,9 @@ Item {
         radius: Appearance.rounding.full
 
         function onClicked(): void {
-            WindowFactory.create();
+            WindowFactory.create(null, {
+                active: "appearance"
+            });
         }
     }
 

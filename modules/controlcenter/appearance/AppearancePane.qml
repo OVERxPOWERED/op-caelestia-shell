@@ -892,7 +892,7 @@ RowLayout {
                                         anchors.centerIn: parent
                                         width: parent.width - Appearance.padding.normal
                                         horizontalAlignment: TextInput.AlignHCenter
-                                        validator: DoubleValidator { bottom: 0.1; top: 2.0 }
+                                        validator: DoubleValidator { bottom: 0.5; top: 2.0 }
                                         
                                         Component.onCompleted: {
                                             text = (rootPane.paddingScale).toFixed(1);
@@ -901,7 +901,7 @@ RowLayout {
                                         onTextChanged: {
                                             if (activeFocus) {
                                                 const val = parseFloat(text);
-                                                if (!isNaN(val) && val >= 0.1 && val <= 2.0) {
+                                                if (!isNaN(val) && val >= 0.5 && val <= 2.0) {
                                                     rootPane.paddingScale = val;
                                                     rootPane.saveConfig();
                                                 }
@@ -909,7 +909,7 @@ RowLayout {
                                         }
                                         onEditingFinished: {
                                             const val = parseFloat(text);
-                                            if (isNaN(val) || val < 0.1 || val > 2.0) {
+                                            if (isNaN(val) || val < 0.5 || val > 2.0) {
                                                 text = (rootPane.paddingScale).toFixed(1);
                                             }
                                         }
@@ -929,7 +929,7 @@ RowLayout {
                                 Layout.fillWidth: true
                                 implicitHeight: Appearance.padding.normal * 3
 
-                                from: 0.1
+                                from: 0.5
                                 to: 2.0
                         value: rootPane.paddingScale
                                 onMoved: {
@@ -1090,7 +1090,7 @@ RowLayout {
                                         anchors.centerIn: parent
                                         width: parent.width - Appearance.padding.normal
                                         horizontalAlignment: TextInput.AlignHCenter
-                                        validator: DoubleValidator { bottom: 0.1; top: 5.0 }
+                                        validator: DoubleValidator { bottom: 0.1; top: 2.0 }
                                         
                                         Component.onCompleted: {
                                             text = (rootPane.spacingScale).toFixed(1);
@@ -1099,7 +1099,7 @@ RowLayout {
                                         onTextChanged: {
                                             if (activeFocus) {
                                                 const val = parseFloat(text);
-                                                if (!isNaN(val) && val >= 0.1 && val <= 5.0) {
+                                                if (!isNaN(val) && val >= 0.1 && val <= 2.0) {
                                                     rootPane.spacingScale = val;
                                                     rootPane.saveConfig();
                                                 }
@@ -1107,7 +1107,7 @@ RowLayout {
                                         }
                                         onEditingFinished: {
                                             const val = parseFloat(text);
-                                            if (isNaN(val) || val < 0.1 || val > 5.0) {
+                                            if (isNaN(val) || val < 0.1 || val > 2.0) {
                                                 text = (rootPane.spacingScale).toFixed(1);
                                             }
                                         }
@@ -1128,7 +1128,7 @@ RowLayout {
                                 implicitHeight: Appearance.padding.normal * 3
 
                                 from: 0.1
-                                to: 5.0
+                                to: 2.0
                         value: rootPane.spacingScale
                                 onMoved: {
                                     rootPane.spacingScale = spacingSlider.value;

@@ -30,7 +30,11 @@ Singleton {
     // Public save function - call this to persist config changes
     function save(): void {
         saveTimer.restart();
+        recentlySaved = true;
+        recentSaveCooldown.restart();
     }
+
+    property bool recentlySaved: false
 
     ElapsedTimer {
         id: timer
@@ -41,6 +45,7 @@ Singleton {
 
         interval: 500
         onTriggered: {
+            timer.restart();
             try {
                 // Parse current config to preserve structure and comments if possible
                 let config = {};
@@ -59,6 +64,15 @@ Singleton {
             } catch (e) {
                 Toaster.toast(qsTr("Failed to serialize config"), e.message, "settings_alert", Toast.Error);
             }
+        }
+    }
+
+    Timer {
+        id: recentSaveCooldown
+
+        interval: 2000
+        onTriggered: {
+            recentlySaved = false;
         }
     }
 
@@ -409,16 +423,24 @@ Singleton {
         watchChanges: true
         onFileChanged: {
             // Prevent reload loop - don't reload if we just saved
-            if (!saveTimer.running) {
+            if (!recentlySaved) {
                 timer.restart();
+                reload();
+            } else {
+                // Self-initiated save - reload without toast
                 reload();
             }
         }
         onLoaded: {
             try {
                 JSON.parse(text());
-                if (adapter.utilities.toasts.configLoaded)
-                    Toaster.toast(qsTr("Config loaded"), qsTr("Config loaded in %1ms").arg(timer.elapsedMs()), "rule_settings");
+                const elapsed = timer.elapsedMs();
+                // Only show toast for external changes (not our own saves) and when elapsed time is meaningful
+                if (adapter.utilities.toasts.configLoaded && !recentlySaved && elapsed > 0) {
+                    Toaster.toast(qsTr("Config loaded"), qsTr("Config loaded in %1ms").arg(elapsed), "rule_settings");
+                } else if (adapter.utilities.toasts.configLoaded && recentlySaved && elapsed > 0) {
+                    Toaster.toast(qsTr("Config saved"), qsTr("Config reloaded in %1ms").arg(elapsed), "rule_settings");
+                }
             } catch (e) {
                 Toaster.toast(qsTr("Failed to load config"), e.message, "settings_alert", Toast.Error);
             }

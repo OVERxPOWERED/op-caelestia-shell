@@ -538,65 +538,72 @@ RowLayout {
                         title: qsTr("Material font family")
                         expanded: true
 
-                        StyledListView {
+                        Loader {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: Math.min(contentHeight, 300)
-                            
-                            clip: true
-                            spacing: Appearance.spacing.small / 2
-                            model: Qt.fontFamilies()
+                            Layout.preferredHeight: item ? Math.min(item.contentHeight, 300) : 0
+                            asynchronous: true
+                            active: materialFontSection.expanded
 
-                            delegate: StyledRect {
-                                required property string modelData
-                                required property int index
+                            sourceComponent: StyledListView {
+                                id: materialFontList
+                                property alias contentHeight: materialFontList.contentHeight
 
-                                width: ListView.view.width
+                                clip: true
+                                spacing: Appearance.spacing.small / 2
+                                model: Qt.fontFamilies()
 
-                                readonly property bool isCurrent: modelData === rootPane.fontFamilyMaterial
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                                radius: Appearance.rounding.normal
-                                border.width: isCurrent ? 1 : 0
-                                border.color: Colours.palette.m3primary
+                                delegate: StyledRect {
+                                    required property string modelData
+                                    required property int index
 
-                                StateLayer {
-                                    function onClicked(): void {
-                                        rootPane.fontFamilyMaterial = modelData;
-                                        rootPane.saveConfig();
-                                    }
-                                }
+                                    width: ListView.view.width
 
-                                RowLayout {
-                                    id: fontFamilyMaterialRow
+                                    readonly property bool isCurrent: modelData === rootPane.fontFamilyMaterial
+                                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                    radius: Appearance.rounding.normal
+                                    border.width: isCurrent ? 1 : 0
+                                    border.color: Colours.palette.m3primary
 
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.margins: Appearance.padding.normal
-
-                                    spacing: Appearance.spacing.normal
-
-                                    StyledText {
-                                        text: modelData
-                                        font.pointSize: Appearance.font.size.normal
-                                    }
-
-                                    Item {
-                                        Layout.fillWidth: true
-                                    }
-
-                                    Loader {
-                                        active: isCurrent
-                                        asynchronous: true
-
-                                        sourceComponent: MaterialIcon {
-                                            text: "check"
-                                            color: Colours.palette.m3onSurfaceVariant
-                                            font.pointSize: Appearance.font.size.large
+                                    StateLayer {
+                                        function onClicked(): void {
+                                            rootPane.fontFamilyMaterial = modelData;
+                                            rootPane.saveConfig();
                                         }
                                     }
-                                }
 
-                                implicitHeight: fontFamilyMaterialRow.implicitHeight + Appearance.padding.normal * 2
+                                    RowLayout {
+                                        id: fontFamilyMaterialRow
+
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.margins: Appearance.padding.normal
+
+                                        spacing: Appearance.spacing.normal
+
+                                        StyledText {
+                                            text: modelData
+                                            font.pointSize: Appearance.font.size.normal
+                                        }
+
+                                        Item {
+                                            Layout.fillWidth: true
+                                        }
+
+                                        Loader {
+                                            active: isCurrent
+                                            asynchronous: true
+
+                                            sourceComponent: MaterialIcon {
+                                                text: "check"
+                                                color: Colours.palette.m3onSurfaceVariant
+                                                font.pointSize: Appearance.font.size.large
+                                            }
+                                        }
+                                    }
+
+                                    implicitHeight: fontFamilyMaterialRow.implicitHeight + Appearance.padding.normal * 2
+                                }
                             }
                         }
                     }
@@ -606,65 +613,72 @@ RowLayout {
                         title: qsTr("Monospace font family")
                         expanded: false
 
-                        StyledListView {
+                        Loader {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: Math.min(contentHeight, 300)
-                            
-                            clip: true
-                            spacing: Appearance.spacing.small / 2
-                            model: Qt.fontFamilies()
+                            Layout.preferredHeight: item ? Math.min(item.contentHeight, 300) : 0
+                            asynchronous: true
+                            active: monoFontSection.expanded
 
-                            delegate: StyledRect {
-                                required property string modelData
-                                required property int index
+                            sourceComponent: StyledListView {
+                                id: monoFontList
+                                property alias contentHeight: monoFontList.contentHeight
 
-                                width: ListView.view.width
+                                clip: true
+                                spacing: Appearance.spacing.small / 2
+                                model: Qt.fontFamilies()
 
-                                readonly property bool isCurrent: modelData === rootPane.fontFamilyMono
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                                radius: Appearance.rounding.normal
-                                border.width: isCurrent ? 1 : 0
-                                border.color: Colours.palette.m3primary
+                                delegate: StyledRect {
+                                    required property string modelData
+                                    required property int index
 
-                                StateLayer {
-                                    function onClicked(): void {
-                                        rootPane.fontFamilyMono = modelData;
-                                        rootPane.saveConfig();
-                                    }
-                                }
+                                    width: ListView.view.width
 
-                                RowLayout {
-                                    id: fontFamilyMonoRow
+                                    readonly property bool isCurrent: modelData === rootPane.fontFamilyMono
+                                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                    radius: Appearance.rounding.normal
+                                    border.width: isCurrent ? 1 : 0
+                                    border.color: Colours.palette.m3primary
 
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.margins: Appearance.padding.normal
-
-                                    spacing: Appearance.spacing.normal
-
-                                    StyledText {
-                                        text: modelData
-                                        font.pointSize: Appearance.font.size.normal
-                                    }
-
-                                    Item {
-                                        Layout.fillWidth: true
-                                    }
-
-                                    Loader {
-                                        active: isCurrent
-                                        asynchronous: true
-
-                                        sourceComponent: MaterialIcon {
-                                            text: "check"
-                                            color: Colours.palette.m3onSurfaceVariant
-                                            font.pointSize: Appearance.font.size.large
+                                    StateLayer {
+                                        function onClicked(): void {
+                                            rootPane.fontFamilyMono = modelData;
+                                            rootPane.saveConfig();
                                         }
                                     }
-                                }
 
-                                implicitHeight: fontFamilyMonoRow.implicitHeight + Appearance.padding.normal * 2
+                                    RowLayout {
+                                        id: fontFamilyMonoRow
+
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.margins: Appearance.padding.normal
+
+                                        spacing: Appearance.spacing.normal
+
+                                        StyledText {
+                                            text: modelData
+                                            font.pointSize: Appearance.font.size.normal
+                                        }
+
+                                        Item {
+                                            Layout.fillWidth: true
+                                        }
+
+                                        Loader {
+                                            active: isCurrent
+                                            asynchronous: true
+
+                                            sourceComponent: MaterialIcon {
+                                                text: "check"
+                                                color: Colours.palette.m3onSurfaceVariant
+                                                font.pointSize: Appearance.font.size.large
+                                            }
+                                        }
+                                    }
+
+                                    implicitHeight: fontFamilyMonoRow.implicitHeight + Appearance.padding.normal * 2
+                                }
                             }
                         }
                     }
@@ -674,65 +688,72 @@ RowLayout {
                         title: qsTr("Sans-serif font family")
                         expanded: false
 
-                        StyledListView {
+                        Loader {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: Math.min(contentHeight, 300)
-                            
-                            clip: true
-                            spacing: Appearance.spacing.small / 2
-                            model: Qt.fontFamilies()
+                            Layout.preferredHeight: item ? Math.min(item.contentHeight, 300) : 0
+                            asynchronous: true
+                            active: sansFontSection.expanded
 
-                            delegate: StyledRect {
-                                required property string modelData
-                                required property int index
+                            sourceComponent: StyledListView {
+                                id: sansFontList
+                                property alias contentHeight: sansFontList.contentHeight
 
-                                width: ListView.view.width
+                                clip: true
+                                spacing: Appearance.spacing.small / 2
+                                model: Qt.fontFamilies()
 
-                                readonly property bool isCurrent: modelData === rootPane.fontFamilySans
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                                radius: Appearance.rounding.normal
-                                border.width: isCurrent ? 1 : 0
-                                border.color: Colours.palette.m3primary
+                                delegate: StyledRect {
+                                    required property string modelData
+                                    required property int index
 
-                                StateLayer {
-                                    function onClicked(): void {
-                                        rootPane.fontFamilySans = modelData;
-                                        rootPane.saveConfig();
-                                    }
-                                }
+                                    width: ListView.view.width
 
-                                RowLayout {
-                                    id: fontFamilySansRow
+                                    readonly property bool isCurrent: modelData === rootPane.fontFamilySans
+                                    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                    radius: Appearance.rounding.normal
+                                    border.width: isCurrent ? 1 : 0
+                                    border.color: Colours.palette.m3primary
 
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.margins: Appearance.padding.normal
-
-                                    spacing: Appearance.spacing.normal
-
-                                    StyledText {
-                                        text: modelData
-                                        font.pointSize: Appearance.font.size.normal
-                                    }
-
-                                    Item {
-                                        Layout.fillWidth: true
-                                    }
-
-                                    Loader {
-                                        active: isCurrent
-                                        asynchronous: true
-
-                                        sourceComponent: MaterialIcon {
-                                            text: "check"
-                                            color: Colours.palette.m3onSurfaceVariant
-                                            font.pointSize: Appearance.font.size.large
+                                    StateLayer {
+                                        function onClicked(): void {
+                                            rootPane.fontFamilySans = modelData;
+                                            rootPane.saveConfig();
                                         }
                                     }
-                                }
 
-                                implicitHeight: fontFamilySansRow.implicitHeight + Appearance.padding.normal * 2
+                                    RowLayout {
+                                        id: fontFamilySansRow
+
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.margins: Appearance.padding.normal
+
+                                        spacing: Appearance.spacing.normal
+
+                                        StyledText {
+                                            text: modelData
+                                            font.pointSize: Appearance.font.size.normal
+                                        }
+
+                                        Item {
+                                            Layout.fillWidth: true
+                                        }
+
+                                        Loader {
+                                            active: isCurrent
+                                            asynchronous: true
+
+                                            sourceComponent: MaterialIcon {
+                                                text: "check"
+                                                color: Colours.palette.m3onSurfaceVariant
+                                                font.pointSize: Appearance.font.size.large
+                                            }
+                                        }
+                                    }
+
+                                    implicitHeight: fontFamilySansRow.implicitHeight + Appearance.padding.normal * 2
+                                }
                             }
                         }
                     }

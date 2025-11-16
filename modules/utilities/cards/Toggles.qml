@@ -68,7 +68,7 @@ StyledRect {
                 toggle: false
                 onClicked: {
                     root.visibilities.utilities = false;
-                    root.popouts.detach("appearance");
+                    root.popouts.detach("network");
                 }
             }
 

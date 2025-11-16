@@ -22,7 +22,7 @@ Item {
 
         function onClicked(): void {
             WindowFactory.create(null, {
-                active: "appearance"
+                active: "network"
             });
         }
     }

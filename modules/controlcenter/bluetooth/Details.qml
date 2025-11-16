@@ -35,7 +35,7 @@ Item {
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
                 animate: true
-                text: Icons.getBluetoothIcon(root.device.icon)
+                text: Icons.getBluetoothIcon(root.device?.icon ?? "")
                 font.pointSize: Appearance.font.size.extraLarge * 3
                 font.bold: true
             }

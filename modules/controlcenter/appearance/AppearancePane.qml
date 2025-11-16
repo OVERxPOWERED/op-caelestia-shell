@@ -84,6 +84,9 @@ RowLayout {
         // Update border
         Config.border.rounding = root.borderRounding;
         Config.border.thickness = root.borderThickness;
+
+        // Persist changes to disk
+        Config.save();
     }
 
     Item {

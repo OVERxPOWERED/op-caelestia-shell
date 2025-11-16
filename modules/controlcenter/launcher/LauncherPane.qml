@@ -320,6 +320,19 @@ RowLayout {
                     color: isSelected ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
                     radius: Appearance.rounding.normal
 
+                    opacity: 0
+
+                    Behavior on opacity {
+                        NumberAnimation {
+                            duration: 200
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+
+                    Component.onCompleted: {
+                        opacity = 1;
+                    }
+
                     StateLayer {
                         function onClicked(): void {
                             root.selectedApp = modelData;

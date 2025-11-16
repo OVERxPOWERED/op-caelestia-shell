@@ -371,11 +371,30 @@ Item {
                                             text: (modelData && modelData.ssid) ? modelData.ssid : qsTr("Unknown")
                                         }
 
-                                        StyledText {
-                                            text: (modelData && modelData.active) ? qsTr("Connected") : ((modelData && modelData.isSecure) ? qsTr("Secured") : qsTr("Open"))
-                                            color: (modelData && modelData.active) ? Colours.palette.m3primary : Colours.palette.m3outline
-                                            font.pointSize: Appearance.font.size.small
-                                            font.weight: (modelData && modelData.active) ? 500 : 400
+                                        RowLayout {
+                                            spacing: Appearance.spacing.smaller
+
+                                            MaterialIcon {
+                                                visible: (modelData && modelData.isSecure)
+                                                text: "lock"
+                                                font.pointSize: Appearance.font.size.small
+                                                color: (modelData && modelData.active) ? Colours.palette.m3primary : Colours.palette.m3outline
+                                            }
+
+                                            StyledText {
+                                                text: {
+                                                    if (!modelData) return qsTr("Open");
+                                                    if (modelData.active) return qsTr("Connected");
+                                                    if (modelData.isSecure && modelData.security && modelData.security.length > 0) {
+                                                        return modelData.security;
+                                                    }
+                                                    if (modelData.isSecure) return qsTr("Secured");
+                                                    return qsTr("Open");
+                                                }
+                                                color: (modelData && modelData.active) ? Colours.palette.m3primary : Colours.palette.m3outline
+                                                font.pointSize: Appearance.font.size.small
+                                                font.weight: (modelData && modelData.active) ? 500 : 400
+                                            }
                                         }
 
                                         StyledRect {

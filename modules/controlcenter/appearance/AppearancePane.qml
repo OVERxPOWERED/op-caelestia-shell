@@ -788,7 +788,7 @@ RowLayout {
                                         anchors.centerIn: parent
                                         width: parent.width - Appearance.padding.normal
                                         horizontalAlignment: TextInput.AlignHCenter
-                                        validator: DoubleValidator { bottom: 0.1; top: 5.0 }
+                                        validator: DoubleValidator { bottom: 0.7; top: 1.5 }
                                         
                                         Component.onCompleted: {
                                             text = (rootPane.fontSizeScale).toFixed(1);
@@ -797,7 +797,7 @@ RowLayout {
                                         onTextChanged: {
                                             if (activeFocus) {
                                                 const val = parseFloat(text);
-                                                if (!isNaN(val) && val >= 0.1 && val <= 5.0) {
+                                                if (!isNaN(val) && val >= 0.7 && val <= 1.5) {
                                                     rootPane.fontSizeScale = val;
                                                     rootPane.saveConfig();
                                                 }
@@ -805,7 +805,7 @@ RowLayout {
                                         }
                                         onEditingFinished: {
                                             const val = parseFloat(text);
-                                            if (isNaN(val) || val < 0.1 || val > 5.0) {
+                                            if (isNaN(val) || val < 0.7 || val > 1.5) {
                                                 text = (rootPane.fontSizeScale).toFixed(1);
                                             }
                                         }
@@ -825,8 +825,8 @@ RowLayout {
                                 Layout.fillWidth: true
                                 implicitHeight: Appearance.padding.normal * 3
 
-                                from: 0.1
-                                to: 5.0
+                                from: 0.7
+                                to: 1.5
                         value: rootPane.fontSizeScale
                                 onMoved: {
                                     rootPane.fontSizeScale = fontSizeSlider.value;

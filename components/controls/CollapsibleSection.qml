@@ -154,10 +154,9 @@ ColumnLayout {
             id: contentColumn
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: parent.top
+            y: Appearance.spacing.small
             anchors.leftMargin: Appearance.padding.normal
             anchors.rightMargin: Appearance.padding.normal
-            anchors.topMargin: Appearance.spacing.small
             anchors.bottomMargin: Appearance.spacing.small
             spacing: Appearance.spacing.small
             opacity: root.expanded ? 1.0 : 0.0

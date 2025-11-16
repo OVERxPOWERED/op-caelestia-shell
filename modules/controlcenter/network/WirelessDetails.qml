@@ -151,8 +151,8 @@ Item {
                         }
                         return Nmcli.hasSavedProfile(root.network.ssid);
                     }
-                    inactiveColour: Colours.palette.m3errorContainer
-                    inactiveOnColour: Colours.palette.m3onErrorContainer
+                    inactiveColour: Colours.palette.m3secondaryContainer
+                    inactiveOnColour: Colours.palette.m3onSecondaryContainer
                     text: qsTr("Forget Network")
 
                     onClicked: {

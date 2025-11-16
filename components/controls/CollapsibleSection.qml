@@ -68,16 +68,37 @@ ColumnLayout {
         }
     }
 
-    StyledText {
-        visible: root.expanded && root.description !== ""
+    Item {
+        visible: root.description !== ""
         Layout.fillWidth: true
-        Layout.leftMargin: Appearance.padding.normal
-        Layout.rightMargin: Appearance.padding.normal
-        Layout.topMargin: Appearance.spacing.smaller
-        Layout.bottomMargin: Appearance.spacing.small
-        text: root.description
-        color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Appearance.font.size.small
+        Layout.preferredHeight: root.expanded ? descriptionText.implicitHeight + Appearance.spacing.smaller + Appearance.spacing.small : 0
+        clip: true
+
+        Behavior on Layout.preferredHeight {
+            Anim {
+                easing.bezierCurve: Appearance.anim.curves.standard
+            }
+        }
+
+        StyledText {
+            id: descriptionText
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.leftMargin: Appearance.padding.normal
+            anchors.rightMargin: Appearance.padding.normal
+            anchors.topMargin: Appearance.spacing.smaller
+            text: root.description
+            color: Colours.palette.m3onSurfaceVariant
+            font.pointSize: Appearance.font.size.small
+            opacity: root.expanded ? 1.0 : 0.0
+
+            Behavior on opacity {
+                Anim {
+                    easing.bezierCurve: Appearance.anim.curves.standard
+                }
+            }
+        }
     }
 
     default property alias content: contentColumn.data

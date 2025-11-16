@@ -1923,6 +1923,7 @@ RowLayout {
                             anchors.fill: parent
                             color: Colours.tPalette.m3surfaceContainer
                             radius: Appearance.rounding.normal
+                            antialiasing: true
 
                             CachingImage {
                                 id: cachingImage
@@ -1931,6 +1932,7 @@ RowLayout {
                                 anchors.fill: parent
                                 cache: true
                                 visible: opacity > 0
+                                antialiasing: true
 
                                 // Show when ready
                                 opacity: status === Image.Ready ? 1 : 0
@@ -1953,6 +1955,7 @@ RowLayout {
                                 fillMode: Image.PreserveAspectCrop
                                 cache: true
                                 visible: opacity > 0
+                                antialiasing: true
 
                                 opacity: status === Image.Ready && cachingImage.status !== Image.Ready ? 1 : 0
 
@@ -1982,6 +1985,7 @@ RowLayout {
                             radius: Appearance.rounding.normal
                             border.width: isCurrent ? 2 : 0
                             border.color: Colours.palette.m3primary
+                            antialiasing: true
 
                             Behavior on border.width {
                                 NumberAnimation {
@@ -2019,16 +2023,16 @@ RowLayout {
                                         color: Qt.rgba(0, 0, 0, 0)
                                     }
                                     GradientStop {
-                                        position: 0.3
-                                        color: Qt.rgba(0, 0, 0, 0.3)
+                                        position: 0.4
+                                        color: Qt.rgba(0, 0, 0, 0.2)
                                     }
                                     GradientStop {
-                                        position: 0.7
-                                        color: Qt.rgba(0, 0, 0, 0.75)
+                                        position: 0.8
+                                        color: Qt.rgba(0, 0, 0, 0.5)
                                     }
                                     GradientStop {
                                         position: 1.0
-                                        color: Qt.rgba(0, 0, 0, 0.85)
+                                        color: Qt.rgba(0, 0, 0, 0.6)
                                     }
                                 }
                             }

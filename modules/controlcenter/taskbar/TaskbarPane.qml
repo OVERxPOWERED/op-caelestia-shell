@@ -111,6 +111,9 @@ RowLayout {
             });
         }
         Config.bar.entries = entries;
+
+        // Persist changes to disk
+        Config.save();
     }
 
     ListModel {

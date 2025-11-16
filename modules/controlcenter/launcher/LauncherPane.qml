@@ -66,8 +66,11 @@ RowLayout {
             }
         }
 
-        // Update Config to trigger save
+        // Update Config
         Config.launcher.hiddenApps = hiddenApps;
+
+        // Persist changes to disk
+        Config.save();
     }
 
     onSelectedAppChanged: {

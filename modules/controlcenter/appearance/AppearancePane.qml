@@ -200,84 +200,80 @@ RowLayout {
                         sidebarFlickable.collapseAllSections(colorVariantSection);
                     }
 
-                    StyledListView {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        implicitHeight: colorVariantSection.expanded ? Math.min(400, M3Variants.list.length * 60) : 0
-
-                        model: M3Variants.list
                         spacing: Appearance.spacing.small / 2
-                        clip: true
 
-                        StyledScrollBar.vertical: StyledScrollBar {
-                            flickable: parent
-                        }
+                        Repeater {
+                            model: M3Variants.list
 
-                        delegate: StyledRect {
-                            required property var modelData
+                            delegate: StyledRect {
+                                required property var modelData
 
-                            width: parent ? parent.width : 0
+                                Layout.fillWidth: true
 
-                            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, modelData.variant === Schemes.currentVariant ? Colours.tPalette.m3surfaceContainer.a : 0)
-                            radius: Appearance.rounding.normal
-                            border.width: modelData.variant === Schemes.currentVariant ? 1 : 0
-                            border.color: Colours.palette.m3primary
+                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, modelData.variant === Schemes.currentVariant ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                radius: Appearance.rounding.normal
+                                border.width: modelData.variant === Schemes.currentVariant ? 1 : 0
+                                border.color: Colours.palette.m3primary
 
-                            StateLayer {
-                                function onClicked(): void {
-                                    const variant = modelData.variant;
+                                StateLayer {
+                                    function onClicked(): void {
+                                        const variant = modelData.variant;
 
-                                    // Optimistic update - set immediately
-                                    Schemes.currentVariant = variant;
+                                        // Optimistic update - set immediately
+                                        Schemes.currentVariant = variant;
 
-                                    // Execute the command
-                                    Quickshell.execDetached(["caelestia", "scheme", "set", "-v", variant]);
+                                        // Execute the command
+                                        Quickshell.execDetached(["caelestia", "scheme", "set", "-v", variant]);
 
-                                    // Reload after a delay to confirm
-                                    Qt.callLater(() => {
-                                        reloadTimer.restart();
-                                    });
+                                        // Reload after a delay to confirm
+                                        Qt.callLater(() => {
+                                            reloadTimer.restart();
+                                        });
+                                    }
                                 }
+
+                                Timer {
+                                    id: reloadTimer
+                                    interval: 300
+                                    onTriggered: {
+                                        Schemes.reload();
+                                    }
+                                }
+
+                                RowLayout {
+                                    id: variantRow
+
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.margins: Appearance.padding.normal
+
+                                    spacing: Appearance.spacing.normal
+
+                                    MaterialIcon {
+                                        text: modelData.icon
+                                        font.pointSize: Appearance.font.size.large
+                                        fill: modelData.variant === Schemes.currentVariant ? 1 : 0
+                                    }
+
+                                    StyledText {
+                                        Layout.fillWidth: true
+                                        text: modelData.name
+                                        font.weight: modelData.variant === Schemes.currentVariant ? 500 : 400
+                                    }
+
+                                    MaterialIcon {
+                                        visible: modelData.variant === Schemes.currentVariant
+                                        text: "check"
+                                        color: Colours.palette.m3primary
+                                        font.pointSize: Appearance.font.size.large
+                                    }
+                                }
+
+                                implicitHeight: variantRow.implicitHeight + Appearance.padding.normal * 2
                             }
-
-                            Timer {
-                                id: reloadTimer
-                                interval: 300
-                                onTriggered: {
-                                    Schemes.reload();
-                                }
-                            }
-
-                            RowLayout {
-                                id: variantRow
-
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Appearance.padding.normal
-
-                                spacing: Appearance.spacing.normal
-
-                                MaterialIcon {
-                                    text: modelData.icon
-                                    font.pointSize: Appearance.font.size.large
-                                    fill: modelData.variant === Schemes.currentVariant ? 1 : 0
-                                }
-
-                                StyledText {
-                                    Layout.fillWidth: true
-                                    text: modelData.name
-                                    font.weight: modelData.variant === Schemes.currentVariant ? 500 : 400
-                                }
-
-                                MaterialIcon {
-                                    visible: modelData.variant === Schemes.currentVariant
-                                    text: "check"
-                                    color: Colours.palette.m3primary
-                                    font.pointSize: Appearance.font.size.large
-                                }
-                            }
-
-                            implicitHeight: variantRow.implicitHeight + Appearance.padding.normal * 2
                         }
                     }
                 }
@@ -290,139 +286,135 @@ RowLayout {
                         sidebarFlickable.collapseAllSections(colorSchemeSection);
                     }
 
-                    StyledListView {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        implicitHeight: colorSchemeSection.expanded ? Math.min(400, Schemes.list.length * 80) : 0
-
-                        model: Schemes.list
                         spacing: Appearance.spacing.small / 2
-                        clip: true
 
-                        StyledScrollBar.vertical: StyledScrollBar {
-                            flickable: parent
-                        }
+                        Repeater {
+                            model: Schemes.list
 
-                        delegate: StyledRect {
-                            required property var modelData
+                            delegate: StyledRect {
+                                required property var modelData
 
-                            width: parent ? parent.width : 0
+                                Layout.fillWidth: true
 
-                            readonly property string schemeKey: `${modelData.name} ${modelData.flavour}`
-                            readonly property bool isCurrent: schemeKey === Schemes.currentScheme
+                                readonly property string schemeKey: `${modelData.name} ${modelData.flavour}`
+                                readonly property bool isCurrent: schemeKey === Schemes.currentScheme
 
-                            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                            radius: Appearance.rounding.normal
-                            border.width: isCurrent ? 1 : 0
-                            border.color: Colours.palette.m3primary
+                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                radius: Appearance.rounding.normal
+                                border.width: isCurrent ? 1 : 0
+                                border.color: Colours.palette.m3primary
 
-                            StateLayer {
-                                function onClicked(): void {
-                                    const name = modelData.name;
-                                    const flavour = modelData.flavour;
-                                    const schemeKey = `${name} ${flavour}`;
+                                StateLayer {
+                                    function onClicked(): void {
+                                        const name = modelData.name;
+                                        const flavour = modelData.flavour;
+                                        const schemeKey = `${name} ${flavour}`;
 
-                                    // Optimistic update - set immediately
-                                    Schemes.currentScheme = schemeKey;
+                                        // Optimistic update - set immediately
+                                        Schemes.currentScheme = schemeKey;
 
-                                    // Execute the command
-                                    Quickshell.execDetached(["caelestia", "scheme", "set", "-n", name, "-f", flavour]);
+                                        // Execute the command
+                                        Quickshell.execDetached(["caelestia", "scheme", "set", "-n", name, "-f", flavour]);
 
-                                    // Reload after a delay to confirm
-                                    Qt.callLater(() => {
-                                        reloadTimer.restart();
-                                    });
-                                }
-                            }
-
-                            Timer {
-                                id: reloadTimer
-                                interval: 300
-                                onTriggered: {
-                                    Schemes.reload();
-                                }
-                            }
-
-                            RowLayout {
-                                id: schemeRow
-
-                                anchors.fill: parent
-                                anchors.margins: Appearance.padding.normal
-
-                                spacing: Appearance.spacing.normal
-
-                                StyledRect {
-                                    id: preview
-
-                                    Layout.alignment: Qt.AlignVCenter
-
-                                    border.width: 1
-                                    border.color: Qt.alpha(`#${modelData.colours?.outline}`, 0.5)
-
-                                    color: `#${modelData.colours?.surface}`
-                                    radius: Appearance.rounding.full
-                                    implicitWidth: iconPlaceholder.implicitWidth
-                                    implicitHeight: iconPlaceholder.implicitWidth
-
-                                    MaterialIcon {
-                                        id: iconPlaceholder
-                                        visible: false
-                                        text: "circle"
-                                        font.pointSize: Appearance.font.size.large
+                                        // Reload after a delay to confirm
+                                        Qt.callLater(() => {
+                                            reloadTimer.restart();
+                                        });
                                     }
+                                }
 
-                                    Item {
-                                        anchors.top: parent.top
-                                        anchors.bottom: parent.bottom
-                                        anchors.right: parent.right
+                                Timer {
+                                    id: reloadTimer
+                                    interval: 300
+                                    onTriggered: {
+                                        Schemes.reload();
+                                    }
+                                }
 
-                                        implicitWidth: parent.implicitWidth / 2
-                                        clip: true
+                                RowLayout {
+                                    id: schemeRow
 
-                                        StyledRect {
+                                    anchors.fill: parent
+                                    anchors.margins: Appearance.padding.normal
+
+                                    spacing: Appearance.spacing.normal
+
+                                    StyledRect {
+                                        id: preview
+
+                                        Layout.alignment: Qt.AlignVCenter
+
+                                        border.width: 1
+                                        border.color: Qt.alpha(`#${modelData.colours?.outline}`, 0.5)
+
+                                        color: `#${modelData.colours?.surface}`
+                                        radius: Appearance.rounding.full
+                                        implicitWidth: iconPlaceholder.implicitWidth
+                                        implicitHeight: iconPlaceholder.implicitWidth
+
+                                        MaterialIcon {
+                                            id: iconPlaceholder
+                                            visible: false
+                                            text: "circle"
+                                            font.pointSize: Appearance.font.size.large
+                                        }
+
+                                        Item {
                                             anchors.top: parent.top
                                             anchors.bottom: parent.bottom
                                             anchors.right: parent.right
 
-                                            implicitWidth: preview.implicitWidth
-                                            color: `#${modelData.colours?.primary}`
-                                            radius: Appearance.rounding.full
+                                            implicitWidth: parent.implicitWidth / 2
+                                            clip: true
+
+                                            StyledRect {
+                                                anchors.top: parent.top
+                                                anchors.bottom: parent.bottom
+                                                anchors.right: parent.right
+
+                                                implicitWidth: preview.implicitWidth
+                                                color: `#${modelData.colours?.primary}`
+                                                radius: Appearance.rounding.full
+                                            }
+                                        }
+                                    }
+
+                                    Column {
+                                        Layout.fillWidth: true
+                                        spacing: 0
+
+                                        StyledText {
+                                            text: modelData.flavour ?? ""
+                                            font.pointSize: Appearance.font.size.normal
+                                        }
+
+                                        StyledText {
+                                            text: modelData.name ?? ""
+                                            font.pointSize: Appearance.font.size.small
+                                            color: Colours.palette.m3outline
+
+                                            elide: Text.ElideRight
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                        }
+                                    }
+
+                                    Loader {
+                                        active: isCurrent
+                                        asynchronous: true
+
+                                        sourceComponent: MaterialIcon {
+                                            text: "check"
+                                            color: Colours.palette.m3onSurfaceVariant
+                                            font.pointSize: Appearance.font.size.large
                                         }
                                     }
                                 }
 
-                                Column {
-                                    Layout.fillWidth: true
-                                    spacing: 0
-
-                                    StyledText {
-                                        text: modelData.flavour ?? ""
-                                        font.pointSize: Appearance.font.size.normal
-                                    }
-
-                                    StyledText {
-                                        text: modelData.name ?? ""
-                                        font.pointSize: Appearance.font.size.small
-                                        color: Colours.palette.m3outline
-
-                                        elide: Text.ElideRight
-                                        anchors.left: parent.left
-                                        anchors.right: parent.right
-                                    }
-                                }
-
-                                Loader {
-                                    active: isCurrent
-                                    asynchronous: true
-
-                                    sourceComponent: MaterialIcon {
-                                        text: "check"
-                                        color: Colours.palette.m3onSurfaceVariant
-                                        font.pointSize: Appearance.font.size.large
-                                    }
-                                }
+                                implicitHeight: schemeRow.implicitHeight + Appearance.padding.normal * 2
                             }
-
-                            implicitHeight: schemeRow.implicitHeight + Appearance.padding.normal * 2
                         }
                     }
                 }
@@ -548,68 +540,64 @@ RowLayout {
                         font.weight: 500
                     }
 
-                    StyledListView {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
-
-                        model: Qt.fontFamilies()
                         spacing: Appearance.spacing.small / 2
-                        clip: true
 
-                        StyledScrollBar.vertical: StyledScrollBar {
-                            flickable: parent
-                        }
+                        Repeater {
+                            model: Qt.fontFamilies()
 
-                        delegate: StyledRect {
-                            required property string modelData
+                            delegate: StyledRect {
+                                required property string modelData
 
-                            width: parent ? parent.width : 0
+                                Layout.fillWidth: true
 
-                            readonly property bool isCurrent: modelData === rootPane.fontFamilyMaterial
-                            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                            radius: Appearance.rounding.normal
-                            border.width: isCurrent ? 1 : 0
-                            border.color: Colours.palette.m3primary
+                                readonly property bool isCurrent: modelData === rootPane.fontFamilyMaterial
+                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                radius: Appearance.rounding.normal
+                                border.width: isCurrent ? 1 : 0
+                                border.color: Colours.palette.m3primary
 
-                            StateLayer {
-                                function onClicked(): void {
-                                    rootPane.fontFamilyMaterial = modelData;
-                                    rootPane.saveConfig();
-                                }
-                            }
-
-                            RowLayout {
-                                id: fontFamilyMaterialRow
-
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Appearance.padding.normal
-
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: modelData
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                Loader {
-                                    active: isCurrent
-                                    asynchronous: true
-
-                                    sourceComponent: MaterialIcon {
-                                        text: "check"
-                                        color: Colours.palette.m3onSurfaceVariant
-                                        font.pointSize: Appearance.font.size.large
+                                StateLayer {
+                                    function onClicked(): void {
+                                        rootPane.fontFamilyMaterial = modelData;
+                                        rootPane.saveConfig();
                                     }
                                 }
-                            }
 
-                            implicitHeight: fontFamilyMaterialRow.implicitHeight + Appearance.padding.normal * 2
+                                RowLayout {
+                                    id: fontFamilyMaterialRow
+
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.margins: Appearance.padding.normal
+
+                                    spacing: Appearance.spacing.normal
+
+                                    StyledText {
+                                        text: modelData
+                                        font.pointSize: Appearance.font.size.normal
+                                    }
+
+                                    Item {
+                                        Layout.fillWidth: true
+                                    }
+
+                                    Loader {
+                                        active: isCurrent
+                                        asynchronous: true
+
+                                        sourceComponent: MaterialIcon {
+                                            text: "check"
+                                            color: Colours.palette.m3onSurfaceVariant
+                                            font.pointSize: Appearance.font.size.large
+                                        }
+                                    }
+                                }
+
+                                implicitHeight: fontFamilyMaterialRow.implicitHeight + Appearance.padding.normal * 2
+                            }
                         }
                     }
 
@@ -620,68 +608,64 @@ RowLayout {
                         font.weight: 500
                     }
 
-                    StyledListView {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
-
-                        model: Qt.fontFamilies()
                         spacing: Appearance.spacing.small / 2
-                        clip: true
 
-                        StyledScrollBar.vertical: StyledScrollBar {
-                            flickable: parent
-                        }
+                        Repeater {
+                            model: Qt.fontFamilies()
 
-                        delegate: StyledRect {
-                            required property string modelData
+                            delegate: StyledRect {
+                                required property string modelData
 
-                            width: parent ? parent.width : 0
+                                Layout.fillWidth: true
 
-                            readonly property bool isCurrent: modelData === rootPane.fontFamilyMono
-                            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                            radius: Appearance.rounding.normal
-                            border.width: isCurrent ? 1 : 0
-                            border.color: Colours.palette.m3primary
+                                readonly property bool isCurrent: modelData === rootPane.fontFamilyMono
+                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                radius: Appearance.rounding.normal
+                                border.width: isCurrent ? 1 : 0
+                                border.color: Colours.palette.m3primary
 
-                            StateLayer {
-                                function onClicked(): void {
-                                    rootPane.fontFamilyMono = modelData;
-                                    rootPane.saveConfig();
-                                }
-                            }
-
-                            RowLayout {
-                                id: fontFamilyMonoRow
-
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Appearance.padding.normal
-
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: modelData
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                Loader {
-                                    active: isCurrent
-                                    asynchronous: true
-
-                                    sourceComponent: MaterialIcon {
-                                        text: "check"
-                                        color: Colours.palette.m3onSurfaceVariant
-                                        font.pointSize: Appearance.font.size.large
+                                StateLayer {
+                                    function onClicked(): void {
+                                        rootPane.fontFamilyMono = modelData;
+                                        rootPane.saveConfig();
                                     }
                                 }
-                            }
 
-                            implicitHeight: fontFamilyMonoRow.implicitHeight + Appearance.padding.normal * 2
+                                RowLayout {
+                                    id: fontFamilyMonoRow
+
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.margins: Appearance.padding.normal
+
+                                    spacing: Appearance.spacing.normal
+
+                                    StyledText {
+                                        text: modelData
+                                        font.pointSize: Appearance.font.size.normal
+                                    }
+
+                                    Item {
+                                        Layout.fillWidth: true
+                                    }
+
+                                    Loader {
+                                        active: isCurrent
+                                        asynchronous: true
+
+                                        sourceComponent: MaterialIcon {
+                                            text: "check"
+                                            color: Colours.palette.m3onSurfaceVariant
+                                            font.pointSize: Appearance.font.size.large
+                                        }
+                                    }
+                                }
+
+                                implicitHeight: fontFamilyMonoRow.implicitHeight + Appearance.padding.normal * 2
+                            }
                         }
                     }
 
@@ -692,68 +676,64 @@ RowLayout {
                         font.weight: 500
                     }
 
-                    StyledListView {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        implicitHeight: fontsSection.expanded ? Math.min(300, Qt.fontFamilies().length * 50) : 0
-
-                        model: Qt.fontFamilies()
                         spacing: Appearance.spacing.small / 2
-                        clip: true
 
-                        StyledScrollBar.vertical: StyledScrollBar {
-                            flickable: parent
-                        }
+                        Repeater {
+                            model: Qt.fontFamilies()
 
-                        delegate: StyledRect {
-                            required property string modelData
+                            delegate: StyledRect {
+                                required property string modelData
 
-                            width: parent ? parent.width : 0
+                                Layout.fillWidth: true
 
-                            readonly property bool isCurrent: modelData === rootPane.fontFamilySans
-                            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                            radius: Appearance.rounding.normal
-                            border.width: isCurrent ? 1 : 0
-                            border.color: Colours.palette.m3primary
+                                readonly property bool isCurrent: modelData === rootPane.fontFamilySans
+                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
+                                radius: Appearance.rounding.normal
+                                border.width: isCurrent ? 1 : 0
+                                border.color: Colours.palette.m3primary
 
-                            StateLayer {
-                                function onClicked(): void {
-                                    rootPane.fontFamilySans = modelData;
-                                    rootPane.saveConfig();
-                                }
-                            }
-
-                            RowLayout {
-                                id: fontFamilySansRow
-
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Appearance.padding.normal
-
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: modelData
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                Loader {
-                                    active: isCurrent
-                                    asynchronous: true
-
-                                    sourceComponent: MaterialIcon {
-                                        text: "check"
-                                        color: Colours.palette.m3onSurfaceVariant
-                                        font.pointSize: Appearance.font.size.large
+                                StateLayer {
+                                    function onClicked(): void {
+                                        rootPane.fontFamilySans = modelData;
+                                        rootPane.saveConfig();
                                     }
                                 }
-                            }
 
-                            implicitHeight: fontFamilySansRow.implicitHeight + Appearance.padding.normal * 2
+                                RowLayout {
+                                    id: fontFamilySansRow
+
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.margins: Appearance.padding.normal
+
+                                    spacing: Appearance.spacing.normal
+
+                                    StyledText {
+                                        text: modelData
+                                        font.pointSize: Appearance.font.size.normal
+                                    }
+
+                                    Item {
+                                        Layout.fillWidth: true
+                                    }
+
+                                    Loader {
+                                        active: isCurrent
+                                        asynchronous: true
+
+                                        sourceComponent: MaterialIcon {
+                                            text: "check"
+                                            color: Colours.palette.m3onSurfaceVariant
+                                            font.pointSize: Appearance.font.size.large
+                                        }
+                                    }
+                                }
+
+                                implicitHeight: fontFamilySansRow.implicitHeight + Appearance.padding.normal * 2
+                            }
                         }
                     }
 

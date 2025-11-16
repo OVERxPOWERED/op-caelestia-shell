@@ -104,6 +104,13 @@ ColumnLayout {
             anchors.topMargin: Appearance.spacing.small
             anchors.bottomMargin: Appearance.spacing.small
             spacing: Appearance.spacing.small
+            opacity: root.expanded ? 1.0 : 0.0
+
+            Behavior on opacity {
+                Anim {
+                    easing.bezierCurve: Appearance.anim.curves.standard
+                }
+            }
         }
     }
 }

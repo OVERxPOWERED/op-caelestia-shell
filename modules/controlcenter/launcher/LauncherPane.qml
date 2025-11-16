@@ -300,73 +300,87 @@ RowLayout {
                 }
             }
 
-            StyledListView {
-                id: appsListView
+            Loader {
+                id: appsListLoader
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
-                model: root.filteredApps
-                spacing: Appearance.spacing.small / 2
-                clip: true
-
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: parent
+                asynchronous: true
+                active: {
+                    // Lazy load: activate when left pane is loaded
+                    // The ListView will load asynchronously, and search will work because filteredApps
+                    // is updated regardless of whether the ListView is loaded
+                    return leftLauncherLoader.item !== null;
                 }
 
-                delegate: StyledRect {
-                    required property var modelData
+                sourceComponent: StyledListView {
+                    id: appsListView
+                    
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
 
-                    width: parent ? parent.width : 0
+                    model: root.filteredApps
+                    spacing: Appearance.spacing.small / 2
+                    clip: true
 
-                    readonly property bool isSelected: root.selectedApp === modelData
-
-                    color: isSelected ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
-                    radius: Appearance.rounding.normal
-
-                    opacity: 0
-
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: 1000
-                            easing.type: Easing.OutCubic
-                        }
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: parent
                     }
 
-                    Component.onCompleted: {
-                        opacity = 1;
-                    }
+                    delegate: StyledRect {
+                        required property var modelData
 
-                    StateLayer {
-                        function onClicked(): void {
-                            root.selectedApp = modelData;
-                        }
-                    }
+                        width: parent ? parent.width : 0
 
-                    RowLayout {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.normal
+                        readonly property bool isSelected: root.selectedApp === modelData
 
-                        spacing: Appearance.spacing.normal
+                        color: isSelected ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
+                        radius: Appearance.rounding.normal
 
-                        IconImage {
-                            Layout.alignment: Qt.AlignVCenter
-                            implicitSize: 32
-                            source: {
-                                const entry = modelData.entry;
-                                return entry ? Quickshell.iconPath(entry.icon, "image-missing") : "image-missing";
+                        opacity: 0
+
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 1000
+                                easing.type: Easing.OutCubic
                             }
                         }
 
-                        StyledText {
-                            Layout.fillWidth: true
-                            text: modelData.name || modelData.entry?.name || qsTr("Unknown")
-                            font.pointSize: Appearance.font.size.normal
+                        Component.onCompleted: {
+                            opacity = 1;
                         }
-                    }
 
-                    implicitHeight: 40
+                        StateLayer {
+                            function onClicked(): void {
+                                root.selectedApp = modelData;
+                            }
+                        }
+
+                        RowLayout {
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.margins: Appearance.padding.normal
+
+                            spacing: Appearance.spacing.normal
+
+                            IconImage {
+                                Layout.alignment: Qt.AlignVCenter
+                                implicitSize: 32
+                                source: {
+                                    const entry = modelData.entry;
+                                    return entry ? Quickshell.iconPath(entry.icon, "image-missing") : "image-missing";
+                                }
+                            }
+
+                            StyledText {
+                                Layout.fillWidth: true
+                                text: modelData.name || modelData.entry?.name || qsTr("Unknown")
+                                font.pointSize: Appearance.font.size.normal
+                            }
+                        }
+
+                        implicitHeight: 40
+                    }
                 }
             }
         }

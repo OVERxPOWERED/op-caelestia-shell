@@ -124,6 +124,9 @@ ClippingRectangle {
         implicitWidth: root.width
         implicitHeight: root.height
 
+        // Track if this pane has ever been loaded to enable caching
+        property bool hasBeenLoaded: false
+
         Loader {
             id: loader
 
@@ -135,11 +138,25 @@ ClippingRectangle {
                 
                 // Always activate current and adjacent panes immediately for smooth transitions
                 if (diff <= 1) {
+                    pane.hasBeenLoaded = true;
                     return true;
                 }
                 
-                // For distant panes, wait until animation completes to avoid heavy loading during transition
+                // For distant panes that have been loaded before, keep them active to preserve cached data
+                // Only wait for animation if pane hasn't been loaded yet
+                if (pane.hasBeenLoaded) {
+                    return true;
+                }
+                
+                // For new distant panes, wait until animation completes to avoid heavy loading during transition
                 return layout.animationComplete;
+            }
+            
+            onItemChanged: {
+                // Mark pane as loaded when item is created
+                if (item) {
+                    pane.hasBeenLoaded = true;
+                }
             }
         }
     }

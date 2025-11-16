@@ -1812,10 +1812,7 @@ RowLayout {
             Loader {
                 id: rightAppearanceLoader
                 anchors.fill: parent
-                anchors.topMargin: Appearance.padding.large * 2
-                anchors.bottomMargin: Appearance.padding.large * 2
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
+                anchors.margins: Appearance.padding.large * 2
                 asynchronous: true
                 sourceComponent: appearanceRightContentComponent
                 property var rootPane: root
@@ -1844,12 +1841,12 @@ RowLayout {
 
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.leftMargin: Appearance.padding.large * 2
-                    anchors.rightMargin: Appearance.padding.large * 2
+                    anchors.top: parent.top
                     spacing: Appearance.spacing.normal
 
                 MaterialIcon {
-                    Layout.alignment: Qt.AlignHCenter
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                    Layout.topMargin: 0
                     text: "palette"
                     font.pointSize: Appearance.font.size.extraLarge * 3
                     font.bold: true
@@ -1877,39 +1874,53 @@ RowLayout {
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
-                GridView {
-                    id: wallpaperGrid
+                Item {
                     Layout.fillWidth: true
                     Layout.topMargin: Appearance.spacing.large
-                    Layout.preferredHeight: Math.min(600, Math.ceil(count / Math.floor(width / cellWidth)) * cellHeight)
-                    Layout.alignment: Qt.AlignHCenter
+                    Layout.preferredHeight: wallpaperGrid.Layout.preferredHeight
+                    
+                    GridView {
+                        id: wallpaperGrid
+                        anchors.fill: parent
+                        
+                        readonly property int minCellWidth: 200 + Appearance.spacing.normal
+                        readonly property int columnsCount: Math.max(1, Math.floor(parent.width / minCellWidth))
+                        
+                        Layout.preferredHeight: Math.ceil(count / columnsCount) * cellHeight
+                        height: Layout.preferredHeight
+                        
+                        // Distribute width evenly across columns
+                        cellWidth: width / columnsCount
+                        cellHeight: 140 + Appearance.spacing.normal
+                        
+                        leftMargin: 0
+                        rightMargin: 0
+                        topMargin: 0
+                        bottomMargin: 0
 
-                    cellWidth: 200 + Appearance.spacing.normal
-                    cellHeight: 140 + Appearance.spacing.normal
-
-                    model: Wallpapers.list
-                    clip: true
+                        model: Wallpapers.list
+                        clip: true
+                        
+                        // Disable GridView's own scrolling - let parent handle it
+                        interactive: false
 
                     // Enable caching for better performance
                     cacheBuffer: cellHeight * 2
 
-                    StyledScrollBar.vertical: StyledScrollBar {
-                        flickable: wallpaperGrid
-                    }
-
                     delegate: Item {
                         required property var modelData
 
-                        width: 200
-                        height: 140
-
-                        // Center in cell
-                        x: (wallpaperGrid.cellWidth - width) / 2
-                        y: (wallpaperGrid.cellHeight - height) / 2
+                        width: wallpaperGrid.cellWidth
+                        height: wallpaperGrid.cellHeight
 
                         readonly property bool isCurrent: modelData.path === Wallpapers.actualCurrent
 
                         StateLayer {
+                            anchors.fill: parent
+                            anchors.leftMargin: Appearance.spacing.normal / 2
+                            anchors.rightMargin: Appearance.spacing.normal / 2
+                            anchors.topMargin: Appearance.spacing.normal / 2
+                            anchors.bottomMargin: Appearance.spacing.normal / 2
                             radius: Appearance.rounding.normal
 
                             function onClicked(): void {
@@ -1921,6 +1932,10 @@ RowLayout {
                             id: image
 
                             anchors.fill: parent
+                            anchors.leftMargin: Appearance.spacing.normal / 2
+                            anchors.rightMargin: Appearance.spacing.normal / 2
+                            anchors.topMargin: Appearance.spacing.normal / 2
+                            anchors.bottomMargin: Appearance.spacing.normal / 2
                             color: Colours.tPalette.m3surfaceContainer
                             radius: Appearance.rounding.normal
                             antialiasing: true
@@ -1930,6 +1945,7 @@ RowLayout {
 
                                 path: modelData.path
                                 anchors.fill: parent
+                                fillMode: Image.PreserveAspectCrop
                                 cache: true
                                 visible: opacity > 0
                                 antialiasing: true
@@ -1981,6 +1997,10 @@ RowLayout {
                         // Border overlay that doesn't affect image size
                         Rectangle {
                             anchors.fill: parent
+                            anchors.leftMargin: Appearance.spacing.normal / 2
+                            anchors.rightMargin: Appearance.spacing.normal / 2
+                            anchors.topMargin: Appearance.spacing.normal / 2
+                            anchors.bottomMargin: Appearance.spacing.normal / 2
                             color: "transparent"
                             radius: Appearance.rounding.normal
                             border.width: isCurrent ? 2 : 0
@@ -2012,27 +2032,63 @@ RowLayout {
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 anchors.bottom: parent.bottom
+                                anchors.leftMargin: isCurrent ? 2 : 0
+                                anchors.rightMargin: isCurrent ? 2 : 0
+                                anchors.bottomMargin: isCurrent ? 2 : 0
 
-                                implicitHeight: filenameText.implicitHeight + Appearance.padding.normal * 2
+                                implicitHeight: filenameText.implicitHeight + Appearance.padding.normal * 1.5
 
-                                radius: Appearance.rounding.normal
+                                // Only round bottom corners
+                                topLeftRadius: 0
+                                topRightRadius: 0
+                                bottomLeftRadius: Appearance.rounding.normal
+                                bottomRightRadius: Appearance.rounding.normal
+
+                                Behavior on anchors.leftMargin {
+                                    NumberAnimation {
+                                        duration: 150
+                                        easing.type: Easing.OutQuad
+                                    }
+                                }
+                                
+                                Behavior on anchors.rightMargin {
+                                    NumberAnimation {
+                                        duration: 150
+                                        easing.type: Easing.OutQuad
+                                    }
+                                }
+                                
+                                Behavior on anchors.bottomMargin {
+                                    NumberAnimation {
+                                        duration: 150
+                                        easing.type: Easing.OutQuad
+                                    }
+                                }
 
                                 gradient: Gradient {
                                     GradientStop {
                                         position: 0.0
-                                        color: Qt.rgba(0, 0, 0, 0)
+                                        color: Qt.rgba(Colours.palette.m3surfaceContainer.r, 
+                                                      Colours.palette.m3surfaceContainer.g, 
+                                                      Colours.palette.m3surfaceContainer.b, 0)
                                     }
                                     GradientStop {
-                                        position: 0.4
-                                        color: Qt.rgba(0, 0, 0, 0.2)
+                                        position: 0.3
+                                        color: Qt.rgba(Colours.palette.m3surfaceContainer.r, 
+                                                      Colours.palette.m3surfaceContainer.g, 
+                                                      Colours.palette.m3surfaceContainer.b, 0.7)
                                     }
                                     GradientStop {
-                                        position: 0.8
-                                        color: Qt.rgba(0, 0, 0, 0.5)
+                                        position: 0.6
+                                        color: Qt.rgba(Colours.palette.m3surfaceContainer.r, 
+                                                      Colours.palette.m3surfaceContainer.g, 
+                                                      Colours.palette.m3surfaceContainer.b, 0.9)
                                     }
                                     GradientStop {
                                         position: 1.0
-                                        color: Qt.rgba(0, 0, 0, 0.6)
+                                        color: Qt.rgba(Colours.palette.m3surfaceContainer.r, 
+                                                      Colours.palette.m3surfaceContainer.g, 
+                                                      Colours.palette.m3surfaceContainer.b, 0.95)
                                     }
                                 }
                             }
@@ -2069,9 +2125,10 @@ RowLayout {
                             text: fileName
                             font.pointSize: Appearance.font.size.smaller
                             font.weight: 500
-                            color: isCurrent ? Colours.palette.m3primary : "#FFFFFF"
+                            color: isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurface
                             elide: Text.ElideMiddle
                             maximumLineCount: 1
+                            horizontalAlignment: Text.AlignHCenter
 
                             opacity: 0
 
@@ -2088,8 +2145,9 @@ RowLayout {
                         }
                     }
                 }
-            }
+                }
             }
         }
+    }
     }
 }

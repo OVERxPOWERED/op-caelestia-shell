@@ -49,6 +49,16 @@ ClippingRectangle {
         y: -root.session.activeIndex * root.height
         clip: true
 
+        property bool animationComplete: true
+
+        Timer {
+            id: animationDelayTimer
+            interval: Appearance.anim.durations.normal
+            onTriggered: {
+                layout.animationComplete = true;
+            }
+        }
+
         Pane {
             index: 0
             sourceComponent: NetworkingPane {
@@ -94,6 +104,15 @@ ClippingRectangle {
         Behavior on y {
             Anim {}
         }
+
+        Connections {
+            target: root.session
+            function onActiveIndexChanged(): void {
+                // Mark animation as incomplete and start delay timer
+                layout.animationComplete = false;
+                animationDelayTimer.restart();
+            }
+        }
     }
 
     component Pane: Item {
@@ -112,10 +131,15 @@ ClippingRectangle {
             clip: false
             asynchronous: true
             active: {
-                // Keep loaders active for current and adjacent panels
-                // This prevents content from disappearing during panel transitions
                 const diff = Math.abs(root.session.activeIndex - pane.index);
-                return diff <= 1;
+                
+                // Always activate current and adjacent panes immediately for smooth transitions
+                if (diff <= 1) {
+                    return true;
+                }
+                
+                // For distant panes, wait until animation completes to avoid heavy loading during transition
+                return layout.animationComplete;
             }
         }
     }

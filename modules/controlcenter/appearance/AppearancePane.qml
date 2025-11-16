@@ -1895,34 +1895,47 @@ RowLayout {
                 Item {
                     Layout.fillWidth: true
                     Layout.topMargin: Appearance.spacing.large
-                    Layout.preferredHeight: wallpaperGrid.Layout.preferredHeight
+                    Layout.preferredHeight: wallpaperLoader.item ? wallpaperLoader.item.layoutPreferredHeight : 0
                     
-                    GridView {
-                        id: wallpaperGrid
+                    Loader {
+                        id: wallpaperLoader
                         anchors.fill: parent
-                        
-                        readonly property int minCellWidth: 200 + Appearance.spacing.normal
-                        readonly property int columnsCount: Math.max(1, Math.floor(parent.width / minCellWidth))
-                        
-                        Layout.preferredHeight: Math.ceil(count / columnsCount) * cellHeight
-                        height: Layout.preferredHeight
-                        
-                        // Distribute width evenly across columns
-                        cellWidth: width / columnsCount
-                        cellHeight: 140 + Appearance.spacing.normal
-                        
-                        leftMargin: 0
-                        rightMargin: 0
-                        topMargin: 0
-                        bottomMargin: 0
+                        asynchronous: true
+                        active: {
+                            // Lazy load: only activate when right pane is loaded
+                            // This defers heavy wallpaper list loading until the right pane is visible
+                            return rightAppearanceLoader.item !== null;
+                        }
 
-                        model: Wallpapers.list
-                        
-                        // Disable GridView's own scrolling - let parent handle it
-                        interactive: false
+                        sourceComponent: Item {
+                            property alias layoutPreferredHeight: wallpaperGrid.layoutPreferredHeight
+                            
+                            GridView {
+                                id: wallpaperGrid
+                                anchors.fill: parent
+                                
+                                readonly property int minCellWidth: 200 + Appearance.spacing.normal
+                                readonly property int columnsCount: Math.max(1, Math.floor(parent.width / minCellWidth))
+                                
+                                readonly property int layoutPreferredHeight: Math.ceil(count / columnsCount) * cellHeight
+                                height: layoutPreferredHeight
+                                
+                                // Distribute width evenly across columns
+                                cellWidth: width / columnsCount
+                                cellHeight: 140 + Appearance.spacing.normal
+                                
+                                leftMargin: 0
+                                rightMargin: 0
+                                topMargin: 0
+                                bottomMargin: 0
 
-                    // Enable caching for better performance
-                    cacheBuffer: cellHeight * 2
+                                model: Wallpapers.list
+                                
+                                // Disable GridView's own scrolling - let parent handle it
+                                interactive: false
+
+                            // Enable caching for better performance
+                            cacheBuffer: cellHeight * 2
 
                     delegate: Item {
                         required property var modelData
@@ -2141,7 +2154,9 @@ RowLayout {
                             }
                         }
                     }
-                }
+                            }
+                        }
+                    }
                 }
             }
         }

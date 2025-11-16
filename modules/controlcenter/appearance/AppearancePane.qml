@@ -2008,6 +2008,8 @@ RowLayout {
 
                                     implicitHeight: filenameText.implicitHeight + Appearance.padding.normal * 2
 
+                                    radius: Appearance.rounding.normal
+
                                     gradient: Gradient {
                                         GradientStop {
                                             position: 0.0

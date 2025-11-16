@@ -69,9 +69,8 @@ ColumnLayout {
     }
 
     Item {
-        visible: root.description !== ""
         Layout.fillWidth: true
-        Layout.preferredHeight: root.expanded ? descriptionText.implicitHeight + Appearance.spacing.smaller + Appearance.spacing.small : 0
+        Layout.preferredHeight: (root.expanded && root.description !== "") ? descriptionText.implicitHeight + Appearance.spacing.smaller + Appearance.spacing.small : 0
         clip: true
 
         Behavior on Layout.preferredHeight {
@@ -91,7 +90,7 @@ ColumnLayout {
             text: root.description
             color: Colours.palette.m3onSurfaceVariant
             font.pointSize: Appearance.font.size.small
-            opacity: root.expanded ? 1.0 : 0.0
+            opacity: (root.expanded && root.description !== "") ? 1.0 : 0.0
 
             Behavior on opacity {
                 Anim {

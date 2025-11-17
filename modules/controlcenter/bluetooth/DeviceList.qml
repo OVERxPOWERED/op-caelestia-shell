@@ -25,7 +25,7 @@ ColumnLayout {
         spacing: Appearance.spacing.smaller
 
         StyledText {
-            text: qsTr("Settings")
+            text: qsTr("Bluetooth")
             font.pointSize: Appearance.font.size.large
             font.weight: 500
         }

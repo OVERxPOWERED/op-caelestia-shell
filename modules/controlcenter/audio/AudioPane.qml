@@ -74,13 +74,13 @@ RowLayout {
                     anchors.right: parent.right
                     spacing: Appearance.spacing.normal
 
-                // Settings header above the collapsible sections
+                // Audio header above the collapsible sections
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: Appearance.spacing.smaller
 
                     StyledText {
-                        text: qsTr("Settings")
+                        text: qsTr("Audio")
                         font.pointSize: Appearance.font.size.large
                         font.weight: 500
                     }

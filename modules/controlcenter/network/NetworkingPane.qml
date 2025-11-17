@@ -82,13 +82,13 @@ Item {
                         anchors.right: parent.right
                         spacing: Appearance.spacing.normal
 
-                    // Settings header above the collapsible sections
+                    // Network header above the collapsible sections
                     RowLayout {
                         Layout.fillWidth: true
                         spacing: Appearance.spacing.smaller
 
                         StyledText {
-                            text: qsTr("Settings")
+                            text: qsTr("Network")
                             font.pointSize: Appearance.font.size.large
                             font.weight: 500
                         }

@@ -336,67 +336,67 @@ Item {
                     id: statusIconsSection
                     title: qsTr("Status Icons")
 
-                    SwitchRow {
-                        label: qsTr("Show audio")
-                        checked: root.showAudio
-                        onToggled: checked => {
-                            root.showAudio = checked;
-                            root.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Show microphone")
-                        checked: root.showMicrophone
-                        onToggled: checked => {
-                            root.showMicrophone = checked;
-                            root.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Show keyboard layout")
-                        checked: root.showKbLayout
-                        onToggled: checked => {
-                            root.showKbLayout = checked;
-                            root.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Show network")
-                        checked: root.showNetwork
-                        onToggled: checked => {
-                            root.showNetwork = checked;
-                            root.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Show bluetooth")
-                        checked: root.showBluetooth
-                        onToggled: checked => {
-                            root.showBluetooth = checked;
-                            root.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Show battery")
-                        checked: root.showBattery
-                        onToggled: checked => {
-                            root.showBattery = checked;
-                            root.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Show lock status")
-                        checked: root.showLockStatus
-                        onToggled: checked => {
-                            root.showLockStatus = checked;
-                            root.saveConfig();
-                        }
+                    ConnectedButtonGroup {
+                        rootItem: root
+                        
+                        options: [
+                            {
+                                label: qsTr("Audio"),
+                                propertyName: "showAudio",
+                                onToggled: function(checked) {
+                                    root.showAudio = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Mic"),
+                                propertyName: "showMicrophone",
+                                onToggled: function(checked) {
+                                    root.showMicrophone = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("KB"),
+                                propertyName: "showKbLayout",
+                                onToggled: function(checked) {
+                                    root.showKbLayout = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Network"),
+                                propertyName: "showNetwork",
+                                onToggled: function(checked) {
+                                    root.showNetwork = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("BT"),
+                                propertyName: "showBluetooth",
+                                onToggled: function(checked) {
+                                    root.showBluetooth = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Battery"),
+                                propertyName: "showBattery",
+                                onToggled: function(checked) {
+                                    root.showBattery = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Lock"),
+                                propertyName: "showLockStatus",
+                                onToggled: function(checked) {
+                                    root.showLockStatus = checked;
+                                    root.saveConfig();
+                                }
+                            }
+                        ]
                     }
                 }
 

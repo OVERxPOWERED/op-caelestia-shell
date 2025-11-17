@@ -213,30 +213,13 @@ RowLayout {
             CollapsibleSection {
                 id: clockSection
                 title: qsTr("Clock")
-                description: qsTr("Clock display settings")
 
-                RowLayout {
-                    id: clockRow
-
-                    Layout.fillWidth: true
-                    Layout.leftMargin: Appearance.padding.large
-                    Layout.rightMargin: Appearance.padding.large
-                    Layout.alignment: Qt.AlignVCenter
-
-                    spacing: Appearance.spacing.normal
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Show clock icon")
-                    }
-
-                    StyledSwitch {
-                        id: clockShowIconSwitch
-                        checked: root.clockShowIcon
-                        onToggled: {
-                            root.clockShowIcon = checked;
-                            root.saveConfig();
-                        }
+                SwitchRow {
+                    label: qsTr("Show clock icon")
+                    checked: root.clockShowIcon
+                    onToggled: checked => {
+                        root.clockShowIcon = checked;
+                        root.saveConfig();
                     }
                 }
             }

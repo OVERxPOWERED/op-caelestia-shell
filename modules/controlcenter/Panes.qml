@@ -50,12 +50,26 @@ ClippingRectangle {
         clip: true
 
         property bool animationComplete: true
+        // Track if initial opening animation has completed
+        // During initial opening, only the active pane loads to avoid hiccups
+        property bool initialOpeningComplete: false
 
         Timer {
             id: animationDelayTimer
             interval: Appearance.anim.durations.normal
             onTriggered: {
                 layout.animationComplete = true;
+            }
+        }
+
+        // Timer to detect when initial opening animation completes
+        // Uses large duration to cover both normal and detached opening cases
+        Timer {
+            id: initialOpeningTimer
+            interval: Appearance.anim.durations.large
+            running: true
+            onTriggered: {
+                layout.initialOpeningComplete = true;
             }
         }
 
@@ -135,8 +149,20 @@ ClippingRectangle {
             asynchronous: true
             active: {
                 const diff = Math.abs(root.session.activeIndex - pane.index);
+                const isActivePane = diff === 0;
                 
-                // Always activate current and adjacent panes immediately for smooth transitions
+                // During initial opening animation, only load the active pane
+                // This prevents hiccups from multiple panes loading simultaneously
+                if (!layout.initialOpeningComplete) {
+                    if (isActivePane) {
+                        pane.hasBeenLoaded = true;
+                        return true;
+                    }
+                    // Defer all other panes until initial opening completes
+                    return false;
+                }
+                
+                // After initial opening, allow current and adjacent panes for smooth transitions
                 if (diff <= 1) {
                     pane.hasBeenLoaded = true;
                     return true;

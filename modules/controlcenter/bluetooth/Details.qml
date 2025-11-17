@@ -12,25 +12,29 @@ import Quickshell.Bluetooth
 import QtQuick
 import QtQuick.Layouts
 
-Item {
+StyledFlickable {
     id: root
 
     required property Session session
     readonly property BluetoothDevice device: session.bt.active
 
-    StyledFlickable {
-        anchors.fill: parent
+    anchors.fill: parent
 
-        flickableDirection: Flickable.VerticalFlick
-        clip: true
-        contentHeight: layout.height
+    flickableDirection: Flickable.VerticalFlick
+    contentHeight: layoutWrapper.height
 
-        ColumnLayout {
-            id: layout
+        Item {
+            id: layoutWrapper
 
             anchors.left: parent.left
             anchors.right: parent.right
-            spacing: Appearance.spacing.normal
+            implicitHeight: layout.height
+
+            ColumnLayout {
+                id: layout
+
+                anchors.fill: parent
+                spacing: Appearance.spacing.normal
 
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
@@ -416,8 +420,8 @@ Item {
                     }
                 }
             }
+            }
         }
-    }
 
     ColumnLayout {
         anchors.right: fabRoot.right
@@ -563,11 +567,11 @@ Item {
     Item {
         id: fabRoot
 
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-
-        implicitWidth: 64
-        implicitHeight: 64
+        x: root.contentX + root.width - width
+        y: root.contentY + root.height - height
+        width: 64
+        height: 64
+        z: 10000
 
         StyledRect {
             id: fabBg

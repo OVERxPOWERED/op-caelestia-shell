@@ -68,74 +68,6 @@ ColumnLayout {
         }
     }
 
-    Item {
-        Layout.fillWidth: true
-        Layout.preferredHeight: (root.expanded && root.description !== "") ? Math.min(descriptionText.implicitHeight + Appearance.spacing.smaller + Appearance.spacing.small, maxDescriptionHeight) : 0
-
-        readonly property real maxDescriptionHeight: 60
-
-        layer.enabled: true
-        layer.smooth: true
-        layer.effect: OpacityMask {
-            maskSource: descriptionMask
-        }
-
-        Behavior on Layout.preferredHeight {
-            Anim {
-                easing.bezierCurve: Appearance.anim.curves.standard
-            }
-        }
-
-        Item {
-            id: descriptionMask
-            anchors.fill: parent
-            layer.enabled: true
-            visible: false
-
-            Rectangle {
-                anchors.fill: parent
-
-                gradient: Gradient {
-                    orientation: Gradient.Vertical
-
-                    GradientStop {
-                        position: 0.0
-                        color: Qt.rgba(0, 0, 0, 1)
-                    }
-                    GradientStop {
-                        position: 0.7
-                        color: Qt.rgba(0, 0, 0, 1)
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Qt.rgba(0, 0, 0, 0)
-                    }
-                }
-            }
-        }
-
-        StyledText {
-            id: descriptionText
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.leftMargin: Appearance.padding.normal
-            anchors.rightMargin: Appearance.padding.normal
-            anchors.topMargin: Appearance.spacing.smaller
-            text: root.description
-            color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Appearance.font.size.small
-            wrapMode: Text.Wrap
-            opacity: (root.expanded && root.description !== "") ? 1.0 : 0.0
-
-            Behavior on opacity {
-                Anim {
-                    easing.bezierCurve: Appearance.anim.curves.standard
-                }
-            }
-        }
-    }
-
     default property alias content: contentColumn.data
 
     Item {
@@ -165,6 +97,18 @@ ColumnLayout {
                 Anim {
                     easing.bezierCurve: Appearance.anim.curves.standard
                 }
+            }
+
+            StyledText {
+                id: descriptionText
+                Layout.fillWidth: true
+                Layout.topMargin: root.description !== "" ? Appearance.spacing.smaller : 0
+                Layout.bottomMargin: root.description !== "" ? Appearance.spacing.small : 0
+                visible: root.description !== ""
+                text: root.description
+                color: Colours.palette.m3onSurfaceVariant
+                font.pointSize: Appearance.font.size.small
+                wrapMode: Text.Wrap
             }
         }
     }

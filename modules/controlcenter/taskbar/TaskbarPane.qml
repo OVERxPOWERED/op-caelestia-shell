@@ -175,19 +175,40 @@ RowLayout {
 
                     spacing: Appearance.spacing.small
 
+                    readonly property bool allSectionsExpanded: 
+                        clockSection.expanded &&
+                        barBehaviorSection.expanded &&
+                        statusIconsSection.expanded &&
+                        traySettingsSection.expanded &&
+                        workspacesSection.expanded
+
                     RowLayout {
-                spacing: Appearance.spacing.smaller
+                        spacing: Appearance.spacing.smaller
 
-                StyledText {
-                    text: qsTr("Settings")
-                    font.pointSize: Appearance.font.size.large
-                    font.weight: 500
-                }
+                        StyledText {
+                            text: qsTr("Settings")
+                            font.pointSize: Appearance.font.size.large
+                            font.weight: 500
+                        }
 
-                Item {
-                    Layout.fillWidth: true
-                }
-            }
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        IconButton {
+                            icon: sidebarLayout.allSectionsExpanded ? "unfold_less" : "unfold_more"
+                            type: IconButton.Text
+                            label.animate: true
+                            onClicked: {
+                                const shouldExpand = !sidebarLayout.allSectionsExpanded;
+                                clockSection.expanded = shouldExpand;
+                                barBehaviorSection.expanded = shouldExpand;
+                                statusIconsSection.expanded = shouldExpand;
+                                traySettingsSection.expanded = shouldExpand;
+                                workspacesSection.expanded = shouldExpand;
+                            }
+                        }
+                    }
 
             CollapsibleSection {
                 id: clockSection

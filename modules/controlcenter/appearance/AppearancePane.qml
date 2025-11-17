@@ -141,6 +141,17 @@ RowLayout {
                     anchors.right: parent.right
                     spacing: Appearance.spacing.small
 
+                    readonly property bool allSectionsExpanded: 
+                        themeModeSection.expanded &&
+                        colorVariantSection.expanded &&
+                        colorSchemeSection.expanded &&
+                        animationsSection.expanded &&
+                        fontsSection.expanded &&
+                        scalesSection.expanded &&
+                        transparencySection.expanded &&
+                        borderSection.expanded &&
+                        backgroundSection.expanded
+
                 RowLayout {
                     spacing: Appearance.spacing.smaller
 
@@ -152,6 +163,24 @@ RowLayout {
 
                     Item {
                         Layout.fillWidth: true
+                    }
+
+                    IconButton {
+                        icon: sidebarLayout.allSectionsExpanded ? "unfold_less" : "unfold_more"
+                        type: IconButton.Text
+                        label.animate: true
+                        onClicked: {
+                            const shouldExpand = !sidebarLayout.allSectionsExpanded;
+                            themeModeSection.expanded = shouldExpand;
+                            colorVariantSection.expanded = shouldExpand;
+                            colorSchemeSection.expanded = shouldExpand;
+                            animationsSection.expanded = shouldExpand;
+                            fontsSection.expanded = shouldExpand;
+                            scalesSection.expanded = shouldExpand;
+                            transparencySection.expanded = shouldExpand;
+                            borderSection.expanded = shouldExpand;
+                            backgroundSection.expanded = shouldExpand;
+                        }
                     }
                 }
 

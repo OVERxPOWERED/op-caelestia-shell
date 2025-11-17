@@ -79,7 +79,8 @@ ColumnLayout {
         implicitHeight: content.implicitHeight + Appearance.padding.large * 2
 
         radius: Appearance.rounding.normal
-        color: Colours.tPalette.m3surface
+        color: Colours.tPalette.m3surfaceContainer
+        visible: root.shouldBeVisible || root.isClosing
         opacity: root.shouldBeVisible && !root.isClosing ? 1 : 0
         scale: root.shouldBeVisible && !root.isClosing ? 1 : 0.7
 

@@ -10,6 +10,7 @@ StyledRect {
 
     default property alias content: contentColumn.data
     property real contentSpacing: Appearance.spacing.larger
+    property bool alignTop: false
 
     Layout.fillWidth: true
     implicitHeight: contentColumn.implicitHeight + Appearance.padding.large * 2
@@ -22,7 +23,8 @@ StyledRect {
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.top: root.alignTop ? parent.top : undefined
+        anchors.verticalCenter: root.alignTop ? undefined : parent.verticalCenter
         anchors.margins: Appearance.padding.large
 
         spacing: root.contentSpacing

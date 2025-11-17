@@ -113,6 +113,24 @@ StyledRect {
                                 button.isChecked = root.rootItem.showLockStatus;
                             }
                         }
+
+                        function onTrayBackgroundChanged() {
+                            if (modelData.propertyName === "trayBackground") {
+                                button.isChecked = root.rootItem.trayBackground;
+                            }
+                        }
+
+                        function onTrayCompactChanged() {
+                            if (modelData.propertyName === "trayCompact") {
+                                button.isChecked = root.rootItem.trayCompact;
+                            }
+                        }
+
+                        function onTrayRecolourChanged() {
+                            if (modelData.propertyName === "trayRecolour") {
+                                button.isChecked = root.rootItem.trayRecolour;
+                            }
+                        }
                     }
 
                     // Match utilities Toggles radius styling

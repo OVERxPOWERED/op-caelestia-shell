@@ -161,11 +161,7 @@ Item {
 
                 spacing: Appearance.spacing.small
 
-                readonly property bool allSectionsExpanded: 
-                    clockSection.expanded &&
-                    barBehaviorSection.expanded &&
-                    traySettingsSection.expanded &&
-                    workspacesSection.expanded
+                readonly property bool allSectionsExpanded: true
 
                 RowLayout {
                     spacing: Appearance.spacing.smaller
@@ -185,11 +181,7 @@ Item {
                         type: IconButton.Text
                         label.animate: true
                         onClicked: {
-                            const shouldExpand = !sidebarLayout.allSectionsExpanded;
-                            clockSection.expanded = shouldExpand;
-                            barBehaviorSection.expanded = shouldExpand;
-                            traySettingsSection.expanded = shouldExpand;
-                            workspacesSection.expanded = shouldExpand;
+                            // No collapsible sections remaining
                         }
                     }
                 }
@@ -258,345 +250,389 @@ Item {
                     ]
                 }
 
-                CollapsibleSection {
-                    id: clockSection
-                    title: qsTr("Clock")
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Appearance.spacing.small
 
-                    SwitchRow {
-                        label: qsTr("Show clock icon")
-                        checked: root.clockShowIcon
-                        onToggled: checked => {
-                            root.clockShowIcon = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignTop
+                        spacing: 0
 
-                CollapsibleSection {
-                    id: barBehaviorSection
-                    title: qsTr("Bar Behavior")
-
-                    SwitchRow {
-                        label: qsTr("Persistent")
-                        checked: root.persistent
-                        onToggled: checked => {
-                            root.persistent = checked;
-                            root.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Show on hover")
-                        checked: root.showOnHover
-                        onToggled: checked => {
-                            root.showOnHover = checked;
-                            root.saveConfig();
-                        }
-                    }
-
-                    SectionContainer {
-                        contentSpacing: Appearance.spacing.normal
-
-                        ColumnLayout {
+                        SectionContainer {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
+                            alignTop: true
+
+                            StyledText {
+                                text: qsTr("Workspaces")
+                                font.pointSize: Appearance.font.size.normal
+                            }
+
+                        StyledRect {
+                            Layout.fillWidth: true
+                            implicitHeight: workspacesShownRow.implicitHeight + Appearance.padding.large * 2
+                            radius: Appearance.rounding.normal
+                            color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+
+                            Behavior on implicitHeight {
+                                Anim {}
+                            }
 
                             RowLayout {
-                                Layout.fillWidth: true
+                                id: workspacesShownRow
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.margins: Appearance.padding.large
                                 spacing: Appearance.spacing.normal
 
                                 StyledText {
-                                    text: qsTr("Drag threshold")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
                                     Layout.fillWidth: true
+                                    text: qsTr("Shown")
                                 }
 
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: dragThresholdInput.implicitHeight + Appearance.padding.small * 2
-                                    color: dragThresholdInputHover.containsMouse || dragThresholdInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: dragThresholdInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: dragThresholdInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
+                                CustomSpinBox {
+                                    min: 1
+                                    max: 20
+                                    value: root.workspacesShown
+                                    onValueModified: value => {
+                                        root.workspacesShown = value;
+                                        root.saveConfig();
                                     }
+                                }
+                            }
+                        }
 
-                                    StyledTextField {
-                                        id: dragThresholdInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: IntValidator { bottom: 0; top: 100 }
-                                        
-                                        Component.onCompleted: {
-                                            text = root.dragThreshold.toString();
+                        StyledRect {
+                            Layout.fillWidth: true
+                            implicitHeight: workspacesActiveIndicatorRow.implicitHeight + Appearance.padding.large * 2
+                            radius: Appearance.rounding.normal
+                            color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+
+                            Behavior on implicitHeight {
+                                Anim {}
+                            }
+
+                            RowLayout {
+                                id: workspacesActiveIndicatorRow
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.margins: Appearance.padding.large
+                                spacing: Appearance.spacing.normal
+
+                                StyledText {
+                                    Layout.fillWidth: true
+                                    text: qsTr("Active indicator")
+                                }
+
+                                StyledSwitch {
+                                    checked: root.workspacesActiveIndicator
+                                    onToggled: {
+                                        root.workspacesActiveIndicator = checked;
+                                        root.saveConfig();
+                                    }
+                                }
+                            }
+                        }
+
+                        StyledRect {
+                            Layout.fillWidth: true
+                            implicitHeight: workspacesOccupiedBgRow.implicitHeight + Appearance.padding.large * 2
+                            radius: Appearance.rounding.normal
+                            color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+
+                            Behavior on implicitHeight {
+                                Anim {}
+                            }
+
+                            RowLayout {
+                                id: workspacesOccupiedBgRow
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.margins: Appearance.padding.large
+                                spacing: Appearance.spacing.normal
+
+                                StyledText {
+                                    Layout.fillWidth: true
+                                    text: qsTr("Occupied background")
+                                }
+
+                                StyledSwitch {
+                                    checked: root.workspacesOccupiedBg
+                                    onToggled: {
+                                        root.workspacesOccupiedBg = checked;
+                                        root.saveConfig();
+                                    }
+                                }
+                            }
+                        }
+
+                        StyledRect {
+                            Layout.fillWidth: true
+                            implicitHeight: workspacesShowWindowsRow.implicitHeight + Appearance.padding.large * 2
+                            radius: Appearance.rounding.normal
+                            color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+
+                            Behavior on implicitHeight {
+                                Anim {}
+                            }
+
+                            RowLayout {
+                                id: workspacesShowWindowsRow
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.margins: Appearance.padding.large
+                                spacing: Appearance.spacing.normal
+
+                                StyledText {
+                                    Layout.fillWidth: true
+                                    text: qsTr("Show windows")
+                                }
+
+                                StyledSwitch {
+                                    checked: root.workspacesShowWindows
+                                    onToggled: {
+                                        root.workspacesShowWindows = checked;
+                                        root.saveConfig();
+                                    }
+                                }
+                            }
+                        }
+
+                        StyledRect {
+                            Layout.fillWidth: true
+                            implicitHeight: workspacesPerMonitorRow.implicitHeight + Appearance.padding.large * 2
+                            radius: Appearance.rounding.normal
+                            color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+
+                            Behavior on implicitHeight {
+                                Anim {}
+                            }
+
+                            RowLayout {
+                                id: workspacesPerMonitorRow
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.margins: Appearance.padding.large
+                                spacing: Appearance.spacing.normal
+
+                                StyledText {
+                                    Layout.fillWidth: true
+                                    text: qsTr("Per monitor workspaces")
+                                }
+
+                                StyledSwitch {
+                                    checked: root.workspacesPerMonitor
+                                    onToggled: {
+                                        root.workspacesPerMonitor = checked;
+                                        root.saveConfig();
+                                    }
+                                }
+                            }
+                        }
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignTop
+                        spacing: Appearance.spacing.small
+
+                        SectionContainer {
+                            Layout.fillWidth: true
+                            alignTop: true
+
+                            StyledText {
+                                text: qsTr("Clock")
+                                font.pointSize: Appearance.font.size.normal
+                            }
+
+                            SwitchRow {
+                                label: qsTr("Show clock icon")
+                                checked: root.clockShowIcon
+                                onToggled: checked => {
+                                    root.clockShowIcon = checked;
+                                    root.saveConfig();
+                                }
+                            }
+                        }
+
+                        SectionContainer {
+                            Layout.fillWidth: true
+                            alignTop: true
+
+                            ConnectedButtonGroup {
+                                rootItem: root
+                                title: qsTr("Tray Settings")
+                                
+                                options: [
+                                    {
+                                        label: qsTr("Background"),
+                                        propertyName: "trayBackground",
+                                        onToggled: function(checked) {
+                                            root.trayBackground = checked;
+                                            root.saveConfig();
                                         }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseInt(text);
-                                                if (!isNaN(val) && val >= 0 && val <= 100) {
-                                                    root.dragThreshold = val;
-                                                    root.saveConfig();
+                                    },
+                                    {
+                                        label: qsTr("Compact"),
+                                        propertyName: "trayCompact",
+                                        onToggled: function(checked) {
+                                            root.trayCompact = checked;
+                                            root.saveConfig();
+                                        }
+                                    },
+                                    {
+                                        label: qsTr("Recolour"),
+                                        propertyName: "trayRecolour",
+                                        onToggled: function(checked) {
+                                            root.trayRecolour = checked;
+                                            root.saveConfig();
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignTop
+                        spacing: 0
+
+                        SectionContainer {
+                            Layout.fillWidth: true
+                            alignTop: true
+
+                            StyledText {
+                                text: qsTr("Bar Behavior")
+                                font.pointSize: Appearance.font.size.normal
+                            }
+
+                            SwitchRow {
+                                label: qsTr("Persistent")
+                                checked: root.persistent
+                                onToggled: checked => {
+                                    root.persistent = checked;
+                                    root.saveConfig();
+                                }
+                            }
+
+                            SwitchRow {
+                                label: qsTr("Show on hover")
+                                checked: root.showOnHover
+                                onToggled: checked => {
+                                    root.showOnHover = checked;
+                                    root.saveConfig();
+                                }
+                            }
+
+                            SectionContainer {
+                                contentSpacing: Appearance.spacing.normal
+
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: Appearance.spacing.small
+
+                                    RowLayout {
+                                        Layout.fillWidth: true
+                                        spacing: Appearance.spacing.normal
+
+                                        StyledText {
+                                            text: qsTr("Drag threshold")
+                                            font.pointSize: Appearance.font.size.normal
+                                        }
+
+                                        Item {
+                                            Layout.fillWidth: true
+                                        }
+
+                                        StyledRect {
+                                            Layout.preferredWidth: 70
+                                            implicitHeight: dragThresholdInput.implicitHeight + Appearance.padding.small * 2
+                                            color: dragThresholdInputHover.containsMouse || dragThresholdInput.activeFocus 
+                                                   ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
+                                                   : Colours.layer(Colours.palette.m3surfaceContainer, 2)
+                                            radius: Appearance.rounding.small
+                                            border.width: 1
+                                            border.color: dragThresholdInput.activeFocus 
+                                                          ? Colours.palette.m3primary
+                                                          : Qt.alpha(Colours.palette.m3outline, 0.3)
+
+                                            Behavior on color { CAnim {} }
+                                            Behavior on border.color { CAnim {} }
+
+                                            MouseArea {
+                                                id: dragThresholdInputHover
+                                                anchors.fill: parent
+                                                hoverEnabled: true
+                                                cursorShape: Qt.IBeamCursor
+                                                acceptedButtons: Qt.NoButton
+                                            }
+
+                                            StyledTextField {
+                                                id: dragThresholdInput
+                                                anchors.centerIn: parent
+                                                width: parent.width - Appearance.padding.normal
+                                                horizontalAlignment: TextInput.AlignHCenter
+                                                validator: IntValidator { bottom: 0; top: 100 }
+                                                
+                                                Component.onCompleted: {
+                                                    text = root.dragThreshold.toString();
+                                                }
+                                                
+                                                onTextChanged: {
+                                                    if (activeFocus) {
+                                                        const val = parseInt(text);
+                                                        if (!isNaN(val) && val >= 0 && val <= 100) {
+                                                            root.dragThreshold = val;
+                                                            root.saveConfig();
+                                                        }
+                                                    }
+                                                }
+                                                onEditingFinished: {
+                                                    const val = parseInt(text);
+                                                    if (isNaN(val) || val < 0 || val > 100) {
+                                                        text = root.dragThreshold.toString();
+                                                    }
                                                 }
                                             }
                                         }
-                                        onEditingFinished: {
-                                            const val = parseInt(text);
-                                            if (isNaN(val) || val < 0 || val > 100) {
-                                                text = root.dragThreshold.toString();
+
+                                        StyledText {
+                                            text: "px"
+                                            color: Colours.palette.m3outline
+                                            font.pointSize: Appearance.font.size.normal
+                                        }
+                                    }
+
+                                    StyledSlider {
+                                        id: dragThresholdSlider
+
+                                        Layout.fillWidth: true
+                                        implicitHeight: Appearance.padding.normal * 3
+
+                                        from: 0
+                                        to: 100
+                                        value: root.dragThreshold
+                                        onMoved: {
+                                            root.dragThreshold = Math.round(dragThresholdSlider.value);
+                                            if (!dragThresholdInput.activeFocus) {
+                                                dragThresholdInput.text = Math.round(dragThresholdSlider.value).toString();
                                             }
+                                            root.saveConfig();
                                         }
                                     }
                                 }
-
-                                StyledText {
-                                    text: "px"
-                                    color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-                            }
-
-                            StyledSlider {
-                                id: dragThresholdSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0
-                                to: 100
-                                value: root.dragThreshold
-                                onMoved: {
-                                    root.dragThreshold = Math.round(dragThresholdSlider.value);
-                                    if (!dragThresholdInput.activeFocus) {
-                                        dragThresholdInput.text = Math.round(dragThresholdSlider.value).toString();
-                                    }
-                                    root.saveConfig();
-                                }
                             }
                         }
                     }
                 }
 
-                CollapsibleSection {
-                    id: traySettingsSection
-                    title: qsTr("Tray Settings")
-
-                    SwitchRow {
-                        label: qsTr("Background")
-                        checked: root.trayBackground
-                        onToggled: checked => {
-                            root.trayBackground = checked;
-                            root.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Compact")
-                        checked: root.trayCompact
-                        onToggled: checked => {
-                            root.trayCompact = checked;
-                            root.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Recolour")
-                        checked: root.trayRecolour
-                        onToggled: checked => {
-                            root.trayRecolour = checked;
-                            root.saveConfig();
-                        }
-                    }
-                }
-
-                CollapsibleSection {
-                    id: workspacesSection
-                    title: qsTr("Workspaces")
-
-                    StyledRect {
-                        Layout.fillWidth: true
-                        implicitHeight: workspacesShownRow.implicitHeight + Appearance.padding.large * 2
-                        radius: Appearance.rounding.normal
-                        color: Colours.tPalette.m3surfaceContainer
-
-                        Behavior on implicitHeight {
-                            Anim {}
-                        }
-
-                        RowLayout {
-                            id: workspacesShownRow
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.margins: Appearance.padding.large
-                            spacing: Appearance.spacing.normal
-
-                            StyledText {
-                                Layout.fillWidth: true
-                                text: qsTr("Shown")
-                            }
-
-                            CustomSpinBox {
-                                min: 1
-                                max: 20
-                                value: root.workspacesShown
-                                onValueModified: value => {
-                                    root.workspacesShown = value;
-                                    root.saveConfig();
-                                }
-                            }
-                        }
-                    }
-
-                    StyledRect {
-                        Layout.fillWidth: true
-                        implicitHeight: workspacesActiveIndicatorRow.implicitHeight + Appearance.padding.large * 2
-                        radius: Appearance.rounding.normal
-                        color: Colours.tPalette.m3surfaceContainer
-
-                        Behavior on implicitHeight {
-                            Anim {}
-                        }
-
-                        RowLayout {
-                            id: workspacesActiveIndicatorRow
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.margins: Appearance.padding.large
-                            spacing: Appearance.spacing.normal
-
-                            StyledText {
-                                Layout.fillWidth: true
-                                text: qsTr("Active indicator")
-                            }
-
-                            StyledSwitch {
-                                checked: root.workspacesActiveIndicator
-                                onToggled: {
-                                    root.workspacesActiveIndicator = checked;
-                                    root.saveConfig();
-                                }
-                            }
-                        }
-                    }
-
-                    StyledRect {
-                        Layout.fillWidth: true
-                        implicitHeight: workspacesOccupiedBgRow.implicitHeight + Appearance.padding.large * 2
-                        radius: Appearance.rounding.normal
-                        color: Colours.tPalette.m3surfaceContainer
-
-                        Behavior on implicitHeight {
-                            Anim {}
-                        }
-
-                        RowLayout {
-                            id: workspacesOccupiedBgRow
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.margins: Appearance.padding.large
-                            spacing: Appearance.spacing.normal
-
-                            StyledText {
-                                Layout.fillWidth: true
-                                text: qsTr("Occupied background")
-                            }
-
-                            StyledSwitch {
-                                checked: root.workspacesOccupiedBg
-                                onToggled: {
-                                    root.workspacesOccupiedBg = checked;
-                                    root.saveConfig();
-                                }
-                            }
-                        }
-                    }
-
-                    StyledRect {
-                        Layout.fillWidth: true
-                        implicitHeight: workspacesShowWindowsRow.implicitHeight + Appearance.padding.large * 2
-                        radius: Appearance.rounding.normal
-                        color: Colours.tPalette.m3surfaceContainer
-
-                        Behavior on implicitHeight {
-                            Anim {}
-                        }
-
-                        RowLayout {
-                            id: workspacesShowWindowsRow
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.margins: Appearance.padding.large
-                            spacing: Appearance.spacing.normal
-
-                            StyledText {
-                                Layout.fillWidth: true
-                                text: qsTr("Show windows")
-                            }
-
-                            StyledSwitch {
-                                checked: root.workspacesShowWindows
-                                onToggled: {
-                                    root.workspacesShowWindows = checked;
-                                    root.saveConfig();
-                                }
-                            }
-                        }
-                    }
-
-                    StyledRect {
-                        Layout.fillWidth: true
-                        implicitHeight: workspacesPerMonitorRow.implicitHeight + Appearance.padding.large * 2
-                        radius: Appearance.rounding.normal
-                        color: Colours.tPalette.m3surfaceContainer
-
-                        Behavior on implicitHeight {
-                            Anim {}
-                        }
-
-                        RowLayout {
-                            id: workspacesPerMonitorRow
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.margins: Appearance.padding.large
-                            spacing: Appearance.spacing.normal
-
-                            StyledText {
-                                Layout.fillWidth: true
-                                text: qsTr("Per monitor workspaces")
-                            }
-
-                            StyledSwitch {
-                                checked: root.workspacesPerMonitor
-                                onToggled: {
-                                    root.workspacesPerMonitor = checked;
-                                    root.saveConfig();
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }

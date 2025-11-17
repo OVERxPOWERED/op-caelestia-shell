@@ -191,7 +191,7 @@ Item {
                         
                         options: [
                             {
-                                label: qsTr("Audio"),
+                                label: qsTr("Speakers"),
                                 propertyName: "showAudio",
                                 onToggled: function(checked) {
                                     root.showAudio = checked;

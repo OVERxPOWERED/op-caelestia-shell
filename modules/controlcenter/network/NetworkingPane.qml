@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import ".."
-import "../ethernet"
 import "."
 import qs.components
 import qs.components.controls

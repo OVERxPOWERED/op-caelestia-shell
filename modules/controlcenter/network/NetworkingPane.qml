@@ -215,19 +215,27 @@ Item {
                                             }
                                         }
 
-                                        StyledText {
+                                        ColumnLayout {
                                             Layout.fillWidth: true
-                                            elide: Text.ElideRight
-                                            maximumLineCount: 1
 
-                                            text: modelData.interface || qsTr("Unknown")
-                                        }
+                                            spacing: 0
 
-                                        StyledText {
-                                            text: modelData.connected ? qsTr("Connected") : qsTr("Disconnected")
-                                            color: modelData.connected ? Colours.palette.m3primary : Colours.palette.m3outline
-                                            font.pointSize: Appearance.font.size.small
-                                            font.weight: modelData.connected ? 500 : 400
+                                            StyledText {
+                                                Layout.fillWidth: true
+                                                elide: Text.ElideRight
+                                                maximumLineCount: 1
+
+                                                text: modelData.interface || qsTr("Unknown")
+                                            }
+
+                                            StyledText {
+                                                Layout.fillWidth: true
+                                                text: modelData.connected ? qsTr("Connected") : qsTr("Disconnected")
+                                                color: modelData.connected ? Colours.palette.m3primary : Colours.palette.m3outline
+                                                font.pointSize: Appearance.font.size.small
+                                                font.weight: modelData.connected ? 500 : 400
+                                                elide: Text.ElideRight
+                                            }
                                         }
 
                                         StyledRect {
@@ -362,37 +370,46 @@ Item {
                                             }
                                         }
 
-                                        StyledText {
+                                        ColumnLayout {
                                             Layout.fillWidth: true
-                                            elide: Text.ElideRight
-                                            maximumLineCount: 1
 
-                                            text: (modelData && modelData.ssid) ? modelData.ssid : qsTr("Unknown")
-                                        }
-
-                                        RowLayout {
-                                            spacing: Appearance.spacing.smaller
-
-                                            MaterialIcon {
-                                                visible: (modelData && modelData.isSecure)
-                                                text: "lock"
-                                                font.pointSize: Appearance.font.size.small
-                                                color: (modelData && modelData.active) ? Colours.palette.m3primary : Colours.palette.m3outline
-                                            }
+                                            spacing: 0
 
                                             StyledText {
-                                                text: {
-                                                    if (!modelData) return qsTr("Open");
-                                                    if (modelData.active) return qsTr("Connected");
-                                                    if (modelData.isSecure && modelData.security && modelData.security.length > 0) {
-                                                        return modelData.security;
-                                                    }
-                                                    if (modelData.isSecure) return qsTr("Secured");
-                                                    return qsTr("Open");
+                                                Layout.fillWidth: true
+                                                elide: Text.ElideRight
+                                                maximumLineCount: 1
+
+                                                text: (modelData && modelData.ssid) ? modelData.ssid : qsTr("Unknown")
+                                            }
+
+                                            RowLayout {
+                                                Layout.fillWidth: true
+                                                spacing: Appearance.spacing.smaller
+
+                                                MaterialIcon {
+                                                    visible: (modelData && modelData.isSecure)
+                                                    text: "lock"
+                                                    font.pointSize: Appearance.font.size.small
+                                                    color: (modelData && modelData.active) ? Colours.palette.m3primary : Colours.palette.m3outline
                                                 }
-                                                color: (modelData && modelData.active) ? Colours.palette.m3primary : Colours.palette.m3outline
-                                                font.pointSize: Appearance.font.size.small
-                                                font.weight: (modelData && modelData.active) ? 500 : 400
+
+                                                StyledText {
+                                                    Layout.fillWidth: true
+                                                    text: {
+                                                        if (!modelData) return qsTr("Open");
+                                                        if (modelData.active) return qsTr("Connected");
+                                                        if (modelData.isSecure && modelData.security && modelData.security.length > 0) {
+                                                            return modelData.security;
+                                                        }
+                                                        if (modelData.isSecure) return qsTr("Secured");
+                                                        return qsTr("Open");
+                                                    }
+                                                    color: (modelData && modelData.active) ? Colours.palette.m3primary : Colours.palette.m3outline
+                                                    font.pointSize: Appearance.font.size.small
+                                                    font.weight: (modelData && modelData.active) ? 500 : 400
+                                                    elide: Text.ElideRight
+                                                }
                                             }
                                         }
 

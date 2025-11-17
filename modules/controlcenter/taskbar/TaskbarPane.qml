@@ -164,7 +164,6 @@ Item {
                 readonly property bool allSectionsExpanded: 
                     clockSection.expanded &&
                     barBehaviorSection.expanded &&
-                    statusIconsSection.expanded &&
                     traySettingsSection.expanded &&
                     workspacesSection.expanded
 
@@ -189,11 +188,74 @@ Item {
                             const shouldExpand = !sidebarLayout.allSectionsExpanded;
                             clockSection.expanded = shouldExpand;
                             barBehaviorSection.expanded = shouldExpand;
-                            statusIconsSection.expanded = shouldExpand;
                             traySettingsSection.expanded = shouldExpand;
                             workspacesSection.expanded = shouldExpand;
                         }
                     }
+                }
+
+                ConnectedButtonGroup {
+                    rootItem: root
+                    title: qsTr("Status Icons")
+                    
+                    options: [
+                        {
+                            label: qsTr("Audio"),
+                            propertyName: "showAudio",
+                            onToggled: function(checked) {
+                                root.showAudio = checked;
+                                root.saveConfig();
+                            }
+                        },
+                        {
+                            label: qsTr("Mic"),
+                            propertyName: "showMicrophone",
+                            onToggled: function(checked) {
+                                root.showMicrophone = checked;
+                                root.saveConfig();
+                            }
+                        },
+                        {
+                            label: qsTr("KB"),
+                            propertyName: "showKbLayout",
+                            onToggled: function(checked) {
+                                root.showKbLayout = checked;
+                                root.saveConfig();
+                            }
+                        },
+                        {
+                            label: qsTr("Network"),
+                            propertyName: "showNetwork",
+                            onToggled: function(checked) {
+                                root.showNetwork = checked;
+                                root.saveConfig();
+                            }
+                        },
+                        {
+                            label: qsTr("BT"),
+                            propertyName: "showBluetooth",
+                            onToggled: function(checked) {
+                                root.showBluetooth = checked;
+                                root.saveConfig();
+                            }
+                        },
+                        {
+                            label: qsTr("Battery"),
+                            propertyName: "showBattery",
+                            onToggled: function(checked) {
+                                root.showBattery = checked;
+                                root.saveConfig();
+                            }
+                        },
+                        {
+                            label: qsTr("Lock"),
+                            propertyName: "showLockStatus",
+                            onToggled: function(checked) {
+                                root.showLockStatus = checked;
+                                root.saveConfig();
+                            }
+                        }
+                    ]
                 }
 
                 CollapsibleSection {
@@ -329,74 +391,6 @@ Item {
                                 }
                             }
                         }
-                    }
-                }
-
-                CollapsibleSection {
-                    id: statusIconsSection
-                    title: qsTr("Status Icons")
-
-                    ConnectedButtonGroup {
-                        rootItem: root
-                        
-                        options: [
-                            {
-                                label: qsTr("Audio"),
-                                propertyName: "showAudio",
-                                onToggled: function(checked) {
-                                    root.showAudio = checked;
-                                    root.saveConfig();
-                                }
-                            },
-                            {
-                                label: qsTr("Mic"),
-                                propertyName: "showMicrophone",
-                                onToggled: function(checked) {
-                                    root.showMicrophone = checked;
-                                    root.saveConfig();
-                                }
-                            },
-                            {
-                                label: qsTr("KB"),
-                                propertyName: "showKbLayout",
-                                onToggled: function(checked) {
-                                    root.showKbLayout = checked;
-                                    root.saveConfig();
-                                }
-                            },
-                            {
-                                label: qsTr("Network"),
-                                propertyName: "showNetwork",
-                                onToggled: function(checked) {
-                                    root.showNetwork = checked;
-                                    root.saveConfig();
-                                }
-                            },
-                            {
-                                label: qsTr("BT"),
-                                propertyName: "showBluetooth",
-                                onToggled: function(checked) {
-                                    root.showBluetooth = checked;
-                                    root.saveConfig();
-                                }
-                            },
-                            {
-                                label: qsTr("Battery"),
-                                propertyName: "showBattery",
-                                onToggled: function(checked) {
-                                    root.showBattery = checked;
-                                    root.saveConfig();
-                                }
-                            },
-                            {
-                                label: qsTr("Lock"),
-                                propertyName: "showLockStatus",
-                                onToggled: function(checked) {
-                                    root.showLockStatus = checked;
-                                    root.saveConfig();
-                                }
-                            }
-                        ]
                     }
                 }
 

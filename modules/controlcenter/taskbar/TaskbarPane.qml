@@ -471,9 +471,13 @@ Item {
                             Layout.fillWidth: true
                             alignTop: true
 
+                            StyledText {
+                                text: qsTr("Tray Settings")
+                                font.pointSize: Appearance.font.size.normal
+                            }
+
                             ConnectedButtonGroup {
                                 rootItem: root
-                                title: qsTr("Tray Settings")
                                 
                                 options: [
                                     {

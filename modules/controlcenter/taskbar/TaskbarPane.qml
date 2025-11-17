@@ -167,8 +167,6 @@ Item {
 
                 spacing: Appearance.spacing.small
 
-                readonly property bool allSectionsExpanded: true
-
                 RowLayout {
                     spacing: Appearance.spacing.smaller
 
@@ -176,19 +174,6 @@ Item {
                         text: qsTr("Settings")
                         font.pointSize: Appearance.font.size.large
                         font.weight: 500
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                    IconButton {
-                        icon: sidebarLayout.allSectionsExpanded ? "unfold_less" : "unfold_more"
-                        type: IconButton.Text
-                        label.animate: true
-                        onClicked: {
-                            // No collapsible sections remaining
-                        }
                     }
                 }
 

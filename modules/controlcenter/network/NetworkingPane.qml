@@ -463,6 +463,7 @@ Item {
                     opacity: 1
                     scale: 1
                     transformOrigin: Item.Center
+                    clip: false
 
                     asynchronous: true
                     sourceComponent: pane ? (ethernetPane ? ethernetDetails : wirelessDetails) : settings
@@ -533,16 +534,34 @@ Item {
             Component {
                 id: ethernetDetails
 
-                EthernetDetails {
-                    session: root.session
+                StyledFlickable {
+                    flickableDirection: Flickable.VerticalFlick
+                    contentHeight: ethernetDetailsInner.height
+
+                    EthernetDetails {
+                        id: ethernetDetailsInner
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        session: root.session
+                    }
                 }
             }
 
             Component {
                 id: wirelessDetails
 
-                WirelessDetails {
-                    session: root.session
+                StyledFlickable {
+                    flickableDirection: Flickable.VerticalFlick
+                    contentHeight: wirelessDetailsInner.height
+
+                    WirelessDetails {
+                        id: wirelessDetailsInner
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        session: root.session
+                    }
                 }
             }
         }

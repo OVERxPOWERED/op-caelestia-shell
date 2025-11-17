@@ -16,6 +16,8 @@ Item {
     required property Session session
     readonly property var device: session.ethernet.active
 
+    anchors.fill: parent
+
     Component.onCompleted: {
         if (device && device.interface) {
             Nmcli.getEthernetDeviceDetails(device.interface, () => {});
@@ -30,25 +32,12 @@ Item {
         }
     }
 
-    StyledFlickable {
-        id: flickable
+    ColumnLayout {
+        id: layout
 
-        anchors.fill: parent
-
-        flickableDirection: Flickable.VerticalFlick
-        clip: true
-        contentHeight: layout.height
-
-        StyledScrollBar.vertical: StyledScrollBar {
-            flickable: flickable
-        }
-
-        ColumnLayout {
-            id: layout
-
-            anchors.left: parent.left
-            anchors.right: parent.right
-            spacing: Appearance.spacing.normal
+        anchors.left: parent.left
+        anchors.right: parent.right
+        spacing: Appearance.spacing.normal
 
             ConnectionHeader {
                 icon: "cable"
@@ -112,8 +101,6 @@ Item {
                     deviceDetails: Nmcli.ethernetDeviceDetails
                 }
             }
-
-        }
     }
 
 }

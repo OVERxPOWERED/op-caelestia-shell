@@ -122,6 +122,8 @@ Item {
         id: taskbarClippingRect
         anchors.fill: parent
         anchors.margins: Appearance.padding.normal
+        anchors.leftMargin: 0
+        anchors.rightMargin: Appearance.padding.normal / 2
 
         radius: taskbarBorder.innerRadius
         color: "transparent"
@@ -130,7 +132,9 @@ Item {
             id: taskbarLoader
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.large * 2
+            anchors.margins: Appearance.padding.large + Appearance.padding.normal
+            anchors.leftMargin: Appearance.padding.large
+            anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
 
             asynchronous: true
             sourceComponent: taskbarContentComponent

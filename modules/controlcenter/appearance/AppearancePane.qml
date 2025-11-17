@@ -130,26 +130,6 @@ RowLayout {
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: sidebarLayout.height
 
-                function collapseAllSections(exceptSection) {
-                    if (exceptSection !== themeModeSection)
-                        themeModeSection.expanded = false;
-                    if (exceptSection !== colorVariantSection)
-                        colorVariantSection.expanded = false;
-                    if (exceptSection !== colorSchemeSection)
-                        colorSchemeSection.expanded = false;
-                    if (exceptSection !== animationsSection)
-                        animationsSection.expanded = false;
-                    if (exceptSection !== fontsSection)
-                        fontsSection.expanded = false;
-                    if (exceptSection !== scalesSection)
-                        scalesSection.expanded = false;
-                    if (exceptSection !== transparencySection)
-                        transparencySection.expanded = false;
-                    if (exceptSection !== borderSection)
-                        borderSection.expanded = false;
-                    if (exceptSection !== backgroundSection)
-                        backgroundSection.expanded = false;
-                }
 
                 StyledScrollBar.vertical: StyledScrollBar {
                     flickable: sidebarFlickable
@@ -179,9 +159,6 @@ RowLayout {
                     id: themeModeSection
                     title: qsTr("Theme mode")
                     description: qsTr("Light or dark theme")
-                    onToggleRequested: {
-                        sidebarFlickable.collapseAllSections(themeModeSection);
-                    }
 
                     SwitchRow {
                         label: qsTr("Dark mode")
@@ -196,9 +173,6 @@ RowLayout {
                     id: colorVariantSection
                     title: qsTr("Color variant")
                     description: qsTr("Material theme variant")
-                    onToggleRequested: {
-                        sidebarFlickable.collapseAllSections(colorVariantSection);
-                    }
 
                     ColumnLayout {
                         Layout.fillWidth: true
@@ -282,9 +256,6 @@ RowLayout {
                     id: colorSchemeSection
                     title: qsTr("Color scheme")
                     description: qsTr("Available color schemes")
-                    onToggleRequested: {
-                        sidebarFlickable.collapseAllSections(colorSchemeSection);
-                    }
 
                     ColumnLayout {
                         Layout.fillWidth: true
@@ -422,9 +393,6 @@ RowLayout {
                 CollapsibleSection {
                     id: animationsSection
                     title: qsTr("Animations")
-                    onToggleRequested: {
-                        sidebarFlickable.collapseAllSections(animationsSection);
-                    }
 
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
@@ -529,9 +497,6 @@ RowLayout {
                 CollapsibleSection {
                     id: fontsSection
                     title: qsTr("Fonts")
-                    onToggleRequested: {
-                        sidebarFlickable.collapseAllSections(fontsSection);
-                    }
 
                     CollapsibleSection {
                         id: materialFontSection
@@ -861,9 +826,6 @@ RowLayout {
                 CollapsibleSection {
                     id: scalesSection
                     title: qsTr("Scales")
-                    onToggleRequested: {
-                        sidebarFlickable.collapseAllSections(scalesSection);
-                    }
 
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
@@ -1166,9 +1128,6 @@ RowLayout {
                 CollapsibleSection {
                     id: transparencySection
                     title: qsTr("Transparency")
-                    onToggleRequested: {
-                        sidebarFlickable.collapseAllSections(transparencySection);
-                    }
 
                     SwitchRow {
                         label: qsTr("Transparency enabled")
@@ -1381,9 +1340,6 @@ RowLayout {
                 CollapsibleSection {
                     id: borderSection
                     title: qsTr("Border")
-                    onToggleRequested: {
-                        sidebarFlickable.collapseAllSections(borderSection);
-                    }
 
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
@@ -1575,9 +1531,6 @@ RowLayout {
                 CollapsibleSection {
                     id: backgroundSection
                     title: qsTr("Background")
-                    onToggleRequested: {
-                        sidebarFlickable.collapseAllSections(backgroundSection);
-                    }
 
                     SwitchRow {
                         label: qsTr("Desktop clock")

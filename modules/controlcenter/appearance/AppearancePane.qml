@@ -1891,6 +1891,20 @@ RowLayout {
                                 console.error("[AppearancePane] Wallpaper loader error!");
                             }
                         }
+                        
+                        // Stop lazy loading when loader becomes inactive
+                        onActiveChanged: {
+                            if (!active && wallpaperLoader.item) {
+                                const container = wallpaperLoader.item;
+                                // Access timer through wallpaperGrid
+                                if (container && container.wallpaperGrid) {
+                                    if (container.wallpaperGrid.scrollCheckTimer) {
+                                        container.wallpaperGrid.scrollCheckTimer.stop();
+                                    }
+                                    container.wallpaperGrid._expansionInProgress = false;
+                                }
+                            }
+                        }
 
                         sourceComponent: Item {
                             id: wallpaperGridContainer
@@ -1906,6 +1920,16 @@ RowLayout {
                                     item = item.parent;
                                 }
                                 return null;
+                            }
+                            
+                            // Cleanup when component is destroyed
+                            Component.onDestruction: {
+                                if (wallpaperGrid) {
+                                    if (wallpaperGrid.scrollCheckTimer) {
+                                        wallpaperGrid.scrollCheckTimer.stop();
+                                    }
+                                    wallpaperGrid._expansionInProgress = false;
+                                }
                             }
                             
                             // Lazy loading model: loads one image at a time, only when touching bottom
@@ -2030,6 +2054,19 @@ RowLayout {
                                     target: root.session
                                     function onActiveIndexChanged(): void {
                                         const isActive = root.session.activeIndex === 3;
+                                        
+                                        // Stop lazy loading when switching away from appearance pane
+                                        if (!isActive) {
+                                            if (scrollCheckTimer) {
+                                                scrollCheckTimer.stop();
+                                            }
+                                            if (wallpaperGrid) {
+                                                wallpaperGrid._expansionInProgress = false;
+                                            }
+                                            return;
+                                        }
+                                        
+                                        // Initialize if needed when switching to appearance pane
                                         if (isActive && width > 0 && !lazyModel.sourceList && parent && parent.visible && Wallpapers.list) {
                                             lazyModel.initialize(Wallpapers.list);
                                             wallpaperListModel.clear();
@@ -2062,6 +2099,10 @@ RowLayout {
                                 Connections {
                                     target: wallpaperGridContainer.parentFlickable
                                     function onContentYChanged(): void {
+                                        // Don't process scroll events if appearance pane is not active
+                                        const isActive = root.session.activeIndex === 3;
+                                        if (!isActive) return;
+                                        
                                         if (!lazyModel || !lazyModel.sourceList || lazyModel.loadedCount >= lazyModel.totalCount || wallpaperGrid._expansionInProgress) {
                                             return;
                                         }
@@ -2107,9 +2148,19 @@ RowLayout {
                                 Timer {
                                     id: scrollCheckTimer
                                     interval: 100
-                                    running: lazyModel && lazyModel.sourceList && lazyModel.loadedCount < lazyModel.totalCount
+                                    running: {
+                                        const isActive = root.session.activeIndex === 3;
+                                        return isActive && lazyModel && lazyModel.sourceList && lazyModel.loadedCount < lazyModel.totalCount;
+                                    }
                                     repeat: true
                                     onTriggered: {
+                                        // Double-check that appearance pane is still active
+                                        const isActive = root.session.activeIndex === 3;
+                                        if (!isActive) {
+                                            stop();
+                                            return;
+                                        }
+                                        
                                         const flickable = wallpaperGridContainer.parentFlickable;
                                         if (!flickable || !lazyModel || !lazyModel.sourceList) return;
                                         

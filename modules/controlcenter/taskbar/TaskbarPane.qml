@@ -177,68 +177,77 @@ Item {
                     }
                 }
 
-                ConnectedButtonGroup {
-                    rootItem: root
-                    title: qsTr("Status Icons")
-                    
-                    options: [
-                        {
-                            label: qsTr("Audio"),
-                            propertyName: "showAudio",
-                            onToggled: function(checked) {
-                                root.showAudio = checked;
-                                root.saveConfig();
+                SectionContainer {
+                    Layout.fillWidth: true
+                    alignTop: true
+
+                    StyledText {
+                        text: qsTr("Status Icons")
+                        font.pointSize: Appearance.font.size.normal
+                    }
+
+                    ConnectedButtonGroup {
+                        rootItem: root
+                        
+                        options: [
+                            {
+                                label: qsTr("Audio"),
+                                propertyName: "showAudio",
+                                onToggled: function(checked) {
+                                    root.showAudio = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Microphone"),
+                                propertyName: "showMicrophone",
+                                onToggled: function(checked) {
+                                    root.showMicrophone = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Keyboard"),
+                                propertyName: "showKbLayout",
+                                onToggled: function(checked) {
+                                    root.showKbLayout = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Network"),
+                                propertyName: "showNetwork",
+                                onToggled: function(checked) {
+                                    root.showNetwork = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Bluetooth"),
+                                propertyName: "showBluetooth",
+                                onToggled: function(checked) {
+                                    root.showBluetooth = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Battery"),
+                                propertyName: "showBattery",
+                                onToggled: function(checked) {
+                                    root.showBattery = checked;
+                                    root.saveConfig();
+                                }
+                            },
+                            {
+                                label: qsTr("Capslock"),
+                                propertyName: "showLockStatus",
+                                onToggled: function(checked) {
+                                    root.showLockStatus = checked;
+                                    root.saveConfig();
+                                }
                             }
-                        },
-                        {
-                            label: qsTr("Microphone"),
-                            propertyName: "showMicrophone",
-                            onToggled: function(checked) {
-                                root.showMicrophone = checked;
-                                root.saveConfig();
-                            }
-                        },
-                        {
-                            label: qsTr("Keyboard"),
-                            propertyName: "showKbLayout",
-                            onToggled: function(checked) {
-                                root.showKbLayout = checked;
-                                root.saveConfig();
-                            }
-                        },
-                        {
-                            label: qsTr("Network"),
-                            propertyName: "showNetwork",
-                            onToggled: function(checked) {
-                                root.showNetwork = checked;
-                                root.saveConfig();
-                            }
-                        },
-                        {
-                            label: qsTr("Bluetooth"),
-                            propertyName: "showBluetooth",
-                            onToggled: function(checked) {
-                                root.showBluetooth = checked;
-                                root.saveConfig();
-                            }
-                        },
-                        {
-                            label: qsTr("Battery"),
-                            propertyName: "showBattery",
-                            onToggled: function(checked) {
-                                root.showBattery = checked;
-                                root.saveConfig();
-                            }
-                        },
-                        {
-                            label: qsTr("Capslock"),
-                            propertyName: "showLockStatus",
-                            onToggled: function(checked) {
-                                root.showLockStatus = checked;
-                                root.saveConfig();
-                            }
-                        }
-                    ]
+                        ]
+                    }
                 }
 
                 RowLayout {

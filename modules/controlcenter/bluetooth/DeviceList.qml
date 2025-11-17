@@ -166,8 +166,8 @@ ColumnLayout {
             readonly property bool loading: modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting
             readonly property bool connected: modelData.state === BluetoothDeviceState.Connected
 
-            anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.left: view.contentItem.left
+            anchors.right: view.contentItem.right
             implicitHeight: deviceInner.implicitHeight + Appearance.padding.normal * 2
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.session.bt.active === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)

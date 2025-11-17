@@ -208,7 +208,7 @@ Item {
                             }
                         },
                         {
-                            label: qsTr("Mic"),
+                            label: qsTr("Microphone"),
                             propertyName: "showMicrophone",
                             onToggled: function(checked) {
                                 root.showMicrophone = checked;
@@ -216,7 +216,7 @@ Item {
                             }
                         },
                         {
-                            label: qsTr("KB"),
+                            label: qsTr("Keyboard"),
                             propertyName: "showKbLayout",
                             onToggled: function(checked) {
                                 root.showKbLayout = checked;
@@ -232,7 +232,7 @@ Item {
                             }
                         },
                         {
-                            label: qsTr("BT"),
+                            label: qsTr("Bluetooth"),
                             propertyName: "showBluetooth",
                             onToggled: function(checked) {
                                 root.showBluetooth = checked;
@@ -248,7 +248,7 @@ Item {
                             }
                         },
                         {
-                            label: qsTr("Lock"),
+                            label: qsTr("Capslock"),
                             propertyName: "showLockStatus",
                             onToggled: function(checked) {
                                 root.showLockStatus = checked;

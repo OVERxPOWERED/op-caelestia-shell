@@ -368,6 +368,32 @@ Item {
                                                 fill: (modelData && modelData.active) ? 1 : 0
                                                 color: (modelData && modelData.active) ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                                             }
+
+                                            StyledRect {
+                                                id: lockBadge
+
+                                                visible: modelData && modelData.isSecure
+                                                anchors.right: parent.right
+                                                anchors.bottom: parent.bottom
+                                                anchors.margins: -Appearance.padding.smaller / 2
+
+                                                implicitWidth: lockIconSize + Appearance.padding.smaller
+                                                implicitHeight: lockIconSize + Appearance.padding.smaller
+                                                radius: Appearance.rounding.full
+                                                color: (modelData && modelData.active) ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHighest
+
+                                                readonly property real lockIconSize: lockIcon.implicitWidth
+
+                                                MaterialIcon {
+                                                    id: lockIcon
+
+                                                    anchors.centerIn: parent
+                                                    text: "lock"
+                                                    font.pointSize: Appearance.font.size.small
+                                                    fill: 1
+                                                    color: (modelData && modelData.active) ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+                                                }
+                                            }
                                         }
 
                                         ColumnLayout {
@@ -386,13 +412,6 @@ Item {
                                             RowLayout {
                                                 Layout.fillWidth: true
                                                 spacing: Appearance.spacing.smaller
-
-                                                MaterialIcon {
-                                                    visible: (modelData && modelData.isSecure)
-                                                    text: "lock"
-                                                    font.pointSize: Appearance.font.size.small
-                                                    color: (modelData && modelData.active) ? Colours.palette.m3primary : Colours.palette.m3outline
-                                                }
 
                                                 StyledText {
                                                     Layout.fillWidth: true

@@ -80,6 +80,7 @@ RowLayout {
     }
 
     Item {
+        id: leftAppearanceItem
         Layout.preferredWidth: Math.floor(parent.width * 0.4)
         Layout.minimumWidth: 420
         Layout.fillHeight: true

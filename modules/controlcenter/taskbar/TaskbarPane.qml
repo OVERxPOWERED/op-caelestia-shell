@@ -143,6 +143,8 @@ Item {
 
     InnerBorder {
         id: taskbarBorder
+        leftThickness: 0
+        rightThickness: Appearance.padding.normal / 2
     }
 
     Component {

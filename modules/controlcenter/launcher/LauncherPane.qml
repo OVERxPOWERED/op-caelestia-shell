@@ -169,7 +169,6 @@ RowLayout {
                 anchors.margins: Appearance.padding.large + Appearance.padding.normal
                 anchors.leftMargin: Appearance.padding.large
                 anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
-                anchors.bottomMargin: 0
 
                 asynchronous: true
                 sourceComponent: leftContentComponent
@@ -186,6 +185,7 @@ RowLayout {
             id: leftContentComponent
 
             ColumnLayout {
+                id: leftLauncherLayout
                 anchors.fill: parent
 
                 spacing: Appearance.spacing.small

@@ -179,6 +179,7 @@ RowLayout {
                     id: themeModeSection
                     title: qsTr("Theme mode")
                     description: qsTr("Light or dark theme")
+                    showBackground: true
 
                     SwitchRow {
                         label: qsTr("Dark mode")
@@ -193,6 +194,7 @@ RowLayout {
                     id: colorVariantSection
                     title: qsTr("Color variant")
                     description: qsTr("Material theme variant")
+                    showBackground: true
 
                     ColumnLayout {
                         Layout.fillWidth: true
@@ -274,6 +276,7 @@ RowLayout {
                     id: colorSchemeSection
                     title: qsTr("Color scheme")
                     description: qsTr("Available color schemes")
+                    showBackground: true
 
                     ColumnLayout {
                         Layout.fillWidth: true
@@ -409,6 +412,7 @@ RowLayout {
                 CollapsibleSection {
                     id: animationsSection
                     title: qsTr("Animations")
+                    showBackground: true
 
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
@@ -513,11 +517,13 @@ RowLayout {
                 CollapsibleSection {
                     id: fontsSection
                     title: qsTr("Fonts")
+                    showBackground: true
 
                     CollapsibleSection {
                         id: materialFontSection
                         title: qsTr("Material font family")
                         expanded: true
+                        showBackground: true
 
                         Loader {
                             Layout.fillWidth: true
@@ -593,6 +599,7 @@ RowLayout {
                         id: monoFontSection
                         title: qsTr("Monospace font family")
                         expanded: false
+                        showBackground: true
 
                         Loader {
                             Layout.fillWidth: true
@@ -668,6 +675,7 @@ RowLayout {
                         id: sansFontSection
                         title: qsTr("Sans-serif font family")
                         expanded: false
+                        showBackground: true
 
                         Loader {
                             Layout.fillWidth: true
@@ -842,6 +850,7 @@ RowLayout {
                 CollapsibleSection {
                     id: scalesSection
                     title: qsTr("Scales")
+                    showBackground: true
 
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
@@ -1144,6 +1153,7 @@ RowLayout {
                 CollapsibleSection {
                     id: transparencySection
                     title: qsTr("Transparency")
+                    showBackground: true
 
                     SwitchRow {
                         label: qsTr("Transparency enabled")
@@ -1356,6 +1366,7 @@ RowLayout {
                 CollapsibleSection {
                     id: borderSection
                     title: qsTr("Border")
+                    showBackground: true
 
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
@@ -1547,6 +1558,7 @@ RowLayout {
                 CollapsibleSection {
                     id: backgroundSection
                     title: qsTr("Background")
+                    showBackground: true
 
                     SwitchRow {
                         label: qsTr("Desktop clock")

@@ -12,6 +12,7 @@ ColumnLayout {
     required property string title
     property string description: ""
     property bool expanded: false
+    property bool showBackground: false
 
     signal toggleRequested
 
@@ -79,6 +80,21 @@ ColumnLayout {
         Behavior on Layout.preferredHeight {
             Anim {
                 easing.bezierCurve: Appearance.anim.curves.standard
+            }
+        }
+
+        StyledRect {
+            id: backgroundRect
+            anchors.fill: parent
+            radius: Appearance.rounding.normal
+            color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+            opacity: root.showBackground && root.expanded ? 1.0 : 0.0
+            visible: root.showBackground
+
+            Behavior on opacity {
+                Anim {
+                    easing.bezierCurve: Appearance.anim.curves.standard
+                }
             }
         }
 

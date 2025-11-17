@@ -17,7 +17,8 @@ Item {
     required property Session session
     readonly property var network: session.network.active
 
-    anchors.fill: parent
+    implicitWidth: layout.implicitWidth
+    implicitHeight: layout.implicitHeight
 
     Component.onCompleted: {
         updateDeviceDetails();
@@ -105,6 +106,7 @@ Item {
 
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.top: parent.top
         spacing: Appearance.spacing.normal
 
             ConnectionHeader {

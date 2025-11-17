@@ -16,7 +16,8 @@ Item {
     required property Session session
     readonly property var device: session.ethernet.active
 
-    anchors.fill: parent
+    implicitWidth: layout.implicitWidth
+    implicitHeight: layout.implicitHeight
 
     Component.onCompleted: {
         if (device && device.interface) {
@@ -37,6 +38,7 @@ Item {
 
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.top: parent.top
         spacing: Appearance.spacing.normal
 
             ConnectionHeader {

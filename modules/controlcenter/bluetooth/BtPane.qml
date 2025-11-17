@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.config
@@ -131,14 +132,20 @@ RowLayout {
             id: settings
 
             StyledFlickable {
+                id: settingsFlickable
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: settingsInner.height
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: settingsFlickable
+                }
 
                 Settings {
                     id: settingsInner
 
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    anchors.top: parent.top
                     session: root.session
                 }
             }

@@ -518,14 +518,20 @@ Item {
                 id: settings
 
                 StyledFlickable {
+                    id: settingsFlickable
                     flickableDirection: Flickable.VerticalFlick
                     contentHeight: settingsInner.height
+
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: settingsFlickable
+                    }
 
                     NetworkSettings {
                         id: settingsInner
 
                         anchors.left: parent.left
                         anchors.right: parent.right
+                        anchors.top: parent.top
                         session: root.session
                     }
                 }
@@ -535,14 +541,20 @@ Item {
                 id: ethernetDetails
 
                 StyledFlickable {
+                    id: ethernetFlickable
                     flickableDirection: Flickable.VerticalFlick
                     contentHeight: ethernetDetailsInner.height
+
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: ethernetFlickable
+                    }
 
                     EthernetDetails {
                         id: ethernetDetailsInner
 
                         anchors.left: parent.left
                         anchors.right: parent.right
+                        anchors.top: parent.top
                         session: root.session
                     }
                 }
@@ -552,14 +564,20 @@ Item {
                 id: wirelessDetails
 
                 StyledFlickable {
+                    id: wirelessFlickable
                     flickableDirection: Flickable.VerticalFlick
                     contentHeight: wirelessDetailsInner.height
+
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: wirelessFlickable
+                    }
 
                     WirelessDetails {
                         id: wirelessDetailsInner
 
                         anchors.left: parent.left
                         anchors.right: parent.right
+                        anchors.top: parent.top
                         session: root.session
                     }
                 }

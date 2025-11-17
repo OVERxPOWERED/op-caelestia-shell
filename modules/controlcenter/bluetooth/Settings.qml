@@ -284,8 +284,12 @@ ColumnLayout {
 
                 CustomSpinBox {
                     min: 0
-                    value: root.session.bt.currentAdapter.discoverableTimeout
-                    onValueModified: value => root.session.bt.currentAdapter.discoverableTimeout = value
+                    value: root.session.bt.currentAdapter?.discoverableTimeout ?? 0
+                    onValueModified: value => {
+                        if (root.session.bt.currentAdapter) {
+                            root.session.bt.currentAdapter.discoverableTimeout = value;
+                        }
+                    }
                 }
             }
 
@@ -345,7 +349,7 @@ ColumnLayout {
                         anchors.top: renameLabel.bottom
                         anchors.leftMargin: root.session.bt.editingAdapterName ? 0 : -Appearance.padding.normal
 
-                        text: root.session.bt.currentAdapter.name
+                        text: root.session.bt.currentAdapter?.name ?? ""
                         readOnly: !root.session.bt.editingAdapterName
                         onAccepted: {
                             root.session.bt.editingAdapterName = false;
@@ -392,7 +396,7 @@ ColumnLayout {
 
                         function onClicked(): void {
                             root.session.bt.editingAdapterName = false;
-                            adapterNameEdit.text = Qt.binding(() => root.session.bt.currentAdapter.name);
+                            adapterNameEdit.text = Qt.binding(() => root.session.bt.currentAdapter?.name ?? "");
                         }
                     }
 

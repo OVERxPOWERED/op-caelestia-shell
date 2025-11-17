@@ -18,10 +18,12 @@ StyledFlickable {
     required property Session session
     readonly property BluetoothDevice device: session.bt.active
 
-    anchors.fill: parent
-
     flickableDirection: Flickable.VerticalFlick
     contentHeight: layoutWrapper.height
+
+    StyledScrollBar.vertical: StyledScrollBar {
+        flickable: root
+    }
 
         Item {
             id: layoutWrapper

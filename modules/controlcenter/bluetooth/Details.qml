@@ -30,12 +30,15 @@ StyledFlickable {
 
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.top: parent.top
             implicitHeight: layout.height
 
             ColumnLayout {
                 id: layout
 
-                anchors.fill: parent
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
                 spacing: Appearance.spacing.normal
 
             MaterialIcon {

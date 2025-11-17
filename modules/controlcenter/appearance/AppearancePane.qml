@@ -526,6 +526,7 @@ RowLayout {
                         showBackground: true
 
                         Loader {
+                            id: materialFontLoader
                             Layout.fillWidth: true
                             Layout.preferredHeight: item ? Math.min(item.contentHeight, 300) : 0
                             asynchronous: true
@@ -538,6 +539,10 @@ RowLayout {
                                 clip: true
                                 spacing: Appearance.spacing.small / 2
                                 model: Qt.fontFamilies()
+
+                                StyledScrollBar.vertical: StyledScrollBar {
+                                    flickable: materialFontList
+                                }
 
                                 delegate: StyledRect {
                                     required property string modelData
@@ -592,6 +597,7 @@ RowLayout {
                                     implicitHeight: fontFamilyMaterialRow.implicitHeight + Appearance.padding.normal * 2
                                 }
                             }
+
                         }
                     }
 
@@ -614,6 +620,10 @@ RowLayout {
                                 clip: true
                                 spacing: Appearance.spacing.small / 2
                                 model: Qt.fontFamilies()
+
+                                StyledScrollBar.vertical: StyledScrollBar {
+                                    flickable: monoFontList
+                                }
 
                                 delegate: StyledRect {
                                     required property string modelData
@@ -690,6 +700,10 @@ RowLayout {
                                 clip: true
                                 spacing: Appearance.spacing.small / 2
                                 model: Qt.fontFamilies()
+
+                                StyledScrollBar.vertical: StyledScrollBar {
+                                    flickable: sansFontList
+                                }
 
                                 delegate: StyledRect {
                                     required property string modelData

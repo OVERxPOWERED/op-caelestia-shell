@@ -163,8 +163,8 @@ ColumnLayout {
             id: device
 
             required property BluetoothDevice modelData
-            readonly property bool loading: modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting
-            readonly property bool connected: modelData.state === BluetoothDeviceState.Connected
+            readonly property bool loading: modelData && (modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting)
+            readonly property bool connected: modelData && modelData.state === BluetoothDeviceState.Connected
 
             anchors.left: view.contentItem.left
             anchors.right: view.contentItem.right
@@ -177,7 +177,8 @@ ColumnLayout {
                 id: stateLayer
 
                 function onClicked(): void {
-                    root.session.bt.active = device.modelData;
+                    if (device.modelData)
+                        root.session.bt.active = device.modelData;
                 }
             }
 
@@ -194,20 +195,20 @@ ColumnLayout {
                     implicitHeight: icon.implicitHeight + Appearance.padding.normal * 2
 
                     radius: Appearance.rounding.normal
-                    color: device.connected ? Colours.palette.m3primaryContainer : device.modelData.bonded ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainerHigh
+                    color: device.connected ? Colours.palette.m3primaryContainer : (device.modelData && device.modelData.bonded) ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainerHigh
 
                     StyledRect {
                         anchors.fill: parent
                         radius: parent.radius
-                        color: Qt.alpha(device.connected ? Colours.palette.m3onPrimaryContainer : device.modelData.bonded ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface, stateLayer.pressed ? 0.1 : stateLayer.containsMouse ? 0.08 : 0)
+                        color: Qt.alpha(device.connected ? Colours.palette.m3onPrimaryContainer : (device.modelData && device.modelData.bonded) ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface, stateLayer.pressed ? 0.1 : stateLayer.containsMouse ? 0.08 : 0)
                     }
 
                     MaterialIcon {
                         id: icon
 
                         anchors.centerIn: parent
-                        text: Icons.getBluetoothIcon(device.modelData.icon)
-                        color: device.connected ? Colours.palette.m3onPrimaryContainer : device.modelData.bonded ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+                        text: Icons.getBluetoothIcon(device.modelData ? device.modelData.icon : "")
+                        color: device.connected ? Colours.palette.m3onPrimaryContainer : (device.modelData && device.modelData.bonded) ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
                         font.pointSize: Appearance.font.size.large
                         fill: device.connected ? 1 : 0
 
@@ -224,13 +225,13 @@ ColumnLayout {
 
                     StyledText {
                         Layout.fillWidth: true
-                        text: device.modelData.name
+                        text: device.modelData ? device.modelData.name : qsTr("Unknown")
                         elide: Text.ElideRight
                     }
 
                     StyledText {
                         Layout.fillWidth: true
-                        text: device.modelData.address + (device.connected ? qsTr(" (Connected)") : device.modelData.bonded ? qsTr(" (Paired)") : "")
+                        text: (device.modelData ? device.modelData.address : "") + (device.connected ? qsTr(" (Connected)") : (device.modelData && device.modelData.bonded) ? qsTr(" (Paired)") : "")
                         color: Colours.palette.m3outline
                         font.pointSize: Appearance.font.size.small
                         elide: Text.ElideRight
@@ -256,7 +257,8 @@ ColumnLayout {
                         disabled: device.loading
 
                         function onClicked(): void {
-                            device.modelData.connected = !device.modelData.connected;
+                            if (device.modelData)
+                                device.modelData.connected = !device.modelData.connected;
                         }
                     }
 
@@ -265,7 +267,7 @@ ColumnLayout {
 
                         anchors.centerIn: parent
                         animate: true
-                        text: device.modelData.connected ? "link_off" : "link"
+                        text: (device.modelData && device.modelData.connected) ? "link_off" : "link"
                         color: device.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
 
                         opacity: device.loading ? 0 : 1

@@ -380,7 +380,7 @@ Item {
                                                 implicitWidth: lockIconSize + Appearance.padding.smaller
                                                 implicitHeight: lockIconSize + Appearance.padding.smaller
                                                 radius: Appearance.rounding.full
-                                                color: (modelData && modelData.active) ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHighest
+                                                color: Colours.palette.m3secondaryContainer
 
                                                 readonly property real lockIconSize: lockIcon.implicitWidth
 
@@ -391,7 +391,7 @@ Item {
                                                     text: "lock"
                                                     font.pointSize: Appearance.font.size.small
                                                     fill: 1
-                                                    color: (modelData && modelData.active) ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+                                                    color: Colours.palette.m3onSurface
                                                 }
                                             }
                                         }

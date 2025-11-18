@@ -434,6 +434,13 @@ RowLayout {
 
                 property var pane: root.session.launcher.active
                 property string paneId: pane ? (pane.id || pane.entry?.id || "") : ""
+                property Component targetComponent: settings
+                property Component nextComponent: settings
+                property var displayedApp: null
+
+                function getComponentForPane() {
+                    return pane ? appDetails : settings;
+                }
 
                 anchors.fill: parent
                 anchors.margins: Appearance.padding.large * 2
@@ -444,18 +451,20 @@ RowLayout {
                 clip: false
 
                 asynchronous: true
-                sourceComponent: pane ? appDetails : settings
+                sourceComponent: rightLauncherLoader.targetComponent
+                active: true
 
                 Component.onCompleted: {
-                    targetComponent = pane ? appDetails : settings;
+                    displayedApp = pane;
+                    targetComponent = getComponentForPane();
                     nextComponent = targetComponent;
                 }
 
-                property Component targetComponent: settings
-                property Component nextComponent: settings
-
-                function getComponentForPane() {
-                    return pane ? appDetails : settings;
+                onItemChanged: {
+                    // Ensure displayedApp is set when item is created (for async loading)
+                    if (item && pane && displayedApp !== pane) {
+                        displayedApp = pane;
+                    }
                 }
 
                 Behavior on paneId {
@@ -476,8 +485,23 @@ RowLayout {
                         }
                         PropertyAction {
                             target: rightLauncherLoader
+                            property: "displayedApp"
+                            value: rightLauncherLoader.pane
+                        }
+                        PropertyAction {
+                            target: rightLauncherLoader
+                            property: "active"
+                            value: false
+                        }
+                        PropertyAction {
+                            target: rightLauncherLoader
                             property: "targetComponent"
                             value: rightLauncherLoader.nextComponent
+                        }
+                        PropertyAction {
+                            target: rightLauncherLoader
+                            property: "active"
+                            value: true
                         }
                         ParallelAnimation {
                             Anim {
@@ -499,6 +523,19 @@ RowLayout {
                 onPaneChanged: {
                     nextComponent = getComponentForPane();
                     paneId = pane ? (pane.id || pane.entry?.id || "") : "";
+                }
+
+                onDisplayedAppChanged: {
+                    if (displayedApp) {
+                        const appId = displayedApp.id || displayedApp.entry?.id;
+                        if (Config.launcher.hiddenApps && Config.launcher.hiddenApps.length > 0) {
+                            root.hideFromLauncherChecked = Config.launcher.hiddenApps.includes(appId);
+                        } else {
+                            root.hideFromLauncherChecked = false;
+                        }
+                    } else {
+                        root.hideFromLauncherChecked = false;
+                    }
                 }
             }
         }
@@ -550,7 +587,7 @@ RowLayout {
 
                 Loader {
                     id: iconLoader
-                    sourceComponent: root.selectedApp ? appIconComponent : defaultIconComponent
+                    sourceComponent: rightLauncherLoader.displayedApp ? appIconComponent : defaultIconComponent
                 }
 
                 Component {
@@ -558,8 +595,8 @@ RowLayout {
                     IconImage {
                         implicitSize: Appearance.font.size.extraLarge * 3 * 2
                         source: {
-                            if (!root.selectedApp) return "image-missing";
-                            const entry = root.selectedApp.entry;
+                            if (!rightLauncherLoader.displayedApp) return "image-missing";
+                            const entry = rightLauncherLoader.displayedApp.entry;
                             if (entry && entry.icon) {
                                 return Quickshell.iconPath(entry.icon, "image-missing");
                             }
@@ -582,7 +619,7 @@ RowLayout {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.leftMargin: Appearance.padding.large * 2
                 Layout.rightMargin: Appearance.padding.large * 2
-                text: root.selectedApp ? (root.selectedApp.name || root.selectedApp.entry?.name || qsTr("Application Details")) : qsTr("Launcher Applications")
+                text: rightLauncherLoader.displayedApp ? (rightLauncherLoader.displayedApp.name || rightLauncherLoader.displayedApp.entry?.name || qsTr("Application Details")) : qsTr("Launcher Applications")
                 font.pointSize: Appearance.font.size.large
                 font.bold: true
             }
@@ -613,13 +650,28 @@ RowLayout {
 
                         SwitchRow {
                             Layout.topMargin: Appearance.spacing.normal
-                            visible: root.selectedApp !== null
+                            visible: rightLauncherLoader.displayedApp !== null
                             label: qsTr("Hide from launcher")
                             checked: root.hideFromLauncherChecked
-                            enabled: root.selectedApp !== null
+                            enabled: rightLauncherLoader.displayedApp !== null
                             onToggled: checked => {
                                 root.hideFromLauncherChecked = checked;
-                                root.saveHiddenApps(checked);
+                                if (rightLauncherLoader.displayedApp) {
+                                    const appId = rightLauncherLoader.displayedApp.id || rightLauncherLoader.displayedApp.entry?.id;
+                                    const hiddenApps = Config.launcher.hiddenApps ? [...Config.launcher.hiddenApps] : [];
+                                    if (checked) {
+                                        if (!hiddenApps.includes(appId)) {
+                                            hiddenApps.push(appId);
+                                        }
+                                    } else {
+                                        const index = hiddenApps.indexOf(appId);
+                                        if (index !== -1) {
+                                            hiddenApps.splice(index, 1);
+                                        }
+                                    }
+                                    Config.launcher.hiddenApps = hiddenApps;
+                                    Config.save();
+                                }
                             }
                         }
 

@@ -57,6 +57,8 @@ RowLayout {
 
                 property var pane: root.session.ethernet.active
                 property string paneId: pane ? (pane.interface || "") : ""
+                property Component targetComponent: settings
+                property Component nextComponent: settings
 
                 anchors.fill: parent
                 anchors.margins: Appearance.padding.large * 2
@@ -67,7 +69,12 @@ RowLayout {
 
                 clip: true
                 asynchronous: true
-                sourceComponent: pane ? details : settings
+                sourceComponent: loader.targetComponent
+
+                Component.onCompleted: {
+                    targetComponent = pane ? details : settings;
+                    nextComponent = targetComponent;
+                }
 
                 Behavior on paneId {
                     SequentialAnimation {
@@ -85,7 +92,11 @@ RowLayout {
                                 easing.bezierCurve: Appearance.anim.curves.standardAccel
                             }
                         }
-                        PropertyAction {}
+                        PropertyAction {
+                            target: loader
+                            property: "targetComponent"
+                            value: loader.nextComponent
+                        }
                         ParallelAnimation {
                             Anim {
                                 target: loader
@@ -104,6 +115,7 @@ RowLayout {
                 }
 
                 onPaneChanged: {
+                    nextComponent = pane ? details : settings;
                     paneId = pane ? (pane.interface || "") : "";
                 }
             }

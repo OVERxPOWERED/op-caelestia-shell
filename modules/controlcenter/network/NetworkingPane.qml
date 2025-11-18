@@ -492,6 +492,12 @@ Item {
                     property var wirelessPane: root.session.network.active
                     property var pane: ethernetPane || wirelessPane
                     property string paneId: ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "")
+                    property Component targetComponent: settings
+                    property Component nextComponent: settings
+
+                    function getComponentForPane() {
+                        return pane ? (ethernetPane ? ethernetDetails : wirelessDetails) : settings;
+                    }
 
                     anchors.fill: parent
                     anchors.margins: Appearance.padding.large * 2
@@ -502,7 +508,12 @@ Item {
                     clip: false
 
                     asynchronous: true
-                    sourceComponent: pane ? (ethernetPane ? ethernetDetails : wirelessDetails) : settings
+                    sourceComponent: loader.targetComponent
+
+                    Component.onCompleted: {
+                        targetComponent = getComponentForPane();
+                        nextComponent = targetComponent;
+                    }
 
                     Behavior on paneId {
                         SequentialAnimation {
@@ -520,7 +531,11 @@ Item {
                                     easing.bezierCurve: Appearance.anim.curves.standardAccel
                                 }
                             }
-                            PropertyAction {}
+                            PropertyAction {
+                                target: loader
+                                property: "targetComponent"
+                                value: loader.nextComponent
+                            }
                             ParallelAnimation {
                                 Anim {
                                     target: loader
@@ -539,6 +554,7 @@ Item {
                     }
 
                     onPaneChanged: {
+                        nextComponent = getComponentForPane();
                         paneId = ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "");
                     }
                 }

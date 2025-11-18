@@ -131,6 +131,24 @@ StyledRect {
                                 button.isChecked = root.rootItem.trayRecolour;
                             }
                         }
+
+                        function onScrollWorkspacesChanged() {
+                            if (modelData.propertyName === "scrollWorkspaces") {
+                                button.isChecked = root.rootItem.scrollWorkspaces;
+                            }
+                        }
+
+                        function onScrollVolumeChanged() {
+                            if (modelData.propertyName === "scrollVolume") {
+                                button.isChecked = root.rootItem.scrollVolume;
+                            }
+                        }
+
+                        function onScrollBrightnessChanged() {
+                            if (modelData.propertyName === "scrollBrightness") {
+                                button.isChecked = root.rootItem.scrollBrightness;
+                            }
+                        }
                     }
 
                     // Match utilities Toggles radius styling

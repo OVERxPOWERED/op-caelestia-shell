@@ -47,6 +47,16 @@ Item {
     property bool workspacesShowWindows: Config.bar.workspaces.showWindows ?? false
     property bool workspacesPerMonitor: Config.bar.workspaces.perMonitorWorkspaces ?? true
 
+    // Scroll Actions
+    property bool scrollWorkspaces: Config.bar.scrollActions.workspaces ?? true
+    property bool scrollVolume: Config.bar.scrollActions.volume ?? true
+    property bool scrollBrightness: Config.bar.scrollActions.brightness ?? true
+
+    // Popouts
+    property bool popoutActiveWindow: Config.bar.popouts.activeWindow ?? true
+    property bool popoutTray: Config.bar.popouts.tray ?? true
+    property bool popoutStatusIcons: Config.bar.popouts.statusIcons ?? true
+
     anchors.fill: parent
 
     Component.onCompleted: {
@@ -92,6 +102,16 @@ Item {
         Config.bar.workspaces.occupiedBg = root.workspacesOccupiedBg;
         Config.bar.workspaces.showWindows = root.workspacesShowWindows;
         Config.bar.workspaces.perMonitorWorkspaces = root.workspacesPerMonitor;
+
+        // Update scroll actions
+        Config.bar.scrollActions.workspaces = root.scrollWorkspaces;
+        Config.bar.scrollActions.volume = root.scrollVolume;
+        Config.bar.scrollActions.brightness = root.scrollBrightness;
+
+        // Update popouts
+        Config.bar.popouts.activeWindow = root.popoutActiveWindow;
+        Config.bar.popouts.tray = root.popoutTray;
+        Config.bar.popouts.statusIcons = root.popoutStatusIcons;
 
         // Update entries from the model (same approach as clock - use provided value if available)
         const entries = [];
@@ -257,7 +277,7 @@ Item {
                     ColumnLayout {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
-                        spacing: Appearance.spacing.small
+                        spacing: Appearance.spacing.normal
 
                         SectionContainer {
                             Layout.fillWidth: true
@@ -435,6 +455,47 @@ Item {
                             }
                         }
                         }
+
+                        SectionContainer {
+                            Layout.fillWidth: true
+                            alignTop: true
+
+                            StyledText {
+                                text: qsTr("Scroll Actions")
+                                font.pointSize: Appearance.font.size.normal
+                            }
+
+                            ConnectedButtonGroup {
+                                rootItem: root
+                                
+                                options: [
+                                    {
+                                        label: qsTr("Workspaces"),
+                                        propertyName: "scrollWorkspaces",
+                                        onToggled: function(checked) {
+                                            root.scrollWorkspaces = checked;
+                                            root.saveConfig();
+                                        }
+                                    },
+                                    {
+                                        label: qsTr("Volume"),
+                                        propertyName: "scrollVolume",
+                                        onToggled: function(checked) {
+                                            root.scrollVolume = checked;
+                                            root.saveConfig();
+                                        }
+                                    },
+                                    {
+                                        label: qsTr("Brightness"),
+                                        propertyName: "scrollBrightness",
+                                        onToggled: function(checked) {
+                                            root.scrollBrightness = checked;
+                                            root.saveConfig();
+                                        }
+                                    }
+                                ]
+                            }
+                        }
                     }
 
                     ColumnLayout {
@@ -501,12 +562,6 @@ Item {
                                 ]
                             }
                         }
-                    }
-
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignTop
-                        spacing: Appearance.spacing.small
 
                         SectionContainer {
                             Layout.fillWidth: true
@@ -631,6 +686,49 @@ Item {
                                             root.saveConfig();
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignTop
+                        spacing: Appearance.spacing.normal
+
+                        SectionContainer {
+                            Layout.fillWidth: true
+                            alignTop: true
+
+                            StyledText {
+                                text: qsTr("Popouts")
+                                font.pointSize: Appearance.font.size.normal
+                            }
+
+                            SwitchRow {
+                                label: qsTr("Active window")
+                                checked: root.popoutActiveWindow
+                                onToggled: checked => {
+                                    root.popoutActiveWindow = checked;
+                                    root.saveConfig();
+                                }
+                            }
+
+                            SwitchRow {
+                                label: qsTr("Tray")
+                                checked: root.popoutTray
+                                onToggled: checked => {
+                                    root.popoutTray = checked;
+                                    root.saveConfig();
+                                }
+                            }
+
+                            SwitchRow {
+                                label: qsTr("Status icons")
+                                checked: root.popoutStatusIcons
+                                onToggled: checked => {
+                                    root.popoutStatusIcons = checked;
+                                    root.saveConfig();
                                 }
                             }
                         }

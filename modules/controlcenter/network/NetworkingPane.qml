@@ -384,6 +384,13 @@ Item {
 
                                                 readonly property real lockIconSize: lockIcon.implicitWidth
 
+                                                Elevation {
+                                                    anchors.fill: parent
+                                                    radius: parent.radius
+                                                    z: -1
+                                                    level: 2
+                                                }
+
                                                 MaterialIcon {
                                                     id: lockIcon
 

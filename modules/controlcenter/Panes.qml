@@ -18,6 +18,9 @@ ClippingRectangle {
 
     required property Session session
 
+    // Expose initialOpeningComplete so parent can check if opening animation is done
+    readonly property bool initialOpeningComplete: layout.initialOpeningComplete
+
     color: "transparent"
     clip: true
     focus: false
@@ -140,6 +143,32 @@ ClippingRectangle {
 
         // Track if this pane has ever been loaded to enable caching
         property bool hasBeenLoaded: false
+        
+        // Function to compute if this pane should be active
+        function updateActive(): void {
+            const diff = Math.abs(root.session.activeIndex - pane.index);
+            const isActivePane = diff === 0;
+            let shouldBeActive = false;
+            
+            // During initial opening animation, only load the active pane
+            // This prevents hiccups from multiple panes loading simultaneously
+            if (!layout.initialOpeningComplete) {
+                shouldBeActive = isActivePane;
+            } else {
+                // After initial opening, allow current and adjacent panes for smooth transitions
+                if (diff <= 1) {
+                    shouldBeActive = true;
+                } else if (pane.hasBeenLoaded) {
+                    // For distant panes that have been loaded before, keep them active to preserve cached data
+                    shouldBeActive = true;
+                } else {
+                    // For new distant panes, wait until animation completes to avoid heavy loading during transition
+                    shouldBeActive = layout.animationComplete;
+                }
+            }
+            
+            loader.active = shouldBeActive;
+        }
 
         Loader {
             id: loader
@@ -147,35 +176,17 @@ ClippingRectangle {
             anchors.fill: parent
             clip: false
             asynchronous: true
-            active: {
-                const diff = Math.abs(root.session.activeIndex - pane.index);
-                const isActivePane = diff === 0;
-                
-                // During initial opening animation, only load the active pane
-                // This prevents hiccups from multiple panes loading simultaneously
-                if (!layout.initialOpeningComplete) {
-                    if (isActivePane) {
-                        pane.hasBeenLoaded = true;
-                        return true;
-                    }
-                    // Defer all other panes until initial opening completes
-                    return false;
-                }
-                
-                // After initial opening, allow current and adjacent panes for smooth transitions
-                if (diff <= 1) {
+            active: false
+            
+            Component.onCompleted: {
+                pane.updateActive();
+            }
+            
+            onActiveChanged: {
+                // Mark pane as loaded when it becomes active
+                if (active && !pane.hasBeenLoaded) {
                     pane.hasBeenLoaded = true;
-                    return true;
                 }
-                
-                // For distant panes that have been loaded before, keep them active to preserve cached data
-                // Only wait for animation if pane hasn't been loaded yet
-                if (pane.hasBeenLoaded) {
-                    return true;
-                }
-                
-                // For new distant panes, wait until animation completes to avoid heavy loading during transition
-                return layout.animationComplete;
             }
             
             onItemChanged: {
@@ -183,6 +194,23 @@ ClippingRectangle {
                 if (item) {
                     pane.hasBeenLoaded = true;
                 }
+            }
+        }
+        
+        Connections {
+            target: root.session
+            function onActiveIndexChanged(): void {
+                pane.updateActive();
+            }
+        }
+        
+        Connections {
+            target: layout
+            function onInitialOpeningCompleteChanged(): void {
+                pane.updateActive();
+            }
+            function onAnimationCompleteChanged(): void {
+                pane.updateActive();
             }
         }
     }

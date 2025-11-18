@@ -13,6 +13,7 @@ Item {
 
     required property ShellScreen screen
     required property Session session
+    required property bool initialOpeningComplete
 
     implicitWidth: layout.implicitWidth + Appearance.padding.larger * 4
     implicitHeight: layout.implicitHeight + Appearance.padding.large * 2
@@ -197,6 +198,10 @@ Item {
                 color: item.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
 
                 function onClicked(): void {
+                    // Prevent tab switching during initial opening animation to avoid blank pages
+                    if (!root.initialOpeningComplete) {
+                        return;
+                    }
                     root.session.active = item.label;
                 }
             }

@@ -527,47 +527,6 @@ Item {
                             alignTop: true
 
                             StyledText {
-                                text: qsTr("Tray Settings")
-                                font.pointSize: Appearance.font.size.normal
-                            }
-
-                            ConnectedButtonGroup {
-                                rootItem: root
-                                
-                                options: [
-                                    {
-                                        label: qsTr("Background"),
-                                        propertyName: "trayBackground",
-                                        onToggled: function(checked) {
-                                            root.trayBackground = checked;
-                                            root.saveConfig();
-                                        }
-                                    },
-                                    {
-                                        label: qsTr("Compact"),
-                                        propertyName: "trayCompact",
-                                        onToggled: function(checked) {
-                                            root.trayCompact = checked;
-                                            root.saveConfig();
-                                        }
-                                    },
-                                    {
-                                        label: qsTr("Recolour"),
-                                        propertyName: "trayRecolour",
-                                        onToggled: function(checked) {
-                                            root.trayRecolour = checked;
-                                            root.saveConfig();
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-
-                        SectionContainer {
-                            Layout.fillWidth: true
-                            alignTop: true
-
-                            StyledText {
                                 text: qsTr("Bar Behavior")
                                 font.pointSize: Appearance.font.size.normal
                             }
@@ -730,6 +689,47 @@ Item {
                                     root.popoutStatusIcons = checked;
                                     root.saveConfig();
                                 }
+                            }
+                        }
+
+                        SectionContainer {
+                            Layout.fillWidth: true
+                            alignTop: true
+
+                            StyledText {
+                                text: qsTr("Tray Settings")
+                                font.pointSize: Appearance.font.size.normal
+                            }
+
+                            ConnectedButtonGroup {
+                                rootItem: root
+                                
+                                options: [
+                                    {
+                                        label: qsTr("Background"),
+                                        propertyName: "trayBackground",
+                                        onToggled: function(checked) {
+                                            root.trayBackground = checked;
+                                            root.saveConfig();
+                                        }
+                                    },
+                                    {
+                                        label: qsTr("Compact"),
+                                        propertyName: "trayCompact",
+                                        onToggled: function(checked) {
+                                            root.trayCompact = checked;
+                                            root.saveConfig();
+                                        }
+                                    },
+                                    {
+                                        label: qsTr("Recolour"),
+                                        propertyName: "trayRecolour",
+                                        onToggled: function(checked) {
+                                            root.trayRecolour = checked;
+                                            root.saveConfig();
+                                        }
+                                    }
+                                ]
                             }
                         }
                     }

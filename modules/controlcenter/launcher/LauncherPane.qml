@@ -21,12 +21,25 @@ RowLayout {
 
     required property Session session
 
-    property var selectedApp: null
+    property var selectedApp: root.session.launcher.active
     property bool hideFromLauncherChecked: false
 
     anchors.fill: parent
 
     spacing: 0
+
+    onSelectedAppChanged: {
+        root.session.launcher.active = root.selectedApp;
+        updateToggleState();
+    }
+
+    Connections {
+        target: root.session.launcher
+        function onActiveChanged() {
+            root.selectedApp = root.session.launcher.active;
+            updateToggleState();
+        }
+    }
 
     function updateToggleState() {
         if (!root.selectedApp) {
@@ -73,9 +86,6 @@ RowLayout {
         Config.save();
     }
 
-    onSelectedAppChanged: {
-        updateToggleState();
-    }
 
     AppDb {
         id: allAppsDb
@@ -201,6 +211,23 @@ RowLayout {
 
                 Item {
                     Layout.fillWidth: true
+                }
+
+                ToggleButton {
+                    toggled: !root.session.launcher.active
+                    icon: "settings"
+                    accent: "Primary"
+
+                    onClicked: {
+                        if (root.session.launcher.active) {
+                            root.session.launcher.active = null;
+                        } else {
+                            // Toggle to show settings - if there are apps, select the first one, otherwise show settings
+                            if (root.filteredApps.length > 0) {
+                                root.session.launcher.active = root.filteredApps[0];
+                            }
+                        }
+                    }
                 }
             }
 
@@ -351,7 +378,7 @@ RowLayout {
 
                         StateLayer {
                             function onClicked(): void {
-                                root.selectedApp = modelData;
+                                root.session.launcher.active = modelData;
                             }
                         }
 
@@ -405,11 +432,74 @@ RowLayout {
             Loader {
                 id: rightLauncherLoader
 
+                property var pane: root.session.launcher.active
+                property string paneId: pane ? (pane.id || pane.entry?.id || "") : ""
+
                 anchors.fill: parent
                 anchors.margins: Appearance.padding.large * 2
 
+                opacity: 1
+                scale: 1
+                transformOrigin: Item.Center
+                clip: false
+
                 asynchronous: true
-                sourceComponent: rightContentComponent
+                sourceComponent: pane ? appDetails : settings
+
+                Component.onCompleted: {
+                    targetComponent = pane ? appDetails : settings;
+                    nextComponent = targetComponent;
+                }
+
+                property Component targetComponent: settings
+                property Component nextComponent: settings
+
+                function getComponentForPane() {
+                    return pane ? appDetails : settings;
+                }
+
+                Behavior on paneId {
+                    SequentialAnimation {
+                        ParallelAnimation {
+                            Anim {
+                                target: rightLauncherLoader
+                                property: "opacity"
+                                to: 0
+                                easing.bezierCurve: Appearance.anim.curves.standardAccel
+                            }
+                            Anim {
+                                target: rightLauncherLoader
+                                property: "scale"
+                                to: 0.8
+                                easing.bezierCurve: Appearance.anim.curves.standardAccel
+                            }
+                        }
+                        PropertyAction {
+                            target: rightLauncherLoader
+                            property: "targetComponent"
+                            value: rightLauncherLoader.nextComponent
+                        }
+                        ParallelAnimation {
+                            Anim {
+                                target: rightLauncherLoader
+                                property: "opacity"
+                                to: 1
+                                easing.bezierCurve: Appearance.anim.curves.standardDecel
+                            }
+                            Anim {
+                                target: rightLauncherLoader
+                                property: "scale"
+                                to: 1
+                                easing.bezierCurve: Appearance.anim.curves.standardDecel
+                            }
+                        }
+                    }
+                }
+
+                onPaneChanged: {
+                    nextComponent = getComponentForPane();
+                    paneId = pane ? (pane.id || pane.entry?.id || "") : "";
+                }
             }
         }
 
@@ -420,7 +510,30 @@ RowLayout {
         }
 
         Component {
-            id: rightContentComponent
+            id: settings
+
+            StyledFlickable {
+                id: settingsFlickable
+                flickableDirection: Flickable.VerticalFlick
+                contentHeight: settingsInner.height
+
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: settingsFlickable
+                }
+
+                Settings {
+                    id: settingsInner
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    session: root.session
+                }
+            }
+        }
+
+        Component {
+            id: appDetails
 
             ColumnLayout {
                 anchors.fill: parent
@@ -515,5 +628,11 @@ RowLayout {
             }
         }
         }
+    }
+
+    component Anim: NumberAnimation {
+        target: rightLauncherLoader
+        duration: Appearance.anim.durations.normal / 2
+        easing.type: Easing.BezierSpline
     }
 }

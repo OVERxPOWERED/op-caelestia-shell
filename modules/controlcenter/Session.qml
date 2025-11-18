@@ -13,6 +13,7 @@ QtObject {
     readonly property Bt bt: Bt {}
     readonly property Network network: Network {}
     readonly property Ethernet ethernet: Ethernet {}
+    readonly property Launcher launcher: Launcher {}
 
     onActiveChanged: activeIndex = panes.indexOf(active)
     onActiveIndexChanged: active = panes[activeIndex]
@@ -32,6 +33,10 @@ QtObject {
     }
 
     component Ethernet: QtObject {
+        property var active
+    }
+
+    component Launcher: QtObject {
         property var active
     }
 }

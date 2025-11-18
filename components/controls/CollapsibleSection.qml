@@ -16,7 +16,7 @@ ColumnLayout {
 
     signal toggleRequested
 
-    spacing: 0
+    spacing: Appearance.spacing.small
     Layout.fillWidth: true
 
     Item {

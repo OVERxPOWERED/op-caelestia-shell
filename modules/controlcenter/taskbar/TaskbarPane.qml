@@ -165,7 +165,7 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
 
-                spacing: Appearance.spacing.small
+                spacing: Appearance.spacing.normal
 
                 RowLayout {
                     spacing: Appearance.spacing.smaller
@@ -252,12 +252,12 @@ Item {
 
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: Appearance.spacing.small
+                    spacing: Appearance.spacing.normal
 
                     ColumnLayout {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
-                        spacing: 0
+                        spacing: Appearance.spacing.small
 
                         SectionContainer {
                             Layout.fillWidth: true
@@ -440,7 +440,7 @@ Item {
                     ColumnLayout {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
-                        spacing: Appearance.spacing.small
+                        spacing: Appearance.spacing.normal
 
                         SectionContainer {
                             Layout.fillWidth: true
@@ -506,7 +506,7 @@ Item {
                     ColumnLayout {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
-                        spacing: 0
+                        spacing: Appearance.spacing.small
 
                         SectionContainer {
                             Layout.fillWidth: true

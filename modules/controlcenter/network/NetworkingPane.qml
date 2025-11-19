@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "../components"
 import "."
 import qs.components
 import qs.components.controls
@@ -21,49 +22,12 @@ Item {
 
     anchors.fill: parent
 
-    RowLayout {
-        id: contentLayout
+    SplitPaneLayout {
+        id: splitLayout
 
         anchors.fill: parent
-        spacing: 0
 
-        Item {
-            id: leftNetworkItem
-            Layout.preferredWidth: Math.floor(parent.width * 0.4)
-            Layout.minimumWidth: 420
-            Layout.fillHeight: true
-
-            ClippingRectangle {
-                id: leftNetworkClippingRect
-                anchors.fill: parent
-                anchors.margins: Appearance.padding.normal
-                anchors.leftMargin: 0
-                anchors.rightMargin: Appearance.padding.normal / 2
-
-                radius: leftNetworkBorder.innerRadius
-                color: "transparent"
-
-                Loader {
-                    id: leftNetworkLoader
-
-                    anchors.fill: parent
-                    anchors.margins: Appearance.padding.large + Appearance.padding.normal
-                    anchors.leftMargin: Appearance.padding.large
-                    anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
-
-                    asynchronous: true
-                    sourceComponent: networkListComponent
-                }
-            }
-
-            InnerBorder {
-                id: leftNetworkBorder
-                leftThickness: 0
-                rightThickness: Appearance.padding.normal / 2
-            }
-
-            Component {
-                id: networkListComponent
+        leftContent: Component {
 
                 StyledFlickable {
                     id: leftFlickable
@@ -473,38 +437,47 @@ Item {
                     }
                 }
             }
-            }
         }
 
-        Item {
-            id: rightNetworkItem
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            ClippingRectangle {
-                id: networkClippingRect
-                anchors.fill: parent
-                anchors.margins: Appearance.padding.normal
-                anchors.leftMargin: 0
-                anchors.rightMargin: Appearance.padding.normal / 2
-
-                radius: rightBorder.innerRadius
-                color: "transparent"
-
+        rightContent: Component {
+            Item {
+                id: rightPaneItem
+                
                 // Right pane - networking details/settings
-                Loader {
-                    id: loader
+                property var ethernetPane: root.session.ethernet.active
+                property var wirelessPane: root.session.network.active
+                property var pane: ethernetPane || wirelessPane
+                property string paneId: ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "")
+                property Component targetComponent: settings
+                property Component nextComponent: settings
 
-                    property var ethernetPane: root.session.ethernet.active
-                    property var wirelessPane: root.session.network.active
-                    property var pane: ethernetPane || wirelessPane
-                    property string paneId: ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "")
-                    property Component targetComponent: settings
-                    property Component nextComponent: settings
+                function getComponentForPane() {
+                    return pane ? (ethernetPane ? ethernetDetails : wirelessDetails) : settings;
+                }
 
-                    function getComponentForPane() {
-                        return pane ? (ethernetPane ? ethernetDetails : wirelessDetails) : settings;
+                Component.onCompleted: {
+                    targetComponent = getComponentForPane();
+                    nextComponent = targetComponent;
+                }
+
+                Connections {
+                    target: root.session.ethernet
+                    function onActiveChanged() {
+                        nextComponent = getComponentForPane();
+                        paneId = ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "");
                     }
+                }
+
+                Connections {
+                    target: root.session.network
+                    function onActiveChanged() {
+                        nextComponent = getComponentForPane();
+                        paneId = ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "");
+                    }
+                }
+
+                Loader {
+                    id: rightLoader
 
                     anchors.fill: parent
                     anchors.margins: Appearance.padding.large * 2
@@ -515,131 +488,129 @@ Item {
                     clip: false
 
                     asynchronous: true
-                    sourceComponent: loader.targetComponent
+                    sourceComponent: rightPaneItem.targetComponent
 
-                    Component.onCompleted: {
-                        targetComponent = getComponentForPane();
-                        nextComponent = targetComponent;
+                    Connections {
+                        target: rightPaneItem
+                        function onPaneIdChanged() {
+                            rightPaneItem.targetComponent = rightPaneItem.nextComponent;
+                        }
                     }
+                }
 
-                    Behavior on paneId {
-                        SequentialAnimation {
-                            ParallelAnimation {
-                                Anim {
-                                    target: loader
-                                    property: "opacity"
-                                    to: 0
-                                    easing.bezierCurve: Appearance.anim.curves.standardAccel
-                                }
-                                Anim {
-                                    target: loader
-                                    property: "scale"
-                                    to: 0.8
-                                    easing.bezierCurve: Appearance.anim.curves.standardAccel
-                                }
+                Behavior on paneId {
+                    SequentialAnimation {
+                        ParallelAnimation {
+                            Anim {
+                                target: rightLoader
+                                property: "opacity"
+                                to: 0
+                                easing.bezierCurve: Appearance.anim.curves.standardAccel
                             }
-                            PropertyAction {
-                                target: loader
-                                property: "targetComponent"
-                                value: loader.nextComponent
+                            Anim {
+                                target: rightLoader
+                                property: "scale"
+                                to: 0.8
+                                easing.bezierCurve: Appearance.anim.curves.standardAccel
                             }
-                            ParallelAnimation {
-                                Anim {
-                                    target: loader
-                                    property: "opacity"
-                                    to: 1
-                                    easing.bezierCurve: Appearance.anim.curves.standardDecel
-                                }
-                                Anim {
-                                    target: loader
-                                    property: "scale"
-                                    to: 1
-                                    easing.bezierCurve: Appearance.anim.curves.standardDecel
-                                }
+                        }
+                        PropertyAction {
+                            target: rightPaneItem
+                            property: "targetComponent"
+                            value: rightPaneItem.nextComponent
+                        }
+                        ParallelAnimation {
+                            Anim {
+                                target: rightLoader
+                                property: "opacity"
+                                to: 1
+                                easing.bezierCurve: Appearance.anim.curves.standardDecel
+                            }
+                            Anim {
+                                target: rightLoader
+                                property: "scale"
+                                to: 1
+                                easing.bezierCurve: Appearance.anim.curves.standardDecel
                             }
                         }
                     }
+                }
 
-                    onPaneChanged: {
-                        nextComponent = getComponentForPane();
-                        paneId = ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "");
+                Connections {
+                    target: rightPaneItem
+                    function onPaneIdChanged() {
+                        rightPaneItem.targetComponent = rightPaneItem.nextComponent;
                     }
                 }
             }
+        }
+    }
 
-            InnerBorder {
-                id: rightBorder
+    Component {
+        id: settings
 
-                leftThickness: Appearance.padding.normal / 2
+        StyledFlickable {
+            id: settingsFlickable
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: settingsInner.height
+
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: settingsFlickable
             }
 
-            Component {
-                id: settings
+            NetworkSettings {
+                id: settingsInner
 
-                StyledFlickable {
-                    id: settingsFlickable
-                    flickableDirection: Flickable.VerticalFlick
-                    contentHeight: settingsInner.height
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                session: root.session
+            }
+        }
+    }
 
-                    StyledScrollBar.vertical: StyledScrollBar {
-                        flickable: settingsFlickable
-                    }
+    Component {
+        id: ethernetDetails
 
-                    NetworkSettings {
-                        id: settingsInner
+        StyledFlickable {
+            id: ethernetFlickable
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: ethernetDetailsInner.height
 
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        session: root.session
-                    }
-                }
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: ethernetFlickable
             }
 
-            Component {
-                id: ethernetDetails
+            EthernetDetails {
+                id: ethernetDetailsInner
 
-                StyledFlickable {
-                    id: ethernetFlickable
-                    flickableDirection: Flickable.VerticalFlick
-                    contentHeight: ethernetDetailsInner.height
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                session: root.session
+            }
+        }
+    }
 
-                    StyledScrollBar.vertical: StyledScrollBar {
-                        flickable: ethernetFlickable
-                    }
+    Component {
+        id: wirelessDetails
 
-                    EthernetDetails {
-                        id: ethernetDetailsInner
+        StyledFlickable {
+            id: wirelessFlickable
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: wirelessDetailsInner.height
 
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        session: root.session
-                    }
-                }
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: wirelessFlickable
             }
 
-            Component {
-                id: wirelessDetails
+            WirelessDetails {
+                id: wirelessDetailsInner
 
-                StyledFlickable {
-                    id: wirelessFlickable
-                    flickableDirection: Flickable.VerticalFlick
-                    contentHeight: wirelessDetailsInner.height
-
-                    StyledScrollBar.vertical: StyledScrollBar {
-                        flickable: wirelessFlickable
-                    }
-
-                    WirelessDetails {
-                        id: wirelessDetailsInner
-
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        session: root.session
-                    }
-                }
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                session: root.session
             }
         }
     }
@@ -651,7 +622,6 @@ Item {
     }
 
     component Anim: NumberAnimation {
-        target: loader
         duration: Appearance.anim.durations.normal / 2
         easing.type: Easing.BezierSpline
     }

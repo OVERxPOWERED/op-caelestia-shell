@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "../components"
 import "../../launcher/services"
 import qs.components
 import qs.components.controls
@@ -16,7 +17,7 @@ import QtQuick
 import QtQuick.Layouts
 import "../../../utils/scripts/fuzzysort.js" as Fuzzy
 
-RowLayout {
+Item {
     id: root
 
     required property Session session
@@ -25,8 +26,6 @@ RowLayout {
     property bool hideFromLauncherChecked: false
 
     anchors.fill: parent
-
-    spacing: 0
 
     onSelectedAppChanged: {
         root.session.launcher.active = root.selectedApp;
@@ -156,43 +155,10 @@ RowLayout {
         }
     }
 
-    Item {
-        id: leftLauncherItem
-        Layout.preferredWidth: Math.floor(parent.width * 0.4)
-        Layout.minimumWidth: 420
-        Layout.fillHeight: true
+    SplitPaneLayout {
+        anchors.fill: parent
 
-        ClippingRectangle {
-            id: leftLauncherClippingRect
-            anchors.fill: parent
-            anchors.margins: Appearance.padding.normal
-            anchors.leftMargin: 0
-            anchors.rightMargin: Appearance.padding.normal / 2
-
-            radius: leftLauncherBorder.innerRadius
-            color: "transparent"
-
-            Loader {
-                id: leftLauncherLoader
-
-                anchors.fill: parent
-                anchors.margins: Appearance.padding.large + Appearance.padding.normal
-                anchors.leftMargin: Appearance.padding.large
-                anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
-
-                asynchronous: true
-                sourceComponent: leftContentComponent
-            }
-        }
-
-        InnerBorder {
-            id: leftLauncherBorder
-            leftThickness: 0
-            rightThickness: Appearance.padding.normal / 2
-        }
-
-        Component {
-            id: leftContentComponent
+        leftContent: Component {
 
             ColumnLayout {
                 id: leftLauncherLayout
@@ -336,7 +302,8 @@ RowLayout {
                     // Lazy load: activate when left pane is loaded
                     // The ListView will load asynchronously, and search will work because filteredApps
                     // is updated regardless of whether the ListView is loaded
-                    return leftLauncherLoader.item !== null;
+                    // Access loader through parent - this will be set when component loads
+                    return true;
                 }
 
                 sourceComponent: StyledListView {
@@ -412,25 +379,10 @@ RowLayout {
             }
         }
         }
-    }
 
-    Item {
-        id: rightLauncherItem
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        ClippingRectangle {
-            id: rightLauncherClippingRect
-            anchors.fill: parent
-            anchors.margins: Appearance.padding.normal
-            anchors.leftMargin: 0
-            anchors.rightMargin: Appearance.padding.normal / 2
-
-            radius: rightLauncherBorder.innerRadius
-            color: "transparent"
-
-            Loader {
-                id: rightLauncherLoader
+        rightContent: Component {
+            Item {
+                id: rightLauncherPane
 
                 property var pane: root.session.launcher.active
                 property string paneId: pane ? (pane.id || pane.entry?.id || "") : ""
@@ -442,28 +394,34 @@ RowLayout {
                     return pane ? appDetails : settings;
                 }
 
-                anchors.fill: parent
-                anchors.margins: Appearance.padding.large * 2
-
-                opacity: 1
-                scale: 1
-                transformOrigin: Item.Center
-                clip: false
-
-                asynchronous: true
-                sourceComponent: rightLauncherLoader.targetComponent
-                active: true
-
                 Component.onCompleted: {
                     displayedApp = pane;
                     targetComponent = getComponentForPane();
                     nextComponent = targetComponent;
                 }
 
-                onItemChanged: {
-                    // Ensure displayedApp is set when item is created (for async loading)
-                    if (item && pane && displayedApp !== pane) {
-                        displayedApp = pane;
+                Loader {
+                    id: rightLauncherLoader
+
+                    anchors.fill: parent
+
+                    opacity: 1
+                    scale: 1
+                    transformOrigin: Item.Center
+                    clip: false
+
+                    asynchronous: true
+                    sourceComponent: rightLauncherPane.targetComponent
+                    active: true
+
+                    // Expose displayedApp to loaded components
+                    property var displayedApp: rightLauncherPane.displayedApp
+
+                    onItemChanged: {
+                        // Ensure displayedApp is set when item is created (for async loading)
+                        if (item && rightLauncherPane.pane && rightLauncherPane.displayedApp !== rightLauncherPane.pane) {
+                            rightLauncherPane.displayedApp = rightLauncherPane.pane;
+                        }
                     }
                 }
 
@@ -484,9 +442,9 @@ RowLayout {
                             }
                         }
                         PropertyAction {
-                            target: rightLauncherLoader
+                            target: rightLauncherPane
                             property: "displayedApp"
-                            value: rightLauncherLoader.pane
+                            value: rightLauncherPane.pane
                         }
                         PropertyAction {
                             target: rightLauncherLoader
@@ -494,9 +452,9 @@ RowLayout {
                             value: false
                         }
                         PropertyAction {
-                            target: rightLauncherLoader
+                            target: rightLauncherPane
                             property: "targetComponent"
-                            value: rightLauncherLoader.nextComponent
+                            value: rightLauncherPane.nextComponent
                         }
                         PropertyAction {
                             target: rightLauncherLoader
@@ -539,90 +497,90 @@ RowLayout {
                 }
             }
         }
+    }
 
-        InnerBorder {
-            id: rightLauncherBorder
+    Component {
+        id: settings
 
-            leftThickness: Appearance.padding.normal / 2
-        }
+        StyledFlickable {
+            id: settingsFlickable
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: settingsInner.height
 
-        Component {
-            id: settings
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: settingsFlickable
+            }
 
-            StyledFlickable {
-                id: settingsFlickable
-                flickableDirection: Flickable.VerticalFlick
-                contentHeight: settingsInner.height
+            Settings {
+                id: settingsInner
 
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: settingsFlickable
-                }
-
-                Settings {
-                    id: settingsInner
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    session: root.session
-                }
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                session: root.session
             }
         }
+    }
 
-        Component {
-            id: appDetails
+    Component {
+        id: appDetails
 
-            ColumnLayout {
-                anchors.fill: parent
+        ColumnLayout {
+            id: appDetailsLayout
+            anchors.fill: parent
 
-                spacing: Appearance.spacing.normal
+            // Get displayedApp from parent Loader (the Loader has displayedApp property we set)
+            readonly property var displayedApp: parent && parent.displayedApp !== undefined ? parent.displayedApp : null
 
-                Item {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.leftMargin: Appearance.padding.large * 2
-                Layout.rightMargin: Appearance.padding.large * 2
-                Layout.topMargin: Appearance.padding.large * 2
-                implicitWidth: iconLoader.implicitWidth
-                implicitHeight: iconLoader.implicitHeight
+            spacing: Appearance.spacing.normal
 
-                Loader {
-                    id: iconLoader
-                    sourceComponent: rightLauncherLoader.displayedApp ? appIconComponent : defaultIconComponent
-                }
+            Item {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.leftMargin: Appearance.padding.large * 2
+            Layout.rightMargin: Appearance.padding.large * 2
+            Layout.topMargin: Appearance.padding.large * 2
+            implicitWidth: iconLoader.implicitWidth
+            implicitHeight: iconLoader.implicitHeight
 
-                Component {
-                    id: appIconComponent
-                    IconImage {
-                        implicitSize: Appearance.font.size.extraLarge * 3 * 2
-                        source: {
-                            if (!rightLauncherLoader.displayedApp) return "image-missing";
-                            const entry = rightLauncherLoader.displayedApp.entry;
-                            if (entry && entry.icon) {
-                                return Quickshell.iconPath(entry.icon, "image-missing");
-                            }
-                            return "image-missing";
+            Loader {
+                id: iconLoader
+                sourceComponent: parent.parent.displayedApp ? appIconComponent : defaultIconComponent
+            }
+
+            Component {
+                id: appIconComponent
+                IconImage {
+                    implicitSize: Appearance.font.size.extraLarge * 3 * 2
+                    source: {
+                        const app = iconLoader.parent.parent.displayedApp;
+                        if (!app) return "image-missing";
+                        const entry = app.entry;
+                        if (entry && entry.icon) {
+                            return Quickshell.iconPath(entry.icon, "image-missing");
                         }
-                    }
-                }
-
-                Component {
-                    id: defaultIconComponent
-                    MaterialIcon {
-                        text: "apps"
-                        font.pointSize: Appearance.font.size.extraLarge * 3
-                        font.bold: true
+                        return "image-missing";
                     }
                 }
             }
 
-            StyledText {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.leftMargin: Appearance.padding.large * 2
-                Layout.rightMargin: Appearance.padding.large * 2
-                text: rightLauncherLoader.displayedApp ? (rightLauncherLoader.displayedApp.name || rightLauncherLoader.displayedApp.entry?.name || qsTr("Application Details")) : qsTr("Launcher Applications")
-                font.pointSize: Appearance.font.size.large
-                font.bold: true
+            Component {
+                id: defaultIconComponent
+                MaterialIcon {
+                    text: "apps"
+                    font.pointSize: Appearance.font.size.extraLarge * 3
+                    font.bold: true
+                }
             }
+        }
+
+        StyledText {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.leftMargin: Appearance.padding.large * 2
+            Layout.rightMargin: Appearance.padding.large * 2
+            text: displayedApp ? (displayedApp.name || displayedApp.entry?.name || qsTr("Application Details")) : qsTr("Launcher Applications")
+            font.pointSize: Appearance.font.size.large
+            font.bold: true
+        }
 
             Item {
                 Layout.fillWidth: true
@@ -648,37 +606,37 @@ RowLayout {
                         anchors.top: parent.top
                         spacing: Appearance.spacing.normal
 
-                        SwitchRow {
-                            Layout.topMargin: Appearance.spacing.normal
-                            visible: rightLauncherLoader.displayedApp !== null
-                            label: qsTr("Hide from launcher")
-                            checked: root.hideFromLauncherChecked
-                            enabled: rightLauncherLoader.displayedApp !== null
-                            onToggled: checked => {
-                                root.hideFromLauncherChecked = checked;
-                                if (rightLauncherLoader.displayedApp) {
-                                    const appId = rightLauncherLoader.displayedApp.id || rightLauncherLoader.displayedApp.entry?.id;
-                                    const hiddenApps = Config.launcher.hiddenApps ? [...Config.launcher.hiddenApps] : [];
-                                    if (checked) {
-                                        if (!hiddenApps.includes(appId)) {
-                                            hiddenApps.push(appId);
-                                        }
-                                    } else {
-                                        const index = hiddenApps.indexOf(appId);
-                                        if (index !== -1) {
-                                            hiddenApps.splice(index, 1);
-                                        }
+                    SwitchRow {
+                        Layout.topMargin: Appearance.spacing.normal
+                        visible: appDetailsLayout.displayedApp !== null
+                        label: qsTr("Hide from launcher")
+                        checked: root.hideFromLauncherChecked
+                        enabled: appDetailsLayout.displayedApp !== null
+                        onToggled: checked => {
+                            root.hideFromLauncherChecked = checked;
+                            const app = appDetailsLayout.displayedApp;
+                            if (app) {
+                                const appId = app.id || app.entry?.id;
+                                const hiddenApps = Config.launcher.hiddenApps ? [...Config.launcher.hiddenApps] : [];
+                                if (checked) {
+                                    if (!hiddenApps.includes(appId)) {
+                                        hiddenApps.push(appId);
                                     }
-                                    Config.launcher.hiddenApps = hiddenApps;
-                                    Config.save();
+                                } else {
+                                    const index = hiddenApps.indexOf(appId);
+                                    if (index !== -1) {
+                                        hiddenApps.splice(index, 1);
+                                    }
                                 }
+                                Config.launcher.hiddenApps = hiddenApps;
+                                Config.save();
                             }
                         }
+                    }
 
                     }
                 }
             }
-        }
         }
     }
 

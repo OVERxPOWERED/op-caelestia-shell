@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "../components"
 import qs.components.controls
 import qs.components.effects
 import qs.components.containers
@@ -10,95 +11,50 @@ import Quickshell.Bluetooth
 import QtQuick
 import QtQuick.Layouts
 
-RowLayout {
+Item {
     id: root
 
     required property Session session
 
     anchors.fill: parent
 
-    spacing: 0
+    SplitPaneLayout {
+        anchors.fill: parent
 
-    Item {
-        id: leftBtItem
-        Layout.preferredWidth: Math.floor(parent.width * 0.4)
-        Layout.minimumWidth: 420
-        Layout.fillHeight: true
-
-        ClippingRectangle {
-            id: leftBtClippingRect
-            anchors.fill: parent
-            anchors.margins: Appearance.padding.normal
-            anchors.leftMargin: 0
-            anchors.rightMargin: Appearance.padding.normal / 2
-
-            radius: leftBtBorder.innerRadius
-            color: "transparent"
-
-            Loader {
-                id: leftBtLoader
-
-                anchors.fill: parent
-                anchors.margins: Appearance.padding.large + Appearance.padding.normal
-                anchors.leftMargin: Appearance.padding.large
-                anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
-
-                asynchronous: true
-                sourceComponent: btDeviceListComponent
-            }
-        }
-
-        InnerBorder {
-            id: leftBtBorder
-            leftThickness: 0
-            rightThickness: Appearance.padding.normal / 2
-        }
-
-        Component {
-            id: btDeviceListComponent
-
+        leftContent: Component {
             DeviceList {
                 anchors.fill: parent
                 session: root.session
             }
         }
-    }
 
-    Item {
-        id: rightBtItem
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        ClippingRectangle {
-            id: btClippingRect
-            anchors.fill: parent
-            anchors.margins: Appearance.padding.normal
-            anchors.leftMargin: 0
-            anchors.rightMargin: Appearance.padding.normal / 2
-
-            radius: rightBorder.innerRadius
-            color: "transparent"
-
-            Loader {
-                id: loader
+        rightContent: Component {
+            Item {
+                id: rightBtPane
 
                 property BluetoothDevice pane: root.session.bt.active
 
-                anchors.fill: parent
-                anchors.margins: Appearance.padding.large * 2
+                Loader {
+                    id: rightLoader
 
-                asynchronous: true
-                sourceComponent: pane ? details : settings
+                    anchors.fill: parent
+                    anchors.margins: Appearance.padding.large * 2
+
+                    asynchronous: true
+                    sourceComponent: rightBtPane.pane ? details : settings
+                }
 
                 Behavior on pane {
                     SequentialAnimation {
                         ParallelAnimation {
                             Anim {
+                                target: rightLoader
                                 property: "opacity"
                                 to: 0
                                 easing.bezierCurve: Appearance.anim.curves.standardAccel
                             }
                             Anim {
+                                target: rightLoader
                                 property: "scale"
                                 to: 0.8
                                 easing.bezierCurve: Appearance.anim.curves.standardAccel
@@ -107,11 +63,13 @@ RowLayout {
                         PropertyAction {}
                         ParallelAnimation {
                             Anim {
+                                target: rightLoader
                                 property: "opacity"
                                 to: 1
                                 easing.bezierCurve: Appearance.anim.curves.standardDecel
                             }
                             Anim {
+                                target: rightLoader
                                 property: "scale"
                                 to: 1
                                 easing.bezierCurve: Appearance.anim.curves.standardDecel
@@ -119,49 +77,49 @@ RowLayout {
                         }
                     }
                 }
-            }
-        }
 
-        InnerBorder {
-            id: rightBorder
-
-            leftThickness: Appearance.padding.normal / 2
-        }
-
-        Component {
-            id: settings
-
-            StyledFlickable {
-                id: settingsFlickable
-                flickableDirection: Flickable.VerticalFlick
-                contentHeight: settingsInner.height
-
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: settingsFlickable
-                }
-
-                Settings {
-                    id: settingsInner
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    session: root.session
+                Connections {
+                    target: root.session.bt
+                    function onActiveChanged() {
+                        rightBtPane.pane = root.session.bt.active;
+                    }
                 }
             }
         }
+    }
 
-        Component {
-            id: details
+    Component {
+        id: settings
 
-            Details {
+        StyledFlickable {
+            id: settingsFlickable
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: settingsInner.height
+
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: settingsFlickable
+            }
+
+            Settings {
+                id: settingsInner
+
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
                 session: root.session
             }
         }
     }
 
+    Component {
+        id: details
+
+        Details {
+            session: root.session
+        }
+    }
+
     component Anim: NumberAnimation {
-        target: loader
         duration: Appearance.anim.durations.normal / 2
         easing.type: Easing.BezierSpline
     }

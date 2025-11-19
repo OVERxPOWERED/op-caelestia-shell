@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "../components"
 import qs.components
 import qs.components.controls
 import qs.components.effects
@@ -11,52 +12,17 @@ import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
 
-RowLayout {
+Item {
     id: root
 
     required property Session session
 
     anchors.fill: parent
 
-    spacing: 0
+    SplitPaneLayout {
+        anchors.fill: parent
 
-    Item {
-        id: leftAudioItem
-        Layout.preferredWidth: Math.floor(parent.width * 0.4)
-        Layout.minimumWidth: 420
-        Layout.fillHeight: true
-
-        ClippingRectangle {
-            id: leftAudioClippingRect
-            anchors.fill: parent
-            anchors.margins: Appearance.padding.normal
-            anchors.leftMargin: 0
-            anchors.rightMargin: Appearance.padding.normal / 2
-
-            radius: leftAudioBorder.innerRadius
-            color: "transparent"
-
-            Loader {
-                id: leftAudioLoader
-
-                anchors.fill: parent
-                anchors.margins: Appearance.padding.large + Appearance.padding.normal
-                anchors.leftMargin: Appearance.padding.large
-                anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
-
-                asynchronous: true
-                sourceComponent: audioLeftContentComponent
-            }
-        }
-
-        InnerBorder {
-            id: leftAudioBorder
-            leftThickness: 0
-            rightThickness: Appearance.padding.normal / 2
-        }
-
-        Component {
-            id: audioLeftContentComponent
+        leftContent: Component {
 
             StyledFlickable {
                 id: leftAudioFlickable
@@ -246,348 +212,320 @@ RowLayout {
                     }
                 }
             }
-            }
         }
-    }
+        }
 
-    Item {
-        id: rightAudioItem
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        ClippingRectangle {
-            id: rightAudioClippingRect
-            anchors.fill: parent
-            anchors.margins: Appearance.padding.normal
-            anchors.leftMargin: 0
-            anchors.rightMargin: Appearance.padding.normal / 2
-
-            radius: rightAudioBorder.innerRadius
-            color: "transparent"
-
-            Loader {
-                id: rightAudioLoader
-
+        rightContent: Component {
+            Item {
                 anchors.fill: parent
                 anchors.topMargin: Appearance.padding.large * 2
                 anchors.bottomMargin: Appearance.padding.large * 2
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
 
-                asynchronous: true
-                sourceComponent: audioRightContentComponent
-            }
-        }
+                StyledFlickable {
+                    id: rightAudioFlickable
+                    anchors.fill: parent
+                    flickableDirection: Flickable.VerticalFlick
+                    contentHeight: contentLayout.height
 
-        InnerBorder {
-            id: rightAudioBorder
-            leftThickness: Appearance.padding.normal / 2
-        }
-
-        Component {
-            id: audioRightContentComponent
-
-            StyledFlickable {
-                id: rightAudioFlickable
-                flickableDirection: Flickable.VerticalFlick
-                contentHeight: contentLayout.height
-
-                StyledScrollBar.vertical: StyledScrollBar {
-                    flickable: rightAudioFlickable
-                }
-
-                ColumnLayout {
-                    id: contentLayout
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.leftMargin: Appearance.padding.large * 2
-                    anchors.rightMargin: Appearance.padding.large * 2
-                    spacing: Appearance.spacing.normal
-
-                ConnectionHeader {
-                    icon: "volume_up"
-                    title: qsTr("Audio Settings")
-                }
-
-                SectionHeader {
-                    title: qsTr("Output volume")
-                    description: qsTr("Control the volume of your output device")
-                }
-
-                SectionContainer {
-                    contentSpacing: Appearance.spacing.normal
+                    StyledScrollBar.vertical: StyledScrollBar {
+                        flickable: rightAudioFlickable
+                    }
 
                     ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
+                        id: contentLayout
 
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: Appearance.spacing.normal
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.leftMargin: Appearance.padding.large * 2
+                        anchors.rightMargin: Appearance.padding.large * 2
+                        spacing: Appearance.spacing.normal
 
-                            StyledText {
-                                text: qsTr("Volume")
-                                font.pointSize: Appearance.font.size.normal
-                                font.weight: 500
-                            }
+                        ConnectionHeader {
+                            icon: "volume_up"
+                            title: qsTr("Audio Settings")
+                        }
 
-                            Item {
+                        SectionHeader {
+                            title: qsTr("Output volume")
+                            description: qsTr("Control the volume of your output device")
+                        }
+
+                        SectionContainer {
+                            contentSpacing: Appearance.spacing.normal
+
+                            ColumnLayout {
                                 Layout.fillWidth: true
-                            }
+                                spacing: Appearance.spacing.small
 
-                            StyledRect {
-                                Layout.preferredWidth: 70
-                                implicitHeight: outputVolumeInput.implicitHeight + Appearance.padding.small * 2
-                                color: outputVolumeInputHover.containsMouse || outputVolumeInput.activeFocus 
-                                       ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                       : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                radius: Appearance.rounding.small
-                                border.width: 1
-                                border.color: outputVolumeInput.activeFocus 
-                                              ? Colours.palette.m3primary
-                                              : Qt.alpha(Colours.palette.m3outline, 0.3)
-                                enabled: !Audio.muted
-                                opacity: enabled ? 1 : 0.5
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    spacing: Appearance.spacing.normal
 
-                                Behavior on color { CAnim {} }
-                                Behavior on border.color { CAnim {} }
+                                    StyledText {
+                                        text: qsTr("Volume")
+                                        font.pointSize: Appearance.font.size.normal
+                                        font.weight: 500
+                                    }
 
-                                MouseArea {
-                                    id: outputVolumeInputHover
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.IBeamCursor
-                                    acceptedButtons: Qt.NoButton
+                                    Item {
+                                        Layout.fillWidth: true
+                                    }
+
+                                    StyledRect {
+                                        Layout.preferredWidth: 70
+                                        implicitHeight: outputVolumeInput.implicitHeight + Appearance.padding.small * 2
+                                        color: outputVolumeInputHover.containsMouse || outputVolumeInput.activeFocus 
+                                               ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
+                                               : Colours.layer(Colours.palette.m3surfaceContainer, 2)
+                                        radius: Appearance.rounding.small
+                                        border.width: 1
+                                        border.color: outputVolumeInput.activeFocus 
+                                                      ? Colours.palette.m3primary
+                                                      : Qt.alpha(Colours.palette.m3outline, 0.3)
+                                        enabled: !Audio.muted
+                                        opacity: enabled ? 1 : 0.5
+
+                                        Behavior on color { CAnim {} }
+                                        Behavior on border.color { CAnim {} }
+
+                                        MouseArea {
+                                            id: outputVolumeInputHover
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            cursorShape: Qt.IBeamCursor
+                                            acceptedButtons: Qt.NoButton
+                                        }
+
+                                        StyledTextField {
+                                            id: outputVolumeInput
+                                            anchors.centerIn: parent
+                                            width: parent.width - Appearance.padding.normal
+                                            horizontalAlignment: TextInput.AlignHCenter
+                                            validator: IntValidator { bottom: 0; top: 100 }
+                                            enabled: !Audio.muted
+                                            
+                                            Component.onCompleted: {
+                                                text = Math.round(Audio.volume * 100).toString();
+                                            }
+                                            
+                                            Connections {
+                                                target: Audio
+                                                function onVolumeChanged() {
+                                                    if (!outputVolumeInput.activeFocus) {
+                                                        outputVolumeInput.text = Math.round(Audio.volume * 100).toString();
+                                                    }
+                                                }
+                                            }
+                                            
+                                            onTextChanged: {
+                                                if (activeFocus) {
+                                                    const val = parseInt(text);
+                                                    if (!isNaN(val) && val >= 0 && val <= 100) {
+                                                        Audio.setVolume(val / 100);
+                                                    }
+                                                }
+                                            }
+                                            onEditingFinished: {
+                                                const val = parseInt(text);
+                                                if (isNaN(val) || val < 0 || val > 100) {
+                                                    text = Math.round(Audio.volume * 100).toString();
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    StyledText {
+                                        text: "%"
+                                        color: Colours.palette.m3outline
+                                        font.pointSize: Appearance.font.size.normal
+                                        opacity: Audio.muted ? 0.5 : 1
+                                    }
+
+                                    StyledRect {
+                                        implicitWidth: implicitHeight
+                                        implicitHeight: muteIcon.implicitHeight + Appearance.padding.normal * 2
+
+                                        radius: Appearance.rounding.normal
+                                        color: Audio.muted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
+
+                                        StateLayer {
+                                            function onClicked(): void {
+                                                if (Audio.sink?.audio) {
+                                                    Audio.sink.audio.muted = !Audio.sink.audio.muted;
+                                                }
+                                            }
+                                        }
+
+                                        MaterialIcon {
+                                            id: muteIcon
+
+                                            anchors.centerIn: parent
+                                            text: Audio.muted ? "volume_off" : "volume_up"
+                                            color: Audio.muted ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
+                                        }
+                                    }
                                 }
 
-                                StyledTextField {
-                                    id: outputVolumeInput
-                                    anchors.centerIn: parent
-                                    width: parent.width - Appearance.padding.normal
-                                    horizontalAlignment: TextInput.AlignHCenter
-                                    validator: IntValidator { bottom: 0; top: 100 }
+                                StyledSlider {
+                                    id: outputVolumeSlider
+                                    Layout.fillWidth: true
+                                    implicitHeight: Appearance.padding.normal * 3
+
+                                    value: Audio.volume
                                     enabled: !Audio.muted
-                                    
-                                    Component.onCompleted: {
-                                        text = Math.round(Audio.volume * 100).toString();
-                                    }
-                                    
-                                    Connections {
-                                        target: Audio
-                                        function onVolumeChanged() {
-                                            if (!outputVolumeInput.activeFocus) {
-                                                outputVolumeInput.text = Math.round(Audio.volume * 100).toString();
-                                            }
+                                    opacity: enabled ? 1 : 0.5
+                                    onMoved: {
+                                        Audio.setVolume(value);
+                                        if (!outputVolumeInput.activeFocus) {
+                                            outputVolumeInput.text = Math.round(value * 100).toString();
                                         }
                                     }
-                                    
-                                    onTextChanged: {
-                                        if (activeFocus) {
-                                            const val = parseInt(text);
-                                            if (!isNaN(val) && val >= 0 && val <= 100) {
-                                                Audio.setVolume(val / 100);
-                                            }
-                                        }
-                                    }
-                                    onEditingFinished: {
-                                        const val = parseInt(text);
-                                        if (isNaN(val) || val < 0 || val > 100) {
-                                            text = Math.round(Audio.volume * 100).toString();
-                                        }
-                                    }
-                                }
-                            }
-
-                            StyledText {
-                                text: "%"
-                                color: Colours.palette.m3outline
-                                font.pointSize: Appearance.font.size.normal
-                                opacity: Audio.muted ? 0.5 : 1
-                            }
-
-                            StyledRect {
-                                implicitWidth: implicitHeight
-                                implicitHeight: muteIcon.implicitHeight + Appearance.padding.normal * 2
-
-                                radius: Appearance.rounding.normal
-                                color: Audio.muted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
-
-                                StateLayer {
-                                    function onClicked(): void {
-                                        if (Audio.sink?.audio) {
-                                            Audio.sink.audio.muted = !Audio.sink.audio.muted;
-                                        }
-                                    }
-                                }
-
-                                MaterialIcon {
-                                    id: muteIcon
-
-                                    anchors.centerIn: parent
-                                    text: Audio.muted ? "volume_off" : "volume_up"
-                                    color: Audio.muted ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
                                 }
                             }
                         }
 
-                        StyledSlider {
-                            id: outputVolumeSlider
-                            Layout.fillWidth: true
-                            implicitHeight: Appearance.padding.normal * 3
-
-                            value: Audio.volume
-                            enabled: !Audio.muted
-                            opacity: enabled ? 1 : 0.5
-                            onMoved: {
-                                Audio.setVolume(value);
-                                if (!outputVolumeInput.activeFocus) {
-                                    outputVolumeInput.text = Math.round(value * 100).toString();
-                                }
-                            }
+                        SectionHeader {
+                            title: qsTr("Input volume")
+                            description: qsTr("Control the volume of your input device")
                         }
-                    }
-                }
 
-                SectionHeader {
-                    title: qsTr("Input volume")
-                    description: qsTr("Control the volume of your input device")
-                }
+                        SectionContainer {
+                            contentSpacing: Appearance.spacing.normal
 
-                SectionContainer {
-                    contentSpacing: Appearance.spacing.normal
-
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small
-
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: Appearance.spacing.normal
-
-                            StyledText {
-                                text: qsTr("Volume")
-                                font.pointSize: Appearance.font.size.normal
-                                font.weight: 500
-                            }
-
-                            Item {
+                            ColumnLayout {
                                 Layout.fillWidth: true
-                            }
+                                spacing: Appearance.spacing.small
 
-                            StyledRect {
-                                Layout.preferredWidth: 70
-                                implicitHeight: inputVolumeInput.implicitHeight + Appearance.padding.small * 2
-                                color: inputVolumeInputHover.containsMouse || inputVolumeInput.activeFocus 
-                                       ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                       : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                radius: Appearance.rounding.small
-                                border.width: 1
-                                border.color: inputVolumeInput.activeFocus 
-                                              ? Colours.palette.m3primary
-                                              : Qt.alpha(Colours.palette.m3outline, 0.3)
-                                enabled: !Audio.sourceMuted
-                                opacity: enabled ? 1 : 0.5
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    spacing: Appearance.spacing.normal
 
-                                Behavior on color { CAnim {} }
-                                Behavior on border.color { CAnim {} }
+                                    StyledText {
+                                        text: qsTr("Volume")
+                                        font.pointSize: Appearance.font.size.normal
+                                        font.weight: 500
+                                    }
 
-                                MouseArea {
-                                    id: inputVolumeInputHover
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.IBeamCursor
-                                    acceptedButtons: Qt.NoButton
+                                    Item {
+                                        Layout.fillWidth: true
+                                    }
+
+                                    StyledRect {
+                                        Layout.preferredWidth: 70
+                                        implicitHeight: inputVolumeInput.implicitHeight + Appearance.padding.small * 2
+                                        color: inputVolumeInputHover.containsMouse || inputVolumeInput.activeFocus 
+                                               ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
+                                               : Colours.layer(Colours.palette.m3surfaceContainer, 2)
+                                        radius: Appearance.rounding.small
+                                        border.width: 1
+                                        border.color: inputVolumeInput.activeFocus 
+                                                      ? Colours.palette.m3primary
+                                                      : Qt.alpha(Colours.palette.m3outline, 0.3)
+                                        enabled: !Audio.sourceMuted
+                                        opacity: enabled ? 1 : 0.5
+
+                                        Behavior on color { CAnim {} }
+                                        Behavior on border.color { CAnim {} }
+
+                                        MouseArea {
+                                            id: inputVolumeInputHover
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            cursorShape: Qt.IBeamCursor
+                                            acceptedButtons: Qt.NoButton
+                                        }
+
+                                        StyledTextField {
+                                            id: inputVolumeInput
+                                            anchors.centerIn: parent
+                                            width: parent.width - Appearance.padding.normal
+                                            horizontalAlignment: TextInput.AlignHCenter
+                                            validator: IntValidator { bottom: 0; top: 100 }
+                                            enabled: !Audio.sourceMuted
+                                            
+                                            Component.onCompleted: {
+                                                text = Math.round(Audio.sourceVolume * 100).toString();
+                                            }
+                                            
+                                            Connections {
+                                                target: Audio
+                                                function onSourceVolumeChanged() {
+                                                    if (!inputVolumeInput.activeFocus) {
+                                                        inputVolumeInput.text = Math.round(Audio.sourceVolume * 100).toString();
+                                                    }
+                                                }
+                                            }
+                                            
+                                            onTextChanged: {
+                                                if (activeFocus) {
+                                                    const val = parseInt(text);
+                                                    if (!isNaN(val) && val >= 0 && val <= 100) {
+                                                        Audio.setSourceVolume(val / 100);
+                                                    }
+                                                }
+                                            }
+                                            onEditingFinished: {
+                                                const val = parseInt(text);
+                                                if (isNaN(val) || val < 0 || val > 100) {
+                                                    text = Math.round(Audio.sourceVolume * 100).toString();
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    StyledText {
+                                        text: "%"
+                                        color: Colours.palette.m3outline
+                                        font.pointSize: Appearance.font.size.normal
+                                        opacity: Audio.sourceMuted ? 0.5 : 1
+                                    }
+
+                                    StyledRect {
+                                        implicitWidth: implicitHeight
+                                        implicitHeight: muteInputIcon.implicitHeight + Appearance.padding.normal * 2
+
+                                        radius: Appearance.rounding.normal
+                                        color: Audio.sourceMuted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
+
+                                        StateLayer {
+                                            function onClicked(): void {
+                                                if (Audio.source?.audio) {
+                                                    Audio.source.audio.muted = !Audio.source.audio.muted;
+                                                }
+                                            }
+                                        }
+
+                                        MaterialIcon {
+                                            id: muteInputIcon
+
+                                            anchors.centerIn: parent
+                                            text: "mic_off"
+                                            color: Audio.sourceMuted ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
+                                        }
+                                    }
                                 }
 
-                                StyledTextField {
-                                    id: inputVolumeInput
-                                    anchors.centerIn: parent
-                                    width: parent.width - Appearance.padding.normal
-                                    horizontalAlignment: TextInput.AlignHCenter
-                                    validator: IntValidator { bottom: 0; top: 100 }
+                                StyledSlider {
+                                    id: inputVolumeSlider
+                                    Layout.fillWidth: true
+                                    implicitHeight: Appearance.padding.normal * 3
+
+                                    value: Audio.sourceVolume
                                     enabled: !Audio.sourceMuted
-                                    
-                                    Component.onCompleted: {
-                                        text = Math.round(Audio.sourceVolume * 100).toString();
-                                    }
-                                    
-                                    Connections {
-                                        target: Audio
-                                        function onSourceVolumeChanged() {
-                                            if (!inputVolumeInput.activeFocus) {
-                                                inputVolumeInput.text = Math.round(Audio.sourceVolume * 100).toString();
-                                            }
+                                    opacity: enabled ? 1 : 0.5
+                                    onMoved: {
+                                        Audio.setSourceVolume(value);
+                                        if (!inputVolumeInput.activeFocus) {
+                                            inputVolumeInput.text = Math.round(value * 100).toString();
                                         }
                                     }
-                                    
-                                    onTextChanged: {
-                                        if (activeFocus) {
-                                            const val = parseInt(text);
-                                            if (!isNaN(val) && val >= 0 && val <= 100) {
-                                                Audio.setSourceVolume(val / 100);
-                                            }
-                                        }
-                                    }
-                                    onEditingFinished: {
-                                        const val = parseInt(text);
-                                        if (isNaN(val) || val < 0 || val > 100) {
-                                            text = Math.round(Audio.sourceVolume * 100).toString();
-                                        }
-                                    }
-                                }
-                            }
-
-                            StyledText {
-                                text: "%"
-                                color: Colours.palette.m3outline
-                                font.pointSize: Appearance.font.size.normal
-                                opacity: Audio.sourceMuted ? 0.5 : 1
-                            }
-
-                            StyledRect {
-                                implicitWidth: implicitHeight
-                                implicitHeight: muteInputIcon.implicitHeight + Appearance.padding.normal * 2
-
-                                radius: Appearance.rounding.normal
-                                color: Audio.sourceMuted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
-
-                                StateLayer {
-                                    function onClicked(): void {
-                                        if (Audio.source?.audio) {
-                                            Audio.source.audio.muted = !Audio.source.audio.muted;
-                                        }
-                                    }
-                                }
-
-                                MaterialIcon {
-                                    id: muteInputIcon
-
-                                    anchors.centerIn: parent
-                                    text: "mic_off"
-                                    color: Audio.sourceMuted ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
-                                }
-                            }
-                        }
-
-                        StyledSlider {
-                            id: inputVolumeSlider
-                            Layout.fillWidth: true
-                            implicitHeight: Appearance.padding.normal * 3
-
-                            value: Audio.sourceVolume
-                            enabled: !Audio.sourceMuted
-                            opacity: enabled ? 1 : 0.5
-                            onMoved: {
-                                Audio.setSourceVolume(value);
-                                if (!inputVolumeInput.activeFocus) {
-                                    inputVolumeInput.text = Math.round(value * 100).toString();
                                 }
                             }
                         }
                     }
                 }
-            }
             }
         }
     }

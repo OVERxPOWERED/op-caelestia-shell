@@ -117,35 +117,15 @@ Item {
             }
         }
 
-        NavItem {
-            Layout.topMargin: Appearance.spacing.large * 2
-            icon: "router"
-            label: "network"
-        }
+        Repeater {
+            model: PaneRegistry.count
 
-        NavItem {
-            icon: "settings_bluetooth"
-            label: "bluetooth"
-        }
-
-        NavItem {
-            icon: "volume_up"
-            label: "audio"
-        }
-
-        NavItem {
-            icon: "palette"
-            label: "appearance"
-        }
-
-        NavItem {
-            icon: "task_alt"
-            label: "taskbar"
-        }
-
-        NavItem {
-            icon: "apps"
-            label: "launcher"
+            NavItem {
+                required property int index
+                Layout.topMargin: index === 0 ? Appearance.spacing.large * 2 : 0
+                icon: PaneRegistry.getByIndex(index).icon
+                label: PaneRegistry.getByIndex(index).label
+            }
         }
     }
 

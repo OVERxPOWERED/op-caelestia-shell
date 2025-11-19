@@ -1,8 +1,9 @@
 import QtQuick
 import "./state"
+import qs.modules.controlcenter
 
 QtObject {
-    readonly property list<string> panes: ["network", "bluetooth", "audio", "appearance", "taskbar", "launcher"]
+    readonly property list<string> panes: PaneRegistry.labels
 
     required property var root
     property bool floating: false

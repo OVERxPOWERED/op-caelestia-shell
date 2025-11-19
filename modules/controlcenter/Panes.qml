@@ -9,6 +9,7 @@ import "launcher"
 import qs.components
 import qs.services
 import qs.config
+import qs.modules.controlcenter
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
@@ -76,45 +77,13 @@ ClippingRectangle {
             }
         }
 
-        Pane {
-            index: 0
-            sourceComponent: NetworkingPane {
-                session: root.session
-            }
-        }
+        Repeater {
+            model: PaneRegistry.count
 
-        Pane {
-            index: 1
-            sourceComponent: BtPane {
-                session: root.session
-            }
-        }
-
-        Pane {
-            index: 2
-            sourceComponent: AudioPane {
-                session: root.session
-            }
-        }
-
-        Pane {
-            index: 3
-            sourceComponent: AppearancePane {
-                session: root.session
-            }
-        }
-
-        Pane {
-            index: 4
-            sourceComponent: TaskbarPane {
-                session: root.session
-            }
-        }
-
-        Pane {
-            index: 5
-            sourceComponent: LauncherPane {
-                session: root.session
+            Pane {
+                required property int index
+                paneIndex: index
+                componentPath: PaneRegistry.getByIndex(index).component
             }
         }
 
@@ -135,8 +104,8 @@ ClippingRectangle {
     component Pane: Item {
         id: pane
 
-        required property int index
-        property alias sourceComponent: loader.sourceComponent
+        required property int paneIndex
+        required property string componentPath
 
         implicitWidth: root.width
         implicitHeight: root.height
@@ -146,7 +115,7 @@ ClippingRectangle {
         
         // Function to compute if this pane should be active
         function updateActive(): void {
-            const diff = Math.abs(root.session.activeIndex - pane.index);
+            const diff = Math.abs(root.session.activeIndex - pane.paneIndex);
             const isActivePane = diff === 0;
             let shouldBeActive = false;
             
@@ -186,6 +155,13 @@ ClippingRectangle {
                 // Mark pane as loaded when it becomes active
                 if (active && !pane.hasBeenLoaded) {
                     pane.hasBeenLoaded = true;
+                }
+                
+                // Load the component with initial properties when activated
+                if (active && !item) {
+                    loader.setSource(pane.componentPath, {
+                        "session": root.session
+                    });
                 }
             }
             

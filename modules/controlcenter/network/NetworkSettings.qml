@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "../components"
 import qs.components
 import qs.components.controls
 import qs.components.effects
@@ -16,18 +17,9 @@ ColumnLayout {
 
     spacing: Appearance.spacing.normal
 
-    MaterialIcon {
-        Layout.alignment: Qt.AlignHCenter
-        text: "router"
-        font.pointSize: Appearance.font.size.extraLarge * 3
-        font.bold: true
-    }
-
-    StyledText {
-        Layout.alignment: Qt.AlignHCenter
-        text: qsTr("Network Settings")
-        font.pointSize: Appearance.font.size.large
-        font.bold: true
+    SettingsHeader {
+        icon: "router"
+        title: qsTr("Network Settings")
     }
 
     SectionHeader {

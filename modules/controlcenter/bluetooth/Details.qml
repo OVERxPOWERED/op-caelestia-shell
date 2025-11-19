@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "../components"
 import qs.components
 import qs.components.controls
 import qs.components.effects
@@ -41,20 +42,9 @@ StyledFlickable {
                 anchors.top: parent.top
                 spacing: Appearance.spacing.normal
 
-            MaterialIcon {
-                Layout.alignment: Qt.AlignHCenter
-                animate: true
-                text: Icons.getBluetoothIcon(root.device?.icon ?? "")
-                font.pointSize: Appearance.font.size.extraLarge * 3
-                font.bold: true
-            }
-
-            StyledText {
-                Layout.alignment: Qt.AlignHCenter
-                animate: true
-                text: root.device?.name ?? ""
-                font.pointSize: Appearance.font.size.large
-                font.bold: true
+            SettingsHeader {
+                icon: Icons.getBluetoothIcon(root.device?.icon ?? "")
+                title: root.device?.name ?? ""
             }
 
             StyledText {

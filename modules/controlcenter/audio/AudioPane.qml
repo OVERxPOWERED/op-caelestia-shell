@@ -233,7 +233,7 @@ Item {
                     anchors.top: parent.top
                     spacing: Appearance.spacing.normal
 
-                        ConnectionHeader {
+                        SettingsHeader {
                             icon: "volume_up"
                             title: qsTr("Audio Settings")
                         }

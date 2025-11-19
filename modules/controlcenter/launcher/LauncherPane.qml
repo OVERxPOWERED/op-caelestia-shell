@@ -509,53 +509,54 @@ Item {
 
             spacing: Appearance.spacing.normal
 
-            Item {
-            Layout.alignment: Qt.AlignHCenter
-            Layout.leftMargin: Appearance.padding.large * 2
-            Layout.rightMargin: Appearance.padding.large * 2
-            Layout.topMargin: Appearance.padding.large * 2
-            implicitWidth: iconLoader.implicitWidth
-            implicitHeight: iconLoader.implicitHeight
-
-            Loader {
-                id: iconLoader
-                sourceComponent: parent.parent.displayedApp ? appIconComponent : defaultIconComponent
+            // Show SettingsHeader when no app is selected, or show app icon + title when app is selected
+            SettingsHeader {
+                Layout.leftMargin: Appearance.padding.large * 2
+                Layout.rightMargin: Appearance.padding.large * 2
+                Layout.topMargin: Appearance.padding.large * 2
+                visible: displayedApp === null
+                icon: "apps"
+                title: qsTr("Launcher Applications")
             }
 
-            Component {
-                id: appIconComponent
-                IconImage {
-                    implicitSize: Appearance.font.size.extraLarge * 3 * 2
-                    source: {
-                        const app = iconLoader.parent.parent.displayedApp;
-                        if (!app) return "image-missing";
-                        const entry = app.entry;
-                        if (entry && entry.icon) {
-                            return Quickshell.iconPath(entry.icon, "image-missing");
+            // App icon and title display (shown when app is selected)
+            Item {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.leftMargin: Appearance.padding.large * 2
+                Layout.rightMargin: Appearance.padding.large * 2
+                Layout.topMargin: Appearance.padding.large * 2
+                visible: displayedApp !== null
+                implicitWidth: Math.max(appIconImage.implicitWidth, appTitleText.implicitWidth)
+                implicitHeight: appIconImage.implicitHeight + Appearance.spacing.normal + appTitleText.implicitHeight
+
+                ColumnLayout {
+                    anchors.centerIn: parent
+                    spacing: Appearance.spacing.normal
+
+                    IconImage {
+                        id: appIconImage
+                        Layout.alignment: Qt.AlignHCenter
+                        implicitSize: Appearance.font.size.extraLarge * 3 * 2
+                        source: {
+                            const app = appDetailsLayout.displayedApp;
+                            if (!app) return "image-missing";
+                            const entry = app.entry;
+                            if (entry && entry.icon) {
+                                return Quickshell.iconPath(entry.icon, "image-missing");
+                            }
+                            return "image-missing";
                         }
-                        return "image-missing";
+                    }
+
+                    StyledText {
+                        id: appTitleText
+                        Layout.alignment: Qt.AlignHCenter
+                        text: displayedApp ? (displayedApp.name || displayedApp.entry?.name || qsTr("Application Details")) : ""
+                        font.pointSize: Appearance.font.size.large
+                        font.bold: true
                     }
                 }
             }
-
-            Component {
-                id: defaultIconComponent
-                MaterialIcon {
-                    text: "apps"
-                    font.pointSize: Appearance.font.size.extraLarge * 3
-                    font.bold: true
-                }
-            }
-        }
-
-        StyledText {
-            Layout.alignment: Qt.AlignHCenter
-            Layout.leftMargin: Appearance.padding.large * 2
-            Layout.rightMargin: Appearance.padding.large * 2
-            text: displayedApp ? (displayedApp.name || displayedApp.entry?.name || qsTr("Application Details")) : qsTr("Launcher Applications")
-            font.pointSize: Appearance.font.size.large
-            font.bold: true
-        }
 
             Item {
                 Layout.fillWidth: true

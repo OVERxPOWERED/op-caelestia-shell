@@ -97,19 +97,9 @@ Item {
                 anchors.top: parent.top
                 spacing: Appearance.spacing.normal
 
-                MaterialIcon {
-                    Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-                    Layout.topMargin: 0
-                    text: "palette"
-                    font.pointSize: Appearance.font.size.extraLarge * 3
-                    font.bold: true
-                }
-
-                StyledText {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("Appearance Settings")
-                    font.pointSize: Appearance.font.size.large
-                    font.bold: true
+                SettingsHeader {
+                    icon: "palette"
+                    title: qsTr("Appearance Settings")
                 }
 
                 StyledText {

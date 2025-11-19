@@ -480,7 +480,6 @@ Item {
                     id: rightLoader
 
                     anchors.fill: parent
-                    anchors.margins: Appearance.padding.large * 2
 
                     opacity: 1
                     scale: 1

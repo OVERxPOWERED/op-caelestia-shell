@@ -216,31 +216,22 @@ Item {
         }
 
         rightContent: Component {
-            Item {
-                anchors.fill: parent
-                anchors.topMargin: Appearance.padding.large * 2
-                anchors.bottomMargin: Appearance.padding.large * 2
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
+            StyledFlickable {
+                id: rightAudioFlickable
+                flickableDirection: Flickable.VerticalFlick
+                contentHeight: contentLayout.height
 
-                StyledFlickable {
-                    id: rightAudioFlickable
-                    anchors.fill: parent
-                    flickableDirection: Flickable.VerticalFlick
-                    contentHeight: contentLayout.height
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: rightAudioFlickable
+                }
 
-                    StyledScrollBar.vertical: StyledScrollBar {
-                        flickable: rightAudioFlickable
-                    }
+                ColumnLayout {
+                    id: contentLayout
 
-                    ColumnLayout {
-                        id: contentLayout
-
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.leftMargin: Appearance.padding.large * 2
-                        anchors.rightMargin: Appearance.padding.large * 2
-                        spacing: Appearance.spacing.normal
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    spacing: Appearance.spacing.normal
 
                         ConnectionHeader {
                             icon: "volume_up"
@@ -529,4 +520,3 @@ Item {
             }
         }
     }
-}

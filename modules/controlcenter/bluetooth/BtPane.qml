@@ -50,7 +50,6 @@ Item {
                     id: rightLoader
 
                     anchors.fill: parent
-                    anchors.margins: Appearance.padding.large * 2
 
                     asynchronous: true
                     sourceComponent: rightBtPane.targetComponent

@@ -16,7 +16,9 @@ StyledRect {
     implicitHeight: contentColumn.implicitHeight + Appearance.padding.large * 2
 
     radius: Appearance.rounding.normal
-    color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+    color: Colours.transparency.enabled 
+           ? Colours.layer(Colours.palette.m3surfaceContainer, 2)
+           : Colours.palette.m3surfaceContainerHigh
 
     ColumnLayout {
         id: contentColumn

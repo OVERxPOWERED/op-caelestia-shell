@@ -13,6 +13,7 @@ ColumnLayout {
     property string description: ""
     property bool expanded: false
     property bool showBackground: false
+    property bool nested: false
 
     signal toggleRequested
 
@@ -87,7 +88,9 @@ ColumnLayout {
             id: backgroundRect
             anchors.fill: parent
             radius: Appearance.rounding.normal
-            color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+            color: Colours.transparency.enabled 
+                   ? Colours.layer(Colours.palette.m3surfaceContainer, root.nested ? 3 : 2)
+                   : (root.nested ? Colours.palette.m3surfaceContainerHigh : Colours.palette.m3surfaceContainer)
             opacity: root.showBackground && root.expanded ? 1.0 : 0.0
             visible: root.showBackground
 

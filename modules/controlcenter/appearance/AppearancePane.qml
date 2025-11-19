@@ -524,6 +524,7 @@ RowLayout {
                         title: qsTr("Material font family")
                         expanded: true
                         showBackground: true
+                        nested: true
 
                         Loader {
                             id: materialFontLoader
@@ -606,6 +607,7 @@ RowLayout {
                         title: qsTr("Monospace font family")
                         expanded: false
                         showBackground: true
+                        nested: true
 
                         Loader {
                             Layout.fillWidth: true
@@ -686,6 +688,7 @@ RowLayout {
                         title: qsTr("Sans-serif font family")
                         expanded: false
                         showBackground: true
+                        nested: true
 
                         Loader {
                             Layout.fillWidth: true

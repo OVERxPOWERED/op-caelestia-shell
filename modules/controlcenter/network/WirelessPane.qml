@@ -76,40 +76,15 @@ RowLayout {
                 }
 
                 Behavior on paneId {
-                    SequentialAnimation {
-                        ParallelAnimation {
-                            Anim {
+                    PaneTransition {
+                        target: loader
+                        propertyActions: [
+                            PropertyAction {
                                 target: loader
-                                property: "opacity"
-                                to: 0
-                                easing.bezierCurve: Appearance.anim.curves.standardAccel
+                                property: "targetComponent"
+                                value: loader.nextComponent
                             }
-                            Anim {
-                                target: loader
-                                property: "scale"
-                                to: 0.8
-                                easing.bezierCurve: Appearance.anim.curves.standardAccel
-                            }
-                        }
-                        PropertyAction {
-                            target: loader
-                            property: "targetComponent"
-                            value: loader.nextComponent
-                        }
-                        ParallelAnimation {
-                            Anim {
-                                target: loader
-                                property: "opacity"
-                                to: 1
-                                easing.bezierCurve: Appearance.anim.curves.standardDecel
-                            }
-                            Anim {
-                                target: loader
-                                property: "scale"
-                                to: 1
-                                easing.bezierCurve: Appearance.anim.curves.standardDecel
-                            }
-                        }
+                        ]
                     }
                 }
 
@@ -157,11 +132,5 @@ RowLayout {
         anchors.fill: parent
         session: root.session
         z: 1000
-    }
-
-    component Anim: NumberAnimation {
-        target: loader
-        duration: Appearance.anim.durations.normal / 2
-        easing.type: Easing.BezierSpline
     }
 }

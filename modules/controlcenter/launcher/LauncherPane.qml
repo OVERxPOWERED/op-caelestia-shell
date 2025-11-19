@@ -426,55 +426,30 @@ Item {
                 }
 
                 Behavior on paneId {
-                    SequentialAnimation {
-                        ParallelAnimation {
-                            Anim {
+                    PaneTransition {
+                        target: rightLauncherLoader
+                        propertyActions: [
+                            PropertyAction {
+                                target: rightLauncherPane
+                                property: "displayedApp"
+                                value: rightLauncherPane.pane
+                            },
+                            PropertyAction {
                                 target: rightLauncherLoader
-                                property: "opacity"
-                                to: 0
-                                easing.bezierCurve: Appearance.anim.curves.standardAccel
-                            }
-                            Anim {
+                                property: "active"
+                                value: false
+                            },
+                            PropertyAction {
+                                target: rightLauncherPane
+                                property: "targetComponent"
+                                value: rightLauncherPane.nextComponent
+                            },
+                            PropertyAction {
                                 target: rightLauncherLoader
-                                property: "scale"
-                                to: 0.8
-                                easing.bezierCurve: Appearance.anim.curves.standardAccel
+                                property: "active"
+                                value: true
                             }
-                        }
-                        PropertyAction {
-                            target: rightLauncherPane
-                            property: "displayedApp"
-                            value: rightLauncherPane.pane
-                        }
-                        PropertyAction {
-                            target: rightLauncherLoader
-                            property: "active"
-                            value: false
-                        }
-                        PropertyAction {
-                            target: rightLauncherPane
-                            property: "targetComponent"
-                            value: rightLauncherPane.nextComponent
-                        }
-                        PropertyAction {
-                            target: rightLauncherLoader
-                            property: "active"
-                            value: true
-                        }
-                        ParallelAnimation {
-                            Anim {
-                                target: rightLauncherLoader
-                                property: "opacity"
-                                to: 1
-                                easing.bezierCurve: Appearance.anim.curves.standardDecel
-                            }
-                            Anim {
-                                target: rightLauncherLoader
-                                property: "scale"
-                                to: 1
-                                easing.bezierCurve: Appearance.anim.curves.standardDecel
-                            }
-                        }
+                        ]
                     }
                 }
 
@@ -638,11 +613,5 @@ Item {
                 }
             }
         }
-    }
-
-    component Anim: NumberAnimation {
-        target: rightLauncherLoader
-        duration: Appearance.anim.durations.normal / 2
-        easing.type: Easing.BezierSpline
     }
 }

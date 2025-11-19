@@ -33,6 +33,18 @@ Item {
                 id: rightBtPane
 
                 property BluetoothDevice pane: root.session.bt.active
+                property string paneId: pane ? (pane.address || "") : ""
+                property Component targetComponent: settings
+                property Component nextComponent: settings
+
+                function getComponentForPane() {
+                    return pane ? details : settings;
+                }
+
+                Component.onCompleted: {
+                    targetComponent = getComponentForPane();
+                    nextComponent = targetComponent;
+                }
 
                 Loader {
                     id: rightLoader
@@ -41,40 +53,19 @@ Item {
                     anchors.margins: Appearance.padding.large * 2
 
                     asynchronous: true
-                    sourceComponent: rightBtPane.pane ? details : settings
+                    sourceComponent: rightBtPane.targetComponent
                 }
 
-                Behavior on pane {
-                    SequentialAnimation {
-                        ParallelAnimation {
-                            Anim {
-                                target: rightLoader
-                                property: "opacity"
-                                to: 0
-                                easing.bezierCurve: Appearance.anim.curves.standardAccel
+                Behavior on paneId {
+                    PaneTransition {
+                        target: rightLoader
+                        propertyActions: [
+                            PropertyAction {
+                                target: rightBtPane
+                                property: "targetComponent"
+                                value: rightBtPane.nextComponent
                             }
-                            Anim {
-                                target: rightLoader
-                                property: "scale"
-                                to: 0.8
-                                easing.bezierCurve: Appearance.anim.curves.standardAccel
-                            }
-                        }
-                        PropertyAction {}
-                        ParallelAnimation {
-                            Anim {
-                                target: rightLoader
-                                property: "opacity"
-                                to: 1
-                                easing.bezierCurve: Appearance.anim.curves.standardDecel
-                            }
-                            Anim {
-                                target: rightLoader
-                                property: "scale"
-                                to: 1
-                                easing.bezierCurve: Appearance.anim.curves.standardDecel
-                            }
-                        }
+                        ]
                     }
                 }
 
@@ -82,6 +73,8 @@ Item {
                     target: root.session.bt
                     function onActiveChanged() {
                         rightBtPane.pane = root.session.bt.active;
+                        rightBtPane.nextComponent = rightBtPane.getComponentForPane();
+                        rightBtPane.paneId = pane ? (pane.address || "") : "";
                     }
                 }
             }
@@ -117,10 +110,5 @@ Item {
         Details {
             session: root.session
         }
-    }
-
-    component Anim: NumberAnimation {
-        duration: Appearance.anim.durations.normal / 2
-        easing.type: Easing.BezierSpline
     }
 }

@@ -447,7 +447,7 @@ Item {
                 property var ethernetPane: root.session.ethernet.active
                 property var wirelessPane: root.session.network.active
                 property var pane: ethernetPane || wirelessPane
-                property string paneId: ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "")
+                property string paneId: ethernetPane ? ("eth:" + (ethernetPane.interface || "")) : (wirelessPane ? ("wifi:" + (wirelessPane.ssid || wirelessPane.bssid || "")) : "settings")
                 property Component targetComponent: settings
                 property Component nextComponent: settings
 
@@ -463,16 +463,16 @@ Item {
                 Connections {
                     target: root.session.ethernet
                     function onActiveChanged() {
-                        nextComponent = getComponentForPane();
-                        paneId = ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "");
+                        rightPaneItem.nextComponent = rightPaneItem.getComponentForPane();
+                        rightPaneItem.paneId = rightPaneItem.ethernetPane ? ("eth:" + (rightPaneItem.ethernetPane.interface || "")) : (rightPaneItem.wirelessPane ? ("wifi:" + (rightPaneItem.wirelessPane.ssid || rightPaneItem.wirelessPane.bssid || "")) : "settings");
                     }
                 }
 
                 Connections {
                     target: root.session.network
                     function onActiveChanged() {
-                        nextComponent = getComponentForPane();
-                        paneId = ethernetPane ? (ethernetPane.interface || "") : (wirelessPane ? (wirelessPane.ssid || wirelessPane.bssid || "") : "");
+                        rightPaneItem.nextComponent = rightPaneItem.getComponentForPane();
+                        rightPaneItem.paneId = rightPaneItem.ethernetPane ? ("eth:" + (rightPaneItem.ethernetPane.interface || "")) : (rightPaneItem.wirelessPane ? ("wifi:" + (rightPaneItem.wirelessPane.ssid || rightPaneItem.wirelessPane.bssid || "")) : "settings");
                     }
                 }
 
@@ -489,57 +489,18 @@ Item {
 
                     asynchronous: true
                     sourceComponent: rightPaneItem.targetComponent
-
-                    Connections {
-                        target: rightPaneItem
-                        function onPaneIdChanged() {
-                            rightPaneItem.targetComponent = rightPaneItem.nextComponent;
-                        }
-                    }
                 }
 
                 Behavior on paneId {
-                    SequentialAnimation {
-                        ParallelAnimation {
-                            Anim {
-                                target: rightLoader
-                                property: "opacity"
-                                to: 0
-                                easing.bezierCurve: Appearance.anim.curves.standardAccel
+                    PaneTransition {
+                        target: rightLoader
+                        propertyActions: [
+                            PropertyAction {
+                                target: rightPaneItem
+                                property: "targetComponent"
+                                value: rightPaneItem.nextComponent
                             }
-                            Anim {
-                                target: rightLoader
-                                property: "scale"
-                                to: 0.8
-                                easing.bezierCurve: Appearance.anim.curves.standardAccel
-                            }
-                        }
-                        PropertyAction {
-                            target: rightPaneItem
-                            property: "targetComponent"
-                            value: rightPaneItem.nextComponent
-                        }
-                        ParallelAnimation {
-                            Anim {
-                                target: rightLoader
-                                property: "opacity"
-                                to: 1
-                                easing.bezierCurve: Appearance.anim.curves.standardDecel
-                            }
-                            Anim {
-                                target: rightLoader
-                                property: "scale"
-                                to: 1
-                                easing.bezierCurve: Appearance.anim.curves.standardDecel
-                            }
-                        }
-                    }
-                }
-
-                Connections {
-                    target: rightPaneItem
-                    function onPaneIdChanged() {
-                        rightPaneItem.targetComponent = rightPaneItem.nextComponent;
+                        ]
                     }
                 }
             }
@@ -619,11 +580,6 @@ Item {
         anchors.fill: parent
         session: root.session
         z: 1000
-    }
-
-    component Anim: NumberAnimation {
-        duration: Appearance.anim.durations.normal / 2
-        easing.type: Easing.BezierSpline
     }
 
     function checkSavedProfileForNetwork(ssid: string): void {

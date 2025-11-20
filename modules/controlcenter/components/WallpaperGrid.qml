@@ -346,6 +346,7 @@ Item {
                     visible: opacity > 0
                     antialiasing: true
                     smooth: true
+                    sourceSize: Qt.size(width, height)
 
                     opacity: status === Image.Ready ? 1 : 0
 
@@ -369,6 +370,7 @@ Item {
                     visible: opacity > 0
                     antialiasing: true
                     smooth: true
+                    sourceSize: Qt.size(width, height)
 
                     opacity: status === Image.Ready && cachingImage.status !== Image.Ready ? 1 : 0
 
@@ -403,19 +405,27 @@ Item {
                     gradient: Gradient {
                         GradientStop {
                             position: 0.0
-                            color: Qt.rgba(0, 0, 0, 0)
+                            color: Qt.rgba(Colours.palette.m3surface.r,
+                                          Colours.palette.m3surface.g,
+                                          Colours.palette.m3surface.b, 0)
                         }
                         GradientStop {
                             position: 0.3
-                            color: Qt.rgba(0, 0, 0, 0.7)
+                            color: Qt.rgba(Colours.palette.m3surface.r,
+                                          Colours.palette.m3surface.g,
+                                          Colours.palette.m3surface.b, 0.7)
                         }
                         GradientStop {
                             position: 0.6
-                            color: Qt.rgba(0, 0, 0, 0.9)
+                            color: Qt.rgba(Colours.palette.m3surface.r,
+                                          Colours.palette.m3surface.g,
+                                          Colours.palette.m3surface.b, 0.9)
                         }
                         GradientStop {
                             position: 1.0
-                            color: Qt.rgba(0, 0, 0, 0.95)
+                            color: Qt.rgba(Colours.palette.m3surface.r,
+                                          Colours.palette.m3surface.g,
+                                          Colours.palette.m3surface.b, 0.95)
                         }
                     }
 

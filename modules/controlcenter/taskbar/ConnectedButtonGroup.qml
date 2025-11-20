@@ -54,100 +54,20 @@ StyledRect {
                     Layout.fillWidth: true
                     text: modelData.label
                     
-                    property bool isChecked: false
+                    property bool _checked: false
                     
-                    // Initialize from root property
-                    Component.onCompleted: {
-                        if (root.rootItem && modelData.propertyName) {
-                            isChecked = root.rootItem[modelData.propertyName];
-                        }
-                    }
-                    
-                    checked: isChecked
+                    checked: _checked
                     toggle: false
                     type: TextButton.Tonal
 
-                    // Listen for property changes on rootItem
-                    Connections {
-                        target: root.rootItem
-                        enabled: root.rootItem !== null && modelData.propertyName !== undefined
-
-                        function onShowAudioChanged() {
-                            if (modelData.propertyName === "showAudio") {
-                                button.isChecked = root.rootItem.showAudio;
-                            }
-                        }
-
-                        function onShowMicrophoneChanged() {
-                            if (modelData.propertyName === "showMicrophone") {
-                                button.isChecked = root.rootItem.showMicrophone;
-                            }
-                        }
-
-                        function onShowKbLayoutChanged() {
-                            if (modelData.propertyName === "showKbLayout") {
-                                button.isChecked = root.rootItem.showKbLayout;
-                            }
-                        }
-
-                        function onShowNetworkChanged() {
-                            if (modelData.propertyName === "showNetwork") {
-                                button.isChecked = root.rootItem.showNetwork;
-                            }
-                        }
-
-                        function onShowBluetoothChanged() {
-                            if (modelData.propertyName === "showBluetooth") {
-                                button.isChecked = root.rootItem.showBluetooth;
-                            }
-                        }
-
-                        function onShowBatteryChanged() {
-                            if (modelData.propertyName === "showBattery") {
-                                button.isChecked = root.rootItem.showBattery;
-                            }
-                        }
-
-                        function onShowLockStatusChanged() {
-                            if (modelData.propertyName === "showLockStatus") {
-                                button.isChecked = root.rootItem.showLockStatus;
-                            }
-                        }
-
-                        function onTrayBackgroundChanged() {
-                            if (modelData.propertyName === "trayBackground") {
-                                button.isChecked = root.rootItem.trayBackground;
-                            }
-                        }
-
-                        function onTrayCompactChanged() {
-                            if (modelData.propertyName === "trayCompact") {
-                                button.isChecked = root.rootItem.trayCompact;
-                            }
-                        }
-
-                        function onTrayRecolourChanged() {
-                            if (modelData.propertyName === "trayRecolour") {
-                                button.isChecked = root.rootItem.trayRecolour;
-                            }
-                        }
-
-                        function onScrollWorkspacesChanged() {
-                            if (modelData.propertyName === "scrollWorkspaces") {
-                                button.isChecked = root.rootItem.scrollWorkspaces;
-                            }
-                        }
-
-                        function onScrollVolumeChanged() {
-                            if (modelData.propertyName === "scrollVolume") {
-                                button.isChecked = root.rootItem.scrollVolume;
-                            }
-                        }
-
-                        function onScrollBrightnessChanged() {
-                            if (modelData.propertyName === "scrollBrightness") {
-                                button.isChecked = root.rootItem.scrollBrightness;
-                            }
+                    // Create binding in Component.onCompleted
+                    Component.onCompleted: {
+                        if (root.rootItem && modelData.propertyName) {
+                            const propName = modelData.propertyName;
+                            const rootItem = root.rootItem;
+                            _checked = Qt.binding(function() {
+                                return rootItem[propName] ?? false;
+                            });
                         }
                     }
 
@@ -162,8 +82,9 @@ StyledRect {
                     Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Appearance.padding.large : internalChecked ? Appearance.padding.smaller : 0)
 
                     onClicked: {
-                        if (modelData.onToggled) {
-                            modelData.onToggled(!checked);
+                        if (modelData.onToggled && root.rootItem && modelData.propertyName) {
+                            const currentValue = root.rootItem[modelData.propertyName] ?? false;
+                            modelData.onToggled(!currentValue);
                         }
                     }
 

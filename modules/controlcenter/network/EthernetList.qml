@@ -122,12 +122,18 @@ DeviceList {
                         elide: Text.ElideRight
                     }
 
-                    StyledText {
+                    RowLayout {
                         Layout.fillWidth: true
-                        text: modelData.connected ? qsTr("Connected") : qsTr("Disconnected")
-                        color: Colours.palette.m3outline
-                        font.pointSize: Appearance.font.size.small
-                        elide: Text.ElideRight
+                        spacing: Appearance.spacing.smaller
+
+                        StyledText {
+                            Layout.fillWidth: true
+                            text: modelData.connected ? qsTr("Connected") : qsTr("Disconnected")
+                            color: modelData.connected ? Colours.palette.m3primary : Colours.palette.m3outline
+                            font.pointSize: Appearance.font.size.small
+                            font.weight: modelData.connected ? 500 : 400
+                            elide: Text.ElideRight
+                        }
                     }
                 }
 

@@ -39,6 +39,9 @@ DeviceList {
                 toggled: !root.session.ethernet.active
                 icon: "settings"
                 accent: "Primary"
+                iconSize: Appearance.font.size.normal
+                horizontalPadding: Appearance.padding.normal
+                verticalPadding: Appearance.padding.smaller
 
                 onClicked: {
                     if (root.session.ethernet.active)
@@ -55,8 +58,7 @@ DeviceList {
         StyledRect {
             required property var modelData
 
-            anchors.left: parent.left
-            anchors.right: parent.right
+            width: ListView.view ? ListView.view.width : undefined
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
             radius: Appearance.rounding.normal

@@ -6,6 +6,7 @@ import qs.components.controls
 import qs.components.containers
 import qs.services
 import qs.config
+import Quickshell
 import QtQuick
 import QtQuick.Layouts
 
@@ -55,6 +56,7 @@ ColumnLayout {
     property var activeItem: null
     property Component headerComponent: null
     property Component titleSuffix: null
+    property bool showHeader: true
     
     signal itemSelected(var item)
 
@@ -66,7 +68,7 @@ ColumnLayout {
         
         Layout.fillWidth: true
         sourceComponent: root.headerComponent
-        visible: root.headerComponent !== null
+        visible: root.headerComponent !== null && root.showHeader
     }
 
     // Title and description row
@@ -109,17 +111,15 @@ ColumnLayout {
         id: view
 
         Layout.fillWidth: true
-        Layout.fillHeight: true
+        // Use contentHeight to show all items without estimation
+        implicitHeight: contentHeight
 
         model: root.model
         delegate: root.delegate
 
         spacing: Appearance.spacing.small / 2
-        clip: true
-
-        StyledScrollBar.vertical: StyledScrollBar {
-            flickable: view
-        }
+        interactive: false  // Disable individual scrolling - parent pane handles it
+        clip: false  // Don't clip - let parent handle scrolling
     }
 }
 

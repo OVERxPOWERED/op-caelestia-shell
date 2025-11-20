@@ -90,6 +90,8 @@ Item {
             model: root.sections
             
             Loader {
+                required property Component modelData
+                
                 Layout.fillWidth: true
                 sourceComponent: modelData
             }

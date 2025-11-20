@@ -48,8 +48,12 @@ DeviceList {
                 toggled: Bluetooth.defaultAdapter?.enabled ?? false
                 icon: "power"
                 accent: "Tertiary"
+                iconSize: Appearance.font.size.normal
+                horizontalPadding: Appearance.padding.normal
+                verticalPadding: Appearance.padding.smaller
+                tooltip: qsTr("Toggle Bluetooth")
 
-                function onClicked(): void {
+                onClicked: {
                     const adapter = Bluetooth.defaultAdapter;
                     if (adapter)
                         adapter.enabled = !adapter.enabled;
@@ -60,8 +64,12 @@ DeviceList {
                 toggled: Bluetooth.defaultAdapter?.discoverable ?? false
                 icon: root.smallDiscoverable ? "group_search" : ""
                 label: root.smallDiscoverable ? "" : qsTr("Discoverable")
+                iconSize: Appearance.font.size.normal
+                horizontalPadding: Appearance.padding.normal
+                verticalPadding: Appearance.padding.smaller
+                tooltip: qsTr("Make discoverable")
 
-                function onClicked(): void {
+                onClicked: {
                     const adapter = Bluetooth.defaultAdapter;
                     if (adapter)
                         adapter.discoverable = !adapter.discoverable;
@@ -72,8 +80,12 @@ DeviceList {
                 toggled: Bluetooth.defaultAdapter?.pairable ?? false
                 icon: "missing_controller"
                 label: root.smallPairable ? "" : qsTr("Pairable")
+                iconSize: Appearance.font.size.normal
+                horizontalPadding: Appearance.padding.normal
+                verticalPadding: Appearance.padding.smaller
+                tooltip: qsTr("Make pairable")
 
-                function onClicked(): void {
+                onClicked: {
                     const adapter = Bluetooth.defaultAdapter;
                     if (adapter)
                         adapter.pairable = !adapter.pairable;
@@ -81,11 +93,31 @@ DeviceList {
             }
 
             ToggleButton {
+                toggled: Bluetooth.defaultAdapter?.discovering ?? false
+                icon: "bluetooth_searching"
+                accent: "Secondary"
+                iconSize: Appearance.font.size.normal
+                horizontalPadding: Appearance.padding.normal
+                verticalPadding: Appearance.padding.smaller
+                tooltip: qsTr("Scan for devices")
+
+                onClicked: {
+                    const adapter = Bluetooth.defaultAdapter;
+                    if (adapter)
+                        adapter.discovering = !adapter.discovering;
+                }
+            }
+
+            ToggleButton {
                 toggled: !root.session.bt.active
                 icon: "settings"
                 accent: "Primary"
+                iconSize: Appearance.font.size.normal
+                horizontalPadding: Appearance.padding.normal
+                verticalPadding: Appearance.padding.smaller
+                tooltip: qsTr("Bluetooth settings")
 
-                function onClicked(): void {
+                onClicked: {
                     if (root.session.bt.active)
                         root.session.bt.active = null;
                     else {
@@ -96,47 +128,6 @@ DeviceList {
         }
     }
 
-    titleSuffix: Component {
-        RowLayout {
-            spacing: Appearance.spacing.normal
-
-            Item {
-                Layout.fillWidth: true
-            }
-
-            StyledRect {
-                implicitWidth: implicitHeight
-                implicitHeight: scanIcon.implicitHeight + Appearance.padding.normal * 2
-
-                radius: Bluetooth.defaultAdapter?.discovering ? Appearance.rounding.normal : implicitHeight / 2 * Math.min(1, Appearance.rounding.scale)
-                color: Bluetooth.defaultAdapter?.discovering ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
-
-                StateLayer {
-                    color: Bluetooth.defaultAdapter?.discovering ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
-
-                    function onClicked(): void {
-                        const adapter = Bluetooth.defaultAdapter;
-                        if (adapter)
-                            adapter.discovering = !adapter.discovering;
-                    }
-                }
-
-                MaterialIcon {
-                    id: scanIcon
-
-                    anchors.centerIn: parent
-                    animate: true
-                    text: "bluetooth_searching"
-                    color: Bluetooth.defaultAdapter?.discovering ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
-                    fill: Bluetooth.defaultAdapter?.discovering ? 1 : 0
-                }
-
-                Behavior on radius {
-                    Anim {}
-                }
-            }
-        }
-    }
 
     delegate: Component {
         StyledRect {
@@ -146,8 +137,7 @@ DeviceList {
             readonly property bool loading: modelData && (modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting)
             readonly property bool connected: modelData && modelData.state === BluetoothDeviceState.Connected
 
-            anchors.left: parent.left
-            anchors.right: parent.right
+            width: ListView.view ? ListView.view.width : undefined
             implicitHeight: deviceInner.implicitHeight + Appearance.padding.normal * 2
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)

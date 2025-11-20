@@ -183,6 +183,10 @@ Item {
                     toggled: !root.session.launcher.active
                     icon: "settings"
                     accent: "Primary"
+                    iconSize: Appearance.font.size.normal
+                    horizontalPadding: Appearance.padding.normal
+                    verticalPadding: Appearance.padding.smaller
+                    tooltip: qsTr("Launcher settings")
 
                     onClicked: {
                         if (root.session.launcher.active) {

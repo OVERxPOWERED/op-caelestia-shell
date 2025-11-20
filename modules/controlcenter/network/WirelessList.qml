@@ -9,6 +9,7 @@ import qs.components.containers
 import qs.services
 import qs.config
 import qs.utils
+import Quickshell
 import QtQuick
 import QtQuick.Layouts
 
@@ -58,6 +59,9 @@ DeviceList {
                 toggled: Nmcli.wifiEnabled
                 icon: "wifi"
                 accent: "Tertiary"
+                iconSize: Appearance.font.size.normal
+                horizontalPadding: Appearance.padding.normal
+                verticalPadding: Appearance.padding.smaller
 
                 onClicked: {
                     Nmcli.toggleWifi(null);
@@ -68,6 +72,9 @@ DeviceList {
                 toggled: Nmcli.scanning
                 icon: "wifi_find"
                 accent: "Secondary"
+                iconSize: Appearance.font.size.normal
+                horizontalPadding: Appearance.padding.normal
+                verticalPadding: Appearance.padding.smaller
 
                 onClicked: {
                     Nmcli.rescanWifi();
@@ -78,6 +85,9 @@ DeviceList {
                 toggled: !root.session.network.active
                 icon: "settings"
                 accent: "Primary"
+                iconSize: Appearance.font.size.normal
+                horizontalPadding: Appearance.padding.normal
+                verticalPadding: Appearance.padding.smaller
 
                 onClicked: {
                     if (root.session.network.active)
@@ -94,8 +104,7 @@ DeviceList {
         StyledRect {
             required property var modelData
 
-            anchors.left: parent.left
-            anchors.right: parent.right
+            width: ListView.view ? ListView.view.width : undefined
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
             radius: Appearance.rounding.normal

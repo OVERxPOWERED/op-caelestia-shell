@@ -24,8 +24,23 @@ SplitPaneWithDetails {
     }
 
     leftContent: Component {
-        DeviceList {
-            session: root.session
+        StyledFlickable {
+            id: leftFlickable
+
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: deviceList.height
+
+            StyledScrollBar.vertical: StyledScrollBar {
+                flickable: leftFlickable
+            }
+
+            DeviceList {
+                id: deviceList
+
+                anchors.left: parent.left
+                anchors.right: parent.right
+                session: root.session
+            }
         }
     }
 

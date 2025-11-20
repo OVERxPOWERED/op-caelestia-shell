@@ -1,5 +1,6 @@
 import ".."
 import qs.components
+import qs.components.controls
 import qs.components.effects
 import qs.services
 import qs.config
@@ -13,12 +14,31 @@ StyledRect {
     property string icon
     property string label
     property string accent: "Secondary"
+    property real iconSize: Appearance.font.size.large
+    property real horizontalPadding: Appearance.padding.large
+    property real verticalPadding: Appearance.padding.normal
+    property string tooltip: ""
 
+    property bool hovered: false
     signal clicked
 
+    Component.onCompleted: {
+        hovered = toggleStateLayer.containsMouse;
+    }
+
+    Connections {
+        target: toggleStateLayer
+        function onContainsMouseChanged() {
+            const newHovered = toggleStateLayer.containsMouse;
+            if (hovered !== newHovered) {
+                hovered = newHovered;
+            }
+        }
+    }
+
     Layout.preferredWidth: implicitWidth + (toggleStateLayer.pressed ? Appearance.padding.normal * 2 : toggled ? Appearance.padding.small * 2 : 0)
-    implicitWidth: toggleBtnInner.implicitWidth + Appearance.padding.large * 2
-    implicitHeight: toggleBtnIcon.implicitHeight + Appearance.padding.normal * 2
+    implicitWidth: toggleBtnInner.implicitWidth + horizontalPadding * 2
+    implicitHeight: toggleBtnIcon.implicitHeight + verticalPadding * 2
 
     radius: toggled || toggleStateLayer.pressed ? Appearance.rounding.small : Math.min(width, height) / 2 * Math.min(1, Appearance.rounding.scale)
     color: toggled ? Colours.palette[`m3${accent.toLowerCase()}`] : Colours.palette[`m3${accent.toLowerCase()}Container`]
@@ -46,7 +66,7 @@ StyledRect {
             fill: root.toggled ? 1 : 0
             text: root.icon
             color: root.toggled ? Colours.palette[`m3on${root.accent}`] : Colours.palette[`m3on${root.accent}Container`]
-            font.pointSize: Appearance.font.size.large
+            font.pointSize: root.iconSize
 
             Behavior on fill {
                 Anim {}
@@ -77,6 +97,31 @@ StyledRect {
             duration: Appearance.anim.durations.expressiveFastSpatial
             easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
         }
+    }
+
+    // Tooltip - positioned absolutely, doesn't affect layout
+    Loader {
+        id: tooltipLoader
+        active: root.tooltip !== ""
+        asynchronous: true
+        z: 10000
+        width: 0
+        height: 0
+        sourceComponent: Component {
+            Tooltip {
+                target: root
+                text: root.tooltip
+            }
+        }
+        // Completely remove from layout
+        Layout.fillWidth: false
+        Layout.fillHeight: false
+        Layout.preferredWidth: 0
+        Layout.preferredHeight: 0
+        Layout.maximumWidth: 0
+        Layout.maximumHeight: 0
+        Layout.minimumWidth: 0
+        Layout.minimumHeight: 0
     }
 }
 

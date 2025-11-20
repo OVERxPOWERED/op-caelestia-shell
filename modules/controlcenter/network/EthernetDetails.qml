@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "../components"
 import qs.components
 import qs.components.controls
 import qs.components.effects
@@ -10,99 +11,108 @@ import qs.config
 import QtQuick
 import QtQuick.Layouts
 
-Item {
+DeviceDetails {
     id: root
 
     required property Session session
-    readonly property var device: session.ethernet.active
+    readonly property var ethernetDevice: session.ethernet.active
 
-    implicitWidth: layout.implicitWidth
-    implicitHeight: layout.implicitHeight
+    device: ethernetDevice
 
     Component.onCompleted: {
-        if (device && device.interface) {
-            Nmcli.getEthernetDeviceDetails(device.interface, () => {});
+        if (ethernetDevice && ethernetDevice.interface) {
+            Nmcli.getEthernetDeviceDetails(ethernetDevice.interface, () => {});
         }
     }
 
-    onDeviceChanged: {
-        if (device && device.interface) {
-            Nmcli.getEthernetDeviceDetails(device.interface, () => {});
+    onEthernetDeviceChanged: {
+        if (ethernetDevice && ethernetDevice.interface) {
+            Nmcli.getEthernetDeviceDetails(ethernetDevice.interface, () => {});
         } else {
             Nmcli.ethernetDeviceDetails = null;
         }
     }
 
-    ColumnLayout {
-        id: layout
+    headerComponent: Component {
+        ConnectionHeader {
+            icon: "cable"
+            title: root.ethernetDevice?.interface ?? qsTr("Unknown")
+        }
+    }
 
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        spacing: Appearance.spacing.normal
+    sections: [
+        Component {
+            ColumnLayout {
+                spacing: Appearance.spacing.normal
 
-            ConnectionHeader {
-                icon: "cable"
-                title: root.device?.interface ?? qsTr("Unknown")
-            }
+                SectionHeader {
+                    title: qsTr("Connection status")
+                    description: qsTr("Connection settings for this device")
+                }
 
-            SectionHeader {
-                title: qsTr("Connection status")
-                description: qsTr("Connection settings for this device")
-            }
-
-            SectionContainer {
-                ToggleRow {
-                    label: qsTr("Connected")
-                    checked: root.device?.connected ?? false
-                    toggle.onToggled: {
-                        if (checked) {
-                            Nmcli.connectEthernet(root.device?.connection || "", root.device?.interface || "", () => {});
-                        } else {
-                            if (root.device?.connection) {
-                                Nmcli.disconnectEthernet(root.device.connection, () => {});
+                SectionContainer {
+                    ToggleRow {
+                        label: qsTr("Connected")
+                        checked: root.ethernetDevice?.connected ?? false
+                        toggle.onToggled: {
+                            if (checked) {
+                                Nmcli.connectEthernet(root.ethernetDevice?.connection || "", root.ethernetDevice?.interface || "", () => {});
+                            } else {
+                                if (root.ethernetDevice?.connection) {
+                                    Nmcli.disconnectEthernet(root.ethernetDevice.connection, () => {});
+                                }
                             }
                         }
                     }
                 }
             }
+        },
+        Component {
+            ColumnLayout {
+                spacing: Appearance.spacing.normal
 
-            SectionHeader {
-                title: qsTr("Device properties")
-                description: qsTr("Additional information")
-            }
-
-            SectionContainer {
-                contentSpacing: Appearance.spacing.small / 2
-
-                PropertyRow {
-                    label: qsTr("Interface")
-                    value: root.device?.interface ?? qsTr("Unknown")
+                SectionHeader {
+                    title: qsTr("Device properties")
+                    description: qsTr("Additional information")
                 }
 
-                PropertyRow {
-                    showTopMargin: true
-                    label: qsTr("Connection")
-                    value: root.device?.connection || qsTr("Not connected")
-                }
+                SectionContainer {
+                    contentSpacing: Appearance.spacing.small / 2
 
-                PropertyRow {
-                    showTopMargin: true
-                    label: qsTr("State")
-                    value: root.device?.state ?? qsTr("Unknown")
-                }
-            }
+                    PropertyRow {
+                        label: qsTr("Interface")
+                        value: root.ethernetDevice?.interface ?? qsTr("Unknown")
+                    }
 
-            SectionHeader {
-                title: qsTr("Connection information")
-                description: qsTr("Network connection details")
-            }
+                    PropertyRow {
+                        showTopMargin: true
+                        label: qsTr("Connection")
+                        value: root.ethernetDevice?.connection || qsTr("Not connected")
+                    }
 
-            SectionContainer {
-                ConnectionInfoSection {
-                    deviceDetails: Nmcli.ethernetDeviceDetails
+                    PropertyRow {
+                        showTopMargin: true
+                        label: qsTr("State")
+                        value: root.ethernetDevice?.state ?? qsTr("Unknown")
+                    }
                 }
             }
-    }
+        },
+        Component {
+            ColumnLayout {
+                spacing: Appearance.spacing.normal
 
+                SectionHeader {
+                    title: qsTr("Connection information")
+                    description: qsTr("Network connection details")
+                }
+
+                SectionContainer {
+                    ConnectionInfoSection {
+                        deviceDetails: Nmcli.ethernetDeviceDetails
+                    }
+                }
+            }
+        }
+    ]
 }

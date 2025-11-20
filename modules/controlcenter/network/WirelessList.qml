@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "../components"
 import "."
 import qs.components
 import qs.components.controls
@@ -11,71 +12,16 @@ import qs.utils
 import QtQuick
 import QtQuick.Layouts
 
-ColumnLayout {
+DeviceList {
     id: root
 
     required property Session session
 
-    spacing: Appearance.spacing.small
-
-    RowLayout {
-        spacing: Appearance.spacing.smaller
-
-        StyledText {
-            text: qsTr("Settings")
-            font.pointSize: Appearance.font.size.large
-            font.weight: 500
-        }
-
-        Item {
-            Layout.fillWidth: true
-        }
-
-        ToggleButton {
-            toggled: Nmcli.wifiEnabled
-            icon: "wifi"
-            accent: "Tertiary"
-
-            onClicked: {
-                Nmcli.toggleWifi(null);
-            }
-        }
-
-        ToggleButton {
-            toggled: Nmcli.scanning
-            icon: "wifi_find"
-            accent: "Secondary"
-
-            onClicked: {
-                Nmcli.rescanWifi();
-            }
-        }
-
-        ToggleButton {
-            toggled: !root.session.network.active
-            icon: "settings"
-            accent: "Primary"
-
-            onClicked: {
-                if (root.session.network.active)
-                    root.session.network.active = null;
-                else {
-                    root.session.network.active = view.model.get(0)?.modelData ?? null;
-                }
-            }
-        }
-    }
-
-    RowLayout {
-        Layout.fillWidth: true
-        spacing: Appearance.spacing.small
-
-        StyledText {
-            text: qsTr("Networks (%1)").arg(Nmcli.networks.length)
-            font.pointSize: Appearance.font.size.large
-            font.weight: 500
-        }
-
+    title: qsTr("Networks (%1)").arg(Nmcli.networks.length)
+    description: qsTr("All available WiFi networks")
+    activeItem: session.network.active
+    
+    titleSuffix: Component {
         StyledText {
             visible: Nmcli.scanning
             text: qsTr("Scanning...")
@@ -84,43 +30,76 @@ ColumnLayout {
         }
     }
 
-    StyledText {
-        text: qsTr("All available WiFi networks")
-        color: Colours.palette.m3outline
+    model: ScriptModel {
+        values: [...Nmcli.networks].sort((a, b) => {
+            // Put active/connected network first
+            if (a.active !== b.active)
+                return b.active - a.active;
+            // Then sort by signal strength
+            return b.strength - a.strength;
+        })
     }
 
-    StyledListView {
-        id: view
+    headerComponent: Component {
+        RowLayout {
+            spacing: Appearance.spacing.smaller
 
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+            StyledText {
+                text: qsTr("Settings")
+                font.pointSize: Appearance.font.size.large
+                font.weight: 500
+            }
 
-        model: ScriptModel {
-            values: [...Nmcli.networks].sort((a, b) => {
-                // Put active/connected network first
-                if (a.active !== b.active)
-                    return b.active - a.active;
-                // Then sort by signal strength
-                return b.strength - a.strength;
-            })
+            Item {
+                Layout.fillWidth: true
+            }
+
+            ToggleButton {
+                toggled: Nmcli.wifiEnabled
+                icon: "wifi"
+                accent: "Tertiary"
+
+                onClicked: {
+                    Nmcli.toggleWifi(null);
+                }
+            }
+
+            ToggleButton {
+                toggled: Nmcli.scanning
+                icon: "wifi_find"
+                accent: "Secondary"
+
+                onClicked: {
+                    Nmcli.rescanWifi();
+                }
+            }
+
+            ToggleButton {
+                toggled: !root.session.network.active
+                icon: "settings"
+                accent: "Primary"
+
+                onClicked: {
+                    if (root.session.network.active)
+                        root.session.network.active = null;
+                    else {
+                        root.session.network.active = root.view.model.get(0)?.modelData ?? null;
+                    }
+                }
+            }
         }
+    }
 
-        spacing: Appearance.spacing.small / 2
-        clip: true
-
-        StyledScrollBar.vertical: StyledScrollBar {
-            flickable: view
-        }
-
-        delegate: StyledRect {
+    delegate: Component {
+        StyledRect {
             required property var modelData
 
             anchors.left: parent.left
             anchors.right: parent.right
 
-            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.session.network.active === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
+            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
             radius: Appearance.rounding.normal
-            border.width: root.session.network.active === modelData ? 1 : 0
+            border.width: root.activeItem === modelData ? 1 : 0
             border.color: Colours.palette.m3primary
 
             StateLayer {
@@ -210,6 +189,13 @@ ColumnLayout {
             }
 
             implicitHeight: rowLayout.implicitHeight + Appearance.padding.normal * 2
+        }
+    }
+
+    onItemSelected: function(item) {
+        session.network.active = item;
+        if (item && item.ssid) {
+            checkSavedProfileForNetwork(item.ssid);
         }
     }
 

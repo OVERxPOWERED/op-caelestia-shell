@@ -9,38 +9,6 @@ import qs.config
 import QtQuick
 import QtQuick.Layouts
 
-/**
- * DeviceDetails
- * 
- * A reusable base component for displaying device/network details with a standardized
- * structure. Provides a header, connection status section, and flexible sections for
- * device-specific information.
- * 
- * This component eliminates duplication across WirelessDetails, EthernetDetails, and Bluetooth Details
- * by providing a common structure while allowing full customization of sections.
- * 
- * Usage:
- * ```qml
- * DeviceDetails {
- *     session: root.session
- *     device: session.network.active
- *     headerComponent: Component {
- *         ConnectionHeader {
- *             icon: "wifi"
- *             title: device?.ssid ?? ""
- *         }
- *     }
- *     sections: [
- *         Component {
- *             // Connection status section
- *         },
- *         Component {
- *             // Properties section
- *         }
- *     ]
- * }
- * ```
- */
 Item {
     id: root
 

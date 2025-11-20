@@ -10,40 +10,6 @@ import Quickshell
 import QtQuick
 import QtQuick.Layouts
 
-/**
- * DeviceList
- * 
- * A reusable base component for displaying lists of devices/networks with a standardized
- * structure. Provides a header with action buttons, title/subtitle, and a scrollable list
- * with customizable delegates.
- * 
- * This component eliminates duplication across WirelessList, EthernetList, and Bluetooth DeviceList
- * by providing a common structure while allowing full customization of headers and delegates.
- * 
- * Usage:
- * ```qml
- * DeviceList {
- *     session: root.session
- *     title: qsTr("Networks (%1)").arg(Nmcli.networks.length)
- *     description: qsTr("All available WiFi networks")
- *     model: ScriptModel {
- *         values: [...Nmcli.networks].sort(...)
- *     }
- *     activeItem: session.network.active
- *     onItemSelected: (item) => {
- *         session.network.active = item;
- *     }
- *     headerComponent: Component {
- *         RowLayout {
- *             // Custom header buttons
- *         }
- *     }
- *     delegate: Component {
- *         // Custom delegate for each item
- *     }
- * }
- * ```
- */
 ColumnLayout {
     id: root
 

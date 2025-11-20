@@ -18,15 +18,10 @@ Item {
 
     required property Session session
 
-    // Clock
     property bool clockShowIcon: Config.bar.clock.showIcon ?? true
-
-    // Bar Behavior
     property bool persistent: Config.bar.persistent ?? true
     property bool showOnHover: Config.bar.showOnHover ?? true
     property int dragThreshold: Config.bar.dragThreshold ?? 20
-
-    // Status Icons
     property bool showAudio: Config.bar.status.showAudio ?? true
     property bool showMicrophone: Config.bar.status.showMicrophone ?? true
     property bool showKbLayout: Config.bar.status.showKbLayout ?? false
@@ -34,25 +29,17 @@ Item {
     property bool showBluetooth: Config.bar.status.showBluetooth ?? true
     property bool showBattery: Config.bar.status.showBattery ?? true
     property bool showLockStatus: Config.bar.status.showLockStatus ?? true
-
-    // Tray Settings
     property bool trayBackground: Config.bar.tray.background ?? false
     property bool trayCompact: Config.bar.tray.compact ?? false
     property bool trayRecolour: Config.bar.tray.recolour ?? false
-
-    // Workspaces
     property int workspacesShown: Config.bar.workspaces.shown ?? 5
     property bool workspacesActiveIndicator: Config.bar.workspaces.activeIndicator ?? true
     property bool workspacesOccupiedBg: Config.bar.workspaces.occupiedBg ?? false
     property bool workspacesShowWindows: Config.bar.workspaces.showWindows ?? false
     property bool workspacesPerMonitor: Config.bar.workspaces.perMonitorWorkspaces ?? true
-
-    // Scroll Actions
     property bool scrollWorkspaces: Config.bar.scrollActions.workspaces ?? true
     property bool scrollVolume: Config.bar.scrollActions.volume ?? true
     property bool scrollBrightness: Config.bar.scrollActions.brightness ?? true
-
-    // Popouts
     property bool popoutActiveWindow: Config.bar.popouts.activeWindow ?? true
     property bool popoutTray: Config.bar.popouts.tray ?? true
     property bool popoutStatusIcons: Config.bar.popouts.statusIcons ?? true
@@ -60,7 +47,6 @@ Item {
     anchors.fill: parent
 
     Component.onCompleted: {
-        // Update entries
         if (Config.bar.entries) {
             entriesModel.clear();
             for (let i = 0; i < Config.bar.entries.length; i++) {
@@ -74,15 +60,10 @@ Item {
     }
 
     function saveConfig(entryIndex, entryEnabled) {
-        // Update clock setting
         Config.bar.clock.showIcon = root.clockShowIcon;
-
-        // Update bar behavior
         Config.bar.persistent = root.persistent;
         Config.bar.showOnHover = root.showOnHover;
         Config.bar.dragThreshold = root.dragThreshold;
-
-        // Update status icons
         Config.bar.status.showAudio = root.showAudio;
         Config.bar.status.showMicrophone = root.showMicrophone;
         Config.bar.status.showKbLayout = root.showKbLayout;
@@ -90,35 +71,24 @@ Item {
         Config.bar.status.showBluetooth = root.showBluetooth;
         Config.bar.status.showBattery = root.showBattery;
         Config.bar.status.showLockStatus = root.showLockStatus;
-
-        // Update tray settings
         Config.bar.tray.background = root.trayBackground;
         Config.bar.tray.compact = root.trayCompact;
         Config.bar.tray.recolour = root.trayRecolour;
-
-        // Update workspaces
         Config.bar.workspaces.shown = root.workspacesShown;
         Config.bar.workspaces.activeIndicator = root.workspacesActiveIndicator;
         Config.bar.workspaces.occupiedBg = root.workspacesOccupiedBg;
         Config.bar.workspaces.showWindows = root.workspacesShowWindows;
         Config.bar.workspaces.perMonitorWorkspaces = root.workspacesPerMonitor;
-
-        // Update scroll actions
         Config.bar.scrollActions.workspaces = root.scrollWorkspaces;
         Config.bar.scrollActions.volume = root.scrollVolume;
         Config.bar.scrollActions.brightness = root.scrollBrightness;
-
-        // Update popouts
         Config.bar.popouts.activeWindow = root.popoutActiveWindow;
         Config.bar.popouts.tray = root.popoutTray;
         Config.bar.popouts.statusIcons = root.popoutStatusIcons;
 
-        // Update entries from the model (same approach as clock - use provided value if available)
         const entries = [];
         for (let i = 0; i < entriesModel.count; i++) {
             const entry = entriesModel.get(i);
-            // If this is the entry being updated, use the provided value (same as clock toggle reads from switch)
-            // Otherwise use the value from the model
             let enabled = entry.enabled;
             if (entryIndex !== undefined && i === entryIndex) {
                 enabled = entryEnabled;
@@ -129,8 +99,6 @@ Item {
             });
         }
         Config.bar.entries = entries;
-
-        // Persist changes to disk
         Config.save();
     }
 

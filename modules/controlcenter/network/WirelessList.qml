@@ -33,10 +33,8 @@ DeviceList {
 
     model: ScriptModel {
         values: [...Nmcli.networks].sort((a, b) => {
-            // Put active/connected network first
             if (a.active !== b.active)
                 return b.active - a.active;
-            // Then sort by signal strength
             return b.strength - a.strength;
         })
     }
@@ -114,7 +112,6 @@ DeviceList {
             StateLayer {
                 function onClicked(): void {
                     root.session.network.active = modelData;
-                    // Check if we need to refresh saved connections when selecting a network
                     if (modelData && modelData.ssid) {
                         root.checkSavedProfileForNetwork(modelData.ssid);
                     }

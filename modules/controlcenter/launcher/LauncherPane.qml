@@ -62,26 +62,20 @@ Item {
 
         const appId = root.selectedApp.id || root.selectedApp.entry?.id;
 
-        // Create a new array to ensure change detection
         const hiddenApps = Config.launcher.hiddenApps ? [...Config.launcher.hiddenApps] : [];
 
         if (isHidden) {
-            // Add to hiddenApps if not already there
             if (!hiddenApps.includes(appId)) {
                 hiddenApps.push(appId);
             }
         } else {
-            // Remove from hiddenApps
             const index = hiddenApps.indexOf(appId);
             if (index !== -1) {
                 hiddenApps.splice(index, 1);
             }
         }
 
-        // Update Config
         Config.launcher.hiddenApps = hiddenApps;
-
-        // Persist changes to disk
         Config.save();
     }
 
@@ -90,15 +84,13 @@ Item {
         id: allAppsDb
 
         path: `${Paths.state}/apps.sqlite`
-        entries: DesktopEntries.applications.values  // No filter - show all apps
+        entries: DesktopEntries.applications.values
     }
 
     property string searchText: ""
 
     function filterApps(search: string): list<var> {
-        // If search is empty, return all apps directly
         if (!search || search.trim() === "") {
-            // Convert QQmlListProperty to array
             const apps = [];
             for (let i = 0; i < allAppsDb.apps.length; i++) {
                 apps.push(allAppsDb.apps[i]);
@@ -110,7 +102,6 @@ Item {
             return [];
         }
 
-        // Prepare apps for fuzzy search
         const preparedApps = [];
         for (let i = 0; i < allAppsDb.apps.length; i++) {
             const app = allAppsDb.apps[i];
@@ -121,14 +112,12 @@ Item {
             });
         }
 
-        // Perform fuzzy search
         const results = Fuzzy.go(search, preparedApps, {
             all: true,
             keys: ["name"],
             scoreFn: r => r[0].score
         });
 
-        // Return sorted by score (highest first)
         return results
             .sort((a, b) => b._score - a._score)
             .map(r => r.obj._item);
@@ -192,7 +181,6 @@ Item {
                         if (root.session.launcher.active) {
                             root.session.launcher.active = null;
                         } else {
-                            // Toggle to show settings - if there are apps, select the first one, otherwise show settings
                             if (root.filteredApps.length > 0) {
                                 root.session.launcher.active = root.filteredApps[0];
                             }
@@ -302,13 +290,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 asynchronous: true
-                active: {
-                    // Lazy load: activate when left pane is loaded
-                    // The ListView will load asynchronously, and search will work because filteredApps
-                    // is updated regardless of whether the ListView is loaded
-                    // Access loader through parent - this will be set when component loads
-                    return true;
-                }
+                active: true
 
                 sourceComponent: StyledListView {
                     id: appsListView
@@ -418,11 +400,9 @@ Item {
                     sourceComponent: rightLauncherPane.targetComponent
                     active: true
 
-                    // Expose displayedApp to loaded components
                     property var displayedApp: rightLauncherPane.displayedApp
 
                     onItemChanged: {
-                        // Ensure displayedApp is set when item is created (for async loading)
                         if (item && rightLauncherPane.pane && rightLauncherPane.displayedApp !== rightLauncherPane.pane) {
                             rightLauncherPane.displayedApp = rightLauncherPane.pane;
                         }
@@ -508,12 +488,10 @@ Item {
             id: appDetailsLayout
             anchors.fill: parent
 
-            // Get displayedApp from parent Loader (the Loader has displayedApp property we set)
             readonly property var displayedApp: parent && parent.displayedApp !== undefined ? parent.displayedApp : null
 
             spacing: Appearance.spacing.normal
 
-            // Show SettingsHeader when no app is selected, or show app icon + title when app is selected
             SettingsHeader {
                 Layout.leftMargin: Appearance.padding.large * 2
                 Layout.rightMargin: Appearance.padding.large * 2
@@ -523,7 +501,6 @@ Item {
                 title: qsTr("Launcher Applications")
             }
 
-            // App icon and title display (shown when app is selected)
             Item {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.leftMargin: Appearance.padding.large * 2

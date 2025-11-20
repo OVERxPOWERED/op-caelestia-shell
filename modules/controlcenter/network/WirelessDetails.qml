@@ -27,7 +27,6 @@ DeviceDetails {
     }
 
     onNetworkChanged: {
-        // Restart timer when network changes
         connectionUpdateTimer.stop();
         if (network && network.ssid) {
             connectionUpdateTimer.start();
@@ -48,11 +47,9 @@ DeviceDetails {
             updateDeviceDetails();
         }
         function onWirelessDeviceDetailsChanged() {
-            // When details are updated, check if we should stop the timer
             if (network && network.ssid) {
                 const isActive = network.active || (Nmcli.active && Nmcli.active.ssid === network.ssid);
                 if (isActive && Nmcli.wirelessDeviceDetails && Nmcli.wirelessDeviceDetails !== null) {
-                    // We have details for the active network, stop the timer
                     connectionUpdateTimer.stop();
                 }
             }
@@ -65,22 +62,16 @@ DeviceDetails {
         repeat: true
         running: network && network.ssid
         onTriggered: {
-            // Periodically check if network becomes active and update details
             if (network) {
                 const isActive = network.active || (Nmcli.active && Nmcli.active.ssid === network.ssid);
                 if (isActive) {
-                    // Network is active - check if we have details
                     if (!Nmcli.wirelessDeviceDetails || Nmcli.wirelessDeviceDetails === null) {
-                        // Network is active but we don't have details yet, fetch them
                         Nmcli.getWirelessDeviceDetails("", () => {
-                        // After fetching, check if we got details - if not, timer will try again
                         });
                     } else {
-                        // We have details, can stop the timer
                         connectionUpdateTimer.stop();
                     }
                 } else {
-                    // Network is not active, clear details
                     if (Nmcli.wirelessDeviceDetails !== null) {
                         Nmcli.wirelessDeviceDetails = null;
                     }

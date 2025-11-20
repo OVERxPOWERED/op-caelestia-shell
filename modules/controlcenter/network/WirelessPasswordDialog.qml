@@ -19,7 +19,6 @@ Item {
     required property Session session
 
     readonly property var network: {
-        // Prefer pendingNetwork, then active network
         if (session.network.pendingNetwork) {
             return session.network.pendingNetwork;
         }
@@ -157,12 +156,10 @@ Item {
 
                 focus: true
                 Keys.onPressed: event => {
-                    // Ensure we have focus when receiving keyboard input
                     if (!activeFocus) {
                         forceActiveFocus();
                     }
 
-                    // Clear error when user starts typing
                     if (connectButton.hasError && event.text && event.text.length > 0) {
                         connectButton.hasError = false;
                     }
@@ -191,7 +188,6 @@ Item {
                     target: root.session.network
                     function onShowPasswordDialogChanged(): void {
                         if (root.session.network.showPasswordDialog) {
-                            // Use callLater to ensure focus happens after dialog is fully rendered
                             Qt.callLater(() => {
                                 passwordContainer.forceActiveFocus();
                                 passwordContainer.passwordBuffer = "";
@@ -205,7 +201,6 @@ Item {
                     target: root
                     function onVisibleChanged(): void {
                         if (root.visible) {
-                            // Use callLater to ensure focus happens after dialog is fully rendered
                             Qt.callLater(() => {
                                 passwordContainer.forceActiveFocus();
                             });
@@ -383,46 +378,36 @@ Item {
                             return;
                         }
 
-                        // Clear any previous error
                         hasError = false;
-
-                        // Set connecting state
                         connecting = true;
                         enabled = false;
                         text = qsTr("Connecting...");
 
-                        // Connect to network
                         NetworkConnection.connectWithPassword(root.network, password, result => {
-                            if (result && result.success)
-                            // Connection successful, monitor will handle the rest
-                            {} else if (result && result.needsPassword) {
-                                // Shouldn't happen since we provided password
+                            if (result && result.success) {
+                            } else if (result && result.needsPassword) {
                                 connectionMonitor.stop();
                                 connecting = false;
                                 hasError = true;
                                 enabled = true;
                                 text = qsTr("Connect");
                                 passwordContainer.passwordBuffer = "";
-                                // Delete the failed connection
                                 if (root.network && root.network.ssid) {
                                     Nmcli.forgetNetwork(root.network.ssid);
                                 }
                             } else {
-                                // Connection failed immediately - show error
                                 connectionMonitor.stop();
                                 connecting = false;
                                 hasError = true;
                                 enabled = true;
                                 text = qsTr("Connect");
                                 passwordContainer.passwordBuffer = "";
-                                // Delete the failed connection
                                 if (root.network && root.network.ssid) {
                                     Nmcli.forgetNetwork(root.network.ssid);
                                 }
                             }
                         });
 
-                        // Start monitoring connection
                         connectionMonitor.start();
                     }
                 }
@@ -435,19 +420,14 @@ Item {
             return;
         }
 
-        // Check if we're connected to the target network (case-insensitive SSID comparison)
         const isConnected = root.network && Nmcli.active && Nmcli.active.ssid && Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
 
         if (isConnected) {
-            // Successfully connected - give it a moment for network list to update
-            // Use Timer for actual delay
             connectionSuccessTimer.start();
             return;
         }
 
-        // Check for connection failures - if pending connection was cleared but we're not connected
         if (Nmcli.pendingConnection === null && connectButton.connecting) {
-            // Wait a bit more before giving up (allow time for connection to establish)
             if (connectionMonitor.repeatCount > 10) {
                 connectionMonitor.stop();
                 connectButton.connecting = false;
@@ -455,7 +435,6 @@ Item {
                 connectButton.enabled = true;
                 connectButton.text = qsTr("Connect");
                 passwordContainer.passwordBuffer = "";
-                // Delete the failed connection
                 if (root.network && root.network.ssid) {
                     Nmcli.forgetNetwork(root.network.ssid);
                 }
@@ -486,7 +465,6 @@ Item {
         id: connectionSuccessTimer
         interval: 500
         onTriggered: {
-            // Double-check connection is still active
             if (root.visible && Nmcli.active && Nmcli.active.ssid) {
                 const stillConnected = Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
                 if (stillConnected) {
@@ -514,7 +492,6 @@ Item {
                 connectButton.enabled = true;
                 connectButton.text = qsTr("Connect");
                 passwordContainer.passwordBuffer = "";
-                // Delete the failed connection
                 Nmcli.forgetNetwork(ssid);
             }
         }

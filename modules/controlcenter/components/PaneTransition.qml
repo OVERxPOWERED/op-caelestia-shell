@@ -3,26 +3,17 @@ pragma ComponentBehavior: Bound
 import qs.config
 import QtQuick
 
-// Reusable pane transition animation component
-// Provides standard fade-out/scale-down → update → fade-in/scale-up animation
-// Used when switching between detail/settings views in panes
 SequentialAnimation {
     id: root
 
-    // The Loader element to animate
     required property Item target
-    
-    // Optional list of PropertyActions to execute during the transition
-    // These typically update the component being displayed
     property list<PropertyAction> propertyActions
     
-    // Animation parameters (with sensible defaults)
     property real scaleFrom: 1.0
     property real scaleTo: 0.8
     property real opacityFrom: 1.0
     property real opacityTo: 0.0
     
-    // Fade out and scale down
     ParallelAnimation {
         NumberAnimation {
             target: root.target
@@ -45,8 +36,6 @@ SequentialAnimation {
         }
     }
     
-    // Execute property actions (component switching, state updates, etc.)
-    // This is where the component change happens while invisible
     ScriptAction {
         script: {
             for (let i = 0; i < root.propertyActions.length; i++) {
@@ -58,7 +47,6 @@ SequentialAnimation {
         }
     }
     
-    // Fade in and scale up
     ParallelAnimation {
         NumberAnimation {
             target: root.target

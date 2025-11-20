@@ -15,19 +15,14 @@ RowLayout {
     property Component leftContent: null
     property Component rightContent: null
     
-    // Left pane configuration
     property real leftWidthRatio: 0.4
     property int leftMinimumWidth: 420
     property var leftLoaderProperties: ({})
-    
-    // Right pane configuration  
     property var rightLoaderProperties: ({})
     
-    // Expose loaders for customization (access via splitLayout.leftLoader or splitLayout.rightLoader)
     property alias leftLoader: leftLoader
     property alias rightLoader: rightLoader
 
-    // Left pane
     Item {
         id: leftPane
 
@@ -57,7 +52,6 @@ RowLayout {
                 asynchronous: true
                 sourceComponent: root.leftContent
 
-                // Apply any additional properties from leftLoaderProperties
                 Component.onCompleted: {
                     for (const key in root.leftLoaderProperties) {
                         leftLoader[key] = root.leftLoaderProperties[key];
@@ -74,7 +68,6 @@ RowLayout {
         }
     }
 
-    // Right pane
     Item {
         id: rightPane
 
@@ -101,7 +94,6 @@ RowLayout {
                 asynchronous: true
                 sourceComponent: root.rightContent
 
-                // Apply any additional properties from rightLoaderProperties
                 Component.onCompleted: {
                     for (const key in root.rightLoaderProperties) {
                         rightLoader[key] = root.rightLoaderProperties[key];

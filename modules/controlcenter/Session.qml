@@ -11,7 +11,6 @@ QtObject {
     property int activeIndex: 0
     property bool navExpanded: false
 
-    // Pane-specific state objects
     readonly property BluetoothState bt: BluetoothState {}
     readonly property NetworkState network: NetworkState {}
     readonly property EthernetState ethernet: EthernetState {}

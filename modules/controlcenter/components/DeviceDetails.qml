@@ -18,10 +18,7 @@ Item {
     property Component headerComponent: null
     property list<Component> sections: []
     
-    // Optional: Custom content to insert after header but before sections
     property Component topContent: null
-    
-    // Optional: Custom content to insert after all sections
     property Component bottomContent: null
 
     implicitWidth: layout.implicitWidth
@@ -35,7 +32,6 @@ Item {
         anchors.top: parent.top
         spacing: Appearance.spacing.normal
 
-        // Header component (e.g., ConnectionHeader or SettingsHeader)
         Loader {
             id: headerLoader
             
@@ -44,7 +40,6 @@ Item {
             visible: root.headerComponent !== null
         }
 
-        // Top content (optional)
         Loader {
             id: topContentLoader
             
@@ -53,7 +48,6 @@ Item {
             visible: root.topContent !== null
         }
 
-        // Sections
         Repeater {
             model: root.sections
             
@@ -65,7 +59,6 @@ Item {
             }
         }
 
-        // Bottom content (optional)
         Loader {
             id: bottomContentLoader
             

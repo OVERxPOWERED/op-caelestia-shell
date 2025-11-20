@@ -19,7 +19,6 @@ ClippingRectangle {
 
     required property Session session
 
-    // Expose initialOpeningComplete so parent can check if opening animation is done
     readonly property bool initialOpeningComplete: layout.initialOpeningComplete
 
     color: "transparent"
@@ -27,7 +26,6 @@ ClippingRectangle {
     focus: false
     activeFocusOnTab: false
 
-    // Clear focus when clicking anywhere in the panes area
     MouseArea {
         anchors.fill: parent
         z: -1
@@ -37,7 +35,6 @@ ClippingRectangle {
         }
     }
 
-    // Clear focus when switching panes
     Connections {
         target: root.session
 
@@ -54,8 +51,6 @@ ClippingRectangle {
         clip: true
 
         property bool animationComplete: true
-        // Track if initial opening animation has completed
-        // During initial opening, only the active pane loads to avoid hiccups
         property bool initialOpeningComplete: false
 
         Timer {
@@ -66,8 +61,6 @@ ClippingRectangle {
             }
         }
 
-        // Timer to detect when initial opening animation completes
-        // Uses large duration to cover both normal and detached opening cases
         Timer {
             id: initialOpeningTimer
             interval: Appearance.anim.durations.large
@@ -94,7 +87,6 @@ ClippingRectangle {
         Connections {
             target: root.session
             function onActiveIndexChanged(): void {
-                // Mark animation as incomplete and start delay timer
                 layout.animationComplete = false;
                 animationDelayTimer.restart();
             }
@@ -110,28 +102,21 @@ ClippingRectangle {
         implicitWidth: root.width
         implicitHeight: root.height
 
-        // Track if this pane has ever been loaded to enable caching
         property bool hasBeenLoaded: false
         
-        // Function to compute if this pane should be active
         function updateActive(): void {
             const diff = Math.abs(root.session.activeIndex - pane.paneIndex);
             const isActivePane = diff === 0;
             let shouldBeActive = false;
             
-            // During initial opening animation, only load the active pane
-            // This prevents hiccups from multiple panes loading simultaneously
             if (!layout.initialOpeningComplete) {
                 shouldBeActive = isActivePane;
             } else {
-                // After initial opening, allow current and adjacent panes for smooth transitions
                 if (diff <= 1) {
                     shouldBeActive = true;
                 } else if (pane.hasBeenLoaded) {
-                    // For distant panes that have been loaded before, keep them active to preserve cached data
                     shouldBeActive = true;
                 } else {
-                    // For new distant panes, wait until animation completes to avoid heavy loading during transition
                     shouldBeActive = layout.animationComplete;
                 }
             }
@@ -152,12 +137,10 @@ ClippingRectangle {
             }
             
             onActiveChanged: {
-                // Mark pane as loaded when it becomes active
                 if (active && !pane.hasBeenLoaded) {
                     pane.hasBeenLoaded = true;
                 }
                 
-                // Load the component with initial properties when activated
                 if (active && !item) {
                     loader.setSource(pane.componentPath, {
                         "session": root.session
@@ -166,7 +149,6 @@ ClippingRectangle {
             }
             
             onItemChanged: {
-                // Mark pane as loaded when item is created
                 if (item) {
                     pane.hasBeenLoaded = true;
                 }

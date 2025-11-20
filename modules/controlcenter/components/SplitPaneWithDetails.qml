@@ -19,7 +19,6 @@ Item {
     property var activeItem: null
     property var paneIdGenerator: function(item) { return item ? String(item) : ""; }
     
-    // Optional: Additional component to overlay on top (e.g., password dialogs)
     property Component overlayComponent: null
 
     SplitPaneLayout {
@@ -82,7 +81,6 @@ Item {
         }
     }
 
-    // Overlay component (e.g., password dialogs)
     Loader {
         id: overlayLoader
         

@@ -22,7 +22,6 @@ Item {
 
     required property Session session
 
-    // Appearance settings
     property real animDurationsScale: Config.appearance.anim.durations.scale ?? 1
     property string fontFamilyMaterial: Config.appearance.font.family.material ?? "Material Symbols Rounded"
     property string fontFamilyMono: Config.appearance.font.family.mono ?? "CaskaydiaCove NF"
@@ -37,7 +36,6 @@ Item {
     property real borderRounding: Config.border.rounding ?? 1
     property real borderThickness: Config.border.thickness ?? 1
 
-    // Background settings
     property bool desktopClockEnabled: Config.background.desktopClock.enabled ?? false
     property bool backgroundEnabled: Config.background.enabled ?? true
     property bool visualiserEnabled: Config.background.visualiser.enabled ?? false
@@ -127,13 +125,8 @@ Item {
                         anchors.fill: parent
                         asynchronous: true
                         active: {
-                            // Lazy load: only activate when:
-                            // 1. Right pane is loaded AND
-                            // 2. Appearance pane is active (index 3) or adjacent (for smooth transitions)
-                            // This prevents loading all wallpapers when control center opens but appearance pane isn't visible
                             const isActive = root.session.activeIndex === 3;
                             const isAdjacent = Math.abs(root.session.activeIndex - 3) === 1;
-                            // Access loader through SplitPaneLayout's rightLoader
                             const splitLayout = root.children[0];
                             const loader = splitLayout && splitLayout.rightLoader ? splitLayout.rightLoader : null;
                             const shouldActivate = loader && loader.item !== null && (isActive || isAdjacent);
@@ -150,7 +143,6 @@ Item {
                         onActiveChanged: {
                             if (!active && wallpaperLoader.item) {
                                 const container = wallpaperLoader.item;
-                                // Access timer through wallpaperGrid
                                 if (container && container.wallpaperGrid) {
                                     const grid = container.wallpaperGrid;
                                     if (grid.imageUpdateTimer) {
@@ -186,20 +178,17 @@ Item {
                                 }
                             }
                             
-                            // Lazy loading model: loads one image at a time, only when touching bottom
-                            // This prevents GridView from creating all delegates at once
                             QtObject {
                                 id: lazyModel
                                 
                                 property var sourceList: null
-                                property int loadedCount: 0  // Total items available to load
-                                property int visibleCount: 0  // Items actually exposed to GridView (only visible + buffer)
+                                property int loadedCount: 0
+                                property int visibleCount: 0
                                 property int totalCount: 0
                                 
                                 function initialize(list) {
                                     sourceList = list;
                                     totalCount = list ? list.length : 0;
-                                    // Start with enough items to fill the initial viewport (~3 rows)
                                     const initialRows = 3;
                                     const cols = wallpaperGrid.columnsCount > 0 ? wallpaperGrid.columnsCount : 3;
                                     const initialCount = Math.min(initialRows * cols, totalCount);
@@ -216,7 +205,6 @@ Item {
                                 }
                                 
                                 function updateVisibleCount(neededCount) {
-                                    // Always round up to complete rows to avoid incomplete rows in the grid
                                     const cols = wallpaperGrid.columnsCount > 0 ? wallpaperGrid.columnsCount : 1;
                                     const maxVisible = Math.min(neededCount, loadedCount);
                                     const rows = Math.ceil(maxVisible / cols);
@@ -237,7 +225,6 @@ Item {
                                 readonly property int minCellWidth: 200 + Appearance.spacing.normal
                                 readonly property int columnsCount: Math.max(1, Math.floor(parent.width / minCellWidth))
                                 
-                                // Height based on visible items only - prevents GridView from creating all delegates
                                 readonly property int layoutPreferredHeight: {
                                     if (!lazyModel || lazyModel.visibleCount === 0 || columnsCount === 0) {
                                         return 0;
@@ -255,7 +242,6 @@ Item {
                                 topMargin: 0
                                 bottomMargin: 0
 
-                                // Use ListModel for incremental updates to prevent flashing when new items are added
                                 ListModel {
                                     id: wallpaperListModel
                                 }
@@ -270,7 +256,6 @@ Item {
                                         const newCount = lazyModel.visibleCount;
                                         const currentCount = wallpaperListModel.count;
                                         
-                                        // Only append new items - never remove or replace existing ones
                                         if (newCount > currentCount) {
                                             const flickable = wallpaperGridContainer.parentFlickable;
                                             const oldScrollY = flickable ? flickable.contentY : 0;
@@ -279,7 +264,6 @@ Item {
                                                 wallpaperListModel.append({modelData: lazyModel.sourceList[i]});
                                             }
                                             
-                                            // Preserve scroll position after model update
                                             if (flickable) {
                                                 Qt.callLater(function() {
                                                     if (Math.abs(flickable.contentY - oldScrollY) < 1) {
@@ -382,7 +366,6 @@ Item {
                                         const neededCount = Math.min((neededBottomRow + 1) * wallpaperGrid.columnsCount, lazyModel.loadedCount);
                                         lazyModel.updateVisibleCount(neededCount);
                                         
-                                        // Load more when we're within 1 row of running out of loaded items
                                         const loadedRows = Math.ceil(lazyModel.loadedCount / wallpaperGrid.columnsCount);
                                         const rowsRemaining = loadedRows - (bottomRow + 1);
                                         
@@ -434,7 +417,6 @@ Item {
                                         const neededCount = Math.min((neededBottomRow + 1) * wallpaperGrid.columnsCount, lazyModel.loadedCount);
                                         lazyModel.updateVisibleCount(neededCount);
                                         
-                                        // Load more when we're within 1 row of running out of loaded items
                                         const loadedRows = Math.ceil(lazyModel.loadedCount / wallpaperGrid.columnsCount);
                                         const rowsRemaining = loadedRows - (bottomRow + 1);
                                         
@@ -450,8 +432,6 @@ Item {
                                     }
                                 }
                                 
-                                
-                                // Parent Flickable handles scrolling
                                 interactive: false
 
 
@@ -786,11 +766,9 @@ Item {
                                     function onClicked(): void {
                                         const variant = modelData.variant;
 
-                                        // Optimistic update - set immediately for responsive UI
                                         Schemes.currentVariant = variant;
                                         Quickshell.execDetached(["caelestia", "scheme", "set", "-v", variant]);
 
-                                        // Reload after a delay to confirm changes
                                         Qt.callLater(() => {
                                             reloadTimer.restart();
                                         });
@@ -873,11 +851,9 @@ Item {
                                         const flavour = modelData.flavour;
                                         const schemeKey = `${name} ${flavour}`;
 
-                                        // Optimistic update - set immediately for responsive UI
                                         Schemes.currentScheme = schemeKey;
                                         Quickshell.execDetached(["caelestia", "scheme", "set", "-n", name, "-f", flavour]);
 
-                                        // Reload after a delay to confirm changes
                                         Qt.callLater(() => {
                                             reloadTimer.restart();
                                         });

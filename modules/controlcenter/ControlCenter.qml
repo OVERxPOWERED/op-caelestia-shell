@@ -97,6 +97,5 @@ Item {
         }
     }
     
-    // Expose initialOpeningComplete for NavRail to prevent tab switching during opening animation
     readonly property bool initialOpeningComplete: panes.initialOpeningComplete
 }

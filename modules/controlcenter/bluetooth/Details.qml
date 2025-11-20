@@ -440,7 +440,6 @@ StyledFlickable {
         }
     }
 
-    // FAB Menu (positioned absolutely relative to flickable)
     ColumnLayout {
         anchors.right: fabRoot.right
         anchors.bottom: fabRoot.top

@@ -45,7 +45,6 @@ Item {
                     anchors.right: parent.right
                     spacing: Appearance.spacing.normal
 
-                    // Network header above the collapsible sections
                     RowLayout {
                         Layout.fillWidth: true
                         spacing: Appearance.spacing.smaller
@@ -102,7 +101,6 @@ Item {
                                     root.session.ethernet.active = null;
                                     root.session.network.active = null;
                                 } else {
-                                    // Toggle to show settings - prefer ethernet if available, otherwise wireless
                                     if (Nmcli.ethernetDevices.length > 0) {
                                         root.session.ethernet.active = Nmcli.ethernetDevices[0];
                                     } else if (Nmcli.networks.length > 0) {

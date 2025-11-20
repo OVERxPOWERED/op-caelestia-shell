@@ -28,7 +28,6 @@ ColumnLayout {
 
     spacing: Appearance.spacing.small
 
-    // Header with action buttons (optional)
     Loader {
         id: headerLoader
         
@@ -37,7 +36,6 @@ ColumnLayout {
         visible: root.headerComponent !== null && root.showHeader
     }
 
-    // Title and description row
     RowLayout {
         Layout.fillWidth: true
         Layout.topMargin: root.headerComponent ? 0 : 0
@@ -61,10 +59,8 @@ ColumnLayout {
         }
     }
     
-    // Expose view for access from parent components
     property alias view: view
 
-    // Description text
     StyledText {
         visible: root.description !== ""
         Layout.fillWidth: true
@@ -72,20 +68,18 @@ ColumnLayout {
         color: Colours.palette.m3outline
     }
 
-    // List view
     StyledListView {
         id: view
 
         Layout.fillWidth: true
-        // Use contentHeight to show all items without estimation
         implicitHeight: contentHeight
 
         model: root.model
         delegate: root.delegate
 
         spacing: Appearance.spacing.small / 2
-        interactive: false  // Disable individual scrolling - parent pane handles it
-        clip: false  // Don't clip - let parent handle scrolling
+        interactive: false
+        clip: false
     }
 }
 

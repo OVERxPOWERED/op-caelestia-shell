@@ -40,7 +40,6 @@ Item {
                     anchors.right: parent.right
                     spacing: Appearance.spacing.normal
 
-                // Audio header above the collapsible sections
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: Appearance.spacing.smaller

@@ -138,43 +138,10 @@ DeviceList {
                         id: icon
 
                         anchors.centerIn: parent
-                        text: Icons.getNetworkIcon(modelData.strength)
+                        text: Icons.getNetworkIcon(modelData.strength, modelData.isSecure)
                         font.pointSize: Appearance.font.size.large
                         fill: modelData.active ? 1 : 0
                         color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
-                    }
-
-                    StyledRect {
-                        id: lockBadge
-
-                        visible: modelData.isSecure
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        anchors.margins: -Appearance.padding.smaller / 2
-
-                        implicitWidth: lockIconSize + Appearance.padding.smaller
-                        implicitHeight: lockIconSize + Appearance.padding.smaller
-                        radius: Appearance.rounding.full
-                        color: Colours.palette.m3secondaryContainer
-
-                        readonly property real lockIconSize: lockIcon.implicitWidth
-
-                        Elevation {
-                            anchors.fill: parent
-                            radius: parent.radius
-                            z: -1
-                            level: 2
-                        }
-
-                        MaterialIcon {
-                            id: lockIcon
-
-                            anchors.centerIn: parent
-                            text: "lock"
-                            font.pointSize: Appearance.font.size.small
-                            fill: 1
-                            color: Colours.palette.m3onSurface
-                        }
                     }
                 }
 

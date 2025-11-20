@@ -6,6 +6,7 @@ import "."
 import qs.components
 import qs.components.controls
 import qs.components.containers
+import qs.components.effects
 import qs.services
 import qs.config
 import qs.utils
@@ -106,8 +107,6 @@ DeviceList {
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
             radius: Appearance.rounding.normal
-            border.width: root.activeItem === modelData ? 1 : 0
-            border.color: Colours.palette.m3primary
 
             StateLayer {
                 function onClicked(): void {
@@ -139,32 +138,79 @@ DeviceList {
                         id: icon
 
                         anchors.centerIn: parent
-                        text: modelData.isSecure ? "lock" : "wifi"
+                        text: Icons.getNetworkIcon(modelData.strength)
                         font.pointSize: Appearance.font.size.large
                         fill: modelData.active ? 1 : 0
                         color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                     }
+
+                    StyledRect {
+                        id: lockBadge
+
+                        visible: modelData.isSecure
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        anchors.margins: -Appearance.padding.smaller / 2
+
+                        implicitWidth: lockIconSize + Appearance.padding.smaller
+                        implicitHeight: lockIconSize + Appearance.padding.smaller
+                        radius: Appearance.rounding.full
+                        color: Colours.palette.m3secondaryContainer
+
+                        readonly property real lockIconSize: lockIcon.implicitWidth
+
+                        Elevation {
+                            anchors.fill: parent
+                            radius: parent.radius
+                            z: -1
+                            level: 2
+                        }
+
+                        MaterialIcon {
+                            id: lockIcon
+
+                            anchors.centerIn: parent
+                            text: "lock"
+                            font.pointSize: Appearance.font.size.small
+                            fill: 1
+                            color: Colours.palette.m3onSurface
+                        }
+                    }
                 }
 
-                StyledText {
+                ColumnLayout {
                     Layout.fillWidth: true
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
 
-                    text: modelData.ssid || qsTr("Unknown")
-                }
+                    spacing: 0
 
-                StyledText {
-                    text: modelData.active ? qsTr("Connected") : (modelData.isSecure ? qsTr("Secured") : qsTr("Open"))
-                    color: modelData.active ? Colours.palette.m3primary : Colours.palette.m3outline
-                    font.pointSize: Appearance.font.size.small
-                    font.weight: modelData.active ? 500 : 400
-                }
+                    StyledText {
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
+                        maximumLineCount: 1
 
-                StyledText {
-                    text: qsTr("%1%").arg(modelData.strength)
-                    color: Colours.palette.m3outline
-                    font.pointSize: Appearance.font.size.small
+                        text: modelData.ssid || qsTr("Unknown")
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Appearance.spacing.smaller
+
+                        StyledText {
+                            Layout.fillWidth: true
+                            text: {
+                                if (modelData.active) return qsTr("Connected");
+                                if (modelData.isSecure && modelData.security && modelData.security.length > 0) {
+                                    return modelData.security;
+                                }
+                                if (modelData.isSecure) return qsTr("Secured");
+                                return qsTr("Open");
+                            }
+                            color: modelData.active ? Colours.palette.m3primary : Colours.palette.m3outline
+                            font.pointSize: Appearance.font.size.small
+                            font.weight: modelData.active ? 500 : 400
+                            elide: Text.ElideRight
+                        }
+                    }
                 }
 
                 StyledRect {

@@ -62,8 +62,6 @@ DeviceList {
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
             radius: Appearance.rounding.normal
-            border.width: root.activeItem === modelData ? 1 : 0
-            border.color: Colours.palette.m3primary
 
             StateLayer {
                 function onClicked(): void {

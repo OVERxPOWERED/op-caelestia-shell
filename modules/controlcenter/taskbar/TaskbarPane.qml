@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "../components"
 import qs.components
 import qs.components.controls
 import qs.components.effects
@@ -520,98 +521,21 @@ Item {
                             SectionContainer {
                                 contentSpacing: Appearance.spacing.normal
 
-                                ColumnLayout {
+                                SliderInput {
                                     Layout.fillWidth: true
-                                    spacing: Appearance.spacing.small
-
-                                    RowLayout {
-                                        Layout.fillWidth: true
-                                        spacing: Appearance.spacing.normal
-
-                                        StyledText {
-                                            text: qsTr("Drag threshold")
-                                            font.pointSize: Appearance.font.size.normal
-                                        }
-
-                                        Item {
-                                            Layout.fillWidth: true
-                                        }
-
-                                        StyledRect {
-                                            Layout.preferredWidth: 70
-                                            implicitHeight: dragThresholdInput.implicitHeight + Appearance.padding.small * 2
-                                            color: dragThresholdInputHover.containsMouse || dragThresholdInput.activeFocus 
-                                                   ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                                   : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                            radius: Appearance.rounding.small
-                                            border.width: 1
-                                            border.color: dragThresholdInput.activeFocus 
-                                                          ? Colours.palette.m3primary
-                                                          : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                            Behavior on color { CAnim {} }
-                                            Behavior on border.color { CAnim {} }
-
-                                            MouseArea {
-                                                id: dragThresholdInputHover
-                                                anchors.fill: parent
-                                                hoverEnabled: true
-                                                cursorShape: Qt.IBeamCursor
-                                                acceptedButtons: Qt.NoButton
-                                            }
-
-                                            StyledTextField {
-                                                id: dragThresholdInput
-                                                anchors.centerIn: parent
-                                                width: parent.width - Appearance.padding.normal
-                                                horizontalAlignment: TextInput.AlignHCenter
-                                                validator: IntValidator { bottom: 0; top: 100 }
-                                                
-                                                Component.onCompleted: {
-                                                    text = root.dragThreshold.toString();
-                                                }
-                                                
-                                                onTextChanged: {
-                                                    if (activeFocus) {
-                                                        const val = parseInt(text);
-                                                        if (!isNaN(val) && val >= 0 && val <= 100) {
-                                                            root.dragThreshold = val;
-                                                            root.saveConfig();
-                                                        }
-                                                    }
-                                                }
-                                                onEditingFinished: {
-                                                    const val = parseInt(text);
-                                                    if (isNaN(val) || val < 0 || val > 100) {
-                                                        text = root.dragThreshold.toString();
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        StyledText {
-                                            text: "px"
-                                            color: Colours.palette.m3outline
-                                            font.pointSize: Appearance.font.size.normal
-                                        }
-                                    }
-
-                                    StyledSlider {
-                                        id: dragThresholdSlider
-
-                                        Layout.fillWidth: true
-                                        implicitHeight: Appearance.padding.normal * 3
-
-                                        from: 0
-                                        to: 100
-                                        value: root.dragThreshold
-                                        onMoved: {
-                                            root.dragThreshold = Math.round(dragThresholdSlider.value);
-                                            if (!dragThresholdInput.activeFocus) {
-                                                dragThresholdInput.text = Math.round(dragThresholdSlider.value).toString();
-                                            }
-                                            root.saveConfig();
-                                        }
+                                    
+                                    label: qsTr("Drag threshold")
+                                    value: root.dragThreshold
+                                    from: 0
+                                    to: 100
+                                    suffix: "px"
+                                    validator: IntValidator { bottom: 0; top: 100 }
+                                    formatValueFunction: (val) => Math.round(val).toString()
+                                    parseValueFunction: (text) => parseInt(text)
+                                    
+                                    onValueModified: (newValue) => {
+                                        root.dragThreshold = Math.round(newValue);
+                                        root.saveConfig();
                                     }
                                 }
                             }

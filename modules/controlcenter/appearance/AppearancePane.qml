@@ -962,98 +962,20 @@ Item {
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
 
-                        ColumnLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: qsTr("Animation duration scale")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: animDurationsInput.implicitHeight + Appearance.padding.small * 2
-                                    color: animDurationsInputHover.containsMouse || animDurationsInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: animDurationsInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: animDurationsInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
-                                    }
-
-                                    StyledTextField {
-                                        id: animDurationsInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: DoubleValidator { bottom: 0.1; top: 5.0 }
-                                        
-                                        Component.onCompleted: {
-                                            text = (rootPane.animDurationsScale).toFixed(1);
-                                        }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseFloat(text);
-                                                if (!isNaN(val) && val >= 0.1 && val <= 5.0) {
-                                                    rootPane.animDurationsScale = val;
-                                                    rootPane.saveConfig();
-                                                }
-                                            }
-                                        }
-                                        onEditingFinished: {
-                                            const val = parseFloat(text);
-                                            if (isNaN(val) || val < 0.1 || val > 5.0) {
-                                                text = (rootPane.animDurationsScale).toFixed(1);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                StyledText {
-                                    text: "×"
-                                    color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-                            }
-
-                            StyledSlider {
-                                id: animDurationsSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0.1
-                                to: 5.0
-                        value: rootPane.animDurationsScale
-                                onMoved: {
-                                    rootPane.animDurationsScale = animDurationsSlider.value;
-                                    if (!animDurationsInput.activeFocus) {
-                                        animDurationsInput.text = (animDurationsSlider.value).toFixed(1);
-                                    }
-                            rootPane.saveConfig();
-                                }
+                            
+                            label: qsTr("Animation duration scale")
+                            value: rootPane.animDurationsScale
+                            from: 0.1
+                            to: 5.0
+                            decimals: 1
+                            suffix: "×"
+                            validator: DoubleValidator { bottom: 0.1; top: 5.0 }
+                            
+                            onValueModified: (newValue) => {
+                                rootPane.animDurationsScale = newValue;
+                                rootPane.saveConfig();
                             }
                         }
                     }
@@ -1312,98 +1234,20 @@ Item {
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
 
-                        ColumnLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: qsTr("Font size scale")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: fontSizeInput.implicitHeight + Appearance.padding.small * 2
-                                    color: fontSizeInputHover.containsMouse || fontSizeInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: fontSizeInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: fontSizeInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
-                                    }
-
-                                    StyledTextField {
-                                        id: fontSizeInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: DoubleValidator { bottom: 0.7; top: 1.5 }
-                                        
-                                        Component.onCompleted: {
-                                            text = (rootPane.fontSizeScale).toFixed(1);
-                                        }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseFloat(text);
-                                                if (!isNaN(val) && val >= 0.7 && val <= 1.5) {
-                                                    rootPane.fontSizeScale = val;
-                                                    rootPane.saveConfig();
-                                                }
-                                            }
-                                        }
-                                        onEditingFinished: {
-                                            const val = parseFloat(text);
-                                            if (isNaN(val) || val < 0.7 || val > 1.5) {
-                                                text = (rootPane.fontSizeScale).toFixed(1);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                StyledText {
-                                    text: "×"
-                                    color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-                            }
-
-                            StyledSlider {
-                                id: fontSizeSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0.7
-                                to: 1.5
-                        value: rootPane.fontSizeScale
-                                onMoved: {
-                                    rootPane.fontSizeScale = fontSizeSlider.value;
-                                    if (!fontSizeInput.activeFocus) {
-                                        fontSizeInput.text = (fontSizeSlider.value).toFixed(1);
-                                    }
-                            rootPane.saveConfig();
-                                }
+                            
+                            label: qsTr("Font size scale")
+                            value: rootPane.fontSizeScale
+                            from: 0.7
+                            to: 1.5
+                            decimals: 2
+                            suffix: "×"
+                            validator: DoubleValidator { bottom: 0.7; top: 1.5 }
+                            
+                            onValueModified: (newValue) => {
+                                rootPane.fontSizeScale = newValue;
+                                rootPane.saveConfig();
                             }
                         }
                     }
@@ -1417,98 +1261,20 @@ Item {
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
 
-                        ColumnLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: qsTr("Padding scale")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: paddingInput.implicitHeight + Appearance.padding.small * 2
-                                    color: paddingInputHover.containsMouse || paddingInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: paddingInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: paddingInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
-                                    }
-
-                                    StyledTextField {
-                                        id: paddingInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: DoubleValidator { bottom: 0.5; top: 2.0 }
-                                        
-                                        Component.onCompleted: {
-                                            text = (rootPane.paddingScale).toFixed(1);
-                                        }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseFloat(text);
-                                                if (!isNaN(val) && val >= 0.5 && val <= 2.0) {
-                                                    rootPane.paddingScale = val;
-                                                    rootPane.saveConfig();
-                                                }
-                                            }
-                                        }
-                                        onEditingFinished: {
-                                            const val = parseFloat(text);
-                                            if (isNaN(val) || val < 0.5 || val > 2.0) {
-                                                text = (rootPane.paddingScale).toFixed(1);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                StyledText {
-                                    text: "×"
-                                    color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-                            }
-
-                            StyledSlider {
-                                id: paddingSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0.5
-                                to: 2.0
-                        value: rootPane.paddingScale
-                                onMoved: {
-                                    rootPane.paddingScale = paddingSlider.value;
-                                    if (!paddingInput.activeFocus) {
-                                        paddingInput.text = (paddingSlider.value).toFixed(1);
-                                    }
-                            rootPane.saveConfig();
-                                }
+                            
+                            label: qsTr("Padding scale")
+                            value: rootPane.paddingScale
+                            from: 0.5
+                            to: 2.0
+                            decimals: 1
+                            suffix: "×"
+                            validator: DoubleValidator { bottom: 0.5; top: 2.0 }
+                            
+                            onValueModified: (newValue) => {
+                                rootPane.paddingScale = newValue;
+                                rootPane.saveConfig();
                             }
                         }
                     }
@@ -1516,98 +1282,20 @@ Item {
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
 
-                        ColumnLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: qsTr("Rounding scale")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: roundingInput.implicitHeight + Appearance.padding.small * 2
-                                    color: roundingInputHover.containsMouse || roundingInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: roundingInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: roundingInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
-                                    }
-
-                                    StyledTextField {
-                                        id: roundingInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: DoubleValidator { bottom: 0.1; top: 5.0 }
-                                        
-                                        Component.onCompleted: {
-                                            text = (rootPane.roundingScale).toFixed(1);
-                                        }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseFloat(text);
-                                                if (!isNaN(val) && val >= 0.1 && val <= 5.0) {
-                                                    rootPane.roundingScale = val;
-                                                    rootPane.saveConfig();
-                                                }
-                                            }
-                                        }
-                                        onEditingFinished: {
-                                            const val = parseFloat(text);
-                                            if (isNaN(val) || val < 0.1 || val > 5.0) {
-                                                text = (rootPane.roundingScale).toFixed(1);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                StyledText {
-                                    text: "×"
-                                    color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-                            }
-
-                            StyledSlider {
-                                id: roundingSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0.1
-                                to: 5.0
-                        value: rootPane.roundingScale
-                                onMoved: {
-                                    rootPane.roundingScale = roundingSlider.value;
-                                    if (!roundingInput.activeFocus) {
-                                        roundingInput.text = (roundingSlider.value).toFixed(1);
-                                    }
-                            rootPane.saveConfig();
-                                }
+                            
+                            label: qsTr("Rounding scale")
+                            value: rootPane.roundingScale
+                            from: 0.1
+                            to: 5.0
+                            decimals: 1
+                            suffix: "×"
+                            validator: DoubleValidator { bottom: 0.1; top: 5.0 }
+                            
+                            onValueModified: (newValue) => {
+                                rootPane.roundingScale = newValue;
+                                rootPane.saveConfig();
                             }
                         }
                     }
@@ -1615,98 +1303,20 @@ Item {
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
 
-                        ColumnLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: qsTr("Spacing scale")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: spacingInput.implicitHeight + Appearance.padding.small * 2
-                                    color: spacingInputHover.containsMouse || spacingInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: spacingInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: spacingInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
-                                    }
-
-                                    StyledTextField {
-                                        id: spacingInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: DoubleValidator { bottom: 0.1; top: 2.0 }
-                                        
-                                        Component.onCompleted: {
-                                            text = (rootPane.spacingScale).toFixed(1);
-                                        }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseFloat(text);
-                                                if (!isNaN(val) && val >= 0.1 && val <= 2.0) {
-                                                    rootPane.spacingScale = val;
-                                                    rootPane.saveConfig();
-                                                }
-                                            }
-                                        }
-                                        onEditingFinished: {
-                                            const val = parseFloat(text);
-                                            if (isNaN(val) || val < 0.1 || val > 2.0) {
-                                                text = (rootPane.spacingScale).toFixed(1);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                StyledText {
-                                    text: "×"
-                                    color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-                            }
-
-                            StyledSlider {
-                                id: spacingSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0.1
-                                to: 2.0
-                        value: rootPane.spacingScale
-                                onMoved: {
-                                    rootPane.spacingScale = spacingSlider.value;
-                                    if (!spacingInput.activeFocus) {
-                                        spacingInput.text = (spacingSlider.value).toFixed(1);
-                                    }
-                            rootPane.saveConfig();
-                                }
+                            
+                            label: qsTr("Spacing scale")
+                            value: rootPane.spacingScale
+                            from: 0.1
+                            to: 2.0
+                            decimals: 1
+                            suffix: "×"
+                            validator: DoubleValidator { bottom: 0.1; top: 2.0 }
+                            
+                            onValueModified: (newValue) => {
+                                rootPane.spacingScale = newValue;
+                                rootPane.saveConfig();
                             }
                         }
                     }
@@ -1729,98 +1339,21 @@ Item {
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
 
-                        ColumnLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: qsTr("Transparency base")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: transparencyBaseInput.implicitHeight + Appearance.padding.small * 2
-                                    color: transparencyBaseInputHover.containsMouse || transparencyBaseInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: transparencyBaseInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: transparencyBaseInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
-                                    }
-
-                                    StyledTextField {
-                                        id: transparencyBaseInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: IntValidator { bottom: 0; top: 100 }
-                                        
-                                        Component.onCompleted: {
-                                            text = Math.round(rootPane.transparencyBase * 100).toString();
-                                        }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseInt(text);
-                                                if (!isNaN(val) && val >= 0 && val <= 100) {
-                                                    rootPane.transparencyBase = val / 100;
-                                                    rootPane.saveConfig();
-                                                }
-                                            }
-                                        }
-                                        onEditingFinished: {
-                                            const val = parseInt(text);
-                                            if (isNaN(val) || val < 0 || val > 100) {
-                                                text = Math.round(rootPane.transparencyBase * 100).toString();
-                                            }
-                                        }
-                                    }
-                                }
-
-                                StyledText {
-                                    text: "%"
-                                    color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-                            }
-
-                            StyledSlider {
-                                id: baseSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0
-                                to: 100
-                                value: rootPane.transparencyBase * 100
-                                onMoved: {
-                                    rootPane.transparencyBase = baseSlider.value / 100;
-                                    if (!transparencyBaseInput.activeFocus) {
-                                        transparencyBaseInput.text = Math.round(baseSlider.value).toString();
-                                    }
-                                    rootPane.saveConfig();
-                                }
+                            
+                            label: qsTr("Transparency base")
+                            value: rootPane.transparencyBase * 100
+                            from: 0
+                            to: 100
+                            suffix: "%"
+                            validator: IntValidator { bottom: 0; top: 100 }
+                            formatValueFunction: (val) => Math.round(val).toString()
+                            parseValueFunction: (text) => parseInt(text)
+                            
+                            onValueModified: (newValue) => {
+                                rootPane.transparencyBase = newValue / 100;
+                                rootPane.saveConfig();
                             }
                         }
                     }
@@ -1828,98 +1361,21 @@ Item {
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
 
-                        ColumnLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: qsTr("Transparency layers")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: transparencyLayersInput.implicitHeight + Appearance.padding.small * 2
-                                    color: transparencyLayersInputHover.containsMouse || transparencyLayersInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: transparencyLayersInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: transparencyLayersInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
-                                    }
-
-                                    StyledTextField {
-                                        id: transparencyLayersInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: IntValidator { bottom: 0; top: 100 }
-                                        
-                                        Component.onCompleted: {
-                                            text = Math.round(rootPane.transparencyLayers * 100).toString();
-                                        }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseInt(text);
-                                                if (!isNaN(val) && val >= 0 && val <= 100) {
-                                                    rootPane.transparencyLayers = val / 100;
-                                                    rootPane.saveConfig();
-                                                }
-                                            }
-                                        }
-                                        onEditingFinished: {
-                                            const val = parseInt(text);
-                                            if (isNaN(val) || val < 0 || val > 100) {
-                                                text = Math.round(rootPane.transparencyLayers * 100).toString();
-                                            }
-                                        }
-                                    }
-                                }
-
-                                StyledText {
-                                    text: "%"
-                                    color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-                            }
-
-                            StyledSlider {
-                                id: layersSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0
-                                to: 100
-                                value: rootPane.transparencyLayers * 100
-                                onMoved: {
-                                    rootPane.transparencyLayers = layersSlider.value / 100;
-                                    if (!transparencyLayersInput.activeFocus) {
-                                        transparencyLayersInput.text = Math.round(layersSlider.value).toString();
-                                    }
-                                    rootPane.saveConfig();
-                                }
+                            
+                            label: qsTr("Transparency layers")
+                            value: rootPane.transparencyLayers * 100
+                            from: 0
+                            to: 100
+                            suffix: "%"
+                            validator: IntValidator { bottom: 0; top: 100 }
+                            formatValueFunction: (val) => Math.round(val).toString()
+                            parseValueFunction: (text) => parseInt(text)
+                            
+                            onValueModified: (newValue) => {
+                                rootPane.transparencyLayers = newValue / 100;
+                                rootPane.saveConfig();
                             }
                         }
                     }
@@ -1933,92 +1389,20 @@ Item {
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
 
-                        ColumnLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: qsTr("Border rounding")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: borderRoundingInput.implicitHeight + Appearance.padding.small * 2
-                                    color: borderRoundingInputHover.containsMouse || borderRoundingInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: borderRoundingInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: borderRoundingInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
-                                    }
-
-                                    StyledTextField {
-                                        id: borderRoundingInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: DoubleValidator { bottom: 0.1; top: 100 }
-                                        
-                                        Component.onCompleted: {
-                                            text = (rootPane.borderRounding).toFixed(1);
-                                        }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseFloat(text);
-                                                if (!isNaN(val) && val >= 0.1 && val <= 100) {
-                                                    rootPane.borderRounding = val;
-                                                    rootPane.saveConfig();
-                                                }
-                                            }
-                                        }
-                                        onEditingFinished: {
-                                            const val = parseFloat(text);
-                                            if (isNaN(val) || val < 0.1 || val > 100) {
-                                                text = (rootPane.borderRounding).toFixed(1);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            StyledSlider {
-                                id: borderRoundingSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0.1
-                                to: 100
-                        value: rootPane.borderRounding
-                                onMoved: {
-                                    rootPane.borderRounding = borderRoundingSlider.value;
-                                    if (!borderRoundingInput.activeFocus) {
-                                        borderRoundingInput.text = (borderRoundingSlider.value).toFixed(1);
-                                    }
-                            rootPane.saveConfig();
-                                }
+                            
+                            label: qsTr("Border rounding")
+                            value: rootPane.borderRounding
+                            from: 0.1
+                            to: 100
+                            decimals: 1
+                            suffix: "px"
+                            validator: DoubleValidator { bottom: 0.1; top: 100 }
+                            
+                            onValueModified: (newValue) => {
+                                rootPane.borderRounding = newValue;
+                                rootPane.saveConfig();
                             }
                         }
                     }
@@ -2026,92 +1410,20 @@ Item {
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
 
-                        ColumnLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: qsTr("Border thickness")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: borderThicknessInput.implicitHeight + Appearance.padding.small * 2
-                                    color: borderThicknessInputHover.containsMouse || borderThicknessInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: borderThicknessInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: borderThicknessInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
-                                    }
-
-                                    StyledTextField {
-                                        id: borderThicknessInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: DoubleValidator { bottom: 0.1; top: 100 }
-                                        
-                                        Component.onCompleted: {
-                                            text = (rootPane.borderThickness).toFixed(1);
-                                        }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseFloat(text);
-                                                if (!isNaN(val) && val >= 0.1 && val <= 100) {
-                                                    rootPane.borderThickness = val;
-                                                    rootPane.saveConfig();
-                                                }
-                                            }
-                                        }
-                                        onEditingFinished: {
-                                            const val = parseFloat(text);
-                                            if (isNaN(val) || val < 0.1 || val > 100) {
-                                                text = (rootPane.borderThickness).toFixed(1);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            StyledSlider {
-                                id: borderThicknessSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0.1
-                                to: 100
-                        value: rootPane.borderThickness
-                                onMoved: {
-                                    rootPane.borderThickness = borderThicknessSlider.value;
-                                    if (!borderThicknessInput.activeFocus) {
-                                        borderThicknessInput.text = (borderThicknessSlider.value).toFixed(1);
-                                    }
-                            rootPane.saveConfig();
-                                }
+                            
+                            label: qsTr("Border thickness")
+                            value: rootPane.borderThickness
+                            from: 0.1
+                            to: 100
+                            decimals: 1
+                            suffix: "px"
+                            validator: DoubleValidator { bottom: 0.1; top: 100 }
+                            
+                            onValueModified: (newValue) => {
+                                rootPane.borderThickness = newValue;
+                                rootPane.saveConfig();
                             }
                         }
                     }
@@ -2168,186 +1480,40 @@ Item {
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
 
-                        ColumnLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: qsTr("Visualiser rounding")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: visualiserRoundingInput.implicitHeight + Appearance.padding.small * 2
-                                    color: visualiserRoundingInputHover.containsMouse || visualiserRoundingInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: visualiserRoundingInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: visualiserRoundingInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
-                                    }
-
-                                    StyledTextField {
-                                        id: visualiserRoundingInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: IntValidator { bottom: 0; top: 10 }
-                                        
-                                        Component.onCompleted: {
-                                            text = Math.round(rootPane.visualiserRounding).toString();
-                                        }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseInt(text);
-                                                if (!isNaN(val) && val >= 0 && val <= 10) {
-                                                    rootPane.visualiserRounding = val;
-                            rootPane.saveConfig();
-                                                }
-                                            }
-                                        }
-                                        onEditingFinished: {
-                                            const val = parseInt(text);
-                                            if (isNaN(val) || val < 0 || val > 10) {
-                                                text = Math.round(rootPane.visualiserRounding).toString();
-                                            }
-                                        }
-                                    }
-                                }
+                            
+                            label: qsTr("Visualiser rounding")
+                            value: rootPane.visualiserRounding
+                            from: 0
+                            to: 10
+                            stepSize: 1
+                            validator: IntValidator { bottom: 0; top: 10 }
+                            formatValueFunction: (val) => Math.round(val).toString()
+                            parseValueFunction: (text) => parseInt(text)
+                            
+                            onValueModified: (newValue) => {
+                                rootPane.visualiserRounding = Math.round(newValue);
+                                rootPane.saveConfig();
                             }
-
-                            StyledSlider {
-                                id: visualiserRoundingSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0
-                                to: 10
-                                stepSize: 1
-                                value: rootPane.visualiserRounding
-                                onMoved: {
-                                    rootPane.visualiserRounding = Math.round(visualiserRoundingSlider.value);
-                                    if (!visualiserRoundingInput.activeFocus) {
-                                        visualiserRoundingInput.text = Math.round(visualiserRoundingSlider.value).toString();
-                                    }
-                            rootPane.saveConfig();
                         }
                     }
-                }
-            }
 
                     SectionContainer {
                         contentSpacing: Appearance.spacing.normal
 
-                        ColumnLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.small
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: Appearance.spacing.normal
-
-                                StyledText {
-                                    text: qsTr("Visualiser spacing")
-                                    font.pointSize: Appearance.font.size.normal
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                }
-
-                                StyledRect {
-                                    Layout.preferredWidth: 70
-                                    implicitHeight: visualiserSpacingInput.implicitHeight + Appearance.padding.small * 2
-                                    color: visualiserSpacingInputHover.containsMouse || visualiserSpacingInput.activeFocus 
-                                           ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                           : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                    radius: Appearance.rounding.small
-                                    border.width: 1
-                                    border.color: visualiserSpacingInput.activeFocus 
-                                                  ? Colours.palette.m3primary
-                                                  : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-                                    Behavior on color { CAnim {} }
-                                    Behavior on border.color { CAnim {} }
-
-                                    MouseArea {
-                                        id: visualiserSpacingInputHover
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.IBeamCursor
-                                        acceptedButtons: Qt.NoButton
-                                    }
-
-                                    StyledTextField {
-                                        id: visualiserSpacingInput
-                                        anchors.centerIn: parent
-                                        width: parent.width - Appearance.padding.normal
-                                        horizontalAlignment: TextInput.AlignHCenter
-                                        validator: DoubleValidator { bottom: 0; top: 2 }
-                                        
-                                        Component.onCompleted: {
-                                            text = (rootPane.visualiserSpacing).toFixed(1);
-                                        }
-                                        
-                                        onTextChanged: {
-                                            if (activeFocus) {
-                                                const val = parseFloat(text);
-                                                if (!isNaN(val) && val >= 0 && val <= 2) {
-                                                    rootPane.visualiserSpacing = val;
-                                                    rootPane.saveConfig();
-                                                }
-                                            }
-                                        }
-                                        onEditingFinished: {
-                                            const val = parseFloat(text);
-                                            if (isNaN(val) || val < 0 || val > 2) {
-                                                text = (rootPane.visualiserSpacing).toFixed(1);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            StyledSlider {
-                                id: visualiserSpacingSlider
-
-                                Layout.fillWidth: true
-                                implicitHeight: Appearance.padding.normal * 3
-
-                                from: 0
-                                to: 2
-                                value: rootPane.visualiserSpacing
-                                onMoved: {
-                                    rootPane.visualiserSpacing = visualiserSpacingSlider.value;
-                                    if (!visualiserSpacingInput.activeFocus) {
-                                        visualiserSpacingInput.text = (visualiserSpacingSlider.value).toFixed(1);
-                                    }
-                                    rootPane.saveConfig();
-                                }
+                            
+                            label: qsTr("Visualiser spacing")
+                            value: rootPane.visualiserSpacing
+                            from: 0
+                            to: 2
+                            validator: DoubleValidator { bottom: 0; top: 2 }
+                            
+                            onValueModified: (newValue) => {
+                                rootPane.visualiserSpacing = newValue;
+                                rootPane.saveConfig();
                             }
                         }
                     }

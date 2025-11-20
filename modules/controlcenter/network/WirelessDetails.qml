@@ -17,8 +17,8 @@ DeviceDetails {
     id: root
 
     required property Session session
-    readonly property var network: session.network.active
-
+    readonly property var network: root.session.network.active
+    
     device: network
 
     Component.onCompleted: {

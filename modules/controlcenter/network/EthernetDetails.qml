@@ -15,8 +15,8 @@ DeviceDetails {
     id: root
 
     required property Session session
-    readonly property var ethernetDevice: session.ethernet.active
-
+    readonly property var ethernetDevice: root.session.ethernet.active
+    
     device: ethernetDevice
 
     Component.onCompleted: {

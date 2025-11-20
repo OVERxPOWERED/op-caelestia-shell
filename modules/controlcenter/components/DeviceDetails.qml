@@ -12,7 +12,7 @@ import QtQuick.Layouts
 Item {
     id: root
 
-    required property Session session
+    property Session session
     property var device: null
     
     property Component headerComponent: null

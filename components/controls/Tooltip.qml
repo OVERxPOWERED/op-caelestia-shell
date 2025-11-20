@@ -45,6 +45,7 @@ Popup {
     closePolicy: Popup.NoAutoClose
     padding: 0
     margins: 0
+    background: Item {}
 
     // Update position when target moves or tooltip becomes visible
     onTooltipVisibleChanged: {
@@ -141,6 +142,7 @@ Popup {
 
         color: Colours.palette.m3surfaceContainerHighest
         radius: Appearance.rounding.small
+        antialiasing: true
 
         // Add elevation for depth
         Elevation {

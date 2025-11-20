@@ -175,16 +175,26 @@ Item {
                 Connections {
                     target: root.session.ethernet
                     function onActiveChanged() {
+                        // Clear wireless when ethernet is selected
+                        if (root.session.ethernet.active && root.session.network.active) {
+                            root.session.network.active = null;
+                            return; // Let the network.onActiveChanged handle the update
+                        }
                         rightPaneItem.nextComponent = rightPaneItem.getComponentForPane();
-                        rightPaneItem.paneId = rightPaneItem.ethernetPane ? ("eth:" + (rightPaneItem.ethernetPane.interface || "")) : (rightPaneItem.wirelessPane ? ("wifi:" + (rightPaneItem.wirelessPane.ssid || rightPaneItem.wirelessPane.bssid || "")) : "settings");
+                        // paneId will automatically update via property binding
                     }
                 }
 
                 Connections {
                     target: root.session.network
                     function onActiveChanged() {
+                        // Clear ethernet when wireless is selected
+                        if (root.session.network.active && root.session.ethernet.active) {
+                            root.session.ethernet.active = null;
+                            return; // Let the ethernet.onActiveChanged handle the update
+                        }
                         rightPaneItem.nextComponent = rightPaneItem.getComponentForPane();
-                        rightPaneItem.paneId = rightPaneItem.ethernetPane ? ("eth:" + (rightPaneItem.ethernetPane.interface || "")) : (rightPaneItem.wirelessPane ? ("wifi:" + (rightPaneItem.wirelessPane.ssid || rightPaneItem.wirelessPane.bssid || "")) : "settings");
+                        // paneId will automatically update via property binding
                     }
                 }
 

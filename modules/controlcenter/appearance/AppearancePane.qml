@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import "../components"
+import "./sections"
 import "../../launcher/services"
 import qs.components
 import qs.components.controls
@@ -680,6 +681,8 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     spacing: Appearance.spacing.small
+                    
+                    readonly property var rootPane: sidebarFlickable.rootPane
 
                     readonly property bool allSectionsExpanded: 
                         themeModeSection.expanded &&
@@ -724,261 +727,21 @@ Item {
                     }
                 }
 
-                CollapsibleSection {
+                ThemeModeSection {
                     id: themeModeSection
-                    title: qsTr("Theme mode")
-                    description: qsTr("Light or dark theme")
-                    showBackground: true
-
-                    SwitchRow {
-                        label: qsTr("Dark mode")
-                        checked: !Colours.currentLight
-                        onToggled: checked => {
-                            Colours.setMode(checked ? "dark" : "light");
-                        }
-                    }
                 }
 
-                CollapsibleSection {
+                ColorVariantSection {
                     id: colorVariantSection
-                    title: qsTr("Color variant")
-                    description: qsTr("Material theme variant")
-                    showBackground: true
-
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small / 2
-
-                        Repeater {
-                            model: M3Variants.list
-
-                            delegate: StyledRect {
-                                required property var modelData
-
-                                Layout.fillWidth: true
-
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, modelData.variant === Schemes.currentVariant ? Colours.tPalette.m3surfaceContainer.a : 0)
-                                radius: Appearance.rounding.normal
-                                border.width: modelData.variant === Schemes.currentVariant ? 1 : 0
-                                border.color: Colours.palette.m3primary
-
-                                StateLayer {
-                                    function onClicked(): void {
-                                        const variant = modelData.variant;
-
-                                        Schemes.currentVariant = variant;
-                                        Quickshell.execDetached(["caelestia", "scheme", "set", "-v", variant]);
-
-                                        Qt.callLater(() => {
-                                            reloadTimer.restart();
-                                        });
-                                    }
-                                }
-
-                                Timer {
-                                    id: reloadTimer
-                                    interval: 300
-                                    onTriggered: {
-                                        Schemes.reload();
-                                    }
-                                }
-
-                                RowLayout {
-                                    id: variantRow
-
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.margins: Appearance.padding.normal
-
-                                    spacing: Appearance.spacing.normal
-
-                                    MaterialIcon {
-                                        text: modelData.icon
-                                        font.pointSize: Appearance.font.size.large
-                                        fill: modelData.variant === Schemes.currentVariant ? 1 : 0
-                                    }
-
-                                    StyledText {
-                                        Layout.fillWidth: true
-                                        text: modelData.name
-                                        font.weight: modelData.variant === Schemes.currentVariant ? 500 : 400
-                                    }
-
-                                    MaterialIcon {
-                                        visible: modelData.variant === Schemes.currentVariant
-                                        text: "check"
-                                        color: Colours.palette.m3primary
-                                        font.pointSize: Appearance.font.size.large
-                                    }
-                                }
-
-                                implicitHeight: variantRow.implicitHeight + Appearance.padding.normal * 2
-                            }
-                        }
-                    }
                 }
 
-                CollapsibleSection {
+                ColorSchemeSection {
                     id: colorSchemeSection
-                    title: qsTr("Color scheme")
-                    description: qsTr("Available color schemes")
-                    showBackground: true
-
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: Appearance.spacing.small / 2
-
-                        Repeater {
-                            model: Schemes.list
-
-                            delegate: StyledRect {
-                                required property var modelData
-
-                                Layout.fillWidth: true
-
-                                readonly property string schemeKey: `${modelData.name} ${modelData.flavour}`
-                                readonly property bool isCurrent: schemeKey === Schemes.currentScheme
-
-                                color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                                radius: Appearance.rounding.normal
-                                border.width: isCurrent ? 1 : 0
-                                border.color: Colours.palette.m3primary
-
-                                StateLayer {
-                                    function onClicked(): void {
-                                        const name = modelData.name;
-                                        const flavour = modelData.flavour;
-                                        const schemeKey = `${name} ${flavour}`;
-
-                                        Schemes.currentScheme = schemeKey;
-                                        Quickshell.execDetached(["caelestia", "scheme", "set", "-n", name, "-f", flavour]);
-
-                                        Qt.callLater(() => {
-                                            reloadTimer.restart();
-                                        });
-                                    }
-                                }
-
-                                Timer {
-                                    id: reloadTimer
-                                    interval: 300
-                                    onTriggered: {
-                                        Schemes.reload();
-                                    }
-                                }
-
-                                RowLayout {
-                                    id: schemeRow
-
-                                    anchors.fill: parent
-                                    anchors.margins: Appearance.padding.normal
-
-                                    spacing: Appearance.spacing.normal
-
-                                    StyledRect {
-                                        id: preview
-
-                                        Layout.alignment: Qt.AlignVCenter
-
-                                        border.width: 1
-                                        border.color: Qt.alpha(`#${modelData.colours?.outline}`, 0.5)
-
-                                        color: `#${modelData.colours?.surface}`
-                                        radius: Appearance.rounding.full
-                                        implicitWidth: iconPlaceholder.implicitWidth
-                                        implicitHeight: iconPlaceholder.implicitWidth
-
-                                        MaterialIcon {
-                                            id: iconPlaceholder
-                                            visible: false
-                                            text: "circle"
-                                            font.pointSize: Appearance.font.size.large
-                                        }
-
-                                        Item {
-                                            anchors.top: parent.top
-                                            anchors.bottom: parent.bottom
-                                            anchors.right: parent.right
-
-                                            implicitWidth: parent.implicitWidth / 2
-                                            clip: true
-
-                                            StyledRect {
-                                                anchors.top: parent.top
-                                                anchors.bottom: parent.bottom
-                                                anchors.right: parent.right
-
-                                                implicitWidth: preview.implicitWidth
-                                                color: `#${modelData.colours?.primary}`
-                                                radius: Appearance.rounding.full
-                                            }
-                                        }
-                                    }
-
-                                    Column {
-                                        Layout.fillWidth: true
-                                        spacing: 0
-
-                                        StyledText {
-                                            text: modelData.flavour ?? ""
-                                            font.pointSize: Appearance.font.size.normal
-                                        }
-
-                                        StyledText {
-                                            text: modelData.name ?? ""
-                                            font.pointSize: Appearance.font.size.small
-                                            color: Colours.palette.m3outline
-
-                                            elide: Text.ElideRight
-                                            anchors.left: parent.left
-                                            anchors.right: parent.right
-                                        }
-                                    }
-
-                                    Loader {
-                                        active: isCurrent
-                                        asynchronous: true
-
-                                        sourceComponent: MaterialIcon {
-                                            text: "check"
-                                            color: Colours.palette.m3onSurfaceVariant
-                                            font.pointSize: Appearance.font.size.large
-                                        }
-                                    }
-                                }
-
-                                implicitHeight: schemeRow.implicitHeight + Appearance.padding.normal * 2
-                            }
-                        }
-                    }
                 }
 
-                CollapsibleSection {
+                AnimationsSection {
                     id: animationsSection
-                    title: qsTr("Animations")
-                    showBackground: true
-
-                    SectionContainer {
-                        contentSpacing: Appearance.spacing.normal
-
-                        SliderInput {
-                            Layout.fillWidth: true
-                            
-                            label: qsTr("Animation duration scale")
-                            value: rootPane.animDurationsScale
-                            from: 0.1
-                            to: 5.0
-                            decimals: 1
-                            suffix: "×"
-                            validator: DoubleValidator { bottom: 0.1; top: 5.0 }
-                            
-                            onValueModified: (newValue) => {
-                                rootPane.animDurationsScale = newValue;
-                                rootPane.saveConfig();
-                            }
-                        }
-                    }
+                    rootPane: sidebarFlickable.rootPane
                 }
 
                 CollapsibleSection {
@@ -1253,270 +1016,24 @@ Item {
                     }
                 }
 
-                CollapsibleSection {
+                ScalesSection {
                     id: scalesSection
-                    title: qsTr("Scales")
-                    showBackground: true
-
-                    SectionContainer {
-                        contentSpacing: Appearance.spacing.normal
-
-                        SliderInput {
-                            Layout.fillWidth: true
-                            
-                            label: qsTr("Padding scale")
-                            value: rootPane.paddingScale
-                            from: 0.5
-                            to: 2.0
-                            decimals: 1
-                            suffix: "×"
-                            validator: DoubleValidator { bottom: 0.5; top: 2.0 }
-                            
-                            onValueModified: (newValue) => {
-                                rootPane.paddingScale = newValue;
-                                rootPane.saveConfig();
-                            }
-                        }
-                    }
-
-                    SectionContainer {
-                        contentSpacing: Appearance.spacing.normal
-
-                        SliderInput {
-                            Layout.fillWidth: true
-                            
-                            label: qsTr("Rounding scale")
-                            value: rootPane.roundingScale
-                            from: 0.1
-                            to: 5.0
-                            decimals: 1
-                            suffix: "×"
-                            validator: DoubleValidator { bottom: 0.1; top: 5.0 }
-                            
-                            onValueModified: (newValue) => {
-                                rootPane.roundingScale = newValue;
-                                rootPane.saveConfig();
-                            }
-                        }
-                    }
-
-                    SectionContainer {
-                        contentSpacing: Appearance.spacing.normal
-
-                        SliderInput {
-                            Layout.fillWidth: true
-                            
-                            label: qsTr("Spacing scale")
-                            value: rootPane.spacingScale
-                            from: 0.1
-                            to: 2.0
-                            decimals: 1
-                            suffix: "×"
-                            validator: DoubleValidator { bottom: 0.1; top: 2.0 }
-                            
-                            onValueModified: (newValue) => {
-                                rootPane.spacingScale = newValue;
-                                rootPane.saveConfig();
-                            }
-                        }
-                    }
+                    rootPane: sidebarFlickable.rootPane
                 }
 
-                CollapsibleSection {
+                TransparencySection {
                     id: transparencySection
-                    title: qsTr("Transparency")
-                    showBackground: true
-
-                    SwitchRow {
-                        label: qsTr("Transparency enabled")
-                        checked: rootPane.transparencyEnabled
-                        onToggled: checked => {
-                            rootPane.transparencyEnabled = checked;
-                            rootPane.saveConfig();
-                        }
-                    }
-
-                    SectionContainer {
-                        contentSpacing: Appearance.spacing.normal
-
-                        SliderInput {
-                            Layout.fillWidth: true
-                            
-                            label: qsTr("Transparency base")
-                            value: rootPane.transparencyBase * 100
-                            from: 0
-                            to: 100
-                            suffix: "%"
-                            validator: IntValidator { bottom: 0; top: 100 }
-                            formatValueFunction: (val) => Math.round(val).toString()
-                            parseValueFunction: (text) => parseInt(text)
-                            
-                            onValueModified: (newValue) => {
-                                rootPane.transparencyBase = newValue / 100;
-                                rootPane.saveConfig();
-                            }
-                        }
-                    }
-
-                    SectionContainer {
-                        contentSpacing: Appearance.spacing.normal
-
-                        SliderInput {
-                            Layout.fillWidth: true
-                            
-                            label: qsTr("Transparency layers")
-                            value: rootPane.transparencyLayers * 100
-                            from: 0
-                            to: 100
-                            suffix: "%"
-                            validator: IntValidator { bottom: 0; top: 100 }
-                            formatValueFunction: (val) => Math.round(val).toString()
-                            parseValueFunction: (text) => parseInt(text)
-                            
-                            onValueModified: (newValue) => {
-                                rootPane.transparencyLayers = newValue / 100;
-                                rootPane.saveConfig();
-                            }
-                        }
-                    }
+                    rootPane: sidebarFlickable.rootPane
                 }
 
-                CollapsibleSection {
+                BorderSection {
                     id: borderSection
-                    title: qsTr("Border")
-                    showBackground: true
-
-                    SectionContainer {
-                        contentSpacing: Appearance.spacing.normal
-
-                        SliderInput {
-                            Layout.fillWidth: true
-                            
-                            label: qsTr("Border rounding")
-                            value: rootPane.borderRounding
-                            from: 0.1
-                            to: 100
-                            decimals: 1
-                            suffix: "px"
-                            validator: DoubleValidator { bottom: 0.1; top: 100 }
-                            
-                            onValueModified: (newValue) => {
-                                rootPane.borderRounding = newValue;
-                                rootPane.saveConfig();
-                            }
-                        }
-                    }
-
-                    SectionContainer {
-                        contentSpacing: Appearance.spacing.normal
-
-                        SliderInput {
-                            Layout.fillWidth: true
-                            
-                            label: qsTr("Border thickness")
-                            value: rootPane.borderThickness
-                            from: 0.1
-                            to: 100
-                            decimals: 1
-                            suffix: "px"
-                            validator: DoubleValidator { bottom: 0.1; top: 100 }
-                            
-                            onValueModified: (newValue) => {
-                                rootPane.borderThickness = newValue;
-                                rootPane.saveConfig();
-                            }
-                        }
-                    }
+                    rootPane: sidebarFlickable.rootPane
                 }
 
-                CollapsibleSection {
+                BackgroundSection {
                     id: backgroundSection
-                    title: qsTr("Background")
-                    showBackground: true
-
-                    SwitchRow {
-                        label: qsTr("Desktop clock")
-                        checked: rootPane.desktopClockEnabled
-                        onToggled: checked => {
-                            rootPane.desktopClockEnabled = checked;
-                            rootPane.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Background enabled")
-                        checked: rootPane.backgroundEnabled
-                        onToggled: checked => {
-                            rootPane.backgroundEnabled = checked;
-                            rootPane.saveConfig();
-                        }
-                    }
-
-                    StyledText {
-                        Layout.topMargin: Appearance.spacing.normal
-                        text: qsTr("Visualiser")
-                        font.pointSize: Appearance.font.size.larger
-                        font.weight: 500
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Visualiser enabled")
-                        checked: rootPane.visualiserEnabled
-                        onToggled: checked => {
-                            rootPane.visualiserEnabled = checked;
-                            rootPane.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Visualiser auto hide")
-                        checked: rootPane.visualiserAutoHide
-                        onToggled: checked => {
-                            rootPane.visualiserAutoHide = checked;
-                            rootPane.saveConfig();
-                        }
-                    }
-
-                    SectionContainer {
-                        contentSpacing: Appearance.spacing.normal
-
-                        SliderInput {
-                            Layout.fillWidth: true
-                            
-                            label: qsTr("Visualiser rounding")
-                            value: rootPane.visualiserRounding
-                            from: 0
-                            to: 10
-                            stepSize: 1
-                            validator: IntValidator { bottom: 0; top: 10 }
-                            formatValueFunction: (val) => Math.round(val).toString()
-                            parseValueFunction: (text) => parseInt(text)
-                            
-                            onValueModified: (newValue) => {
-                                rootPane.visualiserRounding = Math.round(newValue);
-                                rootPane.saveConfig();
-                            }
-                        }
-                    }
-
-                    SectionContainer {
-                        contentSpacing: Appearance.spacing.normal
-
-                        SliderInput {
-                            Layout.fillWidth: true
-                            
-                            label: qsTr("Visualiser spacing")
-                            value: rootPane.visualiserSpacing
-                            from: 0
-                            to: 2
-                            validator: DoubleValidator { bottom: 0; top: 2 }
-                            
-                            onValueModified: (newValue) => {
-                                rootPane.visualiserSpacing = newValue;
-                                rootPane.saveConfig();
-                            }
-                        }
-                    }
+                    rootPane: sidebarFlickable.rootPane
                 }
             }
         }

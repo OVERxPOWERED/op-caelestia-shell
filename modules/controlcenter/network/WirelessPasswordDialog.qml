@@ -8,6 +8,7 @@ import qs.components.effects
 import qs.components.containers
 import qs.services
 import qs.config
+import qs.utils
 import Quickshell
 import QtQuick
 import QtQuick.Layouts
@@ -391,7 +392,7 @@ Item {
                         text = qsTr("Connecting...");
 
                         // Connect to network
-                        Nmcli.connectToNetwork(root.network.ssid, password, root.network.bssid || "", result => {
+                        NetworkConnection.connectWithPassword(root.network, password, result => {
                             if (result && result.success)
                             // Connection successful, monitor will handle the rest
                             {} else if (result && result.needsPassword) {

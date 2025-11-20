@@ -8,6 +8,7 @@ import qs.components.effects
 import qs.components.containers
 import qs.services
 import qs.config
+import qs.utils
 import QtQuick
 import QtQuick.Layouts
 
@@ -125,7 +126,7 @@ Item {
                     checked: root.network?.active ?? false
                     toggle.onToggled: {
                         if (checked) {
-                            root.handleConnect();
+                            NetworkConnection.handleConnect(root.network, root.session, null);
                         } else {
                             Nmcli.disconnectFromNetwork();
                         }
@@ -207,39 +208,4 @@ Item {
             }
     }
 
-    function handleConnect(): void {
-        if (Nmcli.active && Nmcli.active.ssid !== root.network.ssid) {
-            Nmcli.disconnectFromNetwork();
-            Qt.callLater(() => {
-                connectToNetwork();
-            });
-        } else {
-            connectToNetwork();
-        }
-    }
-
-    function connectToNetwork(): void {
-        if (root.network.isSecure) {
-            const hasSavedProfile = Nmcli.hasSavedProfile(root.network.ssid);
-
-            if (hasSavedProfile) {
-                Nmcli.connectToNetwork(root.network.ssid, "", root.network.bssid, null);
-            } else {
-                Nmcli.connectToNetworkWithPasswordCheck(root.network.ssid, root.network.isSecure, result => {
-                    if (result.needsPassword) {
-                        if (Nmcli.pendingConnection) {
-                            Nmcli.connectionCheckTimer.stop();
-                            Nmcli.immediateCheckTimer.stop();
-                            Nmcli.immediateCheckTimer.checkCount = 0;
-                            Nmcli.pendingConnection = null;
-                        }
-                        root.session.network.showPasswordDialog = true;
-                        root.session.network.pendingNetwork = root.network;
-                    }
-                }, root.network.bssid);
-            }
-        } else {
-            Nmcli.connectToNetwork(root.network.ssid, "", root.network.bssid, null);
-        }
-    }
 }

@@ -7,6 +7,7 @@ import qs.components.controls
 import qs.components.containers
 import qs.services
 import qs.config
+import qs.utils
 import QtQuick
 import QtQuick.Layouts
 
@@ -193,7 +194,7 @@ ColumnLayout {
                             if (modelData.active) {
                                 Nmcli.disconnectFromNetwork();
                             } else {
-                                handleConnect(modelData);
+                                NetworkConnection.handleConnect(modelData, root.session, null);
                             }
                         }
                     }
@@ -215,47 +216,6 @@ ColumnLayout {
     function checkSavedProfileForNetwork(ssid: string): void {
         if (ssid && ssid.length > 0) {
             Nmcli.loadSavedConnections(() => {});
-        }
-    }
-
-    function handleConnect(network): void {
-        if (Nmcli.active && Nmcli.active.ssid !== network.ssid) {
-            Nmcli.disconnectFromNetwork();
-            Qt.callLater(() => {
-                connectToNetwork(network);
-            });
-        } else {
-            connectToNetwork(network);
-        }
-    }
-
-    function connectToNetwork(network): void {
-        if (network.isSecure) {
-            const hasSavedProfile = Nmcli.hasSavedProfile(network.ssid);
-
-            if (hasSavedProfile) {
-                Nmcli.connectToNetwork(network.ssid, "", network.bssid, null);
-            } else {
-                Nmcli.connectToNetworkWithPasswordCheck(
-                    network.ssid,
-                    network.isSecure,
-                    (result) => {
-                        if (result.needsPassword) {
-                            if (Nmcli.pendingConnection) {
-                                Nmcli.connectionCheckTimer.stop();
-                                Nmcli.immediateCheckTimer.stop();
-                                Nmcli.immediateCheckTimer.checkCount = 0;
-                                Nmcli.pendingConnection = null;
-                            }
-                            root.session.network.showPasswordDialog = true;
-                            root.session.network.pendingNetwork = network;
-                        }
-                    },
-                    network.bssid
-                );
-            }
-        } else {
-            Nmcli.connectToNetwork(network.ssid, "", network.bssid, null);
         }
     }
 }

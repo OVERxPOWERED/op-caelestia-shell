@@ -415,7 +415,7 @@ Item {
                                                     if (modelData && modelData.active) {
                                                         Nmcli.disconnectFromNetwork();
                                                     } else if (modelData) {
-                                                        handleWirelessConnect(modelData);
+                                                        NetworkConnection.handleConnect(modelData, root.session, null);
                                                     }
                                                 }
                                             }
@@ -584,47 +584,6 @@ Item {
     function checkSavedProfileForNetwork(ssid: string): void {
         if (ssid && ssid.length > 0) {
             Nmcli.loadSavedConnections(() => {});
-        }
-    }
-
-    function handleWirelessConnect(network): void {
-        if (Nmcli.active && Nmcli.active.ssid !== network.ssid) {
-            Nmcli.disconnectFromNetwork();
-            Qt.callLater(() => {
-                connectToWirelessNetwork(network);
-            });
-        } else {
-            connectToWirelessNetwork(network);
-        }
-    }
-
-    function connectToWirelessNetwork(network): void {
-        if (network.isSecure) {
-            const hasSavedProfile = Nmcli.hasSavedProfile(network.ssid);
-
-            if (hasSavedProfile) {
-                Nmcli.connectToNetwork(network.ssid, "", network.bssid, null);
-            } else {
-                Nmcli.connectToNetworkWithPasswordCheck(
-                    network.ssid,
-                    network.isSecure,
-                    (result) => {
-                        if (result.needsPassword) {
-                            if (Nmcli.pendingConnection) {
-                                Nmcli.connectionCheckTimer.stop();
-                                Nmcli.immediateCheckTimer.stop();
-                                Nmcli.immediateCheckTimer.checkCount = 0;
-                                Nmcli.pendingConnection = null;
-                            }
-                            root.session.network.showPasswordDialog = true;
-                            root.session.network.pendingNetwork = network;
-                        }
-                    },
-                    network.bssid
-                );
-            }
-        } else {
-            Nmcli.connectToNetwork(network.ssid, "", network.bssid, null);
         }
     }
 }

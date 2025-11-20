@@ -10,304 +10,35 @@ import qs.config
 import Caelestia.Models
 import QtQuick
 
-Item {
+GridView {
     id: root
 
     required property Session session
 
-    property alias layoutPreferredHeight: wallpaperGrid.layoutPreferredHeight
+    readonly property int minCellWidth: 200 + Appearance.spacing.normal
+    readonly property int columnsCount: Math.max(1, Math.floor(width / minCellWidth))
 
-    // Find and store reference to parent Flickable for scroll monitoring
-    property var parentFlickable: {
-        let item = parent;
-        while (item) {
-            if (item.flickableDirection !== undefined) {
-                return item;
-            }
-            item = item.parent;
-        }
-        return null;
+    cellWidth: width / columnsCount
+    cellHeight: 140 + Appearance.spacing.normal
+
+    model: Wallpapers.list
+
+    clip: true
+    
+    StyledScrollBar.vertical: StyledScrollBar {
+        flickable: root
     }
 
-    // Cleanup when component is destroyed
-    Component.onDestruction: {
-        if (wallpaperGrid) {
-            if (wallpaperGrid.scrollCheckTimer) {
-                wallpaperGrid.scrollCheckTimer.stop();
-            }
-            wallpaperGrid._expansionInProgress = false;
-        }
-    }
+    delegate: Item {
+        required property var modelData
+        required property int index
 
-    QtObject {
-        id: lazyModel
+        width: root.cellWidth
+        height: root.cellHeight
 
-        property var sourceList: null
-        property int loadedCount: 0
-        property int visibleCount: 0
-        property int totalCount: 0
-
-        function initialize(list) {
-            sourceList = list;
-            totalCount = list ? list.length : 0;
-            const initialRows = 3;
-            const cols = wallpaperGrid.columnsCount > 0 ? wallpaperGrid.columnsCount : 3;
-            const initialCount = Math.min(initialRows * cols, totalCount);
-            loadedCount = initialCount;
-            visibleCount = initialCount;
-        }
-
-        function loadOneRow() {
-            if (loadedCount < totalCount) {
-                const cols = wallpaperGrid.columnsCount > 0 ? wallpaperGrid.columnsCount : 1;
-                const itemsToLoad = Math.min(cols, totalCount - loadedCount);
-                loadedCount += itemsToLoad;
-            }
-        }
-
-        function updateVisibleCount(neededCount) {
-            const cols = wallpaperGrid.columnsCount > 0 ? wallpaperGrid.columnsCount : 1;
-            const maxVisible = Math.min(neededCount, loadedCount);
-            const rows = Math.ceil(maxVisible / cols);
-            const newVisibleCount = Math.min(rows * cols, loadedCount);
-
-            if (newVisibleCount > visibleCount) {
-                visibleCount = newVisibleCount;
-            }
-        }
-    }
-
-    GridView {
-        id: wallpaperGrid
-        anchors.fill: parent
-
-        property int _delegateCount: 0
-
-        readonly property int minCellWidth: 200 + Appearance.spacing.normal
-        readonly property int columnsCount: Math.max(1, Math.floor(parent.width / minCellWidth))
-
-        readonly property int layoutPreferredHeight: {
-            if (!lazyModel || lazyModel.visibleCount === 0 || columnsCount === 0) {
-                return 0;
-            }
-            const calculated = Math.ceil(lazyModel.visibleCount / columnsCount) * cellHeight;
-            return calculated;
-        }
-
-        height: layoutPreferredHeight
-        cellWidth: width / columnsCount
-        cellHeight: 140 + Appearance.spacing.normal
-
-        leftMargin: 0
-        rightMargin: 0
-        topMargin: 0
-        bottomMargin: 0
-
-        ListModel {
-            id: wallpaperListModel
-        }
-
-        model: wallpaperListModel
-
-        Connections {
-            target: lazyModel
-            function onVisibleCountChanged(): void {
-                if (!lazyModel || !lazyModel.sourceList) return;
-
-                const newCount = lazyModel.visibleCount;
-                const currentCount = wallpaperListModel.count;
-
-                if (newCount > currentCount) {
-                    const flickable = root.parentFlickable;
-                    const oldScrollY = flickable ? flickable.contentY : 0;
-
-                    for (let i = currentCount; i < newCount; i++) {
-                        wallpaperListModel.append({modelData: lazyModel.sourceList[i]});
-                    }
-
-                    if (flickable) {
-                        Qt.callLater(function() {
-                            if (Math.abs(flickable.contentY - oldScrollY) < 1) {
-                                flickable.contentY = oldScrollY;
-                            }
-                        });
-                    }
-                }
-            }
-        }
-
-        Component.onCompleted: {
-            Qt.callLater(function() {
-                const isActive = root.session.activeIndex === 3;
-                if (width > 0 && parent && parent.visible && isActive && Wallpapers.list) {
-                    lazyModel.initialize(Wallpapers.list);
-                    wallpaperListModel.clear();
-                    for (let i = 0; i < lazyModel.visibleCount; i++) {
-                        wallpaperListModel.append({modelData: lazyModel.sourceList[i]});
-                    }
-                }
-            });
-        }
-
-        Connections {
-            target: root.session
-            function onActiveIndexChanged(): void {
-                const isActive = root.session.activeIndex === 3;
-
-                // Stop lazy loading when switching away from appearance pane
-                if (!isActive) {
-                    if (scrollCheckTimer) {
-                        scrollCheckTimer.stop();
-                    }
-                    if (wallpaperGrid) {
-                        wallpaperGrid._expansionInProgress = false;
-                    }
-                    return;
-                }
-
-                // Initialize if needed when switching to appearance pane
-                if (isActive && width > 0 && !lazyModel.sourceList && parent && parent.visible && Wallpapers.list) {
-                    lazyModel.initialize(Wallpapers.list);
-                    wallpaperListModel.clear();
-                    for (let i = 0; i < lazyModel.visibleCount; i++) {
-                        wallpaperListModel.append({modelData: lazyModel.sourceList[i]});
-                    }
-                }
-            }
-        }
-
-        onWidthChanged: {
-            const isActive = root.session.activeIndex === 3;
-            if (width > 0 && !lazyModel.sourceList && parent && parent.visible && isActive && Wallpapers.list) {
-                lazyModel.initialize(Wallpapers.list);
-                wallpaperListModel.clear();
-                for (let i = 0; i < lazyModel.visibleCount; i++) {
-                    wallpaperListModel.append({modelData: lazyModel.sourceList[i]});
-                }
-            }
-        }
-
-        // Force true lazy loading: only create delegates for visible items
-        displayMarginBeginning: 0
-        displayMarginEnd: 0
-        cacheBuffer: 0
-
-        // Debounce expansion to avoid too frequent checks
-        property bool _expansionInProgress: false
-
-        Connections {
-            target: root.parentFlickable
-            function onContentYChanged(): void {
-                // Don't process scroll events if appearance pane is not active
-                const isActive = root.session.activeIndex === 3;
-                if (!isActive) return;
-
-                if (!lazyModel || !lazyModel.sourceList || lazyModel.loadedCount >= lazyModel.totalCount || wallpaperGrid._expansionInProgress) {
-                    return;
-                }
-
-                const flickable = root.parentFlickable;
-                if (!flickable) return;
-
-                const gridY = root.y;
-                const scrollY = flickable.contentY;
-                const viewportHeight = flickable.height;
-
-                const topY = scrollY - gridY;
-                const bottomY = scrollY + viewportHeight - gridY;
-
-                if (bottomY < 0) return;
-
-                const topRow = Math.max(0, Math.floor(topY / wallpaperGrid.cellHeight));
-                const bottomRow = Math.floor(bottomY / wallpaperGrid.cellHeight);
-
-                // Update visible count with 1 row buffer ahead
-                const bufferRows = 1;
-                const neededBottomRow = bottomRow + bufferRows;
-                const neededCount = Math.min((neededBottomRow + 1) * wallpaperGrid.columnsCount, lazyModel.loadedCount);
-                lazyModel.updateVisibleCount(neededCount);
-
-                const loadedRows = Math.ceil(lazyModel.loadedCount / wallpaperGrid.columnsCount);
-                const rowsRemaining = loadedRows - (bottomRow + 1);
-
-                if (rowsRemaining <= 1 && lazyModel.loadedCount < lazyModel.totalCount) {
-                    if (!wallpaperGrid._expansionInProgress) {
-                        wallpaperGrid._expansionInProgress = true;
-                        lazyModel.loadOneRow();
-                        Qt.callLater(function() {
-                            wallpaperGrid._expansionInProgress = false;
-                        });
-                    }
-                }
-            }
-        }
-
-        // Fallback timer to check scroll position periodically
-        Timer {
-            id: scrollCheckTimer
-            interval: 100
-            running: {
-                const isActive = root.session.activeIndex === 3;
-                return isActive && lazyModel && lazyModel.sourceList && lazyModel.loadedCount < lazyModel.totalCount;
-            }
-            repeat: true
-            onTriggered: {
-                // Double-check that appearance pane is still active
-                const isActive = root.session.activeIndex === 3;
-                if (!isActive) {
-                    stop();
-                    return;
-                }
-
-                const flickable = root.parentFlickable;
-                if (!flickable || !lazyModel || !lazyModel.sourceList) return;
-
-                const gridY = root.y;
-                const scrollY = flickable.contentY;
-                const viewportHeight = flickable.height;
-
-                const topY = scrollY - gridY;
-                const bottomY = scrollY + viewportHeight - gridY;
-                if (bottomY < 0) return;
-
-                const topRow = Math.max(0, Math.floor(topY / wallpaperGrid.cellHeight));
-                const bottomRow = Math.floor(bottomY / wallpaperGrid.cellHeight);
-
-                const bufferRows = 1;
-                const neededBottomRow = bottomRow + bufferRows;
-                const neededCount = Math.min((neededBottomRow + 1) * wallpaperGrid.columnsCount, lazyModel.loadedCount);
-                lazyModel.updateVisibleCount(neededCount);
-
-                const loadedRows = Math.ceil(lazyModel.loadedCount / wallpaperGrid.columnsCount);
-                const rowsRemaining = loadedRows - (bottomRow + 1);
-
-                if (rowsRemaining <= 1 && lazyModel.loadedCount < lazyModel.totalCount) {
-                    if (!wallpaperGrid._expansionInProgress) {
-                        wallpaperGrid._expansionInProgress = true;
-                        lazyModel.loadOneRow();
-                        Qt.callLater(function() {
-                            wallpaperGrid._expansionInProgress = false;
-                        });
-                    }
-                }
-            }
-        }
-
-        interactive: false
-
-        delegate: Item {
-            required property var modelData
-
-            width: wallpaperGrid.cellWidth
-            height: wallpaperGrid.cellHeight
-
-            readonly property bool isCurrent: modelData.path === Wallpapers.actualCurrent
-            readonly property real itemMargin: Appearance.spacing.normal / 2
-            readonly property real itemRadius: Appearance.rounding.normal
-
-            Component.onCompleted: {
-                wallpaperGrid._delegateCount++;
-            }
+        readonly property bool isCurrent: modelData && modelData.path === Wallpapers.actualCurrent
+        readonly property real itemMargin: Appearance.spacing.normal / 2
+        readonly property real itemRadius: Appearance.rounding.normal
 
             StateLayer {
                 anchors.fill: parent
@@ -514,5 +245,3 @@ Item {
             }
         }
     }
-}
-

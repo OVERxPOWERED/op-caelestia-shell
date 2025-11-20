@@ -79,70 +79,48 @@ Item {
     Component {
         id: appearanceRightContentComponent
 
-        StyledFlickable {
+        Item {
             id: rightAppearanceFlickable
-            flickableDirection: Flickable.VerticalFlick
-            contentHeight: contentLayout.height
-
-            StyledScrollBar.vertical: StyledScrollBar {
-                flickable: rightAppearanceFlickable
-            }
 
             ColumnLayout {
                 id: contentLayout
 
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                spacing: Appearance.spacing.normal
-
-                SettingsHeader {
-                    icon: "palette"
-                    title: qsTr("Appearance Settings")
-                }
+                anchors.fill: parent
+                spacing: 0
 
                 StyledText {
-                    Layout.topMargin: Appearance.spacing.large
                     Layout.alignment: Qt.AlignHCenter
+                    Layout.bottomMargin: Appearance.spacing.normal
                     text: qsTr("Wallpaper")
                     font.pointSize: Appearance.font.size.extraLarge
                     font.weight: 600
                 }
 
-                StyledText {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("Select a wallpaper")
-                    font.pointSize: Appearance.font.size.normal
-                    color: Colours.palette.m3onSurfaceVariant
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                    Layout.topMargin: Appearance.spacing.large
-                    Layout.preferredHeight: wallpaperLoader.item ? wallpaperLoader.item.layoutPreferredHeight : 0
+                Loader {
+                    id: wallpaperLoader
                     
-                    Loader {
-                        id: wallpaperLoader
-                        anchors.fill: parent
-                        asynchronous: true
-                        active: {
-                            const isActive = root.session.activeIndex === 3;
-                            const isAdjacent = Math.abs(root.session.activeIndex - 3) === 1;
-                            const splitLayout = root.children[0];
-                            const loader = splitLayout && splitLayout.rightLoader ? splitLayout.rightLoader : null;
-                            const shouldActivate = loader && loader.item !== null && (isActive || isAdjacent);
-                            return shouldActivate;
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.bottomMargin: -Appearance.padding.large * 2
+                    
+                    asynchronous: true
+                    active: {
+                        const isActive = root.session.activeIndex === 3;
+                        const isAdjacent = Math.abs(root.session.activeIndex - 3) === 1;
+                        const splitLayout = root.children[0];
+                        const loader = splitLayout && splitLayout.rightLoader ? splitLayout.rightLoader : null;
+                        const shouldActivate = loader && loader.item !== null && (isActive || isAdjacent);
+                        return shouldActivate;
+                    }
+                    
+                    onStatusChanged: {
+                        if (status === Loader.Error) {
+                            console.error("[AppearancePane] Wallpaper loader error!");
                         }
-                        
-                        onStatusChanged: {
-                            if (status === Loader.Error) {
-                                console.error("[AppearancePane] Wallpaper loader error!");
-                            }
-                        }
-                        
-                        sourceComponent: WallpaperGrid {
-                            session: root.session
-                        }
+                    }
+                    
+                    sourceComponent: WallpaperGrid {
+                        session: root.session
                     }
                 }
             }

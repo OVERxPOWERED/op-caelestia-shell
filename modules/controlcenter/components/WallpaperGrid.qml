@@ -403,27 +403,19 @@ Item {
                     gradient: Gradient {
                         GradientStop {
                             position: 0.0
-                            color: Qt.rgba(Colours.palette.m3surfaceContainer.r,
-                                          Colours.palette.m3surfaceContainer.g,
-                                          Colours.palette.m3surfaceContainer.b, 0)
+                            color: Qt.rgba(0, 0, 0, 0)
                         }
                         GradientStop {
                             position: 0.3
-                            color: Qt.rgba(Colours.palette.m3surfaceContainer.r,
-                                          Colours.palette.m3surfaceContainer.g,
-                                          Colours.palette.m3surfaceContainer.b, 0.7)
+                            color: Qt.rgba(0, 0, 0, 0.7)
                         }
                         GradientStop {
                             position: 0.6
-                            color: Qt.rgba(Colours.palette.m3surfaceContainer.r,
-                                          Colours.palette.m3surfaceContainer.g,
-                                          Colours.palette.m3surfaceContainer.b, 0.9)
+                            color: Qt.rgba(0, 0, 0, 0.9)
                         }
                         GradientStop {
                             position: 1.0
-                            color: Qt.rgba(Colours.palette.m3surfaceContainer.r,
-                                          Colours.palette.m3surfaceContainer.g,
-                                          Colours.palette.m3surfaceContainer.b, 0.95)
+                            color: Qt.rgba(0, 0, 0, 0.95)
                         }
                     }
 

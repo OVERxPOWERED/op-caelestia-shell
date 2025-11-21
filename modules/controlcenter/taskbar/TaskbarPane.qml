@@ -112,7 +112,7 @@ Item {
         anchors.fill: parent
         anchors.margins: Appearance.padding.normal
         anchors.leftMargin: 0
-        anchors.rightMargin: Appearance.padding.normal / 2
+        anchors.rightMargin: Appearance.padding.normal
 
         radius: taskbarBorder.innerRadius
         color: "transparent"
@@ -123,7 +123,7 @@ Item {
             anchors.fill: parent
             anchors.margins: Appearance.padding.large + Appearance.padding.normal
             anchors.leftMargin: Appearance.padding.large
-            anchors.rightMargin: Appearance.padding.large + Appearance.padding.normal / 2
+            anchors.rightMargin: Appearance.padding.large
 
             asynchronous: true
             sourceComponent: taskbarContentComponent
@@ -133,7 +133,7 @@ Item {
     InnerBorder {
         id: taskbarBorder
         leftThickness: 0
-        rightThickness: Appearance.padding.normal / 2
+        rightThickness: Appearance.padding.normal
     }
 
     Component {
@@ -240,10 +240,12 @@ Item {
                 }
 
                 RowLayout {
+                    id: mainRowLayout
                     Layout.fillWidth: true
                     spacing: Appearance.spacing.normal
 
                     ColumnLayout {
+                        id: leftColumnLayout
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
                         spacing: Appearance.spacing.normal
@@ -468,6 +470,7 @@ Item {
                     }
 
                     ColumnLayout {
+                        id: middleColumnLayout
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
                         spacing: Appearance.spacing.normal
@@ -543,6 +546,7 @@ Item {
                     }
 
                     ColumnLayout {
+                        id: rightColumnLayout
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
                         spacing: Appearance.spacing.normal

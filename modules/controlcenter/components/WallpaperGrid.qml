@@ -216,13 +216,7 @@ GridView {
                 anchors.rightMargin: Appearance.padding.normal + Appearance.spacing.normal / 2
                 anchors.bottomMargin: Appearance.padding.normal
 
-                readonly property string fileName: {
-                    const path = modelData.relativePath || "";
-                    const parts = path.split("/");
-                    return parts.length > 0 ? parts[parts.length - 1] : path;
-                }
-
-                text: fileName
+                text: modelData.name
                 font.pointSize: Appearance.font.size.smaller
                 font.weight: 500
                 color: isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurface

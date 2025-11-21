@@ -263,65 +263,38 @@ Item {
                                         Layout.fillWidth: true
                                     }
 
-                                    StyledRect {
+                                    StyledInputField {
+                                        id: outputVolumeInput
                                         Layout.preferredWidth: 70
-                                        implicitHeight: outputVolumeInput.implicitHeight + Appearance.padding.small * 2
-                                        color: outputVolumeInputHover.containsMouse || outputVolumeInput.activeFocus 
-                                               ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                               : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                        radius: Appearance.rounding.small
-                                        border.width: 1
-                                        border.color: outputVolumeInput.activeFocus 
-                                                      ? Colours.palette.m3primary
-                                                      : Qt.alpha(Colours.palette.m3outline, 0.3)
+                                        validator: IntValidator { bottom: 0; top: 100 }
                                         enabled: !Audio.muted
-                                        opacity: enabled ? 1 : 0.5
-
-                                        Behavior on color { CAnim {} }
-                                        Behavior on border.color { CAnim {} }
-
-                                        MouseArea {
-                                            id: outputVolumeInputHover
-                                            anchors.fill: parent
-                                            hoverEnabled: true
-                                            cursorShape: Qt.IBeamCursor
-                                            acceptedButtons: Qt.NoButton
+                                        
+                                        Component.onCompleted: {
+                                            text = Math.round(Audio.volume * 100).toString();
                                         }
-
-                                        StyledTextField {
-                                            id: outputVolumeInput
-                                            anchors.centerIn: parent
-                                            width: parent.width - Appearance.padding.normal
-                                            horizontalAlignment: TextInput.AlignHCenter
-                                            validator: IntValidator { bottom: 0; top: 100 }
-                                            enabled: !Audio.muted
-                                            
-                                            Component.onCompleted: {
-                                                text = Math.round(Audio.volume * 100).toString();
-                                            }
-                                            
-                                            Connections {
-                                                target: Audio
-                                                function onVolumeChanged() {
-                                                    if (!outputVolumeInput.activeFocus) {
-                                                        outputVolumeInput.text = Math.round(Audio.volume * 100).toString();
-                                                    }
+                                        
+                                        Connections {
+                                            target: Audio
+                                            function onVolumeChanged() {
+                                                if (!outputVolumeInput.hasFocus) {
+                                                    outputVolumeInput.text = Math.round(Audio.volume * 100).toString();
                                                 }
                                             }
-                                            
-                                            onTextChanged: {
-                                                if (activeFocus) {
-                                                    const val = parseInt(text);
-                                                    if (!isNaN(val) && val >= 0 && val <= 100) {
-                                                        Audio.setVolume(val / 100);
-                                                    }
-                                                }
-                                            }
-                                            onEditingFinished: {
+                                        }
+                                        
+                                        onTextEdited: (text) => {
+                                            if (hasFocus) {
                                                 const val = parseInt(text);
-                                                if (isNaN(val) || val < 0 || val > 100) {
-                                                    text = Math.round(Audio.volume * 100).toString();
+                                                if (!isNaN(val) && val >= 0 && val <= 100) {
+                                                    Audio.setVolume(val / 100);
                                                 }
+                                            }
+                                        }
+                                        
+                                        onEditingFinished: {
+                                            const val = parseInt(text);
+                                            if (isNaN(val) || val < 0 || val > 100) {
+                                                text = Math.round(Audio.volume * 100).toString();
                                             }
                                         }
                                     }
@@ -368,7 +341,7 @@ Item {
                                     opacity: enabled ? 1 : 0.5
                                     onMoved: {
                                         Audio.setVolume(value);
-                                        if (!outputVolumeInput.activeFocus) {
+                                        if (!outputVolumeInput.hasFocus) {
                                             outputVolumeInput.text = Math.round(value * 100).toString();
                                         }
                                     }
@@ -402,65 +375,38 @@ Item {
                                         Layout.fillWidth: true
                                     }
 
-                                    StyledRect {
+                                    StyledInputField {
+                                        id: inputVolumeInput
                                         Layout.preferredWidth: 70
-                                        implicitHeight: inputVolumeInput.implicitHeight + Appearance.padding.small * 2
-                                        color: inputVolumeInputHover.containsMouse || inputVolumeInput.activeFocus 
-                                               ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                                               : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                                        radius: Appearance.rounding.small
-                                        border.width: 1
-                                        border.color: inputVolumeInput.activeFocus 
-                                                      ? Colours.palette.m3primary
-                                                      : Qt.alpha(Colours.palette.m3outline, 0.3)
+                                        validator: IntValidator { bottom: 0; top: 100 }
                                         enabled: !Audio.sourceMuted
-                                        opacity: enabled ? 1 : 0.5
-
-                                        Behavior on color { CAnim {} }
-                                        Behavior on border.color { CAnim {} }
-
-                                        MouseArea {
-                                            id: inputVolumeInputHover
-                                            anchors.fill: parent
-                                            hoverEnabled: true
-                                            cursorShape: Qt.IBeamCursor
-                                            acceptedButtons: Qt.NoButton
+                                        
+                                        Component.onCompleted: {
+                                            text = Math.round(Audio.sourceVolume * 100).toString();
                                         }
-
-                                        StyledTextField {
-                                            id: inputVolumeInput
-                                            anchors.centerIn: parent
-                                            width: parent.width - Appearance.padding.normal
-                                            horizontalAlignment: TextInput.AlignHCenter
-                                            validator: IntValidator { bottom: 0; top: 100 }
-                                            enabled: !Audio.sourceMuted
-                                            
-                                            Component.onCompleted: {
-                                                text = Math.round(Audio.sourceVolume * 100).toString();
-                                            }
-                                            
-                                            Connections {
-                                                target: Audio
-                                                function onSourceVolumeChanged() {
-                                                    if (!inputVolumeInput.activeFocus) {
-                                                        inputVolumeInput.text = Math.round(Audio.sourceVolume * 100).toString();
-                                                    }
+                                        
+                                        Connections {
+                                            target: Audio
+                                            function onSourceVolumeChanged() {
+                                                if (!inputVolumeInput.hasFocus) {
+                                                    inputVolumeInput.text = Math.round(Audio.sourceVolume * 100).toString();
                                                 }
                                             }
-                                            
-                                            onTextChanged: {
-                                                if (activeFocus) {
-                                                    const val = parseInt(text);
-                                                    if (!isNaN(val) && val >= 0 && val <= 100) {
-                                                        Audio.setSourceVolume(val / 100);
-                                                    }
-                                                }
-                                            }
-                                            onEditingFinished: {
+                                        }
+                                        
+                                        onTextEdited: (text) => {
+                                            if (hasFocus) {
                                                 const val = parseInt(text);
-                                                if (isNaN(val) || val < 0 || val > 100) {
-                                                    text = Math.round(Audio.sourceVolume * 100).toString();
+                                                if (!isNaN(val) && val >= 0 && val <= 100) {
+                                                    Audio.setSourceVolume(val / 100);
                                                 }
+                                            }
+                                        }
+                                        
+                                        onEditingFinished: {
+                                            const val = parseInt(text);
+                                            if (isNaN(val) || val < 0 || val > 100) {
+                                                text = Math.round(Audio.sourceVolume * 100).toString();
                                             }
                                         }
                                     }
@@ -507,7 +453,7 @@ Item {
                                     opacity: enabled ? 1 : 0.5
                                     onMoved: {
                                         Audio.setSourceVolume(value);
-                                        if (!inputVolumeInput.activeFocus) {
+                                        if (!inputVolumeInput.hasFocus) {
                                             inputVolumeInput.text = Math.round(value * 100).toString();
                                         }
                                     }

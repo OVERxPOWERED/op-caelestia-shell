@@ -76,78 +76,52 @@ ColumnLayout {
             Layout.fillWidth: true
         }
 
-        StyledRect {
+        StyledInputField {
+            id: inputField
             Layout.preferredWidth: 70
-            implicitHeight: inputField.implicitHeight + Appearance.padding.small * 2
-            color: inputHover.containsMouse || inputField.activeFocus 
-                   ? Colours.layer(Colours.palette.m3surfaceContainer, 3)
-                   : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-            radius: Appearance.rounding.small
-            border.width: 1
-            border.color: inputField.activeFocus 
-                          ? Colours.palette.m3primary
-                          : Qt.alpha(Colours.palette.m3outline, 0.3)
-
-            Behavior on color { CAnim {} }
-            Behavior on border.color { CAnim {} }
-
-            MouseArea {
-                id: inputHover
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.IBeamCursor
-                acceptedButtons: Qt.NoButton
+            validator: root.validator
+            
+            Component.onCompleted: {
+                // Initialize text without triggering valueModified signal
+                text = root.formatValue(root.value);
             }
-
-            StyledTextField {
-                id: inputField
-                anchors.centerIn: parent
-                width: parent.width - Appearance.padding.normal
-                horizontalAlignment: TextInput.AlignHCenter
-                validator: root.validator
-                
-                Component.onCompleted: {
-                    // Initialize text without triggering valueModified signal
-                    text = root.formatValue(root.value);
-                }
-                
-                onTextChanged: {
-                    if (activeFocus) {
-                        const val = root.parseValue(text);
-                        if (!isNaN(val)) {
-                            // Validate against validator bounds if available
-                            let isValid = true;
-                            if (root.validator) {
-                                if (root.validator.bottom !== undefined && val < root.validator.bottom) {
-                                    isValid = false;
-                                }
-                                if (root.validator.top !== undefined && val > root.validator.top) {
-                                    isValid = false;
-                                }
-                            }
-                            
-                            if (isValid) {
-                                root.valueModified(val);
-                            }
-                        }
-                    }
-                }
-                
-                onEditingFinished: {
+            
+            onTextEdited: (text) => {
+                if (hasFocus) {
                     const val = root.parseValue(text);
-                    let isValid = true;
-                    if (root.validator) {
-                        if (root.validator.bottom !== undefined && val < root.validator.bottom) {
-                            isValid = false;
+                    if (!isNaN(val)) {
+                        // Validate against validator bounds if available
+                        let isValid = true;
+                        if (root.validator) {
+                            if (root.validator.bottom !== undefined && val < root.validator.bottom) {
+                                isValid = false;
+                            }
+                            if (root.validator.top !== undefined && val > root.validator.top) {
+                                isValid = false;
+                            }
                         }
-                        if (root.validator.top !== undefined && val > root.validator.top) {
-                            isValid = false;
+                        
+                        if (isValid) {
+                            root.valueModified(val);
                         }
                     }
-                    
-                    if (isNaN(val) || !isValid) {
-                        text = root.formatValue(root.value);
+                }
+            }
+            
+            onEditingFinished: {
+                const val = root.parseValue(text);
+                let isValid = true;
+                if (root.validator) {
+                    if (root.validator.bottom !== undefined && val < root.validator.bottom) {
+                        isValid = false;
                     }
+                    if (root.validator.top !== undefined && val > root.validator.top) {
+                        isValid = false;
+                    }
+                }
+                
+                if (isNaN(val) || !isValid) {
+                    text = root.formatValue(root.value);
                 }
             }
         }
@@ -181,7 +155,7 @@ ColumnLayout {
         onValueChanged: {
             // Update input field text in real-time as slider moves during dragging
             // Always update when slider value changes (during dragging or external updates)
-            if (!inputField.activeFocus) {
+            if (!inputField.hasFocus) {
                 const newValue = root.stepSize > 0 ? Math.round(value / root.stepSize) * root.stepSize : value;
                 inputField.text = root.formatValue(newValue);
             }
@@ -190,7 +164,7 @@ ColumnLayout {
         onMoved: {
             const newValue = root.stepSize > 0 ? Math.round(value / root.stepSize) * root.stepSize : value;
             root.valueModified(newValue);
-            if (!inputField.activeFocus) {
+            if (!inputField.hasFocus) {
                 inputField.text = root.formatValue(newValue);
             }
         }
@@ -199,7 +173,7 @@ ColumnLayout {
     // Update input field when value changes externally (slider is already bound)
     onValueChanged: {
         // Only update if component is initialized to avoid issues during creation
-        if (root._initialized && !inputField.activeFocus) {
+        if (root._initialized && !inputField.hasFocus) {
             inputField.text = root.formatValue(root.value);
         }
     }

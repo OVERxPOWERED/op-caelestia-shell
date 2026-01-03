@@ -1,7 +1,6 @@
 import qs.components
 import qs.services
 import qs.config
-import qs.utils
 import QtQuick
 import QtQuick.Layouts
 
@@ -160,7 +159,7 @@ Item {
                     implicitHeight: forecastItemColumn.implicitHeight + Appearance.padding.normal * 2
 
                     radius: Appearance.rounding.normal
-                    color: Colours.palette.m3surfaceContainer
+                    color: Colours.tPalette.m3surfaceContainer
 
                     ColumnLayout {
                         id: forecastItemColumn
@@ -215,7 +214,7 @@ Item {
         Layout.fillWidth: true
         Layout.preferredHeight: 60
         radius: Appearance.rounding.small
-        color: Colours.palette.m3surfaceContainer
+        color: Colours.tPalette.m3surfaceContainer
 
         Row {
             anchors.centerIn: parent
@@ -254,6 +253,7 @@ Item {
         property string label
         property string value
         property color colour
+
         spacing: Appearance.spacing.small
 
         MaterialIcon {
@@ -261,6 +261,7 @@ Item {
             font.pointSize: Appearance.font.size.extraLarge
             color: weatherStat.colour
         }
+
         Column {
             StyledText {
                 text: weatherStat.label

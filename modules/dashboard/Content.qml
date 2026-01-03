@@ -106,8 +106,9 @@ Item {
                     index: 2
                     sourceComponent: Performance {}
                 }
-                
+
                 Pane {
+                    index: 3
                     sourceComponent: Weather {}
                 }
             }
@@ -134,7 +135,7 @@ Item {
 
     component Pane: Loader {
         required property int index
-        
+
         Layout.alignment: Qt.AlignTop
 
         Component.onCompleted: active = Qt.binding(() => {

@@ -133,6 +133,7 @@ Item {
 
         StyledText {
             Layout.topMargin: Appearance.spacing.normal
+            Layout.leftMargin: Appearance.padding.normal
             visible: forecastRepeater.count > 0
             text: qsTr("7-Day Forecast")
             font.pointSize: Appearance.font.size.normal

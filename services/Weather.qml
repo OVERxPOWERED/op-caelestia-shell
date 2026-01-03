@@ -24,7 +24,7 @@ Singleton {
     readonly property string sunset: cc ? Qt.formatDateTime(new Date(cc.sunset), Config.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
 
     function reload(): void {
-        let configLocation = Config.services.weatherLocation;
+        const configLocation = Config.services.weatherLocation;
 
         if (configLocation && configLocation !== "") {
             if (configLocation.indexOf(",") !== -1 && !isNaN(parseFloat(configLocation.split(",")[0])))

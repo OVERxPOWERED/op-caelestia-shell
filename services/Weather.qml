@@ -19,18 +19,22 @@ Singleton {
     readonly property string temp: Config.services.useFahrenheit ? `${cc?.temp_F ?? 0}°F` : `${cc?.temp_C ?? 0}°C`
     readonly property string feelsLike: Config.services.useFahrenheit ? `${cc?.FeelsLikeF ?? 0}°F` : `${cc?.FeelsLikeC ?? 0}°C`
     readonly property int humidity: cc?.humidity ?? 0
-    readonly property real windSpeed: (cc && cc.windSpeed !== undefined) ? cc.windSpeed : 0.0
+    readonly property real windSpeed: cc?.windSpeed ?? 0
     readonly property string sunrise: cc ? Qt.formatDateTime(new Date(cc.sunrise), Config.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
     readonly property string sunset: cc ? Qt.formatDateTime(new Date(cc.sunset), Config.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
+
+    readonly property var cachedCities: new Map()
 
     function reload(): void {
         const configLocation = Config.services.weatherLocation;
 
-        if (configLocation && configLocation !== "") {
-            if (configLocation.indexOf(",") !== -1 && !isNaN(parseFloat(configLocation.split(",")[0])))
+        if (configLocation) {
+            if (configLocation.indexOf(",") !== -1 && !isNaN(parseFloat(configLocation.split(",")[0]))) {
                 loc = configLocation;
-            else
+                fetchCityFromCoords(configLocation);
+            } else {
                 fetchCoordsFromCity(configLocation);
+            }
         } else if (!loc || timer.elapsed() > 900) {
             Requests.get("https://ipinfo.io/json", text => {
                 const response = JSON.parse(text);
@@ -43,8 +47,28 @@ Singleton {
         }
     }
 
-    function fetchCoordsFromCity(cityName) {
-        const url = "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(cityName) + "&count=1&language=en&format=json";
+    function fetchCityFromCoords(coords: string): void {
+        if (cachedCities.has(coords)) {
+            city = cachedCities.get(coords);
+            return;
+        }
+
+        const [lat, lon] = coords.split(",");
+        const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=geocodejson`;
+        Requests.get(url, text => {
+            const geo = JSON.parse(text).features?.[0]?.properties.geocoding;
+            if (geo) {
+                const geoCity = geo.type === "city" ? geo.name : geo.city;
+                city = geoCity;
+                cachedCities.set(coords, geoCity);
+            } else {
+                city = "Unknown City";
+            }
+        });
+    }
+
+    function fetchCoordsFromCity(cityName: string): void {
+        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=en&format=json`;
 
         Requests.get(url, text => {
             const json = JSON.parse(text);
@@ -59,7 +83,7 @@ Singleton {
         });
     }
 
-    function fetchWeatherData() {
+    function fetchWeatherData(): void {
         const url = getWeatherUrl();
         if (url === "")
             return;
@@ -99,7 +123,7 @@ Singleton {
         });
     }
 
-    function getWeatherUrl() {
+    function getWeatherUrl(): string {
         if (!loc || loc.indexOf(",") === -1)
             return "";
 

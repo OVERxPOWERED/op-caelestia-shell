@@ -129,7 +129,6 @@ ClippingRectangle {
 
             anchors.fill: parent
             clip: false
-            asynchronous: true
             active: false
             
             Component.onCompleted: {

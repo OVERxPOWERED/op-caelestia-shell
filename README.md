@@ -303,7 +303,20 @@ default, you must create it manually.
     },
     "background": {
         "desktopClock": {
-            "enabled": false
+            "enabled": false,
+            "scale": 1.0,
+            "position": "bottom-right",
+            "shadow": {
+                "enabled": true,
+                "opacity": 0.7,
+                "blur": 0.4
+            },
+            "background": {
+                "enabled": false,
+                "opacity": 0.7,
+                "blur": true
+            },
+            "invertColors": false
         },
         "enabled": true,
         "visualiser": {

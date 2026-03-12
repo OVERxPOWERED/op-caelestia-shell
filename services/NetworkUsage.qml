@@ -192,21 +192,13 @@ Singleton {
                 const maxHistory = root.historyLength + 1;
 
                 if (root._downloadSpeed >= 0 && isFinite(root._downloadSpeed)) {
-                    let newDownHist = root._downloadHistory.slice();
-                    newDownHist.push(root._downloadSpeed);
-                    if (newDownHist.length > maxHistory) {
-                        newDownHist.shift();
-                    }
-                    root._downloadHistory = newDownHist;
+                    const dh = root._downloadHistory;
+                    root._downloadHistory = dh.length >= maxHistory ? [...dh.slice(1), root._downloadSpeed] : [...dh, root._downloadSpeed];
                 }
 
                 if (root._uploadSpeed >= 0 && isFinite(root._uploadSpeed)) {
-                    let newUpHist = root._uploadHistory.slice();
-                    newUpHist.push(root._uploadSpeed);
-                    if (newUpHist.length > maxHistory) {
-                        newUpHist.shift();
-                    }
-                    root._uploadHistory = newUpHist;
+                    const uh = root._uploadHistory;
+                    root._uploadHistory = uh.length >= maxHistory ? [...uh.slice(1), root._uploadSpeed] : [...uh, root._uploadSpeed];
                 }
             }
 

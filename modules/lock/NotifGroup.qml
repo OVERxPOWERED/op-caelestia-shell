@@ -17,9 +17,30 @@ StyledRect {
     required property string modelData
 
     readonly property list<var> notifs: Notifs.list.filter(notif => notif.appName === modelData)
-    readonly property string image: notifs.find(n => n.image.length > 0)?.image ?? ""
-    readonly property string appIcon: notifs.find(n => n.appIcon.length > 0)?.appIcon ?? ""
-    readonly property string urgency: notifs.some(n => n.urgency === NotificationUrgency.Critical) ? "critical" : notifs.some(n => n.urgency === NotificationUrgency.Normal) ? "normal" : "low"
+    readonly property var props: {
+        let img = "";
+        let icon = "";
+        let hasCritical = false;
+        let hasNormal = false;
+        for (const n of notifs) {
+            if (!img && n.image.length > 0)
+                img = n.image;
+            if (!icon && n.appIcon.length > 0)
+                icon = n.appIcon;
+            if (n.urgency === NotificationUrgency.Critical)
+                hasCritical = true;
+            else if (n.urgency === NotificationUrgency.Normal)
+                hasNormal = true;
+        }
+        return {
+            img,
+            icon,
+            urgency: hasCritical ? "critical" : hasNormal ? "normal" : "low"
+        };
+    }
+    readonly property string image: props.img
+    readonly property string appIcon: props.icon
+    readonly property string urgency: props.urgency
 
     property bool expanded
 

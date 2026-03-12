@@ -681,7 +681,7 @@ Item {
                 SparklineItem {
                     id: sparkline
 
-                    property real targetMax: Math.max(NetworkUsage.downloadBuffer.maximum, NetworkUsage.uploadBuffer.maximum, 1024)
+                    property real targetMax: 1024
                     property real smoothMax: targetMax
 
                     anchors.fill: parent
@@ -694,19 +694,23 @@ Item {
                     maxValue: smoothMax
                     historyLength: NetworkUsage.historyLength
 
-                    Timer {
-                        interval: Config.dashboard.resourceUpdateInterval
-                        running: networkCard.visible
-                        repeat: true
-                        onTriggered: sparkline.targetMax = Math.max(NetworkUsage.downloadBuffer.maximum, NetworkUsage.uploadBuffer.maximum, 1024)
+                    Connections {
+                        target: NetworkUsage.downloadBuffer
+
+                        function onValuesChanged(): void {
+                            sparkline.targetMax = Math.max(NetworkUsage.downloadBuffer.maximum, NetworkUsage.uploadBuffer.maximum, 1024);
+                            slideAnim.restart();
+                        }
                     }
 
-                    NumberAnimation on slideProgress {
+                    NumberAnimation {
+                        id: slideAnim
+
+                        target: sparkline
+                        property: "slideProgress"
                         from: 0
                         to: 1
                         duration: Config.dashboard.resourceUpdateInterval
-                        loops: Animation.Infinite
-                        running: networkCard.visible
                     }
 
                     Behavior on smoothMax {

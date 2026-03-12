@@ -73,6 +73,8 @@ StyledRect {
                 Image {
                     source: Qt.resolvedUrl(root.image)
                     fillMode: Image.PreserveAspectCrop
+                    sourceSize.width: Config.notifs.sizes.image
+                    sourceSize.height: Config.notifs.sizes.image
                     cache: false
                     asynchronous: true
                     width: Config.notifs.sizes.image

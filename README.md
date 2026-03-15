@@ -420,6 +420,12 @@ default, you must create it manually.
                     "name": "steam",
                     "icon": "sports_esports"
                 }
+            ],
+            "windowIcons": [
+                {
+                    "regex": "steam(_app_(default|[0-9]+))?",
+                    "icon": "sports_esports"
+                }
             ]
         },
         "excludedScreens": [""],

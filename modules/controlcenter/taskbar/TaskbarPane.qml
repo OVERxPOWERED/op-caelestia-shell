@@ -19,6 +19,8 @@ Item {
 
     required property Session session
 
+    property bool activeWindowCompact: Config.bar.activeWindow.compact ?? false
+    property bool activeWindowInverted: Config.bar.activeWindow.inverted ?? false
     property bool clockShowIcon: Config.bar.clock.showIcon ?? true
     property bool persistent: Config.bar.persistent ?? true
     property bool showOnHover: Config.bar.showOnHover ?? true
@@ -65,6 +67,8 @@ Item {
     }
 
     function saveConfig(entryIndex, entryEnabled) {
+        Config.bar.activeWindow.compact = root.activeWindowCompact;
+        Config.bar.activeWindow.inverted = root.activeWindowInverted;
         Config.bar.clock.showIcon = root.clockShowIcon;
         Config.bar.persistent = root.persistent;
         Config.bar.showOnHover = root.showOnHover;
@@ -595,6 +599,34 @@ Item {
                                 }
                             }
                         }
+
+                        SectionContainer {
+                            Layout.fillWidth: true
+                            alignTop: true
+
+                            StyledText {
+                                text: qsTr("Active window")
+                                font.pointSize: Appearance.font.size.normal
+                            }
+
+                            SwitchRow {
+                                label: qsTr("Compact")
+                                checked: root.activeWindowCompact
+                                onToggled: checked => {
+                                    root.activeWindowCompact = checked;
+                                    root.saveConfig();
+                                }
+                            }
+
+                            SwitchRow {
+                                label: qsTr("Inverted")
+                                checked: root.activeWindowInverted
+                                onToggled: checked => {
+                                    root.activeWindowInverted = checked;
+                                    root.saveConfig();
+                                }
+                            }
+                        }
                     }
 
                     ColumnLayout {
@@ -696,25 +728,25 @@ Item {
                                 rows: Math.ceil(root.monitorNames.length / 3)
 
                                 options: root.monitorNames.map(e => ({
-                                    label: qsTr(e),
-                                    propertyName: `monitor${e}`,
-                                    onToggled: function (_) {
-                                        // if the given monitor is in the excluded list, it should be added back
-                                        let addedBack = excludedScreens.includes(e)
-                                        if (addedBack) {
-                                            const index = excludedScreens.indexOf(e);
-                                            if (index !== -1) {
-                                                excludedScreens.splice(index, 1);
-                                            }
-                                        } else {
-                                            if (!excludedScreens.includes(e)) {
-                                                excludedScreens.push(e);
-                                            }
-                                        }
-                                        root.saveConfig();
-                                    },
-                                    state: !Strings.testRegexList(root.excludedScreens, e)
-                                }))
+                                            label: qsTr(e),
+                                            propertyName: `monitor${e}`,
+                                            onToggled: function (_) {
+                                                // if the given monitor is in the excluded list, it should be added back
+                                                let addedBack = excludedScreens.includes(e);
+                                                if (addedBack) {
+                                                    const index = excludedScreens.indexOf(e);
+                                                    if (index !== -1) {
+                                                        excludedScreens.splice(index, 1);
+                                                    }
+                                                } else {
+                                                    if (!excludedScreens.includes(e)) {
+                                                        excludedScreens.push(e);
+                                                    }
+                                                }
+                                                root.saveConfig();
+                                            },
+                                            state: !Strings.testRegexList(root.excludedScreens, e)
+                                        }))
                             }
                         }
                     }

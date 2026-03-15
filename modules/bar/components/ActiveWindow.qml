@@ -46,9 +46,13 @@ Item {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 const popouts = root.bar.popouts;
-                popouts.currentName = "activewindow";
-                popouts.currentCenter = root.mapToItem(root.bar, 0, root.implicitHeight / 2).y;
-                popouts.hasCurrent = true;
+                if (popouts.hasCurrent) {
+                    popouts.hasCurrent = false;
+                } else {
+                    popouts.currentName = "activewindow";
+                    popouts.currentCenter = root.mapToItem(root.bar, 0, root.implicitHeight / 2).y;
+                    popouts.hasCurrent = true;
+                }
             }
         }
     }

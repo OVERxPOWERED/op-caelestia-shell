@@ -38,6 +38,21 @@ Item {
     implicitWidth: Math.max(icon.implicitWidth, current.implicitHeight)
     implicitHeight: icon.implicitHeight + current.implicitWidth + current.anchors.topMargin
 
+    Loader {
+        anchors.fill: parent
+        active: !Config.bar.activeWindow.showOnHover
+
+        sourceComponent: MouseArea {
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                const popouts = root.bar.popouts;
+                popouts.currentName = "activewindow";
+                popouts.currentCenter = root.mapToItem(root.bar, 0, root.implicitHeight / 2).y;
+                popouts.hasCurrent = true;
+            }
+        }
+    }
+
     MaterialIcon {
         id: icon
 

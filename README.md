@@ -333,7 +333,8 @@ default, you must create it manually.
     "bar": {
         "activeWindow": {
             "compact": false,
-            "inverted": false
+            "inverted": false,
+            "showOnHover": true
         },
         "clock": {
             "showIcon": true

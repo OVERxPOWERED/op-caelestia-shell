@@ -44,6 +44,12 @@ Item {
 
         sourceComponent: MouseArea {
             cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
+            onPositionChanged: {
+                const popouts = root.bar.popouts;
+                if (popouts.hasCurrent && popouts.currentName !== "activewindow")
+                    popouts.hasCurrent = false;
+            }
             onClicked: {
                 const popouts = root.bar.popouts;
                 if (popouts.hasCurrent) {

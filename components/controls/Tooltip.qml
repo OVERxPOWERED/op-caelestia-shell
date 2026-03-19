@@ -24,6 +24,43 @@ Popup {
         onTriggered: root.tooltipVisible = false
     }
 
+    function updatePosition() {
+        if (!target || !parent)
+            return;
+
+        // Wait for tooltipRect to have its size calculated
+        Qt.callLater(() => {
+            if (!target || !parent || !tooltipRect)
+                return;
+
+            // Get target position in parent's coordinate system
+            const targetPos = target.mapToItem(parent, 0, 0);
+            const targetCenterX = targetPos.x + target.width / 2;
+
+            // Get tooltip size (use width/height if available, otherwise implicit)
+            const tooltipWidth = tooltipRect.width > 0 ? tooltipRect.width : tooltipRect.implicitWidth;
+            const tooltipHeight = tooltipRect.height > 0 ? tooltipRect.height : tooltipRect.implicitHeight;
+
+            // Center tooltip horizontally on target
+            let newX = targetCenterX - tooltipWidth / 2;
+
+            // Position tooltip above target
+            let newY = targetPos.y - tooltipHeight - Appearance.spacing.small;
+
+            // Keep within bounds
+            const padding = Appearance.padding.normal;
+            if (newX < padding) {
+                newX = padding;
+            } else if (newX + tooltipWidth > (parent.width - padding)) {
+                newX = parent.width - tooltipWidth - padding;
+            }
+
+            // Update popup position
+            x = newX;
+            y = newY;
+        });
+    }
+
     // Popup properties - doesn't affect layout
     parent: {
         let p = target;
@@ -71,43 +108,6 @@ Popup {
             if (root.tooltipVisible)
                 root.updatePosition();
         }
-    }
-
-    function updatePosition() {
-        if (!target || !parent)
-            return;
-
-        // Wait for tooltipRect to have its size calculated
-        Qt.callLater(() => {
-            if (!target || !parent || !tooltipRect)
-                return;
-
-            // Get target position in parent's coordinate system
-            const targetPos = target.mapToItem(parent, 0, 0);
-            const targetCenterX = targetPos.x + target.width / 2;
-
-            // Get tooltip size (use width/height if available, otherwise implicit)
-            const tooltipWidth = tooltipRect.width > 0 ? tooltipRect.width : tooltipRect.implicitWidth;
-            const tooltipHeight = tooltipRect.height > 0 ? tooltipRect.height : tooltipRect.implicitHeight;
-
-            // Center tooltip horizontally on target
-            let newX = targetCenterX - tooltipWidth / 2;
-
-            // Position tooltip above target
-            let newY = targetPos.y - tooltipHeight - Appearance.spacing.small;
-
-            // Keep within bounds
-            const padding = Appearance.padding.normal;
-            if (newX < padding) {
-                newX = padding;
-            } else if (newX + tooltipWidth > (parent.width - padding)) {
-                newX = parent.width - tooltipWidth - padding;
-            }
-
-            // Update popup position
-            x = newX;
-            y = newY;
-        });
     }
 
     enter: Transition {

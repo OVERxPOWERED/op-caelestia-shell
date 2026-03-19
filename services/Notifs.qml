@@ -148,30 +148,6 @@ Singleton {
         property date time: new Date()
         property string timeStr: qsTr("now")
 
-        function updateTimeStr(): void {
-            const diff = Date.now() - time.getTime();
-            const m = Math.floor(diff / 60000);
-
-            if (m < 1) {
-                timeStr = qsTr("now");
-                timeStrTimer.interval = 5000;
-            } else {
-                const h = Math.floor(m / 60);
-                const d = Math.floor(h / 24);
-
-                if (d > 0) {
-                    timeStr = `${d}d`;
-                    timeStrTimer.interval = 3600000;
-                } else if (h > 0) {
-                    timeStr = `${h}h`;
-                    timeStrTimer.interval = 300000;
-                } else {
-                    timeStr = `${m}m`;
-                    timeStrTimer.interval = m < 10 ? 30000 : 60000;
-                }
-            }
-        }
-
         readonly property Timer timeStrTimer: Timer {
             running: !notif.closed
             repeat: true
@@ -305,6 +281,30 @@ Singleton {
 
             function onHintsChanged(): void {
                 notif.hints = notif.notification.hints;
+            }
+        }
+
+        function updateTimeStr(): void {
+            const diff = Date.now() - time.getTime();
+            const m = Math.floor(diff / 60000);
+
+            if (m < 1) {
+                timeStr = qsTr("now");
+                timeStrTimer.interval = 5000;
+            } else {
+                const h = Math.floor(m / 60);
+                const d = Math.floor(h / 24);
+
+                if (d > 0) {
+                    timeStr = `${d}d`;
+                    timeStrTimer.interval = 3600000;
+                } else if (h > 0) {
+                    timeStr = `${h}h`;
+                    timeStrTimer.interval = 300000;
+                } else {
+                    timeStr = `${m}m`;
+                    timeStrTimer.interval = m < 10 ? 30000 : 60000;
+                }
             }
         }
 

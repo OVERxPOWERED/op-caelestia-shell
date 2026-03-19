@@ -55,9 +55,6 @@ CollapsibleSection {
     SectionContainer {
         id: posContainer
 
-        contentSpacing: Appearance.spacing.small
-        z: 1
-
         readonly property var pos: (rootPane.desktopClockPosition || "top-left").split('-')
         readonly property string currentV: pos[0]
         readonly property string currentH: pos[1]
@@ -66,6 +63,9 @@ CollapsibleSection {
             rootPane.desktopClockPosition = v + "-" + h;
             rootPane.saveConfig();
         }
+
+        contentSpacing: Appearance.spacing.small
+        z: 1
 
         StyledText {
             text: qsTr("Positioning")

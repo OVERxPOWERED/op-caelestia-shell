@@ -40,8 +40,6 @@ Item {
     property bool showStorage: Config.dashboard.performance.showStorage ?? true
     property bool showNetwork: Config.dashboard.performance.showNetwork ?? true
 
-    anchors.fill: parent
-
     function saveConfig() {
         Config.dashboard.enabled = root.enabled;
         Config.dashboard.showOnHover = root.showOnHover;
@@ -61,6 +59,8 @@ Item {
         // Note: sizes properties are readonly and cannot be modified
         Config.save();
     }
+
+    anchors.fill: parent
 
     ClippingRectangle {
         id: dashboardClippingRect

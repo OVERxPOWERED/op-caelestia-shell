@@ -231,12 +231,12 @@ Item {
         implicitHeight: implicitWidth
 
         StateLayer {
-            disabled: !control.canUse
-            radius: Appearance.rounding.full
-
             function onClicked(): void {
                 control.onClicked();
             }
+
+            disabled: !control.canUse
+            radius: Appearance.rounding.full
         }
 
         MaterialIcon {

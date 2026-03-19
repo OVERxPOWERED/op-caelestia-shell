@@ -12,15 +12,15 @@ StyledRect {
 
     required property real contentHeight
 
-    implicitHeight: contentHeight
-
-    radius: Appearance.rounding.large
-    color: Colours.tPalette.m3surfaceContainer
-
     function searchCandidates(title, artist) {
         LyricsService.currentRequestId++;
         LyricsService.fetchNetEaseCandidates(title, artist, LyricsService.currentRequestId);
     }
+
+    implicitHeight: contentHeight
+
+    radius: Appearance.rounding.large
+    color: Colours.tPalette.m3surfaceContainer
 
     Loader {
         asynchronous: true

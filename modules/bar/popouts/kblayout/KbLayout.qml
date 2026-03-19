@@ -16,17 +16,18 @@ ColumnLayout {
 
     required property Item wrapper
 
+    function refresh() {
+        kb.refresh();
+    }
+
     spacing: Appearance.spacing.small
     width: Config.bar.sizes.kbLayoutWidth
+
+    Component.onCompleted: kb.start()
 
     KbLayoutModel {
         id: kb
     }
-
-    function refresh() {
-        kb.refresh();
-    }
-    Component.onCompleted: kb.start()
 
     StyledText {
         Layout.topMargin: Appearance.padding.normal
@@ -97,6 +98,11 @@ ColumnLayout {
             StateLayer {
                 id: layer
 
+                function onClicked(): void {
+                    if (!isDisabled)
+                        kb.switchTo(layoutIndex);
+                }
+
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
@@ -104,11 +110,6 @@ ColumnLayout {
 
                 radius: Appearance.rounding.full
                 enabled: !isDisabled
-
-                function onClicked(): void {
-                    if (!isDisabled)
-                        kb.switchTo(layoutIndex);
-                }
             }
 
             StyledText {

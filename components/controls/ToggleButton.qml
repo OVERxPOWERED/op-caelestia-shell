@@ -46,11 +46,11 @@ StyledRect {
     StateLayer {
         id: toggleStateLayer
 
-        color: root.toggled ? Colours.palette[`m3on${root.accent}`] : Colours.palette[`m3on${root.accent}Container`]
-
         function onClicked(): void {
             root.clicked();
         }
+
+        color: root.toggled ? Colours.palette[`m3on${root.accent}`] : Colours.palette[`m3on${root.accent}Container`]
     }
 
     RowLayout {

@@ -35,11 +35,11 @@ ColumnLayout {
             implicitHeight: moveToWsIcon.implicitHeight + Appearance.padding.small
 
             StateLayer {
-                color: Colours.palette.m3onPrimary
-
                 function onClicked(): void {
                     root.moveToWsExpanded = !root.moveToWsExpanded;
                 }
+
+                color: Colours.palette.m3onPrimary
             }
 
             MaterialIcon {
@@ -161,11 +161,11 @@ ColumnLayout {
         StateLayer {
             id: stateLayer
 
-            color: parent.onColor
-
             function onClicked(): void {
                 parent.onClicked();
             }
+
+            color: parent.onColor
         }
 
         StyledText {

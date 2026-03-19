@@ -101,10 +101,6 @@ ClippingRectangle {
 
         required property int paneIndex
         required property string componentPath
-
-        implicitWidth: root.width
-        implicitHeight: root.height
-
         property bool hasBeenLoaded: false
 
         function updateActive(): void {
@@ -126,6 +122,9 @@ ClippingRectangle {
 
             loader.active = shouldBeActive;
         }
+
+        implicitWidth: root.width
+        implicitHeight: root.height
 
         Loader {
             id: loader

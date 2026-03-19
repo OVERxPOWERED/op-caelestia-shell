@@ -181,7 +181,6 @@ ColumnLayout {
                         color: Qt.alpha(Colours.palette.m3primaryContainer, VPN.connected && modelData.enabled ? 1 : 0)
 
                         StateLayer {
-                            enabled: !VPN.connecting
                             function onClicked(): void {
                                 const clickedIndex = modelData.index;
 
@@ -216,6 +215,8 @@ ColumnLayout {
                                     }
                                 }
                             }
+
+                            enabled: !VPN.connecting
                         }
 
                         MaterialIcon {
@@ -271,6 +272,43 @@ ColumnLayout {
         property string displayName: ""
         property string interfaceName: ""
 
+        function showProviderSelection(): void {
+            currentState = "selection";
+            open();
+        }
+
+        function closeWithAnimation(): void {
+            close();
+        }
+
+        function showAddForm(providerType: string, defaultDisplayName: string): void {
+            editIndex = -1;
+            providerName = providerType;
+            displayName = defaultDisplayName;
+            interfaceName = "";
+
+            if (currentState === "selection") {
+                transitionToForm.start();
+            } else {
+                currentState = "form";
+                isClosing = false;
+                open();
+            }
+        }
+
+        function showEditForm(index: int): void {
+            const provider = Config.utilities.vpn.provider[index];
+            const isObject = typeof provider === "object";
+
+            editIndex = index;
+            providerName = isObject ? (provider.name || "custom") : String(provider);
+            displayName = isObject ? (provider.displayName || providerName) : providerName;
+            interfaceName = isObject ? (provider.interface || "") : "";
+
+            currentState = "form";
+            open();
+        }
+
         parent: Overlay.overlay
         x: Math.round((parent.width - width) / 2)
         y: Math.round((parent.height - height) / 2)
@@ -319,43 +357,6 @@ ColumnLayout {
                     easing.bezierCurve: Appearance.anim.curves.emphasized
                 }
             }
-        }
-
-        function showProviderSelection(): void {
-            currentState = "selection";
-            open();
-        }
-
-        function closeWithAnimation(): void {
-            close();
-        }
-
-        function showAddForm(providerType: string, defaultDisplayName: string): void {
-            editIndex = -1;
-            providerName = providerType;
-            displayName = defaultDisplayName;
-            interfaceName = "";
-
-            if (currentState === "selection") {
-                transitionToForm.start();
-            } else {
-                currentState = "form";
-                isClosing = false;
-                open();
-            }
-        }
-
-        function showEditForm(index: int): void {
-            const provider = Config.utilities.vpn.provider[index];
-            const isObject = typeof provider === "object";
-
-            editIndex = index;
-            providerName = isObject ? (provider.name || "custom") : String(provider);
-            displayName = isObject ? (provider.displayName || providerName) : providerName;
-            interfaceName = isObject ? (provider.interface || "") : "";
-
-            currentState = "form";
-            open();
         }
 
         Overlay.modal: Rectangle {

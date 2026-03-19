@@ -41,16 +41,16 @@ GridView {
         readonly property real itemRadius: Appearance.rounding.normal
 
         StateLayer {
+            function onClicked(): void {
+                Wallpapers.setWallpaper(modelData.path);
+            }
+
             anchors.fill: parent
             anchors.leftMargin: itemMargin
             anchors.rightMargin: itemMargin
             anchors.topMargin: itemMargin
             anchors.bottomMargin: itemMargin
             radius: itemRadius
-
-            function onClicked(): void {
-                Wallpapers.setWallpaper(modelData.path);
-            }
         }
 
         StyledClippingRect {

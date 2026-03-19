@@ -25,21 +25,8 @@ Item {
     property var selectedApp: root.session.launcher.active
     property bool hideFromLauncherChecked: false
     property bool favouriteChecked: false
-
-    anchors.fill: parent
-
-    onSelectedAppChanged: {
-        root.session.launcher.active = root.selectedApp;
-        updateToggleState();
-    }
-
-    Connections {
-        target: root.session.launcher
-        function onActiveChanged() {
-            root.selectedApp = root.session.launcher.active;
-            updateToggleState();
-        }
-    }
+    property string searchText: ""
+    property list<var> filteredApps: []
 
     function updateToggleState() {
         if (!root.selectedApp) {
@@ -78,16 +65,6 @@ Item {
         Config.save();
     }
 
-    AppDb {
-        id: allAppsDb
-
-        path: `${Paths.state}/apps.sqlite`
-        favouriteApps: Config.launcher.favouriteApps
-        entries: DesktopEntries.applications.values
-    }
-
-    property string searchText: ""
-
     function filterApps(search: string): list<var> {
         if (!search || search.trim() === "") {
             const apps = [];
@@ -120,10 +97,31 @@ Item {
         return results.sort((a, b) => b._score - a._score).map(r => r.obj._item);
     }
 
-    property list<var> filteredApps: []
-
     function updateFilteredApps() {
         filteredApps = filterApps(searchText);
+    }
+
+    anchors.fill: parent
+
+    onSelectedAppChanged: {
+        root.session.launcher.active = root.selectedApp;
+        updateToggleState();
+    }
+
+    Connections {
+        target: root.session.launcher
+        function onActiveChanged() {
+            root.selectedApp = root.session.launcher.active;
+            updateToggleState();
+        }
+    }
+
+    AppDb {
+        id: allAppsDb
+
+        path: `${Paths.state}/apps.sqlite`
+        favouriteApps: Config.launcher.favouriteApps
+        entries: DesktopEntries.applications.values
     }
 
     onSearchTextChanged: {
@@ -308,10 +306,10 @@ Item {
                         delegate: StyledRect {
                             required property var modelData
 
-                        width: parent ? parent.width : 0
-                        implicitHeight: 40
-
                             readonly property bool isSelected: root.selectedApp === modelData
+
+                            width: parent ? parent.width : 0
+                            implicitHeight: 40
 
                             color: isSelected ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
                             radius: Appearance.rounding.normal
@@ -418,6 +416,8 @@ Item {
                 Loader {
                     id: rightLauncherLoader
 
+                    property var displayedApp: rightLauncherPane.displayedApp
+
                     anchors.fill: parent
 
                     asynchronous: true
@@ -428,8 +428,6 @@ Item {
 
                     sourceComponent: rightLauncherPane.targetComponent
                     active: true
-
-                    property var displayedApp: rightLauncherPane.displayedApp
 
                     onItemChanged: {
                         if (item && rightLauncherPane.pane && rightLauncherPane.displayedApp !== rightLauncherPane.pane) {
@@ -515,10 +513,9 @@ Item {
         ColumnLayout {
             id: appDetailsLayout
 
-            anchors.fill: parent
-
             readonly property var displayedApp: parent && parent.displayedApp !== undefined ? parent.displayedApp : null
 
+            anchors.fill: parent
             spacing: Appearance.spacing.normal
 
             SettingsHeader {

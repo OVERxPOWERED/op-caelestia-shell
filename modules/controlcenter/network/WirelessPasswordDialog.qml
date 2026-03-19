@@ -29,6 +29,47 @@ Item {
     }
 
     property bool isClosing: false
+
+    function checkConnectionStatus(): void {
+        if (!root.visible || !connectButton.connecting) {
+            return;
+        }
+
+        const isConnected = root.network && Nmcli.active && Nmcli.active.ssid && Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
+
+        if (isConnected) {
+            connectionSuccessTimer.start();
+            return;
+        }
+
+        if (Nmcli.pendingConnection === null && connectButton.connecting) {
+            if (connectionMonitor.repeatCount > 10) {
+                connectionMonitor.stop();
+                connectButton.connecting = false;
+                connectButton.hasError = true;
+                connectButton.enabled = true;
+                connectButton.text = qsTr("Connect");
+                passwordContainer.passwordBuffer = "";
+                if (root.network && root.network.ssid) {
+                    Nmcli.forgetNetwork(root.network.ssid);
+                }
+            }
+        }
+    }
+
+    function closeDialog(): void {
+        if (isClosing) {
+            return;
+        }
+
+        isClosing = true;
+        passwordContainer.passwordBuffer = "";
+        connectButton.connecting = false;
+        connectButton.hasError = false;
+        connectButton.text = qsTr("Connect");
+        connectionMonitor.stop();
+    }
+
     visible: session.network.showPasswordDialog || isClosing
     enabled: session.network.showPasswordDialog && !isClosing
     focus: enabled
@@ -238,12 +279,12 @@ Item {
                 }
 
                 StateLayer {
-                    hoverEnabled: false
-                    cursorShape: Qt.IBeamCursor
-
                     function onClicked(): void {
                         passwordContainer.forceActiveFocus();
                     }
+
+                    hoverEnabled: false
+                    cursorShape: Qt.IBeamCursor
                 }
 
                 StyledText {
@@ -416,33 +457,6 @@ Item {
         }
     }
 
-    function checkConnectionStatus(): void {
-        if (!root.visible || !connectButton.connecting) {
-            return;
-        }
-
-        const isConnected = root.network && Nmcli.active && Nmcli.active.ssid && Nmcli.active.ssid.toLowerCase().trim() === root.network.ssid.toLowerCase().trim();
-
-        if (isConnected) {
-            connectionSuccessTimer.start();
-            return;
-        }
-
-        if (Nmcli.pendingConnection === null && connectButton.connecting) {
-            if (connectionMonitor.repeatCount > 10) {
-                connectionMonitor.stop();
-                connectButton.connecting = false;
-                connectButton.hasError = true;
-                connectButton.enabled = true;
-                connectButton.text = qsTr("Connect");
-                passwordContainer.passwordBuffer = "";
-                if (root.network && root.network.ssid) {
-                    Nmcli.forgetNetwork(root.network.ssid);
-                }
-            }
-        }
-    }
-
     Timer {
         id: connectionMonitor
 
@@ -498,18 +512,5 @@ Item {
                 Nmcli.forgetNetwork(ssid);
             }
         }
-    }
-
-    function closeDialog(): void {
-        if (isClosing) {
-            return;
-        }
-
-        isClosing = true;
-        passwordContainer.passwordBuffer = "";
-        connectButton.connecting = false;
-        connectButton.hasError = false;
-        connectButton.text = qsTr("Connect");
-        connectionMonitor.stop();
     }
 }

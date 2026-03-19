@@ -11,6 +11,8 @@ ScrollBar {
     property bool shouldBeActive
     property real nonAnimPosition
     property bool animating
+    property bool _updatingFromFlickable: false
+    property bool _updatingFromUser: false
 
     onHoveredChanged: {
         if (hovered)
@@ -18,9 +20,6 @@ ScrollBar {
         else
             shouldBeActive = flickable.moving;
     }
-
-    property bool _updatingFromFlickable: false
-    property bool _updatingFromUser: false
 
     // Sync nonAnimPosition with Qt's automatic position binding
     onPositionChanged: {
@@ -118,6 +117,29 @@ ScrollBar {
     CustomMouseArea {
         id: fullMouse
 
+        function onWheel(event: WheelEvent): void {
+            root.animating = true;
+            root._updatingFromUser = true;
+            let newPos = root.nonAnimPosition;
+            if (event.angleDelta.y > 0)
+                newPos = Math.max(0, root.nonAnimPosition - 0.1);
+            else if (event.angleDelta.y < 0)
+                newPos = Math.min(1 - root.size, root.nonAnimPosition + 0.1);
+            root.nonAnimPosition = newPos;
+            // Update flickable position
+            // Map scrollbar position [0, 1-size] to contentY [0, maxContentY]
+            if (root.flickable) {
+                const contentHeight = root.flickable.contentHeight;
+                const height = root.flickable.height;
+                if (contentHeight > height) {
+                    const maxContentY = contentHeight - height;
+                    const maxPos = 1 - root.size;
+                    const contentY = maxPos > 0 ? (newPos / maxPos) * maxContentY : 0;
+                    root.flickable.contentY = Math.max(0, Math.min(maxContentY, contentY));
+                }
+            }
+        }
+
         anchors.fill: parent
         preventStealing: true
 
@@ -143,29 +165,6 @@ ScrollBar {
         onPositionChanged: event => {
             root._updatingFromUser = true;
             const newPos = Math.max(0, Math.min(1 - root.size, event.y / root.height - root.size / 2));
-            root.nonAnimPosition = newPos;
-            // Update flickable position
-            // Map scrollbar position [0, 1-size] to contentY [0, maxContentY]
-            if (root.flickable) {
-                const contentHeight = root.flickable.contentHeight;
-                const height = root.flickable.height;
-                if (contentHeight > height) {
-                    const maxContentY = contentHeight - height;
-                    const maxPos = 1 - root.size;
-                    const contentY = maxPos > 0 ? (newPos / maxPos) * maxContentY : 0;
-                    root.flickable.contentY = Math.max(0, Math.min(maxContentY, contentY));
-                }
-            }
-        }
-
-        function onWheel(event: WheelEvent): void {
-            root.animating = true;
-            root._updatingFromUser = true;
-            let newPos = root.nonAnimPosition;
-            if (event.angleDelta.y > 0)
-                newPos = Math.max(0, root.nonAnimPosition - 0.1);
-            else if (event.angleDelta.y < 0)
-                newPos = Math.min(1 - root.size, root.nonAnimPosition + 0.1);
             root.nonAnimPosition = newPos;
             // Update flickable position
             // Map scrollbar position [0, 1-size] to contentY [0, maxContentY]

@@ -53,21 +53,6 @@ Item {
     property list<string> monitorNames: Hypr.monitorNames()
     property list<string> excludedScreens: Config.bar.excludedScreens ?? []
 
-    anchors.fill: parent
-
-    Component.onCompleted: {
-        if (Config.bar.entries) {
-            entriesModel.clear();
-            for (let i = 0; i < Config.bar.entries.length; i++) {
-                const entry = Config.bar.entries[i];
-                entriesModel.append({
-                    id: entry.id,
-                    enabled: entry.enabled !== false
-                });
-            }
-        }
-    }
-
     function saveConfig(entryIndex, entryEnabled) {
         Config.bar.activeWindow.compact = root.activeWindowCompact;
         Config.bar.activeWindow.inverted = root.activeWindowInverted;
@@ -116,6 +101,21 @@ Item {
         }
         Config.bar.entries = entries;
         Config.save();
+    }
+
+    anchors.fill: parent
+
+    Component.onCompleted: {
+        if (Config.bar.entries) {
+            entriesModel.clear();
+            for (let i = 0; i < Config.bar.entries.length; i++) {
+                const entry = Config.bar.entries[i];
+                entriesModel.append({
+                    id: entry.id,
+                    enabled: entry.enabled !== false
+                });
+            }
+        }
     }
 
     ListModel {

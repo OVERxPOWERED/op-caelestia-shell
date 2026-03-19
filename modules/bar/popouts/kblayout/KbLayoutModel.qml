@@ -36,33 +36,6 @@ Item {
         _switchProc.running = true;
     }
 
-    ListModel {
-        id: _layoutsModel
-    }
-
-    property var _xkbMap: ({})
-    property bool _notifiedLimit: false
-
-    Process {
-        id: _xkbXmlBase
-
-        command: ["xmllint", "--xpath", "//layout/configItem[name and description]", "/usr/share/X11/xkb/rules/base.xml"]
-        stdout: StdioCollector {
-            onStreamFinished: _buildXmlMap(text)
-        }
-        onRunningChanged: if (!running && (typeof exitCode !== "undefined") && exitCode !== 0)
-            _xkbXmlEvdev.running = true
-    }
-
-    Process {
-        id: _xkbXmlEvdev
-
-        command: ["xmllint", "--xpath", "//layout/configItem[name and description]", "/usr/share/X11/xkb/rules/evdev.xml"]
-        stdout: StdioCollector {
-            onStreamFinished: _buildXmlMap(text)
-        }
-    }
-
     function _buildXmlMap(xml) {
         const map = {};
 
@@ -106,6 +79,78 @@ Item {
         const region = m[2].trim();
         const code = (region.split(/[,\s-]/)[0] || region).slice(0, 2).toUpperCase();
         return `${lang} (${code})`;
+    }
+
+    function _setLayouts(raw) {
+        const parts = raw.split(",").map(s => s.trim()).filter(Boolean);
+        _layoutsModel.clear();
+
+        const seen = new Set();
+        let idx = 0;
+
+        for (const p of parts) {
+            if (seen.has(p))
+                continue;
+            seen.add(p);
+            _layoutsModel.append({
+                layoutIndex: idx,
+                token: p,
+                label: _pretty(p)
+            });
+            idx++;
+        }
+    }
+
+    function _rebuildVisible() {
+        _visibleModel.clear();
+
+        let arr = [];
+        for (let i = 0; i < _layoutsModel.count; i++)
+            arr.push(_layoutsModel.get(i));
+
+        arr = arr.filter(i => i.layoutIndex !== activeIndex);
+        arr.forEach(i => _visibleModel.append(i));
+
+        if (!Config.utilities.toasts.kbLimit)
+            return;
+
+        if (_layoutsModel.count > 4) {
+            Toaster.toast(qsTr("Keyboard layout limit"), qsTr("XKB supports only 4 layouts at a time"), "warning");
+        }
+    }
+
+    function _pretty(token) {
+        const code = token.replace(/\(.*\)$/, "").trim();
+        if (_xkbMap[code])
+            return code.toUpperCase() + " - " + _xkbMap[code];
+        return code.toUpperCase() + " - " + code;
+    }
+
+    ListModel {
+        id: _layoutsModel
+    }
+
+    property var _xkbMap: ({})
+    property bool _notifiedLimit: false
+
+    Process {
+        id: _xkbXmlBase
+
+        command: ["xmllint", "--xpath", "//layout/configItem[name and description]", "/usr/share/X11/xkb/rules/base.xml"]
+        stdout: StdioCollector {
+            onStreamFinished: _buildXmlMap(text)
+        }
+        onRunningChanged: if (!running && (typeof exitCode !== "undefined") && exitCode !== 0)
+            _xkbXmlEvdev.running = true
+    }
+
+    Process {
+        id: _xkbXmlEvdev
+
+        command: ["xmllint", "--xpath", "//layout/configItem[name and description]", "/usr/share/X11/xkb/rules/evdev.xml"]
+        stdout: StdioCollector {
+            onStreamFinished: _buildXmlMap(text)
+        }
     }
 
     Process {
@@ -174,50 +219,5 @@ Item {
 
         onRunningChanged: if (!running)
             _fetchActiveLayouts.running = true
-    }
-
-    function _setLayouts(raw) {
-        const parts = raw.split(",").map(s => s.trim()).filter(Boolean);
-        _layoutsModel.clear();
-
-        const seen = new Set();
-        let idx = 0;
-
-        for (const p of parts) {
-            if (seen.has(p))
-                continue;
-            seen.add(p);
-            _layoutsModel.append({
-                layoutIndex: idx,
-                token: p,
-                label: _pretty(p)
-            });
-            idx++;
-        }
-    }
-
-    function _rebuildVisible() {
-        _visibleModel.clear();
-
-        let arr = [];
-        for (let i = 0; i < _layoutsModel.count; i++)
-            arr.push(_layoutsModel.get(i));
-
-        arr = arr.filter(i => i.layoutIndex !== activeIndex);
-        arr.forEach(i => _visibleModel.append(i));
-
-        if (!Config.utilities.toasts.kbLimit)
-            return;
-
-        if (_layoutsModel.count > 4) {
-            Toaster.toast(qsTr("Keyboard layout limit"), qsTr("XKB supports only 4 layouts at a time"), "warning");
-        }
-    }
-
-    function _pretty(token) {
-        const code = token.replace(/\(.*\)$/, "").trim();
-        if (_xkbMap[code])
-            return code.toUpperCase() + " - " + _xkbMap[code];
-        return code.toUpperCase() + " - " + code;
     }
 }

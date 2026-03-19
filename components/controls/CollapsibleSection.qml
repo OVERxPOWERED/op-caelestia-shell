@@ -15,6 +15,8 @@ ColumnLayout {
     property bool showBackground: false
     property bool nested: false
 
+    default property alias content: contentColumn.data
+
     signal toggleRequested
 
     spacing: Appearance.spacing.small
@@ -61,18 +63,17 @@ ColumnLayout {
         }
 
         StateLayer {
-            anchors.fill: parent
-            color: Colours.palette.m3onSurface
-            radius: Appearance.rounding.normal
-            showHoverBackground: false
             function onClicked(): void {
                 root.toggleRequested();
                 root.expanded = !root.expanded;
             }
+
+            anchors.fill: parent
+            color: Colours.palette.m3onSurface
+            radius: Appearance.rounding.normal
+            showHoverBackground: false
         }
     }
-
-    default property alias content: contentColumn.data
 
     Item {
         id: contentWrapper

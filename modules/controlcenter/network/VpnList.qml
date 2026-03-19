@@ -586,6 +586,7 @@ ColumnLayout {
 
                         StyledTextField {
                             id: displayNameField
+
                             anchors.centerIn: parent
                             width: parent.width - Appearance.padding.normal
                             horizontalAlignment: TextInput.AlignLeft
@@ -622,6 +623,7 @@ ColumnLayout {
 
                         StyledTextField {
                             id: interfaceNameField
+
                             anchors.centerIn: parent
                             width: parent.width - Appearance.padding.normal
                             horizontalAlignment: TextInput.AlignLeft

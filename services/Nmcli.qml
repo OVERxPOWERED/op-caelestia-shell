@@ -1285,6 +1285,7 @@ Singleton {
 
     Timer {
         id: monitorRestartTimer
+
         interval: 2000
         onTriggered: {
             monitorProc.running = true;

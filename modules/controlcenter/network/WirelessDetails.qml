@@ -58,6 +58,7 @@ DeviceDetails {
 
     Timer {
         id: connectionUpdateTimer
+
         interval: 500
         repeat: true
         running: network && network.ssid

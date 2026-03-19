@@ -40,6 +40,7 @@ StyledRect {
 
         GridLayout {
             id: buttonGrid
+
             Layout.alignment: Qt.AlignHCenter
             rowSpacing: Appearance.spacing.small
             columnSpacing: Appearance.spacing.small
@@ -48,10 +49,12 @@ StyledRect {
 
             Repeater {
                 id: repeater
+
                 model: root.options
 
                 delegate: TextButton {
                     id: button
+
                     required property int index
                     required property var modelData
 

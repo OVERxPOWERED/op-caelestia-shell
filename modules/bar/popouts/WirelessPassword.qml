@@ -42,6 +42,7 @@ ColumnLayout {
 
     Timer {
         id: focusTimer
+
         interval: 150
         onTriggered: {
             root.forceActiveFocus();
@@ -140,6 +141,7 @@ ColumnLayout {
 
             StyledText {
                 id: networkNameText
+
                 Layout.alignment: Qt.AlignHCenter
                 text: {
                     if (root.network) {
@@ -206,6 +208,7 @@ ColumnLayout {
 
             FocusScope {
                 id: passwordContainer
+
                 objectName: "passwordContainer"
                 Layout.topMargin: Appearance.spacing.large
                 Layout.fillWidth: true
@@ -259,6 +262,7 @@ ColumnLayout {
 
                 Timer {
                     id: passwordFocusTimer
+
                     interval: 50
                     onTriggered: {
                         passwordContainer.forceActiveFocus();
@@ -526,6 +530,7 @@ ColumnLayout {
 
     Timer {
         id: connectionMonitor
+
         interval: 1000
         repeat: true
         triggeredOnStart: false
@@ -545,6 +550,7 @@ ColumnLayout {
 
     Timer {
         id: connectionSuccessTimer
+
         interval: 500
         onTriggered: {
             // Double-check connection is still active

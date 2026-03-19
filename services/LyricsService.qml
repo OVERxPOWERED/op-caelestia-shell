@@ -41,6 +41,7 @@ Singleton {
 
     Timer {
         id: seekTimer
+
         interval: 500
         onTriggered: root.isManualSeeking = false
     }
@@ -48,6 +49,7 @@ Singleton {
     // If no local lyrics were loaded within the interval, fall back to NetEase
     Timer {
         id: fallbackTimer
+
         interval: 200
         onTriggered: {
             if (lyricsModel.count === 0) {
@@ -59,12 +61,14 @@ Singleton {
 
     Timer {
         id: loadDebounce
+
         interval: 50
         onTriggered: root._doLoadLyrics()
     }
 
     FileView {
         id: lyricsMapFileView
+
         path: root.lyricsMapFile
         printErrors: false
         onLoaded: {
@@ -78,6 +82,7 @@ Singleton {
 
     FileView {
         id: lrcFile
+
         printErrors: false
         onLoaded: {
             fallbackTimer.stop();
@@ -111,6 +116,7 @@ Singleton {
 
     Process {
         id: saveLyricsMap
+
         command: ["sh", "-c", `mkdir -p "${root.lyricsDir}" && echo '${JSON.stringify(root.lyricsMap)}' > "${root.lyricsMapFile}"`]
     }
 

@@ -24,6 +24,7 @@ StyledListView {
 
     Timer {
         id: hideTimer
+
         interval: 300  // long enough to bridge the track switch gap
         running: false
         repeat: false
@@ -50,6 +51,7 @@ StyledListView {
 
     delegate: Item {
         id: delegateRoot
+
         width: ListView.view.width
 
         required property string lyricLine
@@ -63,6 +65,7 @@ StyledListView {
 
         MultiEffect {
             id: effect
+
             anchors.fill: lyricText
             source: lyricText
             scale: lyricText.scale
@@ -90,6 +93,7 @@ StyledListView {
 
         Text {
             id: lyricText
+
             text: delegateRoot.lyricLine ? delegateRoot.lyricLine.replace(/\u00A0/g, " ") : ""
             width: parent.width * 0.85
             anchors.centerIn: parent

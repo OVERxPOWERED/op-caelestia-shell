@@ -148,6 +148,7 @@ Item {
 
             ColumnLayout {
                 id: leftLauncherLayout
+
                 anchors.fill: parent
 
                 spacing: Appearance.spacing.small
@@ -284,6 +285,7 @@ Item {
 
                 Loader {
                     id: appsListLoader
+
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     asynchronous: true
@@ -369,6 +371,7 @@ Item {
 
                                 Component {
                                     id: hiddenIcon
+
                                     MaterialIcon {
                                         text: "visibility_off"
                                         fill: 1
@@ -378,6 +381,7 @@ Item {
 
                                 Component {
                                     id: favouriteIcon
+
                                     MaterialIcon {
                                         text: "favorite"
                                         fill: 1
@@ -486,6 +490,7 @@ Item {
 
         StyledFlickable {
             id: settingsFlickable
+
             flickableDirection: Flickable.VerticalFlick
             contentHeight: settingsInner.height
 
@@ -509,6 +514,7 @@ Item {
 
         ColumnLayout {
             id: appDetailsLayout
+
             anchors.fill: parent
 
             readonly property var displayedApp: parent && parent.displayedApp !== undefined ? parent.displayedApp : null
@@ -557,6 +563,7 @@ Item {
 
                     StyledText {
                         id: appTitleText
+
                         Layout.alignment: Qt.AlignHCenter
                         text: displayedApp ? (displayedApp.name || displayedApp.entry?.name || qsTr("Application Details")) : ""
                         font.pointSize: Appearance.font.size.large
@@ -574,6 +581,7 @@ Item {
 
                 StyledFlickable {
                     id: detailsFlickable
+
                     anchors.fill: parent
                     flickableDirection: Flickable.VerticalFlick
                     contentHeight: debugLayout.height
@@ -584,6 +592,7 @@ Item {
 
                     ColumnLayout {
                         id: debugLayout
+
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top

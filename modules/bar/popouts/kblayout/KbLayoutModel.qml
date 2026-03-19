@@ -10,6 +10,7 @@ import Caelestia
 
 Item {
     id: model
+
     visible: false
 
     ListModel {
@@ -44,6 +45,7 @@ Item {
 
     Process {
         id: _xkbXmlBase
+
         command: ["xmllint", "--xpath", "//layout/configItem[name and description]", "/usr/share/X11/xkb/rules/base.xml"]
         stdout: StdioCollector {
             onStreamFinished: _buildXmlMap(text)
@@ -54,6 +56,7 @@ Item {
 
     Process {
         id: _xkbXmlEvdev
+
         command: ["xmllint", "--xpath", "//layout/configItem[name and description]", "/usr/share/X11/xkb/rules/evdev.xml"]
         stdout: StdioCollector {
             onStreamFinished: _buildXmlMap(text)
@@ -107,6 +110,7 @@ Item {
 
     Process {
         id: _getKbLayoutOpt
+
         command: ["hyprctl", "-j", "getoption", "input:kb_layout"]
         stdout: StdioCollector {
             onStreamFinished: {
@@ -126,6 +130,7 @@ Item {
 
     Process {
         id: _fetchLayoutsFromDevices
+
         command: ["hyprctl", "-j", "devices"]
         stdout: StdioCollector {
             onStreamFinished: {
@@ -143,6 +148,7 @@ Item {
 
     Process {
         id: _fetchActiveLayouts
+
         command: ["hyprctl", "-j", "devices"]
         stdout: StdioCollector {
             onStreamFinished: {
@@ -165,6 +171,7 @@ Item {
 
     Process {
         id: _switchProc
+
         onRunningChanged: if (!running)
             _fetchActiveLayouts.running = true
     }

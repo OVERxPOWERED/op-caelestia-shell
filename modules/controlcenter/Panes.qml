@@ -56,6 +56,7 @@ ClippingRectangle {
 
         Timer {
             id: animationDelayTimer
+
             interval: Appearance.anim.durations.normal
             onTriggered: {
                 layout.animationComplete = true;
@@ -64,6 +65,7 @@ ClippingRectangle {
 
         Timer {
             id: initialOpeningTimer
+
             interval: Appearance.anim.durations.large
             running: true
             onTriggered: {

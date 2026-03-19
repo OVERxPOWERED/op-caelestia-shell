@@ -20,6 +20,7 @@ CollapsibleSection {
 
     CollapsibleSection {
         id: sansFontSection
+
         title: qsTr("Sans-serif font family")
         expanded: true
         showBackground: true
@@ -33,6 +34,7 @@ CollapsibleSection {
 
             sourceComponent: StyledListView {
                 id: sansFontList
+
                 property alias contentHeight: sansFontList.contentHeight
 
                 clip: true
@@ -101,6 +103,7 @@ CollapsibleSection {
 
     CollapsibleSection {
         id: monoFontSection
+
         title: qsTr("Monospace font family")
         expanded: false
         showBackground: true
@@ -114,6 +117,7 @@ CollapsibleSection {
 
             sourceComponent: StyledListView {
                 id: monoFontList
+
                 property alias contentHeight: monoFontList.contentHeight
 
                 clip: true
@@ -182,6 +186,7 @@ CollapsibleSection {
 
     CollapsibleSection {
         id: materialFontSection
+
         title: qsTr("Material font family")
         expanded: false
         showBackground: true
@@ -189,6 +194,7 @@ CollapsibleSection {
 
         Loader {
             id: materialFontLoader
+
             Layout.fillWidth: true
             Layout.preferredHeight: item ? Math.min(item.contentHeight, 300) : 0
             asynchronous: true
@@ -196,6 +202,7 @@ CollapsibleSection {
 
             sourceComponent: StyledListView {
                 id: materialFontList
+
                 property alias contentHeight: materialFontList.contentHeight
 
                 clip: true

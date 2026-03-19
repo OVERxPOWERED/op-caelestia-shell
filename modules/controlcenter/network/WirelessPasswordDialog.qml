@@ -150,6 +150,7 @@ Item {
 
             Item {
                 id: passwordContainer
+
                 Layout.topMargin: Appearance.spacing.large
                 Layout.fillWidth: true
                 implicitHeight: Math.max(48, charList.implicitHeight + Appearance.padding.normal * 2)
@@ -247,6 +248,7 @@ Item {
 
                 StyledText {
                     id: placeholder
+
                     anchors.centerIn: parent
                     text: qsTr("Password")
                     color: Colours.palette.m3outline
@@ -443,6 +445,7 @@ Item {
 
     Timer {
         id: connectionMonitor
+
         interval: 1000
         repeat: true
         triggeredOnStart: false
@@ -462,6 +465,7 @@ Item {
 
     Timer {
         id: connectionSuccessTimer
+
         interval: 500
         onTriggered: {
             if (root.visible && Nmcli.active && Nmcli.active.ssid) {

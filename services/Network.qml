@@ -230,6 +230,7 @@ Singleton {
 
     Component {
         id: apComp
+
         AccessPoint {}
     }
 

@@ -80,6 +80,7 @@ Item {
 
     Timer {
         id: lyricsHideDelay
+
         interval: 300
         repeat: false
     }
@@ -248,6 +249,7 @@ Item {
 
         LyricsView {
             id: lyricsViewInDetails
+
             Layout.fillWidth: true
             Layout.preferredHeight: 200
         }
@@ -429,6 +431,7 @@ Item {
 
     RowLayout {
         id: playerChanger
+
         parent: !root.lyricsShowingDebounced ? details : leftSection
         Layout.alignment: Qt.AlignHCenter
         spacing: Appearance.spacing.small

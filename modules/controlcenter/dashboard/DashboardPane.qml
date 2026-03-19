@@ -64,6 +64,7 @@ Item {
 
     ClippingRectangle {
         id: dashboardClippingRect
+
         anchors.fill: parent
         anchors.margins: Appearance.padding.normal
         anchors.leftMargin: 0
@@ -87,6 +88,7 @@ Item {
 
     InnerBorder {
         id: dashboardBorder
+
         leftThickness: 0
         rightThickness: Appearance.padding.normal
     }
@@ -96,6 +98,7 @@ Item {
 
         StyledFlickable {
             id: dashboardFlickable
+
             flickableDirection: Flickable.VerticalFlick
             contentHeight: dashboardLayout.height
 
@@ -105,6 +108,7 @@ Item {
 
             ColumnLayout {
                 id: dashboardLayout
+
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top

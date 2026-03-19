@@ -281,6 +281,7 @@ Item {
 
         StyledFlickable {
             id: settingsFlickable
+
             flickableDirection: Flickable.VerticalFlick
             contentHeight: settingsInner.height
 
@@ -304,6 +305,7 @@ Item {
 
         StyledFlickable {
             id: ethernetFlickable
+
             flickableDirection: Flickable.VerticalFlick
             contentHeight: ethernetDetailsInner.height
 
@@ -327,6 +329,7 @@ Item {
 
         StyledFlickable {
             id: wirelessFlickable
+
             flickableDirection: Flickable.VerticalFlick
             contentHeight: wirelessDetailsInner.height
 
@@ -350,6 +353,7 @@ Item {
 
         StyledFlickable {
             id: vpnFlickable
+
             flickableDirection: Flickable.VerticalFlick
             contentHeight: vpnDetailsInner.height
 

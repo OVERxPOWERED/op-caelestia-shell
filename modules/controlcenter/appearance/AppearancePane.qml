@@ -155,6 +155,7 @@ Item {
 
             StyledFlickable {
                 id: sidebarFlickable
+
                 readonly property var rootPane: root
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: sidebarLayout.height
@@ -165,6 +166,7 @@ Item {
 
                 ColumnLayout {
                     id: sidebarLayout
+
                     anchors.left: parent.left
                     anchors.right: parent.right
                     spacing: Appearance.spacing.small
@@ -219,31 +221,37 @@ Item {
 
                     AnimationsSection {
                         id: animationsSection
+
                         rootPane: sidebarFlickable.rootPane
                     }
 
                     FontsSection {
                         id: fontsSection
+
                         rootPane: sidebarFlickable.rootPane
                     }
 
                     ScalesSection {
                         id: scalesSection
+
                         rootPane: sidebarFlickable.rootPane
                     }
 
                     TransparencySection {
                         id: transparencySection
+
                         rootPane: sidebarFlickable.rootPane
                     }
 
                     BorderSection {
                         id: borderSection
+
                         rootPane: sidebarFlickable.rootPane
                     }
 
                     BackgroundSection {
                         id: backgroundSection
+
                         rootPane: sidebarFlickable.rootPane
                     }
                 }

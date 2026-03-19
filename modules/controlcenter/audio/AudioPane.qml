@@ -26,6 +26,7 @@ Item {
 
             StyledFlickable {
                 id: leftAudioFlickable
+
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: leftContent.height
 
@@ -217,6 +218,7 @@ Item {
         rightContent: Component {
             StyledFlickable {
                 id: rightAudioFlickable
+
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: contentLayout.height
 
@@ -265,6 +267,7 @@ Item {
 
                                 StyledInputField {
                                     id: outputVolumeInput
+
                                     Layout.preferredWidth: 70
                                     validator: IntValidator {
                                         bottom: 0
@@ -336,6 +339,7 @@ Item {
 
                             StyledSlider {
                                 id: outputVolumeSlider
+
                                 Layout.fillWidth: true
                                 implicitHeight: Appearance.padding.normal * 3
 
@@ -380,6 +384,7 @@ Item {
 
                                 StyledInputField {
                                     id: inputVolumeInput
+
                                     Layout.preferredWidth: 70
                                     validator: IntValidator {
                                         bottom: 0
@@ -451,6 +456,7 @@ Item {
 
                             StyledSlider {
                                 id: inputVolumeSlider
+
                                 Layout.fillWidth: true
                                 implicitHeight: Appearance.padding.normal * 3
 
@@ -511,6 +517,7 @@ Item {
 
                                         StyledInputField {
                                             id: streamVolumeInput
+
                                             Layout.preferredWidth: 70
                                             validator: IntValidator {
                                                 bottom: 0

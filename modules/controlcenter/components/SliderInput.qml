@@ -78,6 +78,7 @@ ColumnLayout {
 
         StyledInputField {
             id: inputField
+
             Layout.preferredWidth: 70
             validator: root.validator
 

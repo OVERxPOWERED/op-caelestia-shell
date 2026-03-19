@@ -19,6 +19,7 @@ StyledRect {
 
     Column {
         id: layout
+
         anchors.centerIn: parent
         spacing: Appearance.spacing.small
 

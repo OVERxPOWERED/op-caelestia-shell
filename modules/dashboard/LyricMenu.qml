@@ -91,6 +91,7 @@ StyledRect {
 
                 delegate: Item {
                     id: delegateRoot
+
                     width: ListView.view.width * 0.98
                     height: 70
                     anchors.horizontalCenter: parent?.horizontalCenter
@@ -112,6 +113,7 @@ StyledRect {
 
                     Rectangle {
                         id: background
+
                         anchors.fill: parent
                         radius: Appearance.rounding.small
 
@@ -217,6 +219,7 @@ StyledRect {
 
                     StyledInputField {
                         id: searchTitle
+
                         Layout.fillWidth: true
                         horizontalAlignment: TextInput.AlignLeft
 
@@ -229,6 +232,7 @@ StyledRect {
 
                     StyledInputField {
                         id: searchArtist
+
                         Layout.fillWidth: true
                         horizontalAlignment: TextInput.AlignLeft
 
@@ -278,6 +282,7 @@ StyledRect {
 
                 TextInput {
                     id: offsetInput
+
                     horizontalAlignment: TextInput.AlignHCenter
                     color: Colours.palette.m3secondary
                     font.pointSize: Appearance.font.size.normal

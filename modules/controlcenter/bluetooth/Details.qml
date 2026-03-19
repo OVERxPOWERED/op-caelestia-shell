@@ -359,6 +359,7 @@ StyledFlickable {
 
                                 RowLayout {
                                     id: batteryPercent
+
                                     Layout.topMargin: Appearance.spacing.small / 2
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: Appearance.padding.smaller

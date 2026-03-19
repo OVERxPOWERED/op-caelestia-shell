@@ -37,6 +37,7 @@ ColumnLayout {
 
     ListView {
         id: list
+
         model: kb.visibleModel
 
         Layout.fillWidth: true
@@ -95,6 +96,7 @@ ColumnLayout {
 
             StateLayer {
                 id: layer
+
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
@@ -111,6 +113,7 @@ ColumnLayout {
 
             StyledText {
                 id: rowText
+
                 anchors.verticalCenter: layer.verticalCenter
                 anchors.left: layer.left
                 anchors.right: layer.right
@@ -173,6 +176,7 @@ ColumnLayout {
 
         SequentialAnimation {
             id: popIn
+
             running: false
 
             ParallelAnimation {

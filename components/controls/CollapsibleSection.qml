@@ -22,11 +22,13 @@ ColumnLayout {
 
     Item {
         id: sectionHeaderItem
+
         Layout.fillWidth: true
         Layout.preferredHeight: Math.max(titleRow.implicitHeight + Appearance.padding.normal * 2, 48)
 
         RowLayout {
             id: titleRow
+
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
@@ -74,6 +76,7 @@ ColumnLayout {
 
     Item {
         id: contentWrapper
+
         Layout.fillWidth: true
         Layout.preferredHeight: root.expanded ? (contentColumn.implicitHeight + Appearance.spacing.small * 2) : 0
         clip: true
@@ -86,6 +89,7 @@ ColumnLayout {
 
         StyledRect {
             id: backgroundRect
+
             anchors.fill: parent
             radius: Appearance.rounding.normal
             color: Colours.transparency.enabled ? Colours.layer(Colours.palette.m3surfaceContainer, root.nested ? 3 : 2) : (root.nested ? Colours.palette.m3surfaceContainerHigh : Colours.palette.m3surfaceContainer)
@@ -101,6 +105,7 @@ ColumnLayout {
 
         ColumnLayout {
             id: contentColumn
+
             anchors.left: parent.left
             anchors.right: parent.right
             y: Appearance.spacing.small
@@ -118,6 +123,7 @@ ColumnLayout {
 
             StyledText {
                 id: descriptionText
+
                 Layout.fillWidth: true
                 Layout.topMargin: root.description !== "" ? Appearance.spacing.smaller : 0
                 Layout.bottomMargin: root.description !== "" ? Appearance.spacing.small : 0

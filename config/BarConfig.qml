@@ -114,7 +114,7 @@ JsonObject {
 
     component Clock: JsonObject {
         property bool background: false
-        property bool showDate: true
+        property bool showDate: false
         property bool showIcon: true
     }
 

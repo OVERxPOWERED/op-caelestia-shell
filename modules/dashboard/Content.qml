@@ -12,6 +12,15 @@ Item {
     id: root
 
     required property PersistentProperties visibilities
+    readonly property bool needsKeyboard: {
+        const count = repeater.count;
+        for (let i = 0; i < count; i++) {
+            const item = repeater.itemAt(i) as Loader;
+            if (item?.sourceComponent === mediaComponent && (item?.item as MediaWrapper)?.needsKeyboard)
+                return true;
+        }
+        return false;
+    }
     required property PersistentProperties state
     required property FileDialog facePicker
 
@@ -160,7 +169,7 @@ Item {
 
             Component {
                 id: mediaComponent
-                Media {
+                MediaWrapper {
                     visibilities: root.visibilities
                 }
             }

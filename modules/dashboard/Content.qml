@@ -99,15 +99,15 @@ Item {
 
             flickableDirection: Flickable.HorizontalFlick
 
-            implicitWidth: currentItem.implicitWidth
-            implicitHeight: currentItem.implicitHeight
+            implicitWidth: currentItem?.implicitWidth ?? 0
+            implicitHeight: currentItem?.implicitHeight ?? 0
 
-            contentX: currentItem.x
+            contentX: currentItem?.x ?? 0
             contentWidth: row.implicitWidth
             contentHeight: row.implicitHeight
 
             onContentXChanged: {
-                if (!moving)
+                if (!moving || !currentItem)
                     return;
 
                 const x = contentX - currentItem.x;
@@ -118,13 +118,16 @@ Item {
             }
 
             onDragEnded: {
+                if (!currentItem)
+                    return;
+
                 const x = contentX - currentItem.x;
                 if (x > currentItem.implicitWidth / 10)
                     root.state.currentTab = Math.min(root.state.currentTab + 1, tabs.count - 1);
                 else if (x < -currentItem.implicitWidth / 10)
                     root.state.currentTab = Math.max(root.state.currentTab - 1, 0);
                 else
-                    contentX = Qt.binding(() => currentItem.x);
+                    contentX = Qt.binding(() => currentItem?.x ?? 0);
             }
 
             RowLayout {

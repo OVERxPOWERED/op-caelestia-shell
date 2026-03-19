@@ -81,7 +81,10 @@ Item {
             id: view
 
             readonly property int currentIndex: root.state.currentTab
-            readonly property Item currentItem: row.children[currentIndex]
+            readonly property Item currentItem: {
+                repeater.count; // Trigger update on count change
+                return repeater.itemAt(currentIndex);
+            }
 
             anchors.fill: parent
 
@@ -119,6 +122,8 @@ Item {
                 id: row
 
                 Repeater {
+                    id: repeater
+
                     model: ScriptModel {
                         values: root.dashboardTabs
                     }

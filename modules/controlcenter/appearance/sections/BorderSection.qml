@@ -22,7 +22,7 @@ CollapsibleSection {
             Layout.fillWidth: true
 
             label: qsTr("Border rounding")
-            value: rootPane.borderRounding
+            value: root.rootPane.borderRounding
             from: 0.1
             to: 100
             decimals: 1
@@ -33,8 +33,8 @@ CollapsibleSection {
             }
 
             onValueModified: newValue => {
-                rootPane.borderRounding = newValue;
-                rootPane.saveConfig();
+                root.rootPane.borderRounding = newValue;
+                root.rootPane.saveConfig();
             }
         }
     }
@@ -46,7 +46,7 @@ CollapsibleSection {
             Layout.fillWidth: true
 
             label: qsTr("Border thickness")
-            value: rootPane.borderThickness
+            value: root.rootPane.borderThickness
             from: 0
             to: 100
             decimals: 1
@@ -57,8 +57,8 @@ CollapsibleSection {
             }
 
             onValueModified: newValue => {
-                rootPane.borderThickness = newValue;
-                rootPane.saveConfig();
+                root.rootPane.borderThickness = newValue;
+                root.rootPane.saveConfig();
             }
         }
     }

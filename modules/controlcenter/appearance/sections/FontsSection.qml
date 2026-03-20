@@ -45,9 +45,11 @@ CollapsibleSection {
                 }
 
                 delegate: StyledRect {
+                    id: sansDelegate
+
                     required property string modelData
                     required property int index
-                    readonly property bool isCurrent: modelData === rootPane.fontFamilySans
+                    readonly property bool isCurrent: modelData === root.rootPane.fontFamilySans
 
                     width: ListView.view.width
                     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
@@ -57,8 +59,8 @@ CollapsibleSection {
 
                     StateLayer {
                         function onClicked(): void {
-                            rootPane.fontFamilySans = modelData;
-                            rootPane.saveConfig();
+                            root.rootPane.fontFamilySans = sansDelegate.modelData;
+                            root.rootPane.saveConfig();
                         }
                     }
 
@@ -73,7 +75,7 @@ CollapsibleSection {
                         spacing: Appearance.spacing.normal
 
                         StyledText {
-                            text: modelData
+                            text: sansDelegate.modelData
                             font.pointSize: Appearance.font.size.normal
                         }
 
@@ -83,7 +85,7 @@ CollapsibleSection {
 
                         Loader {
                             asynchronous: true
-                            active: isCurrent
+                            active: sansDelegate.isCurrent
 
                             sourceComponent: MaterialIcon {
                                 text: "check"
@@ -127,9 +129,11 @@ CollapsibleSection {
                 }
 
                 delegate: StyledRect {
+                    id: monoDelegate
+
                     required property string modelData
                     required property int index
-                    readonly property bool isCurrent: modelData === rootPane.fontFamilyMono
+                    readonly property bool isCurrent: modelData === root.rootPane.fontFamilyMono
 
                     width: ListView.view.width
                     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
@@ -139,8 +143,8 @@ CollapsibleSection {
 
                     StateLayer {
                         function onClicked(): void {
-                            rootPane.fontFamilyMono = modelData;
-                            rootPane.saveConfig();
+                            root.rootPane.fontFamilyMono = monoDelegate.modelData;
+                            root.rootPane.saveConfig();
                         }
                     }
 
@@ -155,7 +159,7 @@ CollapsibleSection {
                         spacing: Appearance.spacing.normal
 
                         StyledText {
-                            text: modelData
+                            text: monoDelegate.modelData
                             font.pointSize: Appearance.font.size.normal
                         }
 
@@ -165,7 +169,7 @@ CollapsibleSection {
 
                         Loader {
                             asynchronous: true
-                            active: isCurrent
+                            active: monoDelegate.isCurrent
 
                             sourceComponent: MaterialIcon {
                                 text: "check"
@@ -211,9 +215,11 @@ CollapsibleSection {
                 }
 
                 delegate: StyledRect {
+                    id: materialDelegate
+
                     required property string modelData
                     required property int index
-                    readonly property bool isCurrent: modelData === rootPane.fontFamilyMaterial
+                    readonly property bool isCurrent: modelData === root.rootPane.fontFamilyMaterial
 
                     width: ListView.view.width
                     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
@@ -223,8 +229,8 @@ CollapsibleSection {
 
                     StateLayer {
                         function onClicked(): void {
-                            rootPane.fontFamilyMaterial = modelData;
-                            rootPane.saveConfig();
+                            root.rootPane.fontFamilyMaterial = materialDelegate.modelData;
+                            root.rootPane.saveConfig();
                         }
                     }
 
@@ -239,7 +245,7 @@ CollapsibleSection {
                         spacing: Appearance.spacing.normal
 
                         StyledText {
-                            text: modelData
+                            text: materialDelegate.modelData
                             font.pointSize: Appearance.font.size.normal
                         }
 
@@ -249,7 +255,7 @@ CollapsibleSection {
 
                         Loader {
                             asynchronous: true
-                            active: isCurrent
+                            active: materialDelegate.isCurrent
 
                             sourceComponent: MaterialIcon {
                                 text: "check"
@@ -272,7 +278,7 @@ CollapsibleSection {
             Layout.fillWidth: true
 
             label: qsTr("Font size scale")
-            value: rootPane.fontSizeScale
+            value: root.rootPane.fontSizeScale
             from: 0.7
             to: 1.5
             decimals: 2
@@ -283,8 +289,8 @@ CollapsibleSection {
             }
 
             onValueModified: newValue => {
-                rootPane.fontSizeScale = newValue;
-                rootPane.saveConfig();
+                root.rootPane.fontSizeScale = newValue;
+                root.rootPane.saveConfig();
             }
         }
     }

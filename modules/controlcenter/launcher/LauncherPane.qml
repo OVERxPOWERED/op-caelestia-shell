@@ -102,7 +102,7 @@ Item {
     anchors.fill: parent
 
     onSelectedAppChanged: {
-        root.session.launcher.active = root.selectedApp;
+        session.launcher.active = selectedApp;
         updateToggleState();
     }
 
@@ -117,7 +117,7 @@ Item {
     Connections {
         function onActiveChanged() {
             root.selectedApp = root.session.launcher.active;
-            updateToggleState();
+            root.updateToggleState();
         }
 
         target: root.session.launcher
@@ -133,7 +133,7 @@ Item {
 
     Connections {
         function onAppsChanged() {
-            updateFilteredApps();
+            root.updateFilteredApps();
         }
 
         target: allAppsDb
@@ -299,10 +299,12 @@ Item {
                         clip: true
 
                         StyledScrollBar.vertical: StyledScrollBar {
-                            flickable: parent
+                            flickable: appsListView
                         }
 
                         delegate: StyledRect {
+                            id: appDelegate
+
                             required property var modelData
 
                             readonly property bool isSelected: root.selectedApp === modelData
@@ -328,7 +330,7 @@ Item {
 
                             StateLayer {
                                 function onClicked(): void {
-                                    root.session.launcher.active = modelData;
+                                    root.session.launcher.active = appDelegate.modelData;
                                 }
                             }
 
@@ -345,20 +347,20 @@ Item {
                                     Layout.alignment: Qt.AlignVCenter
                                     implicitSize: 32
                                     source: {
-                                        const entry = modelData.entry;
+                                        const entry = appDelegate.modelData.entry;
                                         return entry ? Quickshell.iconPath(entry.icon, "image-missing") : "image-missing";
                                     }
                                 }
 
                                 StyledText {
                                     Layout.fillWidth: true
-                                    text: modelData.name || modelData.entry?.name || qsTr("Unknown")
+                                    text: appDelegate.modelData.name || appDelegate.modelData.entry?.name || qsTr("Unknown")
                                     font.pointSize: Appearance.font.size.normal
                                 }
 
                                 Loader {
-                                    readonly property bool isHidden: modelData ? Strings.testRegexList(Config.launcher.hiddenApps, modelData.id) : false
-                                    readonly property bool isFav: modelData ? Strings.testRegexList(Config.launcher.favouriteApps, modelData.id) : false
+                                    readonly property bool isHidden: appDelegate.modelData ? Strings.testRegexList(Config.launcher.hiddenApps, appDelegate.modelData.id) : false
+                                    readonly property bool isFav: appDelegate.modelData ? Strings.testRegexList(Config.launcher.favouriteApps, appDelegate.modelData.id) : false
 
                                     Layout.alignment: Qt.AlignVCenter
                                     asynchronous: true
@@ -513,7 +515,7 @@ Item {
         ColumnLayout {
             id: appDetailsLayout
 
-            readonly property var displayedApp: parent && parent.displayedApp !== undefined ? parent.displayedApp : null
+            readonly property var displayedApp: parent?.displayedApp ?? null // qmllint disable missing-property
 
             anchors.fill: parent
             spacing: Appearance.spacing.normal
@@ -522,7 +524,7 @@ Item {
                 Layout.leftMargin: Appearance.padding.large * 2
                 Layout.rightMargin: Appearance.padding.large * 2
                 Layout.topMargin: Appearance.padding.large * 2
-                visible: displayedApp === null
+                visible: appDetailsLayout.displayedApp === null
                 icon: "apps"
                 title: qsTr("Launcher Applications")
             }
@@ -532,7 +534,7 @@ Item {
                 Layout.leftMargin: Appearance.padding.large * 2
                 Layout.rightMargin: Appearance.padding.large * 2
                 Layout.topMargin: Appearance.padding.large * 2
-                visible: displayedApp !== null
+                visible: appDetailsLayout.displayedApp !== null
                 implicitWidth: Math.max(appIconImage.implicitWidth, appTitleText.implicitWidth)
                 implicitHeight: appIconImage.implicitHeight + Appearance.spacing.normal + appTitleText.implicitHeight
 
@@ -562,7 +564,7 @@ Item {
                         id: appTitleText
 
                         Layout.alignment: Qt.AlignHCenter
-                        text: displayedApp ? (displayedApp.name || displayedApp.entry?.name || qsTr("Application Details")) : ""
+                        text: appDetailsLayout.displayedApp.displayedApp ? (appDetailsLayout.displayedApp.displayedApp.displayedApp.name || appDetailsLayout.displayedApp.displayedApp.displayedApp.entry?.name || qsTr("Application Details")) : ""
                         font.pointSize: Appearance.font.size.large
                         font.bold: true
                     }

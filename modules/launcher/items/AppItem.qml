@@ -78,7 +78,7 @@ Item {
             asynchronous: true
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            active: modelData && Strings.testRegexList(Config.launcher.favouriteApps, modelData.id)
+            active: root.modelData && Strings.testRegexList(Config.launcher.favouriteApps, root.modelData.id)
 
             sourceComponent: MaterialIcon {
                 text: "favorite"

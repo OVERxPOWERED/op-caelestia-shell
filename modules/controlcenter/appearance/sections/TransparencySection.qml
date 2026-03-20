@@ -17,10 +17,10 @@ CollapsibleSection {
 
     SwitchRow {
         label: qsTr("Transparency enabled")
-        checked: rootPane.transparencyEnabled
+        checked: root.rootPane.transparencyEnabled
         onToggled: checked => {
-            rootPane.transparencyEnabled = checked;
-            rootPane.saveConfig();
+            root.rootPane.transparencyEnabled = checked;
+            root.rootPane.saveConfig();
         }
     }
 
@@ -31,7 +31,7 @@ CollapsibleSection {
             Layout.fillWidth: true
 
             label: qsTr("Transparency base")
-            value: rootPane.transparencyBase * 100
+            value: root.rootPane.transparencyBase * 100
             from: 0
             to: 100
             suffix: "%"
@@ -43,8 +43,8 @@ CollapsibleSection {
             parseValueFunction: text => parseInt(text)
 
             onValueModified: newValue => {
-                rootPane.transparencyBase = newValue / 100;
-                rootPane.saveConfig();
+                root.rootPane.transparencyBase = newValue / 100;
+                root.rootPane.saveConfig();
             }
         }
     }
@@ -56,7 +56,7 @@ CollapsibleSection {
             Layout.fillWidth: true
 
             label: qsTr("Transparency layers")
-            value: rootPane.transparencyLayers * 100
+            value: root.rootPane.transparencyLayers * 100
             from: 0
             to: 100
             suffix: "%"
@@ -68,8 +68,8 @@ CollapsibleSection {
             parseValueFunction: text => parseInt(text)
 
             onValueModified: newValue => {
-                rootPane.transparencyLayers = newValue / 100;
-                rootPane.saveConfig();
+                root.rootPane.transparencyLayers = newValue / 100;
+                root.rootPane.saveConfig();
             }
         }
     }

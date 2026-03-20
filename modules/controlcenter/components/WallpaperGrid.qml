@@ -28,6 +28,8 @@ GridView {
     }
 
     delegate: Item {
+        id: wpDelegate
+
         required property var modelData
         required property int index
         readonly property bool isCurrent: modelData && modelData.path === Wallpapers.actualCurrent
@@ -39,27 +41,27 @@ GridView {
 
         StateLayer {
             function onClicked(): void {
-                Wallpapers.setWallpaper(modelData.path);
+                Wallpapers.setWallpaper(wpDelegate.modelData.path);
             }
 
             anchors.fill: parent
-            anchors.leftMargin: itemMargin
-            anchors.rightMargin: itemMargin
-            anchors.topMargin: itemMargin
-            anchors.bottomMargin: itemMargin
-            radius: itemRadius
+            anchors.leftMargin: wpDelegate.itemMargin
+            anchors.rightMargin: wpDelegate.itemMargin
+            anchors.topMargin: wpDelegate.itemMargin
+            anchors.bottomMargin: wpDelegate.itemMargin
+            radius: wpDelegate.itemRadius
         }
 
         StyledClippingRect {
             id: image
 
             anchors.fill: parent
-            anchors.leftMargin: itemMargin
-            anchors.rightMargin: itemMargin
-            anchors.topMargin: itemMargin
-            anchors.bottomMargin: itemMargin
+            anchors.leftMargin: wpDelegate.itemMargin
+            anchors.rightMargin: wpDelegate.itemMargin
+            anchors.topMargin: wpDelegate.itemMargin
+            anchors.bottomMargin: wpDelegate.itemMargin
             color: Colours.tPalette.m3surfaceContainer
-            radius: itemRadius
+            radius: wpDelegate.itemRadius
             antialiasing: true
             layer.enabled: true
             layer.smooth: true
@@ -67,7 +69,7 @@ GridView {
             CachingImage {
                 id: cachingImage
 
-                path: modelData.path
+                path: wpDelegate.modelData.path
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectCrop
                 cache: true
@@ -91,7 +93,7 @@ GridView {
                 id: fallbackImage
 
                 anchors.fill: parent
-                source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? modelData.path : ""
+                source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? wpDelegate.modelData.path : ""
                 asynchronous: true
                 fillMode: Image.PreserveAspectCrop
                 cache: true
@@ -167,13 +169,13 @@ GridView {
 
         Rectangle {
             anchors.fill: parent
-            anchors.leftMargin: itemMargin
-            anchors.rightMargin: itemMargin
-            anchors.topMargin: itemMargin
-            anchors.bottomMargin: itemMargin
+            anchors.leftMargin: wpDelegate.itemMargin
+            anchors.rightMargin: wpDelegate.itemMargin
+            anchors.topMargin: wpDelegate.itemMargin
+            anchors.bottomMargin: wpDelegate.itemMargin
             color: "transparent"
-            radius: itemRadius + border.width
-            border.width: isCurrent ? 2 : 0
+            radius: wpDelegate.itemRadius + border.width
+            border.width: wpDelegate.isCurrent ? 2 : 0
             border.color: Colours.palette.m3primary
             antialiasing: true
             smooth: true
@@ -190,7 +192,7 @@ GridView {
                 anchors.top: parent.top
                 anchors.margins: Appearance.padding.small
 
-                visible: isCurrent
+                visible: wpDelegate.isCurrent
                 text: "check_circle"
                 color: Colours.palette.m3primary
                 font.pointSize: Appearance.font.size.large
@@ -207,10 +209,10 @@ GridView {
             anchors.rightMargin: Appearance.padding.normal + Appearance.spacing.normal / 2
             anchors.bottomMargin: Appearance.padding.normal
 
-            text: modelData.name
+            text: wpDelegate.modelData.name
             font.pointSize: Appearance.font.size.smaller
             font.weight: 500
-            color: isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurface
+            color: wpDelegate.isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurface
             elide: Text.ElideMiddle
             maximumLineCount: 1
             horizontalAlignment: Text.AlignHCenter

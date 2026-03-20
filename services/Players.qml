@@ -25,12 +25,12 @@ Singleton {
             if (!Config.utilities.toasts.nowPlaying) {
                 return;
             }
-            if (active.trackArtist != "" && active.trackTitle != "") {
-                Toaster.toast(qsTr("Now Playing"), qsTr("%1 - %2").arg(active.trackArtist).arg(active.trackTitle), "music_note");
+            if (root.active.trackArtist != "" && root.active.trackTitle != "") {
+                Toaster.toast(qsTr("Now Playing"), qsTr("%1 - %2").arg(root.active.trackArtist).arg(root.active.trackTitle), "music_note");
             }
         }
 
-        target: active
+        target: root.active
     }
 
     PersistentProperties {

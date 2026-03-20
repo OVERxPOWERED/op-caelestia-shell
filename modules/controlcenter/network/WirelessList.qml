@@ -104,18 +104,20 @@ DeviceList {
 
     delegate: Component {
         StyledRect {
+            id: networkDelegate
+
             required property var modelData
 
             width: ListView.view ? ListView.view.width : undefined
 
-            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
+            color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === networkDelegate.modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
             radius: Appearance.rounding.normal
 
             StateLayer {
                 function onClicked(): void {
-                    root.session.network.active = modelData;
-                    if (modelData && modelData.ssid) {
-                        root.checkSavedProfileForNetwork(modelData.ssid);
+                    root.session.network.active = networkDelegate.modelData;
+                    if (networkDelegate.modelData && networkDelegate.modelData.ssid) {
+                        root.checkSavedProfileForNetwork(networkDelegate.modelData.ssid);
                     }
                 }
             }
@@ -135,16 +137,16 @@ DeviceList {
                     implicitHeight: icon.implicitHeight + Appearance.padding.normal * 2
 
                     radius: Appearance.rounding.normal
-                    color: modelData.active ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
+                    color: networkDelegate.modelData.active ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
 
                     MaterialIcon {
                         id: icon
 
                         anchors.centerIn: parent
-                        text: Icons.getNetworkIcon(modelData.strength, modelData.isSecure)
+                        text: Icons.getNetworkIcon(networkDelegate.modelData.strength, networkDelegate.modelData.isSecure)
                         font.pointSize: Appearance.font.size.large
-                        fill: modelData.active ? 1 : 0
-                        color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
+                        fill: networkDelegate.modelData.active ? 1 : 0
+                        color: networkDelegate.modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                     }
                 }
 
@@ -158,7 +160,7 @@ DeviceList {
                         elide: Text.ElideRight
                         maximumLineCount: 1
 
-                        text: modelData.ssid || qsTr("Unknown")
+                        text: networkDelegate.modelData.ssid || qsTr("Unknown")
                     }
 
                     RowLayout {
@@ -168,18 +170,18 @@ DeviceList {
                         StyledText {
                             Layout.fillWidth: true
                             text: {
-                                if (modelData.active)
+                                if (networkDelegate.modelData.active)
                                     return qsTr("Connected");
-                                if (modelData.isSecure && modelData.security && modelData.security.length > 0) {
-                                    return modelData.security;
+                                if (networkDelegate.modelData.isSecure && networkDelegate.modelData.security && networkDelegate.modelData.security.length > 0) {
+                                    return networkDelegate.modelData.security;
                                 }
-                                if (modelData.isSecure)
+                                if (networkDelegate.modelData.isSecure)
                                     return qsTr("Secured");
                                 return qsTr("Open");
                             }
-                            color: modelData.active ? Colours.palette.m3primary : Colours.palette.m3outline
+                            color: networkDelegate.modelData.active ? Colours.palette.m3primary : Colours.palette.m3outline
                             font.pointSize: Appearance.font.size.small
-                            font.weight: modelData.active ? 500 : 400
+                            font.weight: networkDelegate.modelData.active ? 500 : 400
                             elide: Text.ElideRight
                         }
                     }
@@ -190,14 +192,14 @@ DeviceList {
                     implicitHeight: connectIcon.implicitHeight + Appearance.padding.smaller * 2
 
                     radius: Appearance.rounding.full
-                    color: Qt.alpha(Colours.palette.m3primaryContainer, modelData.active ? 1 : 0)
+                    color: Qt.alpha(Colours.palette.m3primaryContainer, networkDelegate.modelData.active ? 1 : 0)
 
                     StateLayer {
                         function onClicked(): void {
-                            if (modelData.active) {
+                            if (networkDelegate.modelData.active) {
                                 Nmcli.disconnectFromNetwork();
                             } else {
-                                NetworkConnection.handleConnect(modelData, root.session, null);
+                                NetworkConnection.handleConnect(networkDelegate.modelData, root.session, null);
                             }
                         }
                     }
@@ -206,8 +208,8 @@ DeviceList {
                         id: connectIcon
 
                         anchors.centerIn: parent
-                        text: modelData.active ? "link_off" : "link"
-                        color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
+                        text: networkDelegate.modelData.active ? "link_off" : "link"
+                        color: networkDelegate.modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                     }
                 }
             }

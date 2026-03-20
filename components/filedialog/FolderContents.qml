@@ -5,6 +5,7 @@ import "../controls"
 import "../images"
 import qs.services
 import qs.config
+import qs.utils
 import Caelestia.Models
 import Quickshell
 import QtQuick
@@ -104,7 +105,7 @@ Item {
         model: FileSystemModel {
             path: {
                 if (root.dialog.cwd[0] === "Home")
-                    return `${Paths.home}/${root.dialog.cwd.slice(1).join("/")}`;
+                    return Paths.home + `/${root.dialog.cwd.slice(1).join("/")}`;
                 else
                     return root.dialog.cwd.join("/");
             }

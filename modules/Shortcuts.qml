@@ -69,7 +69,6 @@ Scope {
         onPressed: root.launcherInterrupted = true
     }
 
-
     CustomShortcut {
         name: "sidebar"
         description: "Toggle sidebar"

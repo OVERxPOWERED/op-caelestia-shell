@@ -70,8 +70,7 @@ StyledRect {
                     Component.onCompleted: {
                         if (modelData.state !== undefined && modelData.state) {
                             _checked = modelData.state;
-                        }
-                        else if (root.rootItem && modelData.propertyName) {
+                        } else if (root.rootItem && modelData.propertyName) {
                             const propName = modelData.propertyName;
                             const rootItem = root.rootItem;
                             _checked = Qt.binding(function () {

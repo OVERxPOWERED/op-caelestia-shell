@@ -49,7 +49,6 @@ SECTION_NAMES = {
 }
 
 RULE_COLOURS = {
-    "missing-blank-after-id": RED,
     "section-order": YELLOW,
     "missing-section-separator": CYAN,
     "blank-after-open-brace": MAGENTA,
@@ -212,17 +211,7 @@ def check_file(filepath: Path) -> list[Violation]:
         tracker = scopes[indent]
         had_blank = prev_blank.get(indent, True)
 
-        # --- Check 1: Missing blank line after id ---
-        if section == Section.ID:
-            if i + 1 < len(lines):
-                next_stripped = lines[i + 1].strip()
-                if next_stripped and next_stripped != "}":
-                    violations.append(Violation(
-                        rel, lineno, "missing-blank-after-id",
-                        "id should be followed by a blank line",
-                    ))
-
-        # --- Check 2: Section ordering ---
+        # --- Check 1: Section ordering ---
         if tracker.last_section is not None and section < tracker.last_section:
             violations.append(Violation(
                 rel, lineno, "section-order",
@@ -231,7 +220,7 @@ def check_file(filepath: Path) -> list[Violation]:
                 f"(seen at line {tracker.last_section_line})",
             ))
 
-        # --- Check 3: Missing blank line between different sections ---
+        # --- Check 2: Missing blank line between different sections ---
         if (tracker.last_section is not None
                 and section != tracker.last_section
                 and not had_blank):

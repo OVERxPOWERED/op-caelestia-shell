@@ -11,7 +11,7 @@ Item {
     id: root
 
     required property FileSystemEntry modelData
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
 
     scale: 0.5
     opacity: 0

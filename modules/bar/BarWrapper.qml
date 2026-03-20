@@ -10,7 +10,7 @@ Item {
     id: root
 
     required property ShellScreen screen
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
     required property BarPopouts.Wrapper popouts
     required property bool disabled
 

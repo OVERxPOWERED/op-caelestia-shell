@@ -14,7 +14,7 @@ StyledListView {
     id: root
 
     required property StyledTextField search
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
 
     model: ScriptModel {
         id: model

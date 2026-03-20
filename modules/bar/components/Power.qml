@@ -7,7 +7,7 @@ import QtQuick
 Item {
     id: root
 
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
 
     implicitWidth: icon.implicitHeight + Appearance.padding.small * 2
     implicitHeight: icon.implicitHeight

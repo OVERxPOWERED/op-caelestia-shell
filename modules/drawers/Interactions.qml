@@ -1,3 +1,4 @@
+import qs.components
 import qs.components.controls
 import qs.config
 import qs.modules.bar.popouts as BarPopouts
@@ -9,7 +10,7 @@ CustomMouseArea {
 
     required property ShellScreen screen
     required property BarPopouts.Wrapper popouts
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
     required property Panels panels
     required property Item bar
 

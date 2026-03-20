@@ -1,3 +1,4 @@
+import qs.components
 import qs.components.misc
 import qs.modules.controlcenter
 import qs.services

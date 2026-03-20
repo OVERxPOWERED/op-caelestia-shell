@@ -11,7 +11,7 @@ Item {
     id: root
 
     required property DesktopEntry modelData
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
 
     implicitHeight: Config.launcher.sizes.itemHeight
 

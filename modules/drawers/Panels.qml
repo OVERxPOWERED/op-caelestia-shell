@@ -1,3 +1,4 @@
+import qs.components
 import qs.config
 import qs.modules.osd as Osd
 import qs.modules.notifications as Notifications
@@ -15,7 +16,7 @@ Item {
     id: root
 
     required property ShellScreen screen
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
     required property Item bar
 
     readonly property alias osd: osd

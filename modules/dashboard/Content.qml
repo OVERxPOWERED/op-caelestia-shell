@@ -11,7 +11,7 @@ import QtQuick.Layouts
 Item {
     id: root
 
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
     readonly property bool needsKeyboard: {
         const count = repeater.count;
         for (let i = 0; i < count; i++) {
@@ -21,7 +21,7 @@ Item {
         }
         return false;
     }
-    required property PersistentProperties state
+    required property DashboardState state
     required property FileDialog facePicker
 
     readonly property var dashboardTabs: {

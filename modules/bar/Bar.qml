@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import qs.components
 import qs.services
 import qs.config
 import "popouts" as BarPopouts
@@ -13,7 +14,7 @@ ColumnLayout {
     id: root
 
     required property ShellScreen screen
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
     required property BarPopouts.Wrapper popouts
     readonly property int vPadding: Appearance.padding.large
 

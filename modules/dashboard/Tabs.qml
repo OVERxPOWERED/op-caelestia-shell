@@ -13,7 +13,7 @@ Item {
     id: root
 
     required property real nonAnimWidth
-    required property PersistentProperties state
+    required property DashboardState state
     required property var tabs
 
     readonly property alias count: bar.count

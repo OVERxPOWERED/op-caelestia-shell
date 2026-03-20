@@ -10,7 +10,7 @@ runs:
       run: echo "week=$(date +%Y-%U)" >> $GITHUB_OUTPUT
 
     - name: Restore package cache
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@v5
       with:
         path: |
           /var/cache/pacman/pkg
@@ -41,7 +41,7 @@ runs:
       run: sudo -u builder yay -S --noconfirm quickshell-git
 
     - name: Save packages to cache
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@v5
       with:
         path: |
           /var/cache/pacman/pkg

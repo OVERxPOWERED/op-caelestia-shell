@@ -6,7 +6,7 @@ on:
     - cron: "0 0 * * 0"
 
 jobs:
-  update-flake:
+  build-image:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,7 +23,7 @@ jobs:
           RUN pacman -Syu --needed --noconfirm sudo base-devel cmake ninja fish git clang qt6-declarative python && \
               useradd -m builder && \
               echo 'builder ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-              sudo -u git clone https://aur.archlinux.org/yay-bin.git /home/builder/yay-bin && \
+              sudo -u builder git clone https://aur.archlinux.org/yay-bin.git /home/builder/yay-bin && \
               cd /home/builder/yay-bin && \
               sudo -u builder makepkg -si --noconfirm && \
               sudo -u builder yay -S --noconfirm quickshell-git && \

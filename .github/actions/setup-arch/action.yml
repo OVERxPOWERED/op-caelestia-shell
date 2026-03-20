@@ -30,6 +30,7 @@ runs:
       run: |
         useradd -m builder
         echo 'builder ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+        chown -R builder:builder /home/builder
 
         sudo -u builder git clone https://aur.archlinux.org/yay-bin.git /home/builder/yay-bin
         cd /home/builder/yay-bin

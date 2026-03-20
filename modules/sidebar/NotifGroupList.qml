@@ -63,7 +63,7 @@ Item {
             id: notif
 
             required property int index
-            required property Notifs.Notif modelData
+            required property NotifData modelData
 
             readonly property alias nonAnimHeight: notifInner.nonAnimHeight
             readonly property bool previewHidden: {

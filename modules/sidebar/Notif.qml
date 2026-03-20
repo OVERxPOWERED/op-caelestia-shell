@@ -10,7 +10,7 @@ import QtQuick.Layouts
 StyledRect {
     id: root
 
-    required property Notifs.Notif modelData
+    required property NotifData modelData
     required property Props props
     required property bool expanded
     required property var visibilities

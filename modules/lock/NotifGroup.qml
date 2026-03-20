@@ -306,7 +306,7 @@ StyledRect {
     component NotifLine: StyledText {
         id: notifLine
 
-        required property Notifs.Notif modelData
+        required property NotifData modelData
 
         Layout.fillWidth: true
         textFormat: Text.MarkdownText

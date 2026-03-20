@@ -13,7 +13,7 @@ import QtQuick.Layouts
 Item {
     id: root
 
-    required property Notifs.Notif notif
+    required property NotifData notif
 
     Layout.fillWidth: true
     implicitHeight: flickable.contentHeight

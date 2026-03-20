@@ -68,7 +68,7 @@ Item {
             delegate: Item {
                 id: wrapper
 
-                required property Notifs.Notif modelData
+                required property NotifData modelData
                 required property int index
                 readonly property alias nonAnimHeight: notif.nonAnimHeight
                 property int idx

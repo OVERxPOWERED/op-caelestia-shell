@@ -32,6 +32,12 @@ Singleton {
 
     property var lyricsMap: ({})
 
+    // shared headers for all NetEase requests
+    readonly property var _netEaseHeaders: ({
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+            "Referer": "https://music.163.com/"
+        })
+
     ListModel {
         id: lyricsModel
     }
@@ -99,19 +105,21 @@ Singleton {
     }
 
     Connections {
-        target: Players
         function onActiveChanged() {
             root.player = Players.active;
             loadLyrics();
         }
+
+        target: Players
     }
 
     Connections {
-        target: root.player
-        ignoreUnknownSignals: true
         function onMetadataChanged() {
             loadLyrics();
         }
+
+        target: root.player
+        ignoreUnknownSignals: true
     }
 
     Process {
@@ -225,12 +233,6 @@ Singleton {
     }
 
     // NetEase
-
-    // shared headers for all NetEase requests
-    readonly property var _netEaseHeaders: ({
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
-            "Referer": "https://music.163.com/"
-        })
 
     // searches NetEase and populates the candidates model. returns the result array via the onResults callback
     function _searchNetEase(title, artist, reqId, onResults) {

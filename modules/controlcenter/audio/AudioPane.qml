@@ -23,7 +23,6 @@ Item {
         anchors.fill: parent
 
         leftContent: Component {
-
             StyledFlickable {
                 id: leftAudioFlickable
 
@@ -280,12 +279,13 @@ Item {
                                     }
 
                                     Connections {
-                                        target: Audio
                                         function onVolumeChanged() {
                                             if (!outputVolumeInput.hasFocus) {
                                                 outputVolumeInput.text = Math.round(Audio.volume * 100).toString();
                                             }
                                         }
+
+                                        target: Audio
                                     }
 
                                     onTextEdited: text => {
@@ -397,12 +397,13 @@ Item {
                                     }
 
                                     Connections {
-                                        target: Audio
                                         function onSourceVolumeChanged() {
                                             if (!inputVolumeInput.hasFocus) {
                                                 inputVolumeInput.text = Math.round(Audio.sourceVolume * 100).toString();
                                             }
                                         }
+
+                                        target: Audio
                                     }
 
                                     onTextEdited: text => {
@@ -530,12 +531,13 @@ Item {
                                             }
 
                                             Connections {
-                                                target: modelData
                                                 function onAudioChanged() {
                                                     if (!streamVolumeInput.hasFocus && modelData?.audio) {
                                                         streamVolumeInput.text = Math.round(modelData.audio.volume * 100).toString();
                                                     }
                                                 }
+
+                                                target: modelData
                                             }
 
                                             onTextEdited: text => {
@@ -600,12 +602,13 @@ Item {
                                         }
 
                                         Connections {
-                                            target: modelData
                                             function onAudioChanged() {
                                                 if (modelData?.audio) {
                                                     value = modelData.audio.volume;
                                                 }
                                             }
+
+                                            target: modelData
                                         }
                                     }
                                 }

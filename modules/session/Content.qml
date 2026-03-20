@@ -26,12 +26,12 @@ Column {
         Component.onCompleted: forceActiveFocus()
 
         Connections {
-            target: root.visibilities
-
             function onLauncherChanged(): void {
                 if (!root.visibilities.launcher)
                     logout.forceActiveFocus();
             }
+
+            target: root.visibilities
         }
     }
 

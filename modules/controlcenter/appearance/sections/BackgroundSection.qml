@@ -79,19 +79,22 @@ CollapsibleSection {
 
             menuItems: [
                 MenuItem {
+                    property string val: "top"
+
                     text: qsTr("Top")
                     icon: "vertical_align_top"
-                    property string val: "top"
                 },
                 MenuItem {
+                    property string val: "middle"
+
                     text: qsTr("Middle")
                     icon: "vertical_align_center"
-                    property string val: "middle"
                 },
                 MenuItem {
+                    property string val: "bottom"
+
                     text: qsTr("Bottom")
                     icon: "vertical_align_bottom"
-                    property string val: "bottom"
                 }
             ]
 
@@ -113,19 +116,22 @@ CollapsibleSection {
 
             menuItems: [
                 MenuItem {
+                    property string val: "left"
+
                     text: qsTr("Left")
                     icon: "align_horizontal_left"
-                    property string val: "left"
                 },
                 MenuItem {
+                    property string val: "center"
+
                     text: qsTr("Center")
                     icon: "align_horizontal_center"
-                    property string val: "center"
                 },
                 MenuItem {
+                    property string val: "right"
+
                     text: qsTr("Right")
                     icon: "align_horizontal_right"
-                    property string val: "right"
                 }
             ]
 

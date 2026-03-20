@@ -37,22 +37,22 @@ ClippingRectangle {
     }
 
     Connections {
-        target: root.session
-
         function onActiveIndexChanged(): void {
             root.focus = true;
         }
+
+        target: root.session
     }
 
     ColumnLayout {
         id: layout
 
+        property bool animationComplete: true
+        property bool initialOpeningComplete: false
+
         spacing: 0
         y: -root.session.activeIndex * root.height
         clip: true
-
-        property bool animationComplete: true
-        property bool initialOpeningComplete: false
 
         Timer {
             id: animationDelayTimer
@@ -78,6 +78,7 @@ ClippingRectangle {
 
             Pane {
                 required property int index
+
                 paneIndex: index
                 componentPath: PaneRegistry.getByIndex(index).component
             }
@@ -88,11 +89,12 @@ ClippingRectangle {
         }
 
         Connections {
-            target: root.session
             function onActiveIndexChanged(): void {
                 layout.animationComplete = false;
                 animationDelayTimer.restart();
             }
+
+            target: root.session
         }
     }
 
@@ -158,20 +160,22 @@ ClippingRectangle {
         }
 
         Connections {
-            target: root.session
             function onActiveIndexChanged(): void {
                 pane.updateActive();
             }
+
+            target: root.session
         }
 
         Connections {
-            target: layout
             function onInitialOpeningCompleteChanged(): void {
                 pane.updateActive();
             }
             function onAnimationCompleteChanged(): void {
                 pane.updateActive();
             }
+
+            target: layout
         }
     }
 }

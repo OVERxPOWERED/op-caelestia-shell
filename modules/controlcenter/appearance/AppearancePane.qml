@@ -152,11 +152,11 @@ Item {
         anchors.fill: parent
 
         leftContent: Component {
-
             StyledFlickable {
                 id: sidebarFlickable
 
                 readonly property var rootPane: root
+
                 flickableDirection: Flickable.VerticalFlick
                 contentHeight: sidebarLayout.height
 

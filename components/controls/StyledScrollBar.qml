@@ -36,24 +36,6 @@ ScrollBar {
         }
     }
 
-    // Sync nonAnimPosition with flickable when not animating
-    Connections {
-        target: flickable
-        function onContentYChanged() {
-            if (!animating && !fullMouse.pressed) {
-                _updatingFromFlickable = true;
-                const contentHeight = flickable.contentHeight;
-                const height = flickable.height;
-                if (contentHeight > height) {
-                    nonAnimPosition = Math.max(0, Math.min(1, flickable.contentY / (contentHeight - height)));
-                } else {
-                    nonAnimPosition = 0;
-                }
-                _updatingFromFlickable = false;
-            }
-        }
-    }
-
     Component.onCompleted: {
         if (flickable) {
             const contentHeight = flickable.contentHeight;
@@ -96,15 +78,34 @@ ScrollBar {
         }
     }
 
+    // Sync nonAnimPosition with flickable when not animating
     Connections {
-        target: root.flickable
+        function onContentYChanged() {
+            if (!animating && !fullMouse.pressed) {
+                _updatingFromFlickable = true;
+                const contentHeight = flickable.contentHeight;
+                const height = flickable.height;
+                if (contentHeight > height) {
+                    nonAnimPosition = Math.max(0, Math.min(1, flickable.contentY / (contentHeight - height)));
+                } else {
+                    nonAnimPosition = 0;
+                }
+                _updatingFromFlickable = false;
+            }
+        }
 
+        target: flickable
+    }
+
+    Connections {
         function onMovingChanged(): void {
             if (root.flickable.moving)
                 root.shouldBeActive = true;
             else
                 hideDelay.restart();
         }
+
+        target: root.flickable
     }
 
     Timer {

@@ -92,18 +92,17 @@ StyledRect {
                 delegate: Item {
                     id: delegateRoot
 
-                    width: ListView.view.width * 0.98
-                    height: 70
-                    anchors.horizontalCenter: parent?.horizontalCenter
-
                     required property real id
                     required property string title
                     required property string artist
-
                     property bool hovered: false
                     property bool pressed: false
 
+                    width: ListView.view.width * 0.98
+                    height: 70
+                    anchors.horizontalCenter: parent?.horizontalCenter
                     scale: hovered ? 1.02 : 1.0
+
                     Behavior on scale {
                         NumberAnimation {
                             duration: Appearance.anim.durations.small
@@ -158,6 +157,7 @@ StyledRect {
                             radius: 2
                             anchors.verticalCenter: parent.verticalCenter
                             color: LyricsService.currentSongId === delegateRoot.id ? Colours.palette.m3primary : "transparent"
+
                             Behavior on color {
                                 ColorAnimation {
                                     duration: Appearance.anim.durations.small
@@ -177,6 +177,7 @@ StyledRect {
                                 color: delegateRoot.hovered ? Colours.palette.m3primary : Colours.palette.m3onSurface
                                 width: parent.width
                                 elide: Text.ElideRight
+
                                 Behavior on color {
                                     ColorAnimation {
                                         duration: Appearance.anim.durations.small
@@ -288,21 +289,6 @@ StyledRect {
                     font.pointSize: Appearance.font.size.normal
                     selectByMouse: true
                     text: (LyricsService.offset >= 0 ? "+" : "") + LyricsService.offset.toFixed(1) + "s"
-
-                    Binding {
-                        target: offsetInput
-                        property: "text"
-                        value: (LyricsService.offset >= 0 ? "+" : "") + LyricsService.offset.toFixed(1) + "s"
-                        when: !offsetInput.activeFocus
-                    }
-
-                    Connections {
-                        target: LyricsService
-                        function onCurrentRequestIdChanged() {
-                            offsetInput.focus = false;
-                        }
-                    }
-
                     onEditingFinished: {
                         let cleaned = offsetInput.text.replace(/[+s]/g, "").trim();
                         let val = parseFloat(cleaned);
@@ -312,6 +298,21 @@ StyledRect {
                         } else {
                             offsetInput.text = (LyricsService.offset >= 0 ? "+" : "") + LyricsService.offset.toFixed(1) + "s";
                         }
+                    }
+
+                    Binding {
+                        target: offsetInput
+                        property: "text"
+                        value: (LyricsService.offset >= 0 ? "+" : "") + LyricsService.offset.toFixed(1) + "s"
+                        when: !offsetInput.activeFocus
+                    }
+
+                    Connections {
+                        function onCurrentRequestIdChanged() {
+                            offsetInput.focus = false;
+                        }
+
+                        target: LyricsService
                     }
                 }
 

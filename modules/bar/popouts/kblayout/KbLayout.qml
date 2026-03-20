@@ -89,11 +89,12 @@ ColumnLayout {
         delegate: Item {
             required property int layoutIndex
             required property string label
+            readonly property bool isDisabled: layoutIndex > 3
 
             width: list.width
             height: Math.max(36, rowText.implicitHeight + Appearance.padding.small * 2)
-
-            readonly property bool isDisabled: layoutIndex > 3
+            ToolTip.visible: isDisabled && layer.containsMouse
+            ToolTip.text: "XKB limitation: maximum 4 layouts allowed"
 
             StateLayer {
                 id: layer
@@ -107,7 +108,6 @@ ColumnLayout {
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 implicitHeight: parent.height - 4
-
                 radius: Appearance.rounding.full
                 enabled: !isDisabled
             }
@@ -124,9 +124,6 @@ ColumnLayout {
                 elide: Text.ElideRight
                 opacity: isDisabled ? 0.4 : 1.0
             }
-
-            ToolTip.visible: isDisabled && layer.containsMouse
-            ToolTip.text: "XKB limitation: maximum 4 layouts allowed"
         }
     }
 
@@ -167,12 +164,13 @@ ColumnLayout {
         }
 
         Connections {
-            target: kb
             function onActiveLabelChanged() {
                 if (!activeRow.visible)
                     return;
                 popIn.restart();
             }
+
+            target: kb
         }
 
         SequentialAnimation {

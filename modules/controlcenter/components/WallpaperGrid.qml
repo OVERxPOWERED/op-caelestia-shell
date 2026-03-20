@@ -32,13 +32,12 @@ GridView {
     delegate: Item {
         required property var modelData
         required property int index
-
-        width: root.cellWidth
-        height: root.cellHeight
-
         readonly property bool isCurrent: modelData && modelData.path === Wallpapers.actualCurrent
         readonly property real itemMargin: Appearance.spacing.normal / 2
         readonly property real itemRadius: Appearance.rounding.normal
+
+        width: root.cellWidth
+        height: root.cellHeight
 
         StateLayer {
             function onClicked(): void {
@@ -117,6 +116,7 @@ GridView {
                 id: fallbackTimer
 
                 property bool triggered: false
+
                 interval: 800
                 running: cachingImage.status === Image.Loading || cachingImage.status === Image.Null
                 onTriggered: triggered = true

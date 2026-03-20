@@ -110,34 +110,34 @@ Item {
             spacing: Appearance.spacing.large
 
             PlayerControl {
-                icon: "skip_previous"
-
                 function onClicked(): void {
                     if (Players.active?.canGoPrevious)
                         Players.active.previous();
                 }
+
+                icon: "skip_previous"
             }
 
             PlayerControl {
+                function onClicked(): void {
+                    if (Players.active?.canTogglePlaying)
+                        Players.active.togglePlaying();
+                }
+
                 animate: true
                 icon: active ? "pause" : "play_arrow"
                 colour: "Primary"
                 level: active ? 2 : 1
                 active: Players.active?.isPlaying ?? false
-
-                function onClicked(): void {
-                    if (Players.active?.canTogglePlaying)
-                        Players.active.togglePlaying();
-                }
             }
 
             PlayerControl {
-                icon: "skip_next"
-
                 function onClicked(): void {
                     if (Players.active?.canGoNext)
                         Players.active.next();
                 }
+
+                icon: "skip_next"
             }
         }
     }

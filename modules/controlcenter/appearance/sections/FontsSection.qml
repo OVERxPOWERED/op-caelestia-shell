@@ -48,10 +48,9 @@ CollapsibleSection {
                 delegate: StyledRect {
                     required property string modelData
                     required property int index
+                    readonly property bool isCurrent: modelData === rootPane.fontFamilySans
 
                     width: ListView.view.width
-
-                    readonly property bool isCurrent: modelData === rootPane.fontFamilySans
                     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
                     radius: Appearance.rounding.normal
                     border.width: isCurrent ? 1 : 0
@@ -131,10 +130,9 @@ CollapsibleSection {
                 delegate: StyledRect {
                     required property string modelData
                     required property int index
+                    readonly property bool isCurrent: modelData === rootPane.fontFamilyMono
 
                     width: ListView.view.width
-
-                    readonly property bool isCurrent: modelData === rootPane.fontFamilyMono
                     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
                     radius: Appearance.rounding.normal
                     border.width: isCurrent ? 1 : 0
@@ -216,10 +214,9 @@ CollapsibleSection {
                 delegate: StyledRect {
                     required property string modelData
                     required property int index
+                    readonly property bool isCurrent: modelData === rootPane.fontFamilyMaterial
 
                     width: ListView.view.width
-
-                    readonly property bool isCurrent: modelData === rootPane.fontFamilyMaterial
                     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
                     radius: Appearance.rounding.normal
                     border.width: isCurrent ? 1 : 0

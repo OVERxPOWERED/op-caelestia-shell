@@ -108,12 +108,21 @@ Item {
         updateToggleState();
     }
 
+    onSearchTextChanged: {
+        updateFilteredApps();
+    }
+
+    Component.onCompleted: {
+        updateFilteredApps();
+    }
+
     Connections {
-        target: root.session.launcher
         function onActiveChanged() {
             root.selectedApp = root.session.launcher.active;
             updateToggleState();
         }
+
+        target: root.session.launcher
     }
 
     AppDb {
@@ -124,26 +133,18 @@ Item {
         entries: DesktopEntries.applications.values
     }
 
-    onSearchTextChanged: {
-        updateFilteredApps();
-    }
-
-    Component.onCompleted: {
-        updateFilteredApps();
-    }
-
     Connections {
-        target: allAppsDb
         function onAppsChanged() {
             updateFilteredApps();
         }
+
+        target: allAppsDb
     }
 
     SplitPaneLayout {
         anchors.fill: parent
 
         leftContent: Component {
-
             ColumnLayout {
                 id: leftLauncherLayout
 
@@ -358,9 +359,10 @@ Item {
                                 }
 
                                 Loader {
-                                    Layout.alignment: Qt.AlignVCenter
                                     readonly property bool isHidden: modelData ? Strings.testRegexList(Config.launcher.hiddenApps, modelData.id) : false
                                     readonly property bool isFav: modelData ? Strings.testRegexList(Config.launcher.favouriteApps, modelData.id) : false
+
+                                    Layout.alignment: Qt.AlignVCenter
                                     asynchronous: true
                                     active: isHidden || isFav
 
@@ -413,6 +415,22 @@ Item {
                     nextComponent = targetComponent;
                 }
 
+                onPaneChanged: {
+                    nextComponent = getComponentForPane();
+                    paneId = pane ? (pane.id || pane.entry?.id || "") : "";
+                }
+
+                onDisplayedAppChanged: {
+                    if (displayedApp) {
+                        const appId = displayedApp.id || displayedApp.entry?.id;
+                        root.hideFromLauncherChecked = Config.launcher.hiddenApps && Config.launcher.hiddenApps.length > 0 && Strings.testRegexList(Config.launcher.hiddenApps, appId);
+                        root.favouriteChecked = Config.launcher.favouriteApps && Config.launcher.favouriteApps.length > 0 && Strings.testRegexList(Config.launcher.favouriteApps, appId);
+                    } else {
+                        root.hideFromLauncherChecked = false;
+                        root.favouriteChecked = false;
+                    }
+                }
+
                 Loader {
                     id: rightLauncherLoader
 
@@ -461,22 +479,6 @@ Item {
                                 value: true
                             }
                         ]
-                    }
-                }
-
-                onPaneChanged: {
-                    nextComponent = getComponentForPane();
-                    paneId = pane ? (pane.id || pane.entry?.id || "") : "";
-                }
-
-                onDisplayedAppChanged: {
-                    if (displayedApp) {
-                        const appId = displayedApp.id || displayedApp.entry?.id;
-                        root.hideFromLauncherChecked = Config.launcher.hiddenApps && Config.launcher.hiddenApps.length > 0 && Strings.testRegexList(Config.launcher.hiddenApps, appId);
-                        root.favouriteChecked = Config.launcher.favouriteApps && Config.launcher.favouriteApps.length > 0 && Strings.testRegexList(Config.launcher.favouriteApps, appId);
-                    } else {
-                        root.hideFromLauncherChecked = false;
-                        root.favouriteChecked = false;
                     }
                 }
             }

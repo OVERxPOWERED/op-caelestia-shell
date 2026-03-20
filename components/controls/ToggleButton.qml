@@ -18,30 +18,29 @@ StyledRect {
     property real horizontalPadding: Appearance.padding.large
     property real verticalPadding: Appearance.padding.normal
     property string tooltip: ""
-
     property bool hovered: false
+
     signal clicked
 
     Component.onCompleted: {
         hovered = toggleStateLayer.containsMouse;
     }
+    Layout.preferredWidth: implicitWidth + (toggleStateLayer.pressed ? Appearance.padding.normal * 2 : toggled ? Appearance.padding.small * 2 : 0)
+    implicitWidth: toggleBtnInner.implicitWidth + horizontalPadding * 2
+    implicitHeight: toggleBtnIcon.implicitHeight + verticalPadding * 2
+    radius: toggled || toggleStateLayer.pressed ? Appearance.rounding.small : Math.min(width, height) / 2 * Math.min(1, Appearance.rounding.scale)
+    color: toggled ? Colours.palette[`m3${accent.toLowerCase()}`] : Colours.palette[`m3${accent.toLowerCase()}Container`]
 
     Connections {
-        target: toggleStateLayer
         function onContainsMouseChanged() {
             const newHovered = toggleStateLayer.containsMouse;
             if (hovered !== newHovered) {
                 hovered = newHovered;
             }
         }
+
+        target: toggleStateLayer
     }
-
-    Layout.preferredWidth: implicitWidth + (toggleStateLayer.pressed ? Appearance.padding.normal * 2 : toggled ? Appearance.padding.small * 2 : 0)
-    implicitWidth: toggleBtnInner.implicitWidth + horizontalPadding * 2
-    implicitHeight: toggleBtnIcon.implicitHeight + verticalPadding * 2
-
-    radius: toggled || toggleStateLayer.pressed ? Appearance.rounding.small : Math.min(width, height) / 2 * Math.min(1, Appearance.rounding.scale)
-    color: toggled ? Colours.palette[`m3${accent.toLowerCase()}`] : Colours.palette[`m3${accent.toLowerCase()}Container`]
 
     StateLayer {
         id: toggleStateLayer

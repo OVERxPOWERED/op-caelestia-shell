@@ -58,11 +58,10 @@ StyledRect {
                     required property int index
                     required property var modelData
 
-                    Layout.fillWidth: true
-                    text: modelData.label
-
                     property bool _checked: false
 
+                    Layout.fillWidth: true
+                    text: modelData.label
                     checked: _checked
                     toggle: false
                     type: TextButton.Tonal

@@ -192,10 +192,11 @@ Item {
             Item {
                 id: passwordContainer
 
+                property string passwordBuffer: ""
+
                 Layout.topMargin: Appearance.spacing.large
                 Layout.fillWidth: true
                 implicitHeight: Math.max(48, charList.implicitHeight + Appearance.padding.normal * 2)
-
                 focus: true
                 Keys.onPressed: event => {
                     if (!activeFocus) {
@@ -224,10 +225,7 @@ Item {
                     }
                 }
 
-                property string passwordBuffer: ""
-
                 Connections {
-                    target: root.session.network
                     function onShowPasswordDialogChanged(): void {
                         if (root.session.network.showPasswordDialog) {
                             Qt.callLater(() => {
@@ -237,10 +235,11 @@ Item {
                             });
                         }
                     }
+
+                    target: root.session.network
                 }
 
                 Connections {
-                    target: root
                     function onVisibleChanged(): void {
                         if (root.visible) {
                             Qt.callLater(() => {
@@ -248,6 +247,8 @@ Item {
                             });
                         }
                     }
+
+                    target: root
                 }
 
                 StyledRect {
@@ -460,11 +461,11 @@ Item {
     Timer {
         id: connectionMonitor
 
+        property int repeatCount: 0
+
         interval: 1000
         repeat: true
         triggeredOnStart: false
-        property int repeatCount: 0
-
         onTriggered: {
             repeatCount++;
             checkConnectionStatus();
@@ -495,7 +496,6 @@ Item {
     }
 
     Connections {
-        target: Nmcli
         function onActiveChanged() {
             if (root.visible) {
                 checkConnectionStatus();
@@ -512,5 +512,7 @@ Item {
                 Nmcli.forgetNetwork(ssid);
             }
         }
+
+        target: Nmcli
     }
 }

@@ -69,43 +69,9 @@ ColumnLayout {
         }
     }
 
-    Connections {
-        target: root.wrapper
-        function onCurrentNameChanged() {
-            if (root.wrapper.currentName === "wirelesspassword") {
-                // Update network when popout becomes active
-                Qt.callLater(() => {
-                    // Try to get network from parent Content's networkPopout
-                    const content = root.parent?.parent?.parent;
-                    if (content) {
-                        const networkPopout = content.children.find(c => c.name === "network");
-                        if (networkPopout && networkPopout.item) {
-                            root.network = networkPopout.item.passwordNetwork;
-                        }
-                    }
-                    // Force focus to password container when popout becomes active
-                    // Use Timer for actual delay to ensure dialog is fully rendered
-                    focusTimer.start();
-                });
-            }
-        }
-    }
-
-    Timer {
-        id: focusTimer
-
-        interval: 150
-        onTriggered: {
-            root.forceActiveFocus();
-            passwordContainer.forceActiveFocus();
-        }
-    }
-
     spacing: Appearance.spacing.normal
-
     implicitWidth: 400
     implicitHeight: content.implicitHeight + Appearance.padding.large * 2
-
     visible: shouldBeVisible || isClosing
     enabled: shouldBeVisible && !isClosing
     focus: enabled
@@ -126,16 +92,49 @@ ColumnLayout {
 
     Keys.onEscapePressed: closeDialog()
 
+    Connections {
+        function onCurrentNameChanged() {
+            if (root.wrapper.currentName === "wirelesspassword") {
+                // Update network when popout becomes active
+                Qt.callLater(() => {
+                    // Try to get network from parent Content's networkPopout
+                    const content = root.parent?.parent?.parent;
+                    if (content) {
+                        const networkPopout = content.children.find(c => c.name === "network");
+                        if (networkPopout && networkPopout.item) {
+                            root.network = networkPopout.item.passwordNetwork;
+                        }
+                    }
+                    // Force focus to password container when popout becomes active
+                    // Use Timer for actual delay to ensure dialog is fully rendered
+                    focusTimer.start();
+                });
+            }
+        }
+
+        target: root.wrapper
+    }
+
+    Timer {
+        id: focusTimer
+
+        interval: 150
+        onTriggered: {
+            root.forceActiveFocus();
+            passwordContainer.forceActiveFocus();
+        }
+    }
+
     StyledRect {
         Layout.fillWidth: true
         Layout.preferredWidth: 400
         implicitHeight: content.implicitHeight + Appearance.padding.large * 2
-
         radius: Appearance.rounding.normal
         color: Colours.tPalette.m3surfaceContainer
         visible: root.shouldBeVisible || root.isClosing
         opacity: root.shouldBeVisible && !root.isClosing ? 1 : 0
         scale: root.shouldBeVisible && !root.isClosing ? 1 : 0.7
+        Keys.onEscapePressed: root.closeDialog()
 
         Behavior on opacity {
             Anim {}
@@ -164,8 +163,6 @@ ColumnLayout {
                 to: 0.7
             }
         }
-
-        Keys.onEscapePressed: root.closeDialog()
 
         ColumnLayout {
             id: content
@@ -208,10 +205,11 @@ ColumnLayout {
             }
 
             Timer {
+                property int attempts: 0
+
                 interval: 50
                 running: root.shouldBeVisible && (!root.network || !root.network.ssid)
                 repeat: true
-                property int attempts: 0
                 onTriggered: {
                     attempts++;
                     // Keep trying to get network from Network component
@@ -260,15 +258,14 @@ ColumnLayout {
             FocusScope {
                 id: passwordContainer
 
+                property string passwordBuffer: ""
+
                 objectName: "passwordContainer"
                 Layout.topMargin: Appearance.spacing.large
                 Layout.fillWidth: true
                 implicitHeight: Math.max(48, charList.implicitHeight + Appearance.padding.normal * 2)
-
                 focus: true
                 activeFocusOnTab: true
-
-                property string passwordBuffer: ""
 
                 Keys.onPressed: event => {
                     // Ensure we have focus when receiving keyboard input
@@ -300,7 +297,6 @@ ColumnLayout {
                 }
 
                 Connections {
-                    target: root
                     function onShouldBeVisibleChanged(): void {
                         if (root.shouldBeVisible) {
                             // Use Timer for actual delay to ensure focus works correctly
@@ -309,6 +305,8 @@ ColumnLayout {
                             connectButton.hasError = false;
                         }
                     }
+
+                    target: root
                 }
 
                 Timer {
@@ -549,10 +547,11 @@ ColumnLayout {
     Timer {
         id: connectionMonitor
 
+        property int repeatCount: 0
+
         interval: 1000
         repeat: true
         triggeredOnStart: false
-        property int repeatCount: 0
 
         onTriggered: {
             repeatCount++;
@@ -589,12 +588,12 @@ ColumnLayout {
     }
 
     Connections {
-        target: Nmcli
         function onActiveChanged() {
             if (root.shouldBeVisible) {
                 root.checkConnectionStatus();
             }
         }
+
         function onConnectionFailed(ssid: string) {
             if (root.shouldBeVisible && root.network && root.network.ssid === ssid && connectButton.connecting) {
                 connectionMonitor.stop();
@@ -607,5 +606,7 @@ ColumnLayout {
                 Nmcli.forgetNetwork(ssid);
             }
         }
+
+        target: Nmcli
     }
 }

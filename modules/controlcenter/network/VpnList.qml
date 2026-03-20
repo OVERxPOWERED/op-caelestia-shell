@@ -21,7 +21,6 @@ ColumnLayout {
     spacing: Appearance.spacing.normal
 
     Connections {
-        target: VPN
         function onConnectedChanged() {
             if (!VPN.connected && root.pendingSwitchIndex >= 0) {
                 const targetIndex = root.pendingSwitchIndex;
@@ -50,6 +49,8 @@ ColumnLayout {
                 });
             }
         }
+
+        target: VPN
     }
 
     TextButton {
@@ -367,36 +368,6 @@ ColumnLayout {
             currentState = "selection";
         }
 
-        SequentialAnimation {
-            id: transitionToForm
-
-            ParallelAnimation {
-                Anim {
-                    target: selectionContent
-                    property: "opacity"
-                    to: 0
-                    duration: Appearance.anim.durations.small
-                    easing.bezierCurve: Appearance.anim.curves.emphasized
-                }
-            }
-
-            ScriptAction {
-                script: {
-                    vpnDialog.currentState = "form";
-                }
-            }
-
-            ParallelAnimation {
-                Anim {
-                    target: formContent
-                    property: "opacity"
-                    to: 1
-                    duration: Appearance.anim.durations.small
-                    easing.bezierCurve: Appearance.anim.curves.emphasized
-                }
-            }
-        }
-
         background: StyledRect {
             color: Colours.palette.m3surfaceContainerHigh
             radius: Appearance.rounding.large
@@ -682,6 +653,36 @@ ColumnLayout {
                             vpnDialog.closeWithAnimation();
                         }
                     }
+                }
+            }
+        }
+
+        SequentialAnimation {
+            id: transitionToForm
+
+            ParallelAnimation {
+                Anim {
+                    target: selectionContent
+                    property: "opacity"
+                    to: 0
+                    duration: Appearance.anim.durations.small
+                    easing.bezierCurve: Appearance.anim.curves.emphasized
+                }
+            }
+
+            ScriptAction {
+                script: {
+                    vpnDialog.currentState = "form";
+                }
+            }
+
+            ParallelAnimation {
+                Anim {
+                    target: formContent
+                    property: "opacity"
+                    to: 1
+                    duration: Appearance.anim.durations.small
+                    easing.bezierCurve: Appearance.anim.curves.emphasized
                 }
             }
         }

@@ -90,23 +90,9 @@ Popup {
             Qt.callLater(updatePosition);
         }
     }
-    Connections {
-        target: root.target
-        function onXChanged() {
-            if (root.tooltipVisible)
-                root.updatePosition();
-        }
-        function onYChanged() {
-            if (root.tooltipVisible)
-                root.updatePosition();
-        }
-        function onWidthChanged() {
-            if (root.tooltipVisible)
-                root.updatePosition();
-        }
-        function onHeightChanged() {
-            if (root.tooltipVisible)
-                root.updatePosition();
+    Component.onCompleted: {
+        if (tooltipVisible) {
+            updatePosition();
         }
     }
 
@@ -127,24 +113,6 @@ Popup {
             to: 0
             duration: Appearance.anim.durations.expressiveFastSpatial
             easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
-        }
-    }
-
-    // Monitor hover state
-    Connections {
-        target: root.target
-        function onHoveredChanged() {
-            if (target.hovered) {
-                showTimer.start();
-                if (timeout > 0) {
-                    hideTimer.stop();
-                    hideTimer.start();
-                }
-            } else {
-                showTimer.stop();
-                hideTimer.stop();
-                tooltipVisible = false;
-            }
         }
     }
 
@@ -177,9 +145,43 @@ Popup {
         }
     }
 
-    Component.onCompleted: {
-        if (tooltipVisible) {
-            updatePosition();
+    Connections {
+        function onXChanged() {
+            if (root.tooltipVisible)
+                root.updatePosition();
         }
+        function onYChanged() {
+            if (root.tooltipVisible)
+                root.updatePosition();
+        }
+        function onWidthChanged() {
+            if (root.tooltipVisible)
+                root.updatePosition();
+        }
+        function onHeightChanged() {
+            if (root.tooltipVisible)
+                root.updatePosition();
+        }
+
+        target: root.target
+    }
+
+    // Monitor hover state
+    Connections {
+        function onHoveredChanged() {
+            if (target.hovered) {
+                showTimer.start();
+                if (timeout > 0) {
+                    hideTimer.stop();
+                    hideTimer.start();
+                }
+            } else {
+                showTimer.stop();
+                hideTimer.stop();
+                tooltipVisible = false;
+            }
+        }
+
+        target: root.target
     }
 }

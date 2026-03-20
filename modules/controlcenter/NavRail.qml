@@ -122,6 +122,7 @@ Item {
 
             NavItem {
                 required property int index
+
                 Layout.topMargin: index === 0 ? Appearance.spacing.large * 2 : 0
                 icon: PaneRegistry.getByIndex(index).icon
                 label: PaneRegistry.getByIndex(index).label

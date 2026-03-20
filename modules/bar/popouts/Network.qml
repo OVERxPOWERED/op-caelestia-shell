@@ -334,8 +334,6 @@ ColumnLayout {
     }
 
     Connections {
-        target: Nmcli
-
         function onActiveChanged(): void {
             if (Nmcli.active && root.connectingToSsid === Nmcli.active.ssid) {
                 root.connectingToSsid = "";
@@ -354,10 +352,11 @@ ColumnLayout {
             if (!Nmcli.scanning)
                 scanIcon.rotation = 0;
         }
+
+        target: Nmcli
     }
 
     Connections {
-        target: root.wrapper
         function onCurrentNameChanged(): void {
             // Clear password network when leaving password dialog
             if (root.wrapper.currentName !== "wirelesspassword" && root.showPasswordDialog) {
@@ -365,6 +364,8 @@ ColumnLayout {
                 root.passwordNetwork = null;
             }
         }
+
+        target: root.wrapper
     }
 
     component Toggle: RowLayout {

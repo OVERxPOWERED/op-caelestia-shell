@@ -53,6 +53,7 @@ ColumnLayout {
                 rotation: root.expanded ? 180 : 0
                 color: Colours.palette.m3onSurfaceVariant
                 font.pointSize: Appearance.font.size.normal
+
                 Behavior on rotation {
                     Anim {
                         duration: Appearance.anim.durations.small

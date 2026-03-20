@@ -86,10 +86,11 @@ Item {
     }
 
     Connections {
-        target: lyricsHideDelay
         function onTriggered() {
             root.lyricsShowingDebounced = false;
         }
+
+        target: lyricsHideDelay
     }
 
     ServiceRef {
@@ -327,9 +328,6 @@ Item {
             }
 
             CustomMouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.NoButton
-
                 function onWheel(event: WheelEvent) {
                     const active = Players.active;
                     if (!active?.canSeek || !active?.positionSupported)
@@ -341,6 +339,9 @@ Item {
                         active.position = Math.max(0, Math.min(active.length, active.position + delta));
                     });
                 }
+
+                anchors.fill: parent
+                acceptedButtons: Qt.NoButton
             }
         }
 
@@ -380,6 +381,7 @@ Item {
 
         visible: lyricMenu.height === 0 || opacity > 0
         opacity: lyricMenu.height === 0 ? 1 : 0
+
         Behavior on opacity {
             NumberAnimation {
                 duration: Appearance.anim.durations.normal
@@ -421,6 +423,7 @@ Item {
         visible: root.lyricMenuOpen || height > 0
         height: root.lyricMenuOpen ? implicitHeight : 0
         clip: true
+
         Behavior on height {
             NumberAnimation {
                 duration: Appearance.anim.durations.normal

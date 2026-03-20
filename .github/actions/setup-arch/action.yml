@@ -1,0 +1,30 @@
+name: Set up Arch Linux
+description: Install deps needed on Arch
+
+runs:
+  using: composite
+  steps:
+    - name: Get week
+      id: date
+      run: echo "week=$(date +%Y-%U)" >> $GITHUB_OUTPUT
+
+    - name: Cache packages
+      uses: actions/cache@v4
+      with:
+        path: /var/cache/pacman/pkg
+        key: pacman-${{ steps.date.outputs.week }}-${{ hashFiles('.github/actions/setup-arch/action.yml') }}
+        restore-keys: |
+          pacman-${{ steps.date.outputs.week }}-
+          pacman-
+
+    - name: Install deps
+      run: |
+        pacman -Syu --needed --noconfirm sudo base-devel cmake ninja fish git clang qt6-declarative python
+
+    - name: Install quickshell-git
+      run: |
+        useradd -m builder
+        echo 'builder ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+        sudo -u builder git clone https://aur.archlinux.org/quickshell-git.git /home/builder/quickshell-git
+        cd /home/builder/quickshell-git
+        sudo -u builder makepkg -si --noconfirm

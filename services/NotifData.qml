@@ -72,7 +72,7 @@ QtObject {
                     h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
                     const hash = (h2 >>> 0).toString(16).padStart(8, 0) + (h1 >>> 0).toString(16).padStart(8, 0);
 
-                    const cache = `${Paths.notifimagecache}/${hash}.png`;
+                    const cache = Paths.notifimagecache + "/${hash}.png";
                     CUtils.saveItem(this, Qt.resolvedUrl(cache), () => {
                         notif.image = cache;
                         notif.dummyImageLoader.active = false;

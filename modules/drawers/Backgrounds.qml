@@ -1,4 +1,3 @@
-import qs.services
 import qs.config
 import qs.modules.osd as Osd
 import qs.modules.notifications as Notifications

@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.filedialog
 import qs.config
-import qs.services
 import qs.utils
 import Caelestia
 import Quickshell

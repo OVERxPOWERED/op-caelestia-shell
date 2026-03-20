@@ -1,4 +1,3 @@
-import "../services"
 import qs.components
 import qs.services
 import qs.config

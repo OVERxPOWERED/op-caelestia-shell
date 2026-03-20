@@ -3,7 +3,6 @@ import qs.components.filedialog
 import qs.services
 import qs.config
 import "dash"
-import Quickshell
 import QtQuick.Layouts
 
 GridLayout {

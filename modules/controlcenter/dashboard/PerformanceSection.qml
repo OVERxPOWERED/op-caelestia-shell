@@ -1,10 +1,8 @@
-import ".."
 import "../components"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.UPower
 import qs.components
-import qs.components.controls
 import qs.config
 import qs.services
 

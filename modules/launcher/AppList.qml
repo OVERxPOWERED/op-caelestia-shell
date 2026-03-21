@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
-import "items"
-import "services"
+import qs.modules.launcher.items
+import qs.modules.launcher.services
 import qs.components
 import qs.components.controls
 import qs.components.containers

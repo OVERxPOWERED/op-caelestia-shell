@@ -19,7 +19,7 @@ Item {
     required property int rounding
 
     readonly property bool showWallpapers: search.text.startsWith(`${Config.launcher.actionPrefix}wallpaper `)
-    readonly property Item currentList: showWallpapers ? wallpaperList.item : appList.item
+    readonly property var currentList: showWallpapers ? wallpaperList.item : appList.item // Can be either ListView or PathView, so can't type properly
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom

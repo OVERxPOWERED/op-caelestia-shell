@@ -1,4 +1,4 @@
-import "../services"
+import qs.modules.launcher.services
 import qs.components
 import qs.services
 import qs.config

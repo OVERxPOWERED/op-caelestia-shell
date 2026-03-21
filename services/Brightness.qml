@@ -17,34 +17,34 @@ Singleton {
             map[m.connector] = m;
         return map;
     }
-    readonly property list<Monitor> monitors: variants.instances
+    readonly property list<Monitor> monitors: variants.instances // qmllint disable incompatible-type
     property bool appleDisplayPresent: false
 
     function getMonitorForScreen(screen: ShellScreen): var {
-        return monitors.find(m => m.modelData === screen);
+        return monitors.find(m => m.modelData === screen); // qmllint disable missing-property
     }
 
     function getMonitor(query: string): var {
         if (query === "active") {
-            return monitors.find(m => Hypr.monitorFor(m.modelData)?.focused);
+            return monitors.find(m => Hypr.monitorFor(m.modelData)?.focused); // qmllint disable missing-property
         }
 
         if (query.startsWith("model:")) {
             const model = query.slice(6);
-            return monitors.find(m => m.modelData.model === model);
+            return monitors.find(m => m.modelData.model === model); // qmllint disable missing-property
         }
 
         if (query.startsWith("serial:")) {
             const serial = query.slice(7);
-            return monitors.find(m => m.modelData.serialNumber === serial);
+            return monitors.find(m => m.modelData.serialNumber === serial); // qmllint disable missing-property
         }
 
         if (query.startsWith("id:")) {
             const id = parseInt(query.slice(3), 10);
-            return monitors.find(m => Hypr.monitorFor(m.modelData)?.id === id);
+            return monitors.find(m => Hypr.monitorFor(m.modelData)?.id === id); // qmllint disable missing-property
         }
 
-        return monitors.find(m => m.modelData.name === query);
+        return monitors.find(m => m.modelData.name === query); // qmllint disable missing-property
     }
 
     function increaseBrightness(): void {

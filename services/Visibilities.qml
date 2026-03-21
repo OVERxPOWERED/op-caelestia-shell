@@ -1,6 +1,7 @@
 pragma Singleton
 
 import qs.components
+import qs.services
 import Quickshell
 
 Singleton {

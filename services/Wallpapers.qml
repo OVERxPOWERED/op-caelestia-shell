@@ -1,5 +1,6 @@
 pragma Singleton
 
+import qs.services
 import qs.config
 import qs.utils
 import Caelestia.Models

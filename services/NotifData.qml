@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import qs.services
 import qs.config
 import qs.utils
 import Caelestia
@@ -139,7 +140,9 @@ QtObject {
         }
 
         function onActionsChanged(): void {
+            // qmllint disable unresolved-type
             notif.actions = notif.notification.actions.map(a => ({
+                        // qmllint enable unresolved-type
                         identifier: a.identifier,
                         text: a.text,
                         invoke: () => a.invoke()

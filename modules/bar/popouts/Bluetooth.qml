@@ -26,9 +26,9 @@ ColumnLayout {
 
     Toggle {
         label: qsTr("Enabled")
-        checked: Bluetooth.defaultAdapter?.enabled ?? false
+        checked: Bluetooth.defaultAdapter?.enabled ?? false // qmllint disable unresolved-type
         toggle.onToggled: {
-            const adapter = Bluetooth.defaultAdapter;
+            const adapter = Bluetooth.defaultAdapter; // qmllint disable unresolved-type
             if (adapter)
                 adapter.enabled = checked;
         }
@@ -36,9 +36,9 @@ ColumnLayout {
 
     Toggle {
         label: qsTr("Discovering")
-        checked: Bluetooth.defaultAdapter?.discovering ?? false
+        checked: Bluetooth.defaultAdapter?.discovering ?? false // qmllint disable unresolved-type
         toggle.onToggled: {
-            const adapter = Bluetooth.defaultAdapter;
+            const adapter = Bluetooth.defaultAdapter; // qmllint disable unresolved-type
             if (adapter)
                 adapter.discovering = checked;
         }
@@ -48,7 +48,7 @@ ColumnLayout {
         Layout.topMargin: Appearance.spacing.small
         Layout.rightMargin: Appearance.padding.small
         text: {
-            const devices = Bluetooth.devices.values;
+            const devices = Bluetooth.devices.values; // qmllint disable unresolved-type
             let available = qsTr("%1 device%2 available").arg(devices.length).arg(devices.length === 1 ? "" : "s");
             const connected = devices.filter(d => d.connected).length;
             if (connected > 0)
@@ -61,14 +61,14 @@ ColumnLayout {
 
     Repeater {
         model: ScriptModel {
-            values: [...Bluetooth.devices.values].sort((a, b) => (b.connected - a.connected) || (b.paired - a.paired) || a.name.localeCompare(b.name)).slice(0, 5)
+            values: [...Bluetooth.devices.values].sort((a, b) => (b.connected - a.connected) || (b.paired - a.paired) || a.name.localeCompare(b.name)).slice(0, 5) // qmllint disable unresolved-type
         }
 
         RowLayout {
             id: device
 
             required property BluetoothDevice modelData
-            readonly property bool loading: modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting
+            readonly property bool loading: modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting // qmllint disable unresolved-type
 
             Layout.fillWidth: true
             Layout.rightMargin: Appearance.padding.small
@@ -108,7 +108,7 @@ ColumnLayout {
                 implicitHeight: connectIcon.implicitHeight + Appearance.padding.small
 
                 radius: Appearance.rounding.full
-                color: Qt.alpha(Colours.palette.m3primary, device.modelData.state === BluetoothDeviceState.Connected ? 1 : 0)
+                color: Qt.alpha(Colours.palette.m3primary, device.modelData.state === BluetoothDeviceState.Connected ? 1 : 0) // qmllint disable unresolved-type
 
                 CircularIndicator {
                     anchors.fill: parent
@@ -120,7 +120,7 @@ ColumnLayout {
                         device.modelData.connected = !device.modelData.connected;
                     }
 
-                    color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+                    color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface // qmllint disable unresolved-type
                     disabled: device.loading
                 }
 
@@ -130,7 +130,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     animate: true
                     text: device.modelData.connected ? "link_off" : "link"
-                    color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+                    color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface // qmllint disable unresolved-type
 
                     opacity: device.loading ? 0 : 1
 

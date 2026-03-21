@@ -7,6 +7,8 @@ import Quickshell.Io
 import qs.config
 import Caelestia
 
+// TODO: handle this better later
+
 Item {
     id: model
 
@@ -139,7 +141,7 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: model._buildXmlMap(text)
         }
-        onRunningChanged: if (!running && (typeof _xkbXmlBase.exitCode !== "undefined") && _xkbXmlBase.exitCode !== 0)
+        onRunningChanged: if (!running && (typeof _xkbXmlBase.exitCode !== "undefined") && _xkbXmlBase.exitCode !== 0) // qmllint disable missing-property
             _xkbXmlEvdev.running = true
     }
 

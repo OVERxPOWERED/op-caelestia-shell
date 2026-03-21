@@ -44,7 +44,7 @@ StyledRect {
             step: root.step
             value: root.value
             onValueModified: value => {
-                root.onValueModified(value);
+                root.onValueModified(value); // qmllint disable use-proper-function
             }
         }
     }

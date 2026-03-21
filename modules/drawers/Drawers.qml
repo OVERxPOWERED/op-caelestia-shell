@@ -64,7 +64,7 @@ Variants {
                 height: win.height - Config.border.clampedThickness * 2 - win.dragMaskPadding * 2
                 intersection: Intersection.Xor
 
-                regions: regions.instances
+                regions: regions.instances // qmllint disable stale-property-read
             }
 
             anchors.top: true

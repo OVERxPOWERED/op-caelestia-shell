@@ -18,7 +18,7 @@ Item {
 
     Image {
         anchors.fill: parent
-        source: Players.active?.trackArtUrl ?? ""
+        source: Players.active?.trackArtUrl ?? "" // qmllint disable incompatible-type
 
         asynchronous: true
         fillMode: Image.PreserveAspectCrop

@@ -25,13 +25,13 @@ Scope {
         lock: lock
     }
 
-    CustomShortcut {
+    CustomShortcut { // qmllint disable unresolved-type
         name: "lock"
         description: "Lock the current session"
         onPressed: lock.locked = true
     }
 
-    CustomShortcut {
+    CustomShortcut { // qmllint disable unresolved-type
         name: "unlock"
         description: "Unlock the current session"
         onPressed: lock.unlock()

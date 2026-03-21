@@ -40,7 +40,7 @@ StyledRect {
             checked: root.checked
             enabled: root.enabled
             onToggled: {
-                root.onToggled(checked);
+                root.onToggled(checked); // qmllint disable use-proper-function
             }
         }
     }

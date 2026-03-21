@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.config
+import qs.modules.bar.popouts as BarPopouts
 import Quickshell
 import QtQuick
 
@@ -10,7 +11,7 @@ Item {
 
     required property DrawerVisibilities visibilities
     required property Item sidebar
-    required property Item popouts
+    required property BarPopouts.Wrapper popouts
 
     readonly property PersistentProperties props: PersistentProperties {
         property bool recordingListExpanded: false

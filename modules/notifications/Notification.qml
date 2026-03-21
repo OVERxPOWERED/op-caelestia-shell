@@ -85,7 +85,7 @@ StyledRect {
                 return;
 
             const actions = root.modelData.actions;
-            if (actions?.length === 1)
+            if (actions.length === 1)
                 actions[0].invoke();
         }
 

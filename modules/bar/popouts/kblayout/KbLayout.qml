@@ -129,7 +129,7 @@ ColumnLayout {
         Layout.rightMargin: Appearance.padding.small
         Layout.topMargin: Appearance.spacing.small
 
-        height: 1
+        implicitHeight: 1
         color: Colours.palette.m3onSurfaceVariant
         opacity: 0.35
     }

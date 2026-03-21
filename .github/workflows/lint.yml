@@ -39,5 +39,5 @@ jobs:
           set -l qml_files (string match -vr '(build|modules/controlcenter)/.*' **.qml)
 
           # Lint
-          set -l lint_out (qmllint --import disable $args $qml_files 2>&1 | tee /dev/stderr)
+          set -l lint_out (/usr/lib/qt6/bin/qmllint --import disable $args $qml_files 2>&1 | tee /dev/stderr)
           test -z "$lint_out" || exit 1

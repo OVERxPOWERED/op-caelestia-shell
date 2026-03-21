@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  check-format:
+  lint:
     runs-on: ubuntu-latest
 
     container:

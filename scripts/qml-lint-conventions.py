@@ -50,6 +50,7 @@ SECTION_NAMES = {
 }
 
 RULE_COLOURS = {
+    "file-structure": RED,
     "import-order": GREEN,
     "section-order": YELLOW,
     "missing-section-separator": CYAN,
@@ -175,6 +176,123 @@ def fix_imports(lines: list[str]) -> list[str]:
     return lines[:first] + sorted_imports + lines[last + 1 :]
 
 
+def check_file_structure(lines: list[str], rel: str) -> list[Violation]:
+    """Check file-level structure: pragmas, then imports, then content."""
+    violations = []
+    pragma_indices: list[int] = []
+    import_indices: list[int] = []
+    content_start: int | None = None
+
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped.startswith("pragma "):
+            pragma_indices.append(i)
+        elif IMPORT_RE.match(stripped):
+            import_indices.append(i)
+        else:
+            content_start = i
+            break
+
+    # Pragmas must come before imports
+    if pragma_indices and import_indices:
+        if pragma_indices[-1] > import_indices[0]:
+            violations.append(
+                Violation(rel, pragma_indices[-1] + 1, "file-structure", "pragmas should appear before imports")
+            )
+
+    # Separator between pragmas and imports
+    if pragma_indices and import_indices:
+        gap = import_indices[0] - pragma_indices[-1] - 1
+        if gap == 0:
+            violations.append(
+                Violation(
+                    rel, import_indices[0] + 1, "file-structure", "blank line expected between pragmas and imports"
+                )
+            )
+        elif gap > 1:
+            violations.append(
+                Violation(
+                    rel,
+                    pragma_indices[-1] + 3,
+                    "file-structure",
+                    "only one blank line expected between pragmas and imports",
+                )
+            )
+
+    # No blank lines within imports
+    for j in range(1, len(import_indices)):
+        if import_indices[j] != import_indices[j - 1] + 1:
+            for gap_line in range(import_indices[j - 1] + 1, import_indices[j]):
+                if not lines[gap_line].strip():
+                    violations.append(
+                        Violation(rel, gap_line + 1, "file-structure", "no blank lines expected within imports")
+                    )
+
+    # Separator between imports/pragmas and content
+    last_header = import_indices[-1] if import_indices else (pragma_indices[-1] if pragma_indices else None)
+    if last_header is not None and content_start is not None:
+        gap = content_start - last_header - 1
+        label = "imports" if import_indices else "pragmas"
+        if gap == 0:
+            violations.append(
+                Violation(
+                    rel, content_start + 1, "file-structure", f"blank line expected between {label} and content"
+                )
+            )
+        elif gap > 1:
+            violations.append(
+                Violation(
+                    rel,
+                    last_header + 3,
+                    "file-structure",
+                    f"only one blank line expected between {label} and content",
+                )
+            )
+
+    return violations
+
+
+def fix_file_structure(lines: list[str]) -> list[str]:
+    """Ensure correct file structure: pragmas, blank, imports (no gaps), blank, content."""
+    pragmas: list[str] = []
+    imports: list[str] = []
+    content_start: int | None = None
+
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped.startswith("pragma "):
+            pragmas.append(line)
+        elif IMPORT_RE.match(stripped):
+            imports.append(line)
+        else:
+            content_start = i
+            break
+
+    if content_start is None:
+        content_start = len(lines)
+
+    # Skip any blank lines at the start of content
+    while content_start < len(lines) and not lines[content_start].strip():
+        content_start += 1
+
+    result: list[str] = []
+    has_content = content_start < len(lines)
+    if pragmas:
+        result.extend(pragmas)
+        if imports or has_content:
+            result.append("")
+    if imports:
+        result.extend(imports)
+        if has_content:
+            result.append("")
+    result.extend(lines[content_start:])
+    return result
+
+
 def fix_section_separators(lines: list[str]) -> list[str]:
     """Insert blank lines between different sections and return modified lines."""
     insertions: list[int] = []
@@ -265,6 +383,7 @@ def fix_file(filepath: Path) -> bool:
 
     lines = text.splitlines()
     lines = fix_imports(lines)
+    lines = fix_file_structure(lines)
     lines = fix_section_separators(lines)
     new_text = "\n".join(lines)
     if text.endswith("\n"):
@@ -358,6 +477,7 @@ def check_file(filepath: Path) -> list[Violation]:
     except (OSError, UnicodeDecodeError):
         return violations
 
+    violations.extend(check_file_structure(lines, rel))
     violations.extend(check_imports(filepath, lines, rel))
 
     scopes: dict[str, ScopeTracker] = {}  # indent -> tracker

@@ -8,7 +8,8 @@ MouseArea {
     property bool disabled
     property bool showHoverBackground: true
     property color color: Colours.palette.m3onSurface
-    property real radius: parent?.radius ?? 0
+    // Pick up radius from parent if it has one (parent can be anything with a radius property)
+    property real radius: parent?.radius ?? 0 // qmllint disable missing-property
     property alias rect: hoverLayer
 
     function onClicked(): void {

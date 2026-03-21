@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
-import ".."
+import qs.components
+import qs.components.filedialog
 import qs.services
 import qs.config
 import QtQuick

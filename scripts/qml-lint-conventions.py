@@ -9,7 +9,8 @@ Required ordering within each QML object (with blank line between sections):
   3. signal declarations
   4. JavaScript functions
   5. object properties (bindings)
-  6. child objects / component definitions
+  6. child objects
+  7. component definitions
 """
 
 import re
@@ -184,7 +185,8 @@ def check_file(filepath: Path) -> list[Violation]:
                 func_skip_depth = 0
             continue
 
-        # Closing brace: pop scope for this indent and all deeper scopes
+        # Closing brace: pop all scopes deeper than this indent
+        # (the scope at this indent belongs to the parent object and must persist)
         if stripped == "}":
             # Check: blank line right before closing brace
             if i > 0 and not lines[i - 1].strip():
@@ -196,8 +198,6 @@ def check_file(filepath: Path) -> list[Violation]:
                         "no blank line expected before closing brace",
                     )
                 )
-            scopes.pop(indent, None)
-            prev_blank.pop(indent, None)
             to_remove = [k for k in scopes if len(k) > len(indent)]
             for k in to_remove:
                 del scopes[k]

@@ -11,7 +11,7 @@ import QtQuick.Controls
 StackView {
     id: root
 
-    required property Item popouts
+    required property PopoutState popouts
     required property QsMenuHandle trayItem
 
     implicitWidth: currentItem?.implicitWidth ?? 0

@@ -7,12 +7,8 @@ import qs.components
 import qs.services
 import qs.config
 
-import "."
-
 ColumnLayout {
     id: root
-
-    required property Item wrapper
 
     function refresh() {
         kb.refresh();

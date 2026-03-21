@@ -13,7 +13,7 @@ import QtQuick.Layouts
 ColumnLayout {
     id: root
 
-    required property Item wrapper
+    required property PopoutState popouts
 
     spacing: Appearance.spacing.small
 
@@ -173,7 +173,7 @@ ColumnLayout {
         text: qsTr("Open settings")
         icon: "settings"
 
-        onClicked: root.wrapper.detach("bluetooth")
+        onClicked: root.popouts.detachRequested("bluetooth")
     }
 
     component Toggle: RowLayout {

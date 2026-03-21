@@ -42,7 +42,7 @@ Column {
 
         active: PowerProfiles.degradationReason !== PerformanceDegradationReason.None
 
-        height: active ? (item?.implicitHeight ?? 0) : 0
+        height: active ? ((item as Item)?.implicitHeight ?? 0) : 0
 
         sourceComponent: StyledRect {
             implicitWidth: child.implicitWidth + Appearance.padding.normal * 2

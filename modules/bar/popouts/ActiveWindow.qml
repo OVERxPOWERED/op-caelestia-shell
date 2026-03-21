@@ -10,7 +10,7 @@ import QtQuick.Layouts
 Item {
     id: root
 
-    required property Item wrapper
+    required property PopoutState popouts
 
     implicitWidth: Hypr.activeToplevel ? child.implicitWidth : -Appearance.padding.large * 2
     implicitHeight: child.implicitHeight
@@ -66,7 +66,7 @@ Item {
 
                 StateLayer {
                     function onClicked(): void {
-                        root.wrapper.detach("winfo");
+                        root.popouts.detachRequested("winfo");
                     }
 
                     radius: Appearance.rounding.normal

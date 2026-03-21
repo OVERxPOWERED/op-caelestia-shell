@@ -12,7 +12,7 @@ import QtQuick.Controls
 Item {
     id: root
 
-    required property var wrapper
+    required property PopoutState popouts
 
     implicitWidth: layout.implicitWidth + Appearance.padding.normal * 2
     implicitHeight: layout.implicitHeight + Appearance.padding.normal * 2
@@ -112,7 +112,7 @@ Item {
             text: qsTr("Open settings")
             icon: "settings"
 
-            onClicked: root.wrapper.detach("audio")
+            onClicked: root.popouts.detachRequested("audio")
         }
     }
 }

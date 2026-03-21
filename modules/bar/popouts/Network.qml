@@ -12,7 +12,7 @@ import QtQuick.Layouts
 ColumnLayout {
     id: root
 
-    required property Item wrapper
+    required property PopoutState popouts
 
     property string connectingToSsid: ""
     property string view: "wireless" // "wireless" or "ethernet"
@@ -132,7 +132,7 @@ ColumnLayout {
                                 // Password is required - show password dialog
                                 root.passwordNetwork = network;
                                 root.showPasswordDialog = true;
-                                root.wrapper.currentName = "wirelesspassword";
+                                root.popouts.currentName = "wirelesspassword";
                             });
 
                             // Clear connecting state if connection succeeds immediately (saved profile)
@@ -341,8 +341,8 @@ ColumnLayout {
                 if (root.showPasswordDialog && root.passwordNetwork && Nmcli.active.ssid === root.passwordNetwork.ssid) {
                     root.showPasswordDialog = false;
                     root.passwordNetwork = null;
-                    if (root.wrapper.currentName === "wirelesspassword") {
-                        root.wrapper.currentName = "network";
+                    if (root.popouts.currentName === "wirelesspassword") {
+                        root.popouts.currentName = "network";
                     }
                 }
             }
@@ -359,13 +359,13 @@ ColumnLayout {
     Connections {
         function onCurrentNameChanged(): void {
             // Clear password network when leaving password dialog
-            if (root.wrapper.currentName !== "wirelesspassword" && root.showPasswordDialog) {
+            if (root.popouts.currentName !== "wirelesspassword" && root.showPasswordDialog) {
                 root.showPasswordDialog = false;
                 root.passwordNetwork = null;
             }
         }
 
-        target: root.wrapper
+        target: root.popouts
     }
 
     component Toggle: RowLayout {

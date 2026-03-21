@@ -50,11 +50,88 @@ SECTION_NAMES = {
 }
 
 RULE_COLOURS = {
+    "import-order": GREEN,
     "section-order": YELLOW,
     "missing-section-separator": CYAN,
     "blank-after-open-brace": MAGENTA,
     "blank-before-close-brace": MAGENTA,
 }
+
+IMPORT_RE = re.compile(r"^import\s+(\S+)")
+
+
+def import_group(module: str) -> tuple[int, int] | None:
+    """Return (group, depth) for a module import, or None to skip."""
+    if module.startswith('"'):
+        return None
+    depth = module.count(".") + 1
+    if module == "QtQuick" or module.startswith("QtQuick."):
+        return (1, depth)
+    if module.startswith("Qt"):
+        return (2, depth)
+    if module == "Quickshell" or module.startswith("Quickshell."):
+        return (3, depth)
+    if module == "M3Shapes":
+        return (4, depth)
+    if module == "Caelestia" or module.startswith("Caelestia."):
+        return (5, depth)
+    if module == "qs.components" or module.startswith("qs.components."):
+        return (6, depth)
+    if module == "qs.services":
+        return (7, depth)
+    if module == "qs.config":
+        return (8, depth)
+    if module == "qs.utils":
+        return (9, depth)
+    if module == "qs.modules" or module.startswith("qs.modules."):
+        return (10, depth)
+    return None
+
+
+def check_imports(filepath: Path, lines: list[str], rel: str) -> list[Violation]:
+    """Check that module imports are in the required order."""
+    violations = []
+    imports: list[tuple[int, str, int, int]] = []  # (lineno, module, group, depth)
+
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("//") or stripped.startswith("pragma "):
+            continue
+        m = IMPORT_RE.match(stripped)
+        if m:
+            module = m.group(1)
+            result = import_group(module)
+            if result is not None:
+                group, depth = result
+                imports.append((i + 1, module, group, depth))
+            continue
+        break  # end of import block
+
+    for j in range(1, len(imports)):
+        prev_lineno, prev_mod, prev_group, prev_depth = imports[j - 1]
+        curr_lineno, curr_mod, curr_group, curr_depth = imports[j]
+
+        if curr_group < prev_group:
+            violations.append(
+                Violation(
+                    rel,
+                    curr_lineno,
+                    "import-order",
+                    f"'{curr_mod}' should appear before '{prev_mod}'",
+                )
+            )
+        elif curr_group == prev_group and curr_depth < prev_depth:
+            violations.append(
+                Violation(
+                    rel,
+                    curr_lineno,
+                    "import-order",
+                    f"'{curr_mod}' should appear before '{prev_mod}' (less nested first)",
+                )
+            )
+
+    return violations
+
 
 # Regexes
 PROPERTY_DECL_RE = re.compile(r"^(?:required\s+|readonly\s+|default\s+)*property\s")
@@ -138,6 +215,8 @@ def check_file(filepath: Path) -> list[Violation]:
         lines = filepath.read_text().splitlines()
     except (OSError, UnicodeDecodeError):
         return violations
+
+    violations.extend(check_imports(filepath, lines, rel))
 
     scopes: dict[str, ScopeTracker] = {}  # indent -> tracker
     in_block_comment = False

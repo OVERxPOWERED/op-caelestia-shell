@@ -12,7 +12,7 @@ Item {
     id: root
 
     required property Brightness.Monitor monitor
-    required property var visibilities
+    required property DrawerVisibilities visibilities
 
     required property real volume
     required property bool muted

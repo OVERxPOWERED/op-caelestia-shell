@@ -5,11 +5,13 @@ import QtQuick
 Item {
     id: root
 
-    required property var visibilities
-    required property Item panels
+    required property DrawerVisibilities visibilities
+    required property Item sidebarPanel
+    property alias osdPanel: content.osdPanel
+    property alias sessionPanel: content.sessionPanel
 
     visible: height > 0
-    implicitWidth: Math.max(panels.sidebar.width, content.implicitWidth)
+    implicitWidth: Math.max(sidebarPanel.width, content.implicitWidth)
     implicitHeight: content.implicitHeight
 
     states: State {
@@ -34,6 +36,5 @@ Item {
         id: content
 
         visibilities: root.visibilities
-        panels: root.panels
     }
 }

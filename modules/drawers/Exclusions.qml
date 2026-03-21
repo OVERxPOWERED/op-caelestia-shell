@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components.containers
 import qs.config
+import qs.modules.bar as Bar
 import Quickshell
 import QtQuick
 
@@ -9,7 +10,7 @@ Scope {
     id: root
 
     required property ShellScreen screen
-    required property Item bar
+    required property Bar.BarWrapper bar
 
     ExclusionZone {
         anchors.left: true

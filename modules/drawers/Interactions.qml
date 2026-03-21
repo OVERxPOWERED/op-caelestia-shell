@@ -1,9 +1,11 @@
 import qs.components
 import qs.components.controls
 import qs.config
+import qs.modules.bar as Bar
 import qs.modules.bar.popouts as BarPopouts
 import Quickshell
 import QtQuick
+import QtQuick.Controls
 
 CustomMouseArea {
     id: root
@@ -12,7 +14,7 @@ CustomMouseArea {
     required property BarPopouts.Wrapper popouts
     required property DrawerVisibilities visibilities
     required property Panels panels
-    required property Item bar
+    required property Bar.BarWrapper bar
 
     property point dragStart
     property bool dashboardShortcutActive
@@ -69,7 +71,7 @@ CustomMouseArea {
             if (!utilitiesShortcutActive)
                 visibilities.utilities = false;
 
-            if (!popouts.currentName.startsWith("traymenu") || (popouts.current?.depth ?? 0) <= 1) {
+            if (!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) {
                 popouts.hasCurrent = false;
                 bar.closeTray();
             }
@@ -202,7 +204,7 @@ CustomMouseArea {
         // Show popouts on hover
         if (x < bar.implicitWidth) {
             bar.checkPopout(y);
-        } else if ((!popouts.currentName.startsWith("traymenu") || (popouts.current?.depth ?? 0) <= 1) && !inLeftPanel(panels.popouts, x, y)) {
+        } else if ((!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) && !inLeftPanel(panels.popouts, x, y)) {
             popouts.hasCurrent = false;
             bar.closeTray();
         }

@@ -1,12 +1,12 @@
 pragma Singleton
 
-import qs.config
-import qs.utils
-import Caelestia
+import "../utils/scripts/lrcparser.js" as Lrc
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import "../utils/scripts/lrcparser.js" as Lrc
+import Caelestia
+import qs.config
+import qs.utils
 
 Singleton {
     id: root

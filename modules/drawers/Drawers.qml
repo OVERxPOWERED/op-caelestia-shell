@@ -1,17 +1,17 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Effects
+import Quickshell
+import Quickshell.Hyprland
+import Quickshell.Wayland
 import qs.components
 import qs.components.containers
 import qs.services
 import qs.config
 import qs.utils
 import qs.modules.bar
-import Quickshell
-import Quickshell.Wayland
-import Quickshell.Hyprland
-import QtQuick
-import QtQuick.Controls
-import QtQuick.Effects
 
 Variants {
     model: Screens.screens

@@ -1,8 +1,8 @@
 pragma Singleton
 
+import Quickshell
 import qs.components
 import qs.services
-import Quickshell
 
 Singleton {
     property var screens: new Map()

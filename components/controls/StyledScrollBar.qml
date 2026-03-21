@@ -1,8 +1,8 @@
 import ".."
-import qs.services
-import qs.config
 import QtQuick
 import QtQuick.Templates
+import qs.services
+import qs.config
 
 ScrollBar {
     id: root

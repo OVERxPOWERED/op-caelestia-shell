@@ -3,19 +3,19 @@ pragma ComponentBehavior: Bound
 import ".."
 import "../components"
 import "../../launcher/services"
+import "../../../utils/scripts/fuzzysort.js" as Fuzzy
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Widgets
+import Caelestia
 import qs.components
+import qs.components.containers
 import qs.components.controls
 import qs.components.effects
-import qs.components.containers
 import qs.services
 import qs.config
 import qs.utils
-import Caelestia
-import Quickshell
-import Quickshell.Widgets
-import QtQuick
-import QtQuick.Layouts
-import "../../../utils/scripts/fuzzysort.js" as Fuzzy
 
 Item {
     id: root

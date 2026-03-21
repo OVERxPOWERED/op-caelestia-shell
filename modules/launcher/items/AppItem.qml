@@ -1,11 +1,11 @@
-import qs.modules.launcher.services
+import QtQuick
+import Quickshell
+import Quickshell.Widgets
 import qs.components
 import qs.services
 import qs.config
 import qs.utils
-import Quickshell
-import Quickshell.Widgets
-import QtQuick
+import qs.modules.launcher.services
 
 Item {
     id: root

@@ -5,8 +5,8 @@ import Quickshell.Services.UPower
 import Caelestia.Internal
 import qs.components
 import qs.components.misc
-import qs.config
 import qs.services
+import qs.config
 
 Item {
     id: root

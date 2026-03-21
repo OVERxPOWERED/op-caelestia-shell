@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
-import qs.utils
-import Quickshell.Widgets
 import QtQuick
+import Quickshell.Widgets
+import qs.utils
 
 Item {
     id: root

@@ -1,14 +1,14 @@
 pragma ComponentBehavior: Bound
 
-import qs.modules.launcher.items
-import qs.modules.launcher.services
+import QtQuick
+import Quickshell
 import qs.components
-import qs.components.controls
 import qs.components.containers
+import qs.components.controls
 import qs.services
 import qs.config
-import Quickshell
-import QtQuick
+import qs.modules.launcher.items
+import qs.modules.launcher.services
 
 StyledListView {
     id: root

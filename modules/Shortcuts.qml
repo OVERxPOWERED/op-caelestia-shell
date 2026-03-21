@@ -1,9 +1,9 @@
-import qs.components.misc
-import qs.modules.controlcenter
-import qs.services
-import Caelestia
 import Quickshell
 import Quickshell.Io
+import Caelestia
+import qs.components.misc
+import qs.services
+import qs.modules.controlcenter
 
 Scope {
     id: root

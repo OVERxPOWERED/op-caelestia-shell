@@ -1,10 +1,10 @@
+import QtQuick
+import QtQuick.Shapes
+import Caelestia.Services
 import qs.components
 import qs.services
 import qs.config
 import qs.utils
-import Caelestia.Services
-import QtQuick
-import QtQuick.Shapes
 
 Item {
     id: root

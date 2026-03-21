@@ -1,11 +1,11 @@
 pragma ComponentBehavior: Bound
 
+import Quickshell
+import Quickshell.Io
+import Quickshell.Wayland
 import qs.components.containers
 import qs.components.misc
 import qs.services
-import Quickshell
-import Quickshell.Wayland
-import Quickshell.Io
 
 Scope {
     LazyLoader {

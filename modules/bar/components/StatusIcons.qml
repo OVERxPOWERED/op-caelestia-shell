@@ -1,14 +1,14 @@
 pragma ComponentBehavior: Bound
 
-import qs.components
-import qs.services
-import qs.utils
-import qs.config
+import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Services.UPower
-import QtQuick
-import QtQuick.Layouts
+import qs.components
+import qs.services
+import qs.config
+import qs.utils
 
 StyledRect {
     id: root

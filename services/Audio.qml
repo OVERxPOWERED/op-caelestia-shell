@@ -1,11 +1,11 @@
 pragma Singleton
 
-import qs.config
-import Caelestia.Services
-import Caelestia
+import QtQuick
 import Quickshell
 import Quickshell.Services.Pipewire
-import QtQuick
+import Caelestia
+import Caelestia.Services
+import qs.config
 
 Singleton {
     id: root

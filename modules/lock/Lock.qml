@@ -1,9 +1,9 @@
 pragma ComponentBehavior: Bound
 
-import qs.components.misc
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import qs.components.misc
 
 Scope {
     property alias lock: lock

@@ -1,8 +1,8 @@
-import qs.modules.launcher.services
+import QtQuick
 import qs.components
 import qs.services
 import qs.config
-import QtQuick
+import qs.modules.launcher.services
 
 Item {
     id: root

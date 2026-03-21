@@ -1,10 +1,10 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import Quickshell.Services.UPower
 import qs.components
 import qs.services
 import qs.config
-import Quickshell.Services.UPower
-import QtQuick
 
 Column {
     id: root

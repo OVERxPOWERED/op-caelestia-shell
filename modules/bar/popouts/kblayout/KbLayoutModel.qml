@@ -1,11 +1,9 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-
 import Quickshell.Io
-
-import qs.config
 import Caelestia
+import qs.config
 
 // TODO: handle this better later
 
@@ -17,9 +15,11 @@ Item {
     ListModel {
         id: _visibleModel
     }
+
     property alias visibleModel: _visibleModel
 
     property string activeLabel: ""
+
     property int activeIndex: -1
 
     function start() {
@@ -132,6 +132,7 @@ Item {
     }
 
     property var _xkbMap: ({})
+
     property bool _notifiedLimit: false
 
     Process {

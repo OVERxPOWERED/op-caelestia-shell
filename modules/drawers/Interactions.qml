@@ -1,11 +1,11 @@
+import QtQuick
+import QtQuick.Controls
+import Quickshell
 import qs.components
 import qs.components.controls
 import qs.config
 import qs.modules.bar as Bar
 import qs.modules.bar.popouts as BarPopouts
-import Quickshell
-import QtQuick
-import QtQuick.Controls
 
 CustomMouseArea {
     id: root

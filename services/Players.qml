@@ -1,12 +1,12 @@
 pragma Singleton
 
-import qs.components.misc
-import qs.config
+import QtQml
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Mpris
-import QtQml
 import Caelestia
+import qs.components.misc
+import qs.config
 
 Singleton {
     id: root

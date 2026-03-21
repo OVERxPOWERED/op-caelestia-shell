@@ -1,6 +1,6 @@
+import QtQuick
 import qs.services
 import qs.config
-import QtQuick
 
 MouseArea {
     id: root

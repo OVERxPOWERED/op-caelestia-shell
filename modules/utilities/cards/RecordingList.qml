@@ -1,16 +1,16 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Widgets
+import Caelestia.Models
 import qs.components
-import qs.components.controls
 import qs.components.containers
+import qs.components.controls
 import qs.services
 import qs.config
 import qs.utils
-import Caelestia.Models
-import Quickshell
-import Quickshell.Widgets
-import QtQuick
-import QtQuick.Layouts
 
 ColumnLayout {
     id: root

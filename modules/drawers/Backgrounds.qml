@@ -1,14 +1,14 @@
-import qs.config
-import qs.modules.osd as Osd
-import qs.modules.notifications as Notifications
-import qs.modules.session as Session
-import qs.modules.launcher as Launcher
-import qs.modules.dashboard as Dashboard
-import qs.modules.bar.popouts as BarPopouts
-import qs.modules.utilities as Utilities
-import qs.modules.sidebar as Sidebar
 import QtQuick
 import QtQuick.Shapes
+import qs.config
+import qs.modules.dashboard as Dashboard
+import qs.modules.launcher as Launcher
+import qs.modules.notifications as Notifications
+import qs.modules.osd as Osd
+import qs.modules.session as Session
+import qs.modules.sidebar as Sidebar
+import qs.modules.utilities as Utilities
+import qs.modules.bar.popouts as BarPopouts
 
 Shape {
     id: root

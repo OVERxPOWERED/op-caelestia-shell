@@ -1,17 +1,17 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Effects
+import QtQuick.Layouts
+import Quickshell
+import Caelestia.Models
 import qs.components
-import qs.components.filedialog
 import qs.components.controls
+import qs.components.filedialog
 import qs.components.images
 import qs.services
 import qs.config
 import qs.utils
-import Caelestia.Models
-import Quickshell
-import QtQuick
-import QtQuick.Layouts
-import QtQuick.Effects
 
 Item {
     id: root

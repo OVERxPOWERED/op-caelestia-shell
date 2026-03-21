@@ -1,11 +1,11 @@
-import qs.components
-import qs.services
-import qs.utils
-import qs.config
-import Quickshell.Widgets
-import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Wayland
+import Quickshell.Widgets
+import qs.components
+import qs.services
+import qs.config
+import qs.utils
 
 Item {
     id: root

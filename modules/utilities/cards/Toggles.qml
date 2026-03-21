@@ -1,13 +1,13 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Layouts
+import Quickshell.Bluetooth
 import qs.components
 import qs.components.controls
 import qs.services
 import qs.config
 import qs.modules.bar.popouts as BarPopouts
-import Quickshell.Bluetooth
-import QtQuick
-import QtQuick.Layouts
 
 StyledRect {
     id: root

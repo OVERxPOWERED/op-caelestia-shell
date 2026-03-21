@@ -1,13 +1,13 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Hyprland
+import Quickshell.Wayland
 import qs.components
 import qs.services
 import qs.config
-import Quickshell
-import Quickshell.Wayland
-import Quickshell.Hyprland
-import QtQuick
-import QtQuick.Layouts
 
 Item {
     id: root

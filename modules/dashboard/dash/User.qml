@@ -1,11 +1,11 @@
+import QtQuick
 import qs.components
 import qs.components.effects
-import qs.components.images
 import qs.components.filedialog
+import qs.components.images
 import qs.services
 import qs.config
 import qs.utils
-import QtQuick
 
 Row {
     id: root

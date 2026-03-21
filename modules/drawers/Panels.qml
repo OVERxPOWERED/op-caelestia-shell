@@ -1,17 +1,17 @@
+import QtQuick
+import Quickshell
 import qs.components
 import qs.config
-import qs.modules.osd as Osd
-import qs.modules.notifications as Notifications
-import qs.modules.session as Session
-import qs.modules.launcher as Launcher
-import qs.modules.dashboard as Dashboard
 import qs.modules.bar as Bar
-import qs.modules.bar.popouts as BarPopouts
-import qs.modules.utilities as Utilities
-import qs.modules.utilities.toasts as Toasts
+import qs.modules.dashboard as Dashboard
+import qs.modules.launcher as Launcher
+import qs.modules.notifications as Notifications
+import qs.modules.osd as Osd
+import qs.modules.session as Session
 import qs.modules.sidebar as Sidebar
-import Quickshell
-import QtQuick
+import qs.modules.utilities as Utilities
+import qs.modules.bar.popouts as BarPopouts
+import qs.modules.utilities.toasts as Toasts
 
 Item {
     id: root

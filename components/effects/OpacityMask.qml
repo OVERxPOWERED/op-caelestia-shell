@@ -1,5 +1,5 @@
-import Quickshell
 import QtQuick
+import Quickshell
 
 ShaderEffect {
     required property Item source

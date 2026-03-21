@@ -1,13 +1,13 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Quickshell.Services.Pipewire
 import qs.components
 import qs.components.controls
 import qs.services
 import qs.config
-import Quickshell.Services.Pipewire
-import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
 
 Item {
     id: root

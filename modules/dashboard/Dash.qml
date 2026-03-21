@@ -1,9 +1,9 @@
+import "dash"
+import QtQuick.Layouts
 import qs.components
 import qs.components.filedialog
 import qs.services
 import qs.config
-import "dash"
-import QtQuick.Layouts
 
 GridLayout {
     id: root

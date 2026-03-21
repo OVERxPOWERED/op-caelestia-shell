@@ -1,12 +1,12 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Controls
+import Quickshell
+import Quickshell.Widgets
 import qs.components
 import qs.services
 import qs.config
-import Quickshell
-import Quickshell.Widgets
-import QtQuick
-import QtQuick.Controls
 
 StackView {
     id: root

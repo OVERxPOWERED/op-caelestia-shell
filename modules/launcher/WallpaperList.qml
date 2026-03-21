@@ -1,11 +1,11 @@
 pragma ComponentBehavior: Bound
 
 import "items"
+import QtQuick
+import Quickshell
 import qs.components.controls
 import qs.services
 import qs.config
-import Quickshell
-import QtQuick
 
 PathView {
     id: root

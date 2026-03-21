@@ -4,6 +4,7 @@ import qs.components
 import qs.components.controls
 import qs.services
 import qs.config
+import qs.modules.bar.popouts as BarPopouts
 import Quickshell.Bluetooth
 import QtQuick
 import QtQuick.Layouts
@@ -11,8 +12,8 @@ import QtQuick.Layouts
 StyledRect {
     id: root
 
-    required property var visibilities
-    required property Item popouts
+    required property DrawerVisibilities visibilities
+    required property BarPopouts.Wrapper popouts
 
     readonly property var quickToggles: {
         const seenIds = new Set();
@@ -54,17 +55,17 @@ StyledRect {
             font.pointSize: Appearance.font.size.normal
         }
 
-        ToggleRow {
+        QuickToggleRow {
             rowModel: root.needExtraRow ? root.quickToggles.slice(0, root.splitIndex) : root.quickToggles
         }
 
-        ToggleRow {
+        QuickToggleRow {
             visible: root.needExtraRow
             rowModel: root.needExtraRow ? root.quickToggles.slice(root.splitIndex) : []
         }
     }
 
-    component ToggleRow: RowLayout {
+    component QuickToggleRow: RowLayout {
         property var rowModel: []
 
         Layout.fillWidth: true

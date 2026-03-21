@@ -16,7 +16,7 @@ ColumnLayout {
     id: root
 
     required property var props
-    required property var visibilities
+    required property DrawerVisibilities visibilities
 
     spacing: 0
 

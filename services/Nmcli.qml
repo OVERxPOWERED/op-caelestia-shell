@@ -30,6 +30,9 @@ Singleton {
     readonly property var activeEthernet: ethernetDevices.find(d => d.connected) ?? null
     property list<var> activeProcesses: []
 
+    readonly property alias connectionCheckTimer: connectionCheckTimer
+    readonly property alias immediateCheckTimer: immediateCheckTimer
+
     // Constants
     readonly property string deviceTypeWifi: "wifi"
     readonly property string deviceTypeEthernet: "ethernet"

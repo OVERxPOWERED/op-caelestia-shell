@@ -1,8 +1,11 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import "."
 import qs.components
 import qs.components.controls
+import qs.components.effects
+import qs.components.containers
 import qs.services
 import qs.config
 import qs.utils
@@ -71,7 +74,9 @@ Item {
     enabled: session.network.showPasswordDialog && !isClosing
     focus: enabled
 
-    Keys.onEscapePressed: closeDialog()
+    Keys.onEscapePressed: {
+        closeDialog();
+    }
 
     Rectangle {
         anchors.fill: parent
@@ -84,7 +89,7 @@ Item {
 
         MouseArea {
             anchors.fill: parent
-            onClicked: root.closeDialog()
+            onClicked: closeDialog()
         }
     }
 
@@ -130,7 +135,7 @@ Item {
             }
         }
 
-        Keys.onEscapePressed: root.closeDialog()
+        Keys.onEscapePressed: closeDialog()
 
         ColumnLayout {
             id: content
@@ -463,7 +468,7 @@ Item {
         triggeredOnStart: false
         onTriggered: {
             repeatCount++;
-            root.checkConnectionStatus();
+            checkConnectionStatus();
         }
 
         onRunningChanged: {
@@ -484,7 +489,7 @@ Item {
                     connectionMonitor.stop();
                     connectButton.connecting = false;
                     connectButton.text = qsTr("Connect");
-                    root.closeDialog();
+                    closeDialog();
                 }
             }
         }
@@ -493,7 +498,7 @@ Item {
     Connections {
         function onActiveChanged() {
             if (root.visible) {
-                root.checkConnectionStatus();
+                checkConnectionStatus();
             }
         }
         function onConnectionFailed(ssid: string) {

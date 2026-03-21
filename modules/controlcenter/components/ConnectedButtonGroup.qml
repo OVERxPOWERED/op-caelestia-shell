@@ -1,7 +1,7 @@
-pragma ComponentBehavior: Bound
-
+import ".."
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.services
 import qs.config
 import QtQuick
@@ -68,10 +68,10 @@ StyledRect {
 
                     // Create binding in Component.onCompleted
                     Component.onCompleted: {
-                        if (button.modelData.state !== undefined && button.modelData.state) {
-                            _checked = button.modelData.state;
-                        } else if (root.rootItem && button.modelData.propertyName) {
-                            const propName = button.modelData.propertyName;
+                        if (modelData.state !== undefined && modelData.state) {
+                            _checked = modelData.state;
+                        } else if (root.rootItem && modelData.propertyName) {
+                            const propName = modelData.propertyName;
                             const rootItem = root.rootItem;
                             _checked = Qt.binding(function () {
                                 return rootItem[propName] ?? false;
@@ -90,9 +90,9 @@ StyledRect {
                     Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Appearance.padding.large : internalChecked ? Appearance.padding.smaller : 0)
 
                     onClicked: {
-                        if (button.modelData.onToggled && root.rootItem && button.modelData.propertyName) {
-                            const currentValue = root.rootItem[button.modelData.propertyName] ?? false;
-                            button.modelData.onToggled(!currentValue);
+                        if (modelData.onToggled && root.rootItem && modelData.propertyName) {
+                            const currentValue = root.rootItem[modelData.propertyName] ?? false;
+                            modelData.onToggled(!currentValue);
                         }
                     }
 

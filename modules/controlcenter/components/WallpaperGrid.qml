@@ -3,9 +3,11 @@ pragma ComponentBehavior: Bound
 import ".."
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.components.images
 import qs.services
 import qs.config
+import Caelestia.Models
 import QtQuick
 
 GridView {
@@ -28,8 +30,6 @@ GridView {
     }
 
     delegate: Item {
-        id: wpDelegate
-
         required property var modelData
         required property int index
         readonly property bool isCurrent: modelData && modelData.path === Wallpapers.actualCurrent
@@ -41,27 +41,27 @@ GridView {
 
         StateLayer {
             function onClicked(): void {
-                Wallpapers.setWallpaper(wpDelegate.modelData.path);
+                Wallpapers.setWallpaper(modelData.path);
             }
 
             anchors.fill: parent
-            anchors.leftMargin: wpDelegate.itemMargin
-            anchors.rightMargin: wpDelegate.itemMargin
-            anchors.topMargin: wpDelegate.itemMargin
-            anchors.bottomMargin: wpDelegate.itemMargin
-            radius: wpDelegate.itemRadius
+            anchors.leftMargin: itemMargin
+            anchors.rightMargin: itemMargin
+            anchors.topMargin: itemMargin
+            anchors.bottomMargin: itemMargin
+            radius: itemRadius
         }
 
         StyledClippingRect {
             id: image
 
             anchors.fill: parent
-            anchors.leftMargin: wpDelegate.itemMargin
-            anchors.rightMargin: wpDelegate.itemMargin
-            anchors.topMargin: wpDelegate.itemMargin
-            anchors.bottomMargin: wpDelegate.itemMargin
+            anchors.leftMargin: itemMargin
+            anchors.rightMargin: itemMargin
+            anchors.topMargin: itemMargin
+            anchors.bottomMargin: itemMargin
             color: Colours.tPalette.m3surfaceContainer
-            radius: wpDelegate.itemRadius
+            radius: itemRadius
             antialiasing: true
             layer.enabled: true
             layer.smooth: true
@@ -69,7 +69,7 @@ GridView {
             CachingImage {
                 id: cachingImage
 
-                path: wpDelegate.modelData.path
+                path: modelData.path
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectCrop
                 cache: true
@@ -93,7 +93,7 @@ GridView {
                 id: fallbackImage
 
                 anchors.fill: parent
-                source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? wpDelegate.modelData.path : ""
+                source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? modelData.path : ""
                 asynchronous: true
                 fillMode: Image.PreserveAspectCrop
                 cache: true
@@ -169,13 +169,13 @@ GridView {
 
         Rectangle {
             anchors.fill: parent
-            anchors.leftMargin: wpDelegate.itemMargin
-            anchors.rightMargin: wpDelegate.itemMargin
-            anchors.topMargin: wpDelegate.itemMargin
-            anchors.bottomMargin: wpDelegate.itemMargin
+            anchors.leftMargin: itemMargin
+            anchors.rightMargin: itemMargin
+            anchors.topMargin: itemMargin
+            anchors.bottomMargin: itemMargin
             color: "transparent"
-            radius: wpDelegate.itemRadius + border.width
-            border.width: wpDelegate.isCurrent ? 2 : 0
+            radius: itemRadius + border.width
+            border.width: isCurrent ? 2 : 0
             border.color: Colours.palette.m3primary
             antialiasing: true
             smooth: true
@@ -192,7 +192,7 @@ GridView {
                 anchors.top: parent.top
                 anchors.margins: Appearance.padding.small
 
-                visible: wpDelegate.isCurrent
+                visible: isCurrent
                 text: "check_circle"
                 color: Colours.palette.m3primary
                 font.pointSize: Appearance.font.size.large
@@ -209,10 +209,10 @@ GridView {
             anchors.rightMargin: Appearance.padding.normal + Appearance.spacing.normal / 2
             anchors.bottomMargin: Appearance.padding.normal
 
-            text: wpDelegate.modelData.name
+            text: modelData.name
             font.pointSize: Appearance.font.size.smaller
             font.weight: 500
-            color: wpDelegate.isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurface
+            color: isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurface
             elide: Text.ElideMiddle
             maximumLineCount: 1
             horizontalAlignment: Text.AlignHCenter

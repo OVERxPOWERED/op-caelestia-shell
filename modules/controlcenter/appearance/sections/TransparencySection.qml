@@ -1,8 +1,11 @@
 pragma ComponentBehavior: Bound
 
+import ".."
 import "../../components"
 import qs.components
 import qs.components.controls
+import qs.components.containers
+import qs.services
 import qs.config
 import QtQuick
 import QtQuick.Layouts
@@ -17,10 +20,10 @@ CollapsibleSection {
 
     SwitchRow {
         label: qsTr("Transparency enabled")
-        checked: root.rootPane.transparencyEnabled
+        checked: rootPane.transparencyEnabled
         onToggled: checked => {
-            root.rootPane.transparencyEnabled = checked;
-            root.rootPane.saveConfig();
+            rootPane.transparencyEnabled = checked;
+            rootPane.saveConfig();
         }
     }
 
@@ -31,7 +34,7 @@ CollapsibleSection {
             Layout.fillWidth: true
 
             label: qsTr("Transparency base")
-            value: root.rootPane.transparencyBase * 100
+            value: rootPane.transparencyBase * 100
             from: 0
             to: 100
             suffix: "%"
@@ -43,8 +46,8 @@ CollapsibleSection {
             parseValueFunction: text => parseInt(text)
 
             onValueModified: newValue => {
-                root.rootPane.transparencyBase = newValue / 100;
-                root.rootPane.saveConfig();
+                rootPane.transparencyBase = newValue / 100;
+                rootPane.saveConfig();
             }
         }
     }
@@ -56,7 +59,7 @@ CollapsibleSection {
             Layout.fillWidth: true
 
             label: qsTr("Transparency layers")
-            value: root.rootPane.transparencyLayers * 100
+            value: rootPane.transparencyLayers * 100
             from: 0
             to: 100
             suffix: "%"
@@ -68,8 +71,8 @@ CollapsibleSection {
             parseValueFunction: text => parseInt(text)
 
             onValueModified: newValue => {
-                root.rootPane.transparencyLayers = newValue / 100;
-                root.rootPane.saveConfig();
+                rootPane.transparencyLayers = newValue / 100;
+                rootPane.saveConfig();
             }
         }
     }

@@ -4,10 +4,13 @@ import ".."
 import "../components"
 import qs.components
 import qs.components.controls
+import qs.components.containers
+import qs.components.effects
 import qs.services
 import qs.config
 import Quickshell
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 
 ColumnLayout {

@@ -2,8 +2,10 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import "../components"
+import "../../launcher/services"
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.components.containers
 import qs.services
 import qs.config
@@ -102,7 +104,7 @@ Item {
     anchors.fill: parent
 
     onSelectedAppChanged: {
-        session.launcher.active = selectedApp;
+        root.session.launcher.active = root.selectedApp;
         updateToggleState();
     }
 
@@ -117,7 +119,7 @@ Item {
     Connections {
         function onActiveChanged() {
             root.selectedApp = root.session.launcher.active;
-            root.updateToggleState();
+            updateToggleState();
         }
 
         target: root.session.launcher
@@ -133,7 +135,7 @@ Item {
 
     Connections {
         function onAppsChanged() {
-            root.updateFilteredApps();
+            updateFilteredApps();
         }
 
         target: allAppsDb
@@ -299,12 +301,10 @@ Item {
                         clip: true
 
                         StyledScrollBar.vertical: StyledScrollBar {
-                            flickable: appsListView
+                            flickable: parent
                         }
 
                         delegate: StyledRect {
-                            id: appDelegate
-
                             required property var modelData
 
                             readonly property bool isSelected: root.selectedApp === modelData
@@ -330,7 +330,7 @@ Item {
 
                             StateLayer {
                                 function onClicked(): void {
-                                    root.session.launcher.active = appDelegate.modelData;
+                                    root.session.launcher.active = modelData;
                                 }
                             }
 
@@ -347,20 +347,20 @@ Item {
                                     Layout.alignment: Qt.AlignVCenter
                                     implicitSize: 32
                                     source: {
-                                        const entry = appDelegate.modelData.entry;
+                                        const entry = modelData.entry;
                                         return entry ? Quickshell.iconPath(entry.icon, "image-missing") : "image-missing";
                                     }
                                 }
 
                                 StyledText {
                                     Layout.fillWidth: true
-                                    text: appDelegate.modelData.name || appDelegate.modelData.entry?.name || qsTr("Unknown")
+                                    text: modelData.name || modelData.entry?.name || qsTr("Unknown")
                                     font.pointSize: Appearance.font.size.normal
                                 }
 
                                 Loader {
-                                    readonly property bool isHidden: appDelegate.modelData ? Strings.testRegexList(Config.launcher.hiddenApps, appDelegate.modelData.id) : false
-                                    readonly property bool isFav: appDelegate.modelData ? Strings.testRegexList(Config.launcher.favouriteApps, appDelegate.modelData.id) : false
+                                    readonly property bool isHidden: modelData ? Strings.testRegexList(Config.launcher.hiddenApps, modelData.id) : false
+                                    readonly property bool isFav: modelData ? Strings.testRegexList(Config.launcher.favouriteApps, modelData.id) : false
 
                                     Layout.alignment: Qt.AlignVCenter
                                     asynchronous: true
@@ -515,7 +515,7 @@ Item {
         ColumnLayout {
             id: appDetailsLayout
 
-            readonly property var displayedApp: parent?.displayedApp ?? null // qmllint disable missing-property
+            readonly property var displayedApp: parent && parent.displayedApp !== undefined ? parent.displayedApp : null
 
             anchors.fill: parent
             spacing: Appearance.spacing.normal
@@ -524,7 +524,7 @@ Item {
                 Layout.leftMargin: Appearance.padding.large * 2
                 Layout.rightMargin: Appearance.padding.large * 2
                 Layout.topMargin: Appearance.padding.large * 2
-                visible: appDetailsLayout.displayedApp === null
+                visible: displayedApp === null
                 icon: "apps"
                 title: qsTr("Launcher Applications")
             }
@@ -534,7 +534,7 @@ Item {
                 Layout.leftMargin: Appearance.padding.large * 2
                 Layout.rightMargin: Appearance.padding.large * 2
                 Layout.topMargin: Appearance.padding.large * 2
-                visible: appDetailsLayout.displayedApp !== null
+                visible: displayedApp !== null
                 implicitWidth: Math.max(appIconImage.implicitWidth, appTitleText.implicitWidth)
                 implicitHeight: appIconImage.implicitHeight + Appearance.spacing.normal + appTitleText.implicitHeight
 
@@ -564,7 +564,7 @@ Item {
                         id: appTitleText
 
                         Layout.alignment: Qt.AlignHCenter
-                        text: appDetailsLayout.displayedApp.displayedApp ? (appDetailsLayout.displayedApp.displayedApp.displayedApp.name || appDetailsLayout.displayedApp.displayedApp.displayedApp.entry?.name || qsTr("Application Details")) : ""
+                        text: displayedApp ? (displayedApp.name || displayedApp.entry?.name || qsTr("Application Details")) : ""
                         font.pointSize: Appearance.font.size.large
                         font.bold: true
                     }

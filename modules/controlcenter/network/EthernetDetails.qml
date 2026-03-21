@@ -4,6 +4,8 @@ import ".."
 import "../components"
 import qs.components
 import qs.components.controls
+import qs.components.effects
+import qs.components.containers
 import qs.services
 import qs.config
 import QtQuick

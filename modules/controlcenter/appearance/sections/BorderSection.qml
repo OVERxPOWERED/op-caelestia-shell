@@ -1,8 +1,11 @@
 pragma ComponentBehavior: Bound
 
+import ".."
 import "../../components"
 import qs.components
 import qs.components.controls
+import qs.components.containers
+import qs.services
 import qs.config
 import QtQuick
 import QtQuick.Layouts
@@ -22,7 +25,7 @@ CollapsibleSection {
             Layout.fillWidth: true
 
             label: qsTr("Border rounding")
-            value: root.rootPane.borderRounding
+            value: rootPane.borderRounding
             from: 0.1
             to: 100
             decimals: 1
@@ -33,8 +36,8 @@ CollapsibleSection {
             }
 
             onValueModified: newValue => {
-                root.rootPane.borderRounding = newValue;
-                root.rootPane.saveConfig();
+                rootPane.borderRounding = newValue;
+                rootPane.saveConfig();
             }
         }
     }
@@ -46,7 +49,7 @@ CollapsibleSection {
             Layout.fillWidth: true
 
             label: qsTr("Border thickness")
-            value: root.rootPane.borderThickness
+            value: rootPane.borderThickness
             from: 0
             to: 100
             decimals: 1
@@ -57,8 +60,8 @@ CollapsibleSection {
             }
 
             onValueModified: newValue => {
-                root.rootPane.borderThickness = newValue;
-                root.rootPane.saveConfig();
+                rootPane.borderThickness = newValue;
+                rootPane.saveConfig();
             }
         }
     }

@@ -1,8 +1,11 @@
 pragma ComponentBehavior: Bound
 
+import ".."
 import "../../components"
 import qs.components
 import qs.components.controls
+import qs.components.containers
+import qs.services
 import qs.config
 import QtQuick
 import QtQuick.Layouts
@@ -17,19 +20,19 @@ CollapsibleSection {
 
     SwitchRow {
         label: qsTr("Background enabled")
-        checked: root.rootPane.backgroundEnabled
+        checked: rootPane.backgroundEnabled
         onToggled: checked => {
-            root.rootPane.backgroundEnabled = checked;
-            root.rootPane.saveConfig();
+            rootPane.backgroundEnabled = checked;
+            rootPane.saveConfig();
         }
     }
 
     SwitchRow {
         label: qsTr("Wallpaper enabled")
-        checked: root.rootPane.wallpaperEnabled
+        checked: rootPane.wallpaperEnabled
         onToggled: checked => {
-            root.rootPane.wallpaperEnabled = checked;
-            root.rootPane.saveConfig();
+            rootPane.wallpaperEnabled = checked;
+            rootPane.saveConfig();
         }
     }
 
@@ -42,23 +45,23 @@ CollapsibleSection {
 
     SwitchRow {
         label: qsTr("Desktop Clock enabled")
-        checked: root.rootPane.desktopClockEnabled
+        checked: rootPane.desktopClockEnabled
         onToggled: checked => {
-            root.rootPane.desktopClockEnabled = checked;
-            root.rootPane.saveConfig();
+            rootPane.desktopClockEnabled = checked;
+            rootPane.saveConfig();
         }
     }
 
     SectionContainer {
         id: posContainer
 
-        readonly property var pos: (root.rootPane.desktopClockPosition || "top-left").split('-')
+        readonly property var pos: (rootPane.desktopClockPosition || "top-left").split('-')
         readonly property string currentV: pos[0]
         readonly property string currentH: pos[1]
 
         function updateClockPos(v, h) {
-            root.rootPane.desktopClockPosition = v + "-" + h;
-            root.rootPane.saveConfig();
+            rootPane.desktopClockPosition = v + "-" + h;
+            rootPane.saveConfig();
         }
 
         contentSpacing: Appearance.spacing.small
@@ -72,7 +75,7 @@ CollapsibleSection {
 
         SplitButtonRow {
             label: qsTr("Vertical Position")
-            enabled: root.rootPane.desktopClockEnabled
+            enabled: rootPane.desktopClockEnabled
 
             menuItems: [
                 MenuItem {
@@ -108,7 +111,7 @@ CollapsibleSection {
 
         SplitButtonRow {
             label: qsTr("Horizontal Position")
-            enabled: root.rootPane.desktopClockEnabled
+            enabled: rootPane.desktopClockEnabled
             expandedZ: 99
 
             menuItems: [
@@ -145,10 +148,10 @@ CollapsibleSection {
 
     SwitchRow {
         label: qsTr("Invert colors")
-        checked: root.rootPane.desktopClockInvertColors
+        checked: rootPane.desktopClockInvertColors
         onToggled: checked => {
-            root.rootPane.desktopClockInvertColors = checked;
-            root.rootPane.saveConfig();
+            rootPane.desktopClockInvertColors = checked;
+            rootPane.saveConfig();
         }
     }
 
@@ -163,10 +166,10 @@ CollapsibleSection {
 
         SwitchRow {
             label: qsTr("Enabled")
-            checked: root.rootPane.desktopClockShadowEnabled
+            checked: rootPane.desktopClockShadowEnabled
             onToggled: checked => {
-                root.rootPane.desktopClockShadowEnabled = checked;
-                root.rootPane.saveConfig();
+                rootPane.desktopClockShadowEnabled = checked;
+                rootPane.saveConfig();
             }
         }
 
@@ -177,7 +180,7 @@ CollapsibleSection {
                 Layout.fillWidth: true
 
                 label: qsTr("Opacity")
-                value: root.rootPane.desktopClockShadowOpacity * 100
+                value: rootPane.desktopClockShadowOpacity * 100
                 from: 0
                 to: 100
                 suffix: "%"
@@ -189,8 +192,8 @@ CollapsibleSection {
                 parseValueFunction: text => parseInt(text)
 
                 onValueModified: newValue => {
-                    root.rootPane.desktopClockShadowOpacity = newValue / 100;
-                    root.rootPane.saveConfig();
+                    rootPane.desktopClockShadowOpacity = newValue / 100;
+                    rootPane.saveConfig();
                 }
             }
         }
@@ -202,7 +205,7 @@ CollapsibleSection {
                 Layout.fillWidth: true
 
                 label: qsTr("Blur")
-                value: root.rootPane.desktopClockShadowBlur * 100
+                value: rootPane.desktopClockShadowBlur * 100
                 from: 0
                 to: 100
                 suffix: "%"
@@ -214,8 +217,8 @@ CollapsibleSection {
                 parseValueFunction: text => parseInt(text)
 
                 onValueModified: newValue => {
-                    root.rootPane.desktopClockShadowBlur = newValue / 100;
-                    root.rootPane.saveConfig();
+                    rootPane.desktopClockShadowBlur = newValue / 100;
+                    rootPane.saveConfig();
                 }
             }
         }
@@ -232,19 +235,19 @@ CollapsibleSection {
 
         SwitchRow {
             label: qsTr("Enabled")
-            checked: root.rootPane.desktopClockBackgroundEnabled
+            checked: rootPane.desktopClockBackgroundEnabled
             onToggled: checked => {
-                root.rootPane.desktopClockBackgroundEnabled = checked;
-                root.rootPane.saveConfig();
+                rootPane.desktopClockBackgroundEnabled = checked;
+                rootPane.saveConfig();
             }
         }
 
         SwitchRow {
             label: qsTr("Blur enabled")
-            checked: root.rootPane.desktopClockBackgroundBlur
+            checked: rootPane.desktopClockBackgroundBlur
             onToggled: checked => {
-                root.rootPane.desktopClockBackgroundBlur = checked;
-                root.rootPane.saveConfig();
+                rootPane.desktopClockBackgroundBlur = checked;
+                rootPane.saveConfig();
             }
         }
 
@@ -255,7 +258,7 @@ CollapsibleSection {
                 Layout.fillWidth: true
 
                 label: qsTr("Opacity")
-                value: root.rootPane.desktopClockBackgroundOpacity * 100
+                value: rootPane.desktopClockBackgroundOpacity * 100
                 from: 0
                 to: 100
                 suffix: "%"
@@ -267,8 +270,8 @@ CollapsibleSection {
                 parseValueFunction: text => parseInt(text)
 
                 onValueModified: newValue => {
-                    root.rootPane.desktopClockBackgroundOpacity = newValue / 100;
-                    root.rootPane.saveConfig();
+                    rootPane.desktopClockBackgroundOpacity = newValue / 100;
+                    rootPane.saveConfig();
                 }
             }
         }
@@ -283,19 +286,19 @@ CollapsibleSection {
 
     SwitchRow {
         label: qsTr("Visualiser enabled")
-        checked: root.rootPane.visualiserEnabled
+        checked: rootPane.visualiserEnabled
         onToggled: checked => {
-            root.rootPane.visualiserEnabled = checked;
-            root.rootPane.saveConfig();
+            rootPane.visualiserEnabled = checked;
+            rootPane.saveConfig();
         }
     }
 
     SwitchRow {
         label: qsTr("Visualiser auto hide")
-        checked: root.rootPane.visualiserAutoHide
+        checked: rootPane.visualiserAutoHide
         onToggled: checked => {
-            root.rootPane.visualiserAutoHide = checked;
-            root.rootPane.saveConfig();
+            rootPane.visualiserAutoHide = checked;
+            rootPane.saveConfig();
         }
     }
 
@@ -306,7 +309,7 @@ CollapsibleSection {
             Layout.fillWidth: true
 
             label: qsTr("Visualiser rounding")
-            value: root.rootPane.visualiserRounding
+            value: rootPane.visualiserRounding
             from: 0
             to: 10
             stepSize: 1
@@ -318,8 +321,8 @@ CollapsibleSection {
             parseValueFunction: text => parseInt(text)
 
             onValueModified: newValue => {
-                root.rootPane.visualiserRounding = Math.round(newValue);
-                root.rootPane.saveConfig();
+                rootPane.visualiserRounding = Math.round(newValue);
+                rootPane.saveConfig();
             }
         }
     }
@@ -331,7 +334,7 @@ CollapsibleSection {
             Layout.fillWidth: true
 
             label: qsTr("Visualiser spacing")
-            value: root.rootPane.visualiserSpacing
+            value: rootPane.visualiserSpacing
             from: 0
             to: 2
             validator: DoubleValidator {
@@ -340,8 +343,8 @@ CollapsibleSection {
             }
 
             onValueModified: newValue => {
-                root.rootPane.visualiserSpacing = newValue;
-                root.rootPane.saveConfig();
+                rootPane.visualiserSpacing = newValue;
+                rootPane.saveConfig();
             }
         }
     }

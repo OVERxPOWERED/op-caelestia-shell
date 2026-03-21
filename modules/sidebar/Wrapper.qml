@@ -7,7 +7,7 @@ import QtQuick
 Item {
     id: root
 
-    required property var visibilities
+    required property DrawerVisibilities visibilities
     required property var panels
     readonly property Props props: Props {}
 

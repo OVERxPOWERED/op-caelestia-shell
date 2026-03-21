@@ -8,7 +8,7 @@ Item {
     id: root
 
     required property Props props
-    required property var visibilities
+    required property DrawerVisibilities visibilities
 
     ColumnLayout {
         id: layout

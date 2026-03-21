@@ -15,7 +15,7 @@ Item {
     id: root
 
     required property Props props
-    required property var visibilities
+    required property DrawerVisibilities visibilities
     readonly property int notifCount: Notifs.list.reduce((acc, n) => n.closed ? acc : acc + 1, 0)
 
     anchors.fill: parent
@@ -156,13 +156,14 @@ Item {
             let next = null;
             for (let i = 0; i < notifList.repeater.count; i++) {
                 next = notifList.repeater.itemAt(i);
-                if (!next?.closed)
+                if (!next?.closed) // qmllint disable missing-property
                     break;
             }
-            if (next)
-                next.closeAll();
-            else
+            if (next) {
+                next.closeAll(); // qmllint disable missing-property
+            } else {
                 stop();
+            }
         }
     }
 

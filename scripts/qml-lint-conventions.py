@@ -88,10 +88,15 @@ def import_group(module: str) -> tuple[int, int] | None:
     return None
 
 
-def check_imports(filepath: Path, lines: list[str], rel: str) -> list[Violation]:
-    """Check that module imports are in the required order."""
-    violations = []
-    imports: list[tuple[int, str, int, int]] = []  # (lineno, module, group, depth)
+def parse_imports(lines: list[str]) -> tuple[int | None, int | None, list[str], list[tuple[str, int, int, str]]]:
+    """Parse the import block, returning (first_idx, last_idx, relative_imports, module_imports).
+
+    module_imports entries are (line_text, group, depth, module_name).
+    """
+    first_import = None
+    last_import = None
+    relative_imports: list[str] = []
+    module_imports: list[tuple[str, int, int, str]] = []
 
     for i, line in enumerate(lines):
         stripped = line.strip()
@@ -99,23 +104,49 @@ def check_imports(filepath: Path, lines: list[str], rel: str) -> list[Violation]
             continue
         m = IMPORT_RE.match(stripped)
         if m:
+            if first_import is None:
+                first_import = i
+            last_import = i
             module = m.group(1)
             result = import_group(module)
-            if result is not None:
+            if result is None:
+                relative_imports.append(line)
+            else:
                 group, depth = result
-                imports.append((i + 1, module, group, depth))
+                module_imports.append((line, group, depth, module))
             continue
-        break  # end of import block
+        break
+
+    return first_import, last_import, relative_imports, module_imports
+
+
+def check_imports(filepath: Path, lines: list[str], rel: str) -> list[Violation]:
+    """Check that module imports are in the required order."""
+    violations = []
+    _, _, _, module_imports = parse_imports(lines)
+    imports = [(i, *entry) for i, entry in enumerate(module_imports)]
 
     for j in range(1, len(imports)):
-        prev_lineno, prev_mod, prev_group, prev_depth = imports[j - 1]
-        curr_lineno, curr_mod, curr_group, curr_depth = imports[j]
+        _, prev_line, prev_group, prev_depth, prev_mod = imports[j - 1]
+        _, curr_line, curr_group, curr_depth, curr_mod = imports[j]
+
+        # Find actual line number for the current import
+        lineno = 0
+        count = 0
+        for li, line in enumerate(lines):
+            stripped = line.strip()
+            m = IMPORT_RE.match(stripped)
+            if m and import_group(m.group(1)) is not None:
+                if count == j:
+                    lineno = li + 1
+                    break
+                count += 1
 
         if curr_group < prev_group:
             violations.append(
                 Violation(
                     rel,
-                    curr_lineno,
+                    lineno,
                     "import-order",
                     f"'{curr_mod}' should appear before '{prev_mod}'",
                 )
@@ -124,13 +155,124 @@ def check_imports(filepath: Path, lines: list[str], rel: str) -> list[Violation]
             violations.append(
                 Violation(
                     rel,
-                    curr_lineno,
+                    lineno,
                     "import-order",
                     f"'{curr_mod}' should appear before '{prev_mod}' (less nested first)",
                 )
             )
 
     return violations
+
+
+def fix_imports(lines: list[str]) -> list[str]:
+    """Sort imports and return the modified lines."""
+    first, last, relative, module = parse_imports(lines)
+    if first is None:
+        return lines
+
+    module.sort(key=lambda x: (x[1], x[2], x[3]))
+    sorted_imports = relative + [entry[0] for entry in module]
+    return lines[:first] + sorted_imports + lines[last + 1 :]
+
+
+def fix_section_separators(lines: list[str]) -> list[str]:
+    """Insert blank lines between different sections and return modified lines."""
+    insertions: list[int] = []
+    scopes: dict[str, ScopeTracker] = {}
+    in_block_comment = False
+    func_skip_depth = 0
+    prev_blank: dict[str, bool] = {}
+
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        indent = get_indent(line)
+
+        if in_block_comment:
+            if BLOCK_COMMENT_END.search(stripped):
+                in_block_comment = False
+            continue
+        if BLOCK_COMMENT_START.search(stripped) and not BLOCK_COMMENT_END.search(stripped):
+            in_block_comment = True
+            continue
+
+        if not stripped:
+            for key in prev_blank:
+                prev_blank[key] = True
+            continue
+
+        if COMMENT_LINE_RE.match(stripped):
+            continue
+
+        if func_skip_depth > 0:
+            func_skip_depth += stripped.count("{") - stripped.count("}")
+            if func_skip_depth <= 0:
+                func_skip_depth = 0
+            continue
+
+        if stripped == "}":
+            to_remove = [k for k in scopes if len(k) > len(indent)]
+            for k in to_remove:
+                del scopes[k]
+                prev_blank.pop(k, None)
+            continue
+
+        section = classify_line(stripped)
+        if section is None:
+            continue
+
+        if indent not in scopes:
+            scopes[indent] = ScopeTracker()
+            prev_blank[indent] = True
+
+        tracker = scopes[indent]
+        had_blank = prev_blank.get(indent, True)
+
+        if tracker.last_section is not None and section != tracker.last_section and not had_blank:
+            insertions.append(i)
+
+        if tracker.last_section is None or section >= tracker.last_section:
+            tracker.last_section = section
+            tracker.last_section_line = i + 1
+
+        prev_blank[indent] = False
+
+        brace_count = stripped.count("{") - stripped.count("}")
+        if brace_count > 0 and section == Section.FUNCTION:
+            func_skip_depth = brace_count
+        if brace_count > 0 and section == Section.BINDING:
+            colon_idx = stripped.index(":")
+            after_colon = stripped[colon_idx + 1 :].strip()
+            if not re.match(r"^[A-Z]", after_colon):
+                func_skip_depth = brace_count
+        if brace_count > 0 and section in (Section.CHILD, Section.COMPONENT_DEF):
+            to_remove = [k for k in scopes if len(k) > len(indent)]
+            for k in to_remove:
+                del scopes[k]
+                prev_blank.pop(k, None)
+
+    result = list(lines)
+    for idx in reversed(insertions):
+        result.insert(idx, "")
+    return result
+
+
+def fix_file(filepath: Path) -> bool:
+    """Fix auto-fixable violations. Returns True if file was modified."""
+    try:
+        text = filepath.read_text()
+    except (OSError, UnicodeDecodeError):
+        return False
+
+    lines = text.splitlines()
+    lines = fix_imports(lines)
+    lines = fix_section_separators(lines)
+    new_text = "\n".join(lines)
+    if text.endswith("\n"):
+        new_text += "\n"
+    if new_text != text:
+        filepath.write_text(new_text)
+        return True
+    return False
 
 
 # Regexes
@@ -352,7 +494,12 @@ def check_file(filepath: Path) -> list[Violation]:
 
 
 def main():
+    fix_mode = "--fix" in sys.argv
     qml_files = sorted(p for p in REPO_ROOT.rglob("*.qml") if "build" not in p.parts)
+
+    if fix_mode:
+        fixed = sum(1 for f in qml_files if fix_file(f))
+        print(f"{BOLD}Fixed {fixed} file(s).{RESET}\n")
 
     print(f"{BOLD}Checking {len(qml_files)} QML files for convention violations...{RESET}\n")
 

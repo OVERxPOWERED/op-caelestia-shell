@@ -40,7 +40,7 @@ GridLayout {
 
         radius: Appearance.rounding.large * 1.5
 
-        Weather {}
+        SmallWeather {}
     }
 
     Rect {

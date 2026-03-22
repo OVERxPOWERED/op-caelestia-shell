@@ -188,7 +188,7 @@ Item {
             Component {
                 id: weatherComponent
 
-                Weather {}
+                WeatherTab {}
             }
 
             Behavior on contentX {

@@ -10,17 +10,11 @@ import qs.config
 Item {
     id: model
 
-    visible: false
-
-    ListModel {
-        id: _visibleModel
-    }
-
     property alias visibleModel: _visibleModel
-
     property string activeLabel: ""
-
     property int activeIndex: -1
+    property var _xkbMap: ({})
+    property bool _notifiedLimit: false
 
     function start() {
         _xkbXmlBase.running = true;
@@ -127,13 +121,15 @@ Item {
         return code.toUpperCase() + " - " + code;
     }
 
+    visible: false
+
+    ListModel {
+        id: _visibleModel
+    }
+
     ListModel {
         id: _layoutsModel
     }
-
-    property var _xkbMap: ({})
-
-    property bool _notifiedLimit: false
 
     Process {
         id: _xkbXmlBase

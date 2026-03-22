@@ -38,96 +38,6 @@ Singleton {
             "Referer": "https://music.163.com/"
         })
 
-    ListModel {
-        id: lyricsModel
-    }
-    ListModel {
-        id: fetchedCandidatesModel
-    }
-
-    Timer {
-        id: seekTimer
-
-        interval: 500
-        onTriggered: root.isManualSeeking = false
-    }
-
-    // If no local lyrics were loaded within the interval, fall back to NetEase
-    Timer {
-        id: fallbackTimer
-
-        interval: 200
-        onTriggered: {
-            if (lyricsModel.count === 0) {
-                root.backend = "NetEase";
-                fallbackToOnline();
-            }
-        }
-    }
-
-    Timer {
-        id: loadDebounce
-
-        interval: 50
-        onTriggered: root._doLoadLyrics()
-    }
-
-    FileView {
-        id: lyricsMapFileView
-
-        path: root.lyricsMapFile
-        printErrors: false
-        onLoaded: {
-            try {
-                root.lyricsMap = JSON.parse(text());
-            } catch (e) {
-                root.lyricsMap = {};
-            }
-        }
-    }
-
-    FileView {
-        id: lrcFile
-
-        printErrors: false
-        onLoaded: {
-            fallbackTimer.stop();
-            let parsed = Lrc.parseLrc(text());
-            if (parsed.length > 0) {
-                root.backend = "Local";
-                updateModel(parsed);
-                loading = false;
-            } else {
-                root.backend = "NetEase";
-                fallbackToOnline();
-            }
-        }
-    }
-
-    Connections {
-        function onActiveChanged() {
-            root.player = Players.active;
-            loadLyrics();
-        }
-
-        target: Players
-    }
-
-    Connections {
-        function onMetadataChanged() {
-            loadLyrics();
-        }
-
-        target: root.player
-        ignoreUnknownSignals: true
-    }
-
-    Process {
-        id: saveLyricsMap
-
-        command: ["sh", "-c", `mkdir -p "${root.lyricsDir}" && echo '${JSON.stringify(root.lyricsMap)}' > "${root.lyricsMapFile}"`]
-    }
-
     function getMetadata() {
         if (!player || !player.metadata)
             return null;
@@ -344,5 +254,96 @@ Singleton {
         }
 
         seekTimer.restart();
+    }
+
+    ListModel {
+        id: lyricsModel
+    }
+
+    ListModel {
+        id: fetchedCandidatesModel
+    }
+
+    Timer {
+        id: seekTimer
+
+        interval: 500
+        onTriggered: root.isManualSeeking = false
+    }
+
+    // If no local lyrics were loaded within the interval, fall back to NetEase
+    Timer {
+        id: fallbackTimer
+
+        interval: 200
+        onTriggered: {
+            if (lyricsModel.count === 0) {
+                root.backend = "NetEase";
+                fallbackToOnline();
+            }
+        }
+    }
+
+    Timer {
+        id: loadDebounce
+
+        interval: 50
+        onTriggered: root._doLoadLyrics()
+    }
+
+    FileView {
+        id: lyricsMapFileView
+
+        path: root.lyricsMapFile
+        printErrors: false
+        onLoaded: {
+            try {
+                root.lyricsMap = JSON.parse(text());
+            } catch (e) {
+                root.lyricsMap = {};
+            }
+        }
+    }
+
+    FileView {
+        id: lrcFile
+
+        printErrors: false
+        onLoaded: {
+            fallbackTimer.stop();
+            let parsed = Lrc.parseLrc(text());
+            if (parsed.length > 0) {
+                root.backend = "Local";
+                updateModel(parsed);
+                loading = false;
+            } else {
+                root.backend = "NetEase";
+                fallbackToOnline();
+            }
+        }
+    }
+
+    Connections {
+        function onActiveChanged() {
+            root.player = Players.active;
+            loadLyrics();
+        }
+
+        target: Players
+    }
+
+    Connections {
+        function onMetadataChanged() {
+            loadLyrics();
+        }
+
+        target: root.player
+        ignoreUnknownSignals: true
+    }
+
+    Process {
+        id: saveLyricsMap
+
+        command: ["sh", "-c", `mkdir -p "${root.lyricsDir}" && echo '${JSON.stringify(root.lyricsMap)}' > "${root.lyricsMapFile}"`]
     }
 }

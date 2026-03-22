@@ -154,15 +154,15 @@ GridView {
 
                 opacity: 0
 
+                Component.onCompleted: {
+                    opacity = 1;
+                }
+
                 Behavior on opacity {
                     NumberAnimation {
                         duration: 1000
                         easing.type: Easing.OutCubic
                     }
-                }
-
-                Component.onCompleted: {
-                    opacity = 1;
                 }
             }
         }
@@ -219,15 +219,15 @@ GridView {
 
             opacity: 0
 
+            Component.onCompleted: {
+                opacity = 1;
+            }
+
             Behavior on opacity {
                 NumberAnimation {
                     duration: 1000
                     easing.type: Easing.OutCubic
                 }
-            }
-
-            Component.onCompleted: {
-                opacity = 1;
             }
         }
     }

@@ -32,6 +32,7 @@ CollapsibleSection {
                 radius: Appearance.rounding.normal
                 border.width: modelData.variant === Schemes.currentVariant ? 1 : 0
                 border.color: Colours.palette.m3primary
+                implicitHeight: variantRow.implicitHeight + Appearance.padding.normal * 2
 
                 StateLayer {
                     function onClicked(): void {
@@ -84,8 +85,6 @@ CollapsibleSection {
                         font.pointSize: Appearance.font.size.large
                     }
                 }
-
-                implicitHeight: variantRow.implicitHeight + Appearance.padding.normal * 2
             }
         }
     }

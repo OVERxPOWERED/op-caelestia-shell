@@ -105,6 +105,7 @@ Item {
         color: Colours.tPalette.m3surface
         opacity: root.session.network.showPasswordDialog && !root.isClosing ? 1 : 0
         scale: root.session.network.showPasswordDialog && !root.isClosing ? 1 : 0.7
+        Keys.onEscapePressed: closeDialog()
 
         Behavior on opacity {
             Anim {}
@@ -134,8 +135,6 @@ Item {
                 to: 0.7
             }
         }
-
-        Keys.onEscapePressed: closeDialog()
 
         ColumnLayout {
             id: content

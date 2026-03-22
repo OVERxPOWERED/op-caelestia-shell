@@ -23,6 +23,7 @@ ColumnLayout {
     property Component headerComponent: null
     property Component titleSuffix: null
     property bool showHeader: true
+    property alias view: view
 
     signal itemSelected(var item)
 
@@ -60,8 +61,6 @@ ColumnLayout {
             Layout.fillWidth: true
         }
     }
-
-    property alias view: view
 
     StyledText {
         visible: root.description !== ""

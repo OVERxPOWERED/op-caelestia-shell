@@ -48,6 +48,11 @@ Item {
                     nextComponent = targetComponent;
                 }
 
+                onPaneChanged: {
+                    nextComponent = getComponentForPane();
+                    paneId = root.paneIdGenerator(pane);
+                }
+
                 Loader {
                     id: rightLoader
 
@@ -73,11 +78,6 @@ Item {
                             }
                         ]
                     }
-                }
-
-                onPaneChanged: {
-                    nextComponent = getComponentForPane();
-                    paneId = root.paneIdGenerator(pane);
                 }
             }
         }

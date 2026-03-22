@@ -90,14 +90,14 @@ Item {
         }
     }
 
-    component Pill: QtObject {
-        property int start
-        property int end
-    }
-
     Component {
         id: pillComp
 
         Pill {}
+    }
+
+    component Pill: QtObject {
+        property int start
+        property int end
     }
 }

@@ -61,13 +61,6 @@ Item {
             readOnly: root.readOnly
             enabled: root.enabled
 
-            Binding {
-                target: inputField
-                property: "text"
-                value: root.text
-                when: !inputField.activeFocus
-            }
-
             onTextChanged: {
                 root.text = text;
                 root.textEdited(text);
@@ -75,6 +68,13 @@ Item {
 
             onEditingFinished: {
                 root.editingFinished();
+            }
+
+            Binding {
+                target: inputField
+                property: "text"
+                value: root.text
+                when: !inputField.activeFocus
             }
         }
     }

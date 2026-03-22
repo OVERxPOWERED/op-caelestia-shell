@@ -26,6 +26,12 @@ StackView {
     popEnter: NoAnim {}
     popExit: NoAnim {}
 
+    Component {
+        id: subMenuComp
+
+        SubMenu {}
+    }
+
     component NoAnim: Transition {
         NumberAnimation {
             duration: 0
@@ -220,11 +226,5 @@ StackView {
                 }
             }
         }
-    }
-
-    Component {
-        id: subMenuComp
-
-        SubMenu {}
     }
 }

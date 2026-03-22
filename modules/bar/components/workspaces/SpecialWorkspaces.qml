@@ -159,6 +159,76 @@ Item {
         }
     }
 
+    Loader {
+        asynchronous: true
+        active: Config.bar.workspaces.activeIndicator
+        anchors.fill: parent
+
+        sourceComponent: Item {
+            StyledClippingRect {
+                id: indicator
+
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                y: (view.currentItem?.y ?? 0) - view.contentY
+                implicitHeight: (view.currentItem as SpecialWsDelegate)?.size ?? 0
+
+                color: Colours.palette.m3tertiary
+                radius: Appearance.rounding.full
+
+                Colouriser {
+                    source: view
+                    sourceColor: Colours.palette.m3onSurface
+                    colorizationColor: Colours.palette.m3onTertiary
+
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    x: 0
+                    y: -indicator.y
+                    implicitWidth: view.width
+                    implicitHeight: view.height
+                }
+
+                Behavior on y {
+                    Anim {
+                        easing.bezierCurve: Appearance.anim.curves.emphasized
+                    }
+                }
+
+                Behavior on implicitHeight {
+                    Anim {
+                        easing.bezierCurve: Appearance.anim.curves.emphasized
+                    }
+                }
+            }
+        }
+    }
+
+    MouseArea {
+        property real startY
+
+        anchors.fill: view
+
+        drag.target: view.contentItem
+        drag.axis: Drag.YAxis
+        drag.maximumY: 0
+        drag.minimumY: Math.min(0, view.height - view.contentHeight - Appearance.padding.small)
+
+        onPressed: event => startY = event.y
+
+        onClicked: event => {
+            if (Math.abs(event.y - startY) > drag.threshold)
+                return;
+
+            const ws = view.itemAt(event.x, event.y) as SpecialWsDelegate;
+            if (ws?.modelData)
+                Hypr.dispatch(`togglespecialworkspace ${ws.modelData.name.slice(8)}`);
+            else
+                Hypr.dispatch("togglespecialworkspace special");
+        }
+    }
+
     component SpecialWsDelegate: ColumnLayout {
         id: ws
 
@@ -295,76 +365,6 @@ Item {
             Behavior on Layout.preferredHeight {
                 Anim {}
             }
-        }
-    }
-
-    Loader {
-        asynchronous: true
-        active: Config.bar.workspaces.activeIndicator
-        anchors.fill: parent
-
-        sourceComponent: Item {
-            StyledClippingRect {
-                id: indicator
-
-                anchors.left: parent.left
-                anchors.right: parent.right
-
-                y: (view.currentItem?.y ?? 0) - view.contentY
-                implicitHeight: (view.currentItem as SpecialWsDelegate)?.size ?? 0
-
-                color: Colours.palette.m3tertiary
-                radius: Appearance.rounding.full
-
-                Colouriser {
-                    source: view
-                    sourceColor: Colours.palette.m3onSurface
-                    colorizationColor: Colours.palette.m3onTertiary
-
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    x: 0
-                    y: -indicator.y
-                    implicitWidth: view.width
-                    implicitHeight: view.height
-                }
-
-                Behavior on y {
-                    Anim {
-                        easing.bezierCurve: Appearance.anim.curves.emphasized
-                    }
-                }
-
-                Behavior on implicitHeight {
-                    Anim {
-                        easing.bezierCurve: Appearance.anim.curves.emphasized
-                    }
-                }
-            }
-        }
-    }
-
-    MouseArea {
-        property real startY
-
-        anchors.fill: view
-
-        drag.target: view.contentItem
-        drag.axis: Drag.YAxis
-        drag.maximumY: 0
-        drag.minimumY: Math.min(0, view.height - view.contentHeight - Appearance.padding.small)
-
-        onPressed: event => startY = event.y
-
-        onClicked: event => {
-            if (Math.abs(event.y - startY) > drag.threshold)
-                return;
-
-            const ws = view.itemAt(event.x, event.y) as SpecialWsDelegate;
-            if (ws?.modelData)
-                Hypr.dispatch(`togglespecialworkspace ${ws.modelData.name.slice(8)}`);
-            else
-                Hypr.dispatch("togglespecialworkspace special");
         }
     }
 }

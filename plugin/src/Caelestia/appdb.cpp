@@ -303,11 +303,13 @@ void AppDb::updateApps() {
         newIds.insert(entry->property("id").toString());
     }
 
-    for (auto it = m_apps.keyBegin(); it != m_apps.keyEnd(); ++it) {
-        const auto& id = *it;
-        if (!newIds.contains(id)) {
+    for (auto it = m_apps.begin(); it != m_apps.end();) {
+        if (!newIds.contains(it.key())) {
             dirty = true;
-            m_apps.take(id)->deleteLater();
+            it.value()->deleteLater();
+            it = m_apps.erase(it);
+        } else {
+            ++it;
         }
     }
 

@@ -11,7 +11,7 @@ AppEntry::AppEntry(QObject* entry, unsigned int frequency, QObject* parent)
     , m_entry(entry)
     , m_frequency(frequency) {
     const auto mo = m_entry->metaObject();
-    const auto tmo = metaObject();
+    const auto tmo = &AppEntry::staticMetaObject;
 
     for (const auto& prop :
         { "name", "comment", "execString", "startupClass", "genericName", "categories", "keywords" }) {

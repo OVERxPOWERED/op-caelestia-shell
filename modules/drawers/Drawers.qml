@@ -156,6 +156,7 @@ Variants {
                     group: blobGroup
                     panel: panels.dashboard
                     bar: bar
+                    deformAmount: 0.1
                 }
 
                 PanelBg {
@@ -173,6 +174,7 @@ Variants {
                     group: blobGroup
                     panel: panels.session
                     bar: bar
+                    deformAmount: 0.25
                 }
 
                 PanelBg {
@@ -190,6 +192,7 @@ Variants {
                     group: blobGroup
                     panel: panels.osd
                     bar: bar
+                    deformAmount: 0.3
                 }
 
                 PanelBg {

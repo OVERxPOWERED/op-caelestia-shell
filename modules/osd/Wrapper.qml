@@ -34,8 +34,9 @@ Item {
         brightness = root.monitor?.brightness ?? 0;
     }
 
-    visible: width > 0
-    implicitWidth: 0
+    visible: anchors.rightMargin > -implicitWidth
+    anchors.rightMargin: -implicitWidth
+    implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight
 
     states: State {
@@ -43,31 +44,33 @@ Item {
         when: root.shouldBeActive
 
         PropertyChanges {
-            root.implicitWidth: content.implicitWidth
+            root.anchors.rightMargin: 0
         }
     }
 
     transitions: [
         Transition {
-            from: ""
-            to: "visible"
+            // from: ""
+            // to: "visible"
 
             Anim {
-                target: root
-                property: "implicitWidth"
+                target: root.anchors
+                property: "rightMargin"
                 easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
             }
-        },
-        Transition {
-            from: "visible"
-            to: ""
-
-            Anim {
-                target: root
-                property: "implicitWidth"
-                easing.bezierCurve: Appearance.anim.curves.emphasized
-            }
         }
+        // Transition {
+        //     from: "visible"
+        //     to: ""
+
+        //     Anim {
+        //         target: root
+        //         property: "implicitWidth"
+        //         easing.bezierCurve: Appearance.anim.curves.emphasized
+        //     }
+        // }
+
+
     ]
 
     Connections {

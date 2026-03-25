@@ -11,8 +11,9 @@ Item {
     required property var panels
     readonly property real nonAnimWidth: content.implicitWidth
 
-    visible: width > 0
-    implicitWidth: 0
+    visible: anchors.rightMargin > -implicitWidth - 1
+    anchors.rightMargin: -implicitWidth - 1
+    implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight
 
     states: State {
@@ -20,31 +21,33 @@ Item {
         when: root.visibilities.session && Config.session.enabled
 
         PropertyChanges {
-            root.implicitWidth: root.nonAnimWidth
+            root.anchors.rightMargin: 0
         }
     }
 
     transitions: [
         Transition {
-            from: ""
-            to: "visible"
+            // from: ""
+            // to: "visible"
 
             Anim {
-                target: root
-                property: "implicitWidth"
+                target: root.anchors
+                property: "rightMargin"
                 easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
             }
-        },
-        Transition {
-            from: "visible"
-            to: ""
-
-            Anim {
-                target: root
-                property: "implicitWidth"
-                easing.bezierCurve: root.panels.osd.width > 0 ? Appearance.anim.curves.expressiveDefaultSpatial : Appearance.anim.curves.emphasized
-            }
         }
+        // Transition {
+        //     from: "visible"
+        //     to: ""
+
+        //     Anim {
+        //         target: root
+        //         property: "implicitWidth"
+        //         easing.bezierCurve: root.panels.osd.width > 0 ? Appearance.anim.curves.expressiveDefaultSpatial : Appearance.anim.curves.emphasized
+        //     }
+        // }
+
+
     ]
 
     Loader {

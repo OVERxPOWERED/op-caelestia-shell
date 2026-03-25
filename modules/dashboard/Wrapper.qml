@@ -30,8 +30,9 @@ Item {
 
     readonly property real nonAnimHeight: state === "visible" ? ((content.item as Content)?.nonAnimHeight ?? 0) : 0
 
-    visible: height > 0
-    implicitHeight: 0
+    visible: anchors.topMargin > -implicitHeight - 5
+    anchors.topMargin: -implicitHeight - 5
+    implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth
 
     onStateChanged: {
@@ -46,32 +47,35 @@ Item {
         when: root.visibilities.dashboard && Config.dashboard.enabled
 
         PropertyChanges {
-            root.implicitHeight: content.implicitHeight
+            // root.implicitHeight: content.implicitHeight
+            root.anchors.topMargin: 0
         }
     }
 
     transitions: [
         Transition {
-            from: ""
-            to: "visible"
+            // from: ""
+            // to: "visible"
 
             Anim {
-                target: root
-                property: "implicitHeight"
+                target: root.anchors
+                property: "topMargin"
                 duration: Appearance.anim.durations.expressiveDefaultSpatial
                 easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
             }
-        },
-        Transition {
-            from: "visible"
-            to: ""
-
-            Anim {
-                target: root
-                property: "implicitHeight"
-                easing.bezierCurve: Appearance.anim.curves.emphasized
-            }
         }
+        // Transition {
+        //     from: "visible"
+        //     to: ""
+
+        //     Anim {
+        //         target: root.anchors
+        //         property: "topMargin"
+        //         easing.bezierCurve: Appearance.anim.curves.emphasized
+        //     }
+        // }
+
+
     ]
 
     Timer {

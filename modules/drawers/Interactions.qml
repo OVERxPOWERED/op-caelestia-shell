@@ -102,7 +102,7 @@ CustomMouseArea {
                 visibilities.bar = false;
         }
 
-        if (panels.sidebar.width === 0) {
+        if (panels.sidebar.anchors.rightMargin === -panels.sidebar.implicitWidth - 5) {
             // Show osd on hover
             const showOsd = inRightPanel(panels.osd, x, y);
 

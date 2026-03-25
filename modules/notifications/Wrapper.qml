@@ -10,23 +10,24 @@ Item {
     property alias osdPanel: content.osdPanel
     property alias sessionPanel: content.sessionPanel
 
-    visible: height > 0
+    visible: anchors.topMargin > -implicitHeight - 5
+    anchors.topMargin: -5
     implicitWidth: Math.max(sidebarPanel.width, content.implicitWidth)
     implicitHeight: content.implicitHeight
 
     states: State {
         name: "hidden"
-        when: root.visibilities.sidebar && Config.sidebar.enabled
+        // when: root.visibilities.sidebar && Config.sidebar.enabled
 
         PropertyChanges {
-            root.implicitHeight: 0
+            root.anchors.topMargin: -implicitHeight - 5
         }
     }
 
     transitions: Transition {
         Anim {
-            target: root
-            property: "implicitHeight"
+            target: root.anchors
+            property: "topMargin"
             duration: Appearance.anim.durations.expressiveDefaultSpatial
             easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
         }

@@ -15,7 +15,8 @@ Item {
 
     required property ShellScreen screen
 
-    readonly property real nonAnimWidth: x > 0 || hasCurrent ? children.find(c => c.shouldBeActive)?.implicitWidth ?? content.implicitWidth : 0
+    readonly property real shownWidth: children.find(c => c.shouldBeActive)?.implicitWidth ?? content.implicitWidth
+    readonly property real nonAnimWidth: x > 0 || hasCurrent ? shownWidth : 0
     readonly property real nonAnimHeight: children.find(c => c.shouldBeActive)?.implicitHeight ?? content.implicitHeight
     readonly property Item current: (content.item as Content)?.current ?? null
 

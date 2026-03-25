@@ -6,6 +6,7 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
+import Caelestia.Blobs
 import qs.components
 import qs.components.containers
 import qs.services
@@ -123,13 +124,113 @@ Variants {
                     shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.7)
                 }
 
-                Border {
+                // Border {
+                //     bar: bar
+                // }
+
+                // Backgrounds {
+                //     panels: panels
+                //     bar: bar
+                // }
+
+                BlobGroup {
+                    id: blobGroup
+
+                    color: Colours.palette.m3surface
+                }
+
+                BlobInvertedRect {
+                    anchors.fill: parent
+                    anchors.margins: -50 // Make border thicker to smooth out bulge from closed drawers
+                    group: blobGroup
+                    radius: Config.border.rounding
+                    borderLeft: bar.implicitWidth - anchors.margins
+                    borderRight: Config.border.thickness - anchors.margins
+                    borderTop: Config.border.thickness - anchors.margins
+                    borderBottom: Config.border.thickness - anchors.margins
+                }
+
+                PanelBg {
+                    id: dashBg
+
+                    group: blobGroup
+                    panel: panels.dashboard
                     bar: bar
                 }
 
-                Backgrounds {
-                    panels: panels
+                PanelBg {
+                    id: launcherBg
+
+                    group: blobGroup
+                    panel: panels.launcher
                     bar: bar
+                    deformAmount: 0.1
+                }
+
+                PanelBg {
+                    id: sessionBg
+
+                    group: blobGroup
+                    panel: panels.session
+                    bar: bar
+                }
+
+                PanelBg {
+                    id: sidebarBg
+
+                    group: blobGroup
+                    panel: panels.sidebar
+                    bar: bar
+                    deformAmount: 0
+                }
+
+                PanelBg {
+                    id: osdBg
+
+                    group: blobGroup
+                    panel: panels.osd
+                    bar: bar
+                }
+
+                PanelBg {
+                    id: notifsBg
+
+                    group: blobGroup
+                    panel: panels.notifications
+                    bar: bar
+                }
+
+                PanelBg {
+                    id: utilsBg
+
+                    group: blobGroup
+                    panel: panels.utilities
+                    bar: bar
+                }
+
+                PanelBg {
+                    id: popoutBg
+
+                    group: blobGroup
+                    panel: panels.popouts
+                    bar: bar
+
+                    x: bar.implicitWidth - (panels.popouts.isDetached ? -(win.width - panels.popouts.shownWidth) / 2 : panels.popouts.hasCurrent ? 0 : panels.popouts.shownWidth + 5)
+                    implicitWidth: panels.popouts.shownWidth
+
+                    Behavior on x {
+                        Anim {
+                            duration: Appearance.anim.durations.expressiveDefaultSpatial
+                            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                        }
+                    }
+
+                    Behavior on implicitWidth {
+                        Anim {
+                            duration: Appearance.anim.durations.expressiveDefaultSpatial
+                            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                        }
+                    }
                 }
             }
 
@@ -152,6 +253,31 @@ Variants {
                     screen: scope.modelData
                     visibilities: visibilities
                     bar: bar
+
+                    dashboard.transform: Matrix4x4 {
+                        matrix: dashBg.deformMatrix
+                    }
+                    launcher.transform: Matrix4x4 {
+                        matrix: launcherBg.deformMatrix
+                    }
+                    session.transform: Matrix4x4 {
+                        matrix: sessionBg.deformMatrix
+                    }
+                    sidebar.transform: Matrix4x4 {
+                        matrix: sidebarBg.deformMatrix
+                    }
+                    osd.transform: Matrix4x4 {
+                        matrix: osdBg.deformMatrix
+                    }
+                    notifications.transform: Matrix4x4 {
+                        matrix: notifsBg.deformMatrix
+                    }
+                    utilities.transform: Matrix4x4 {
+                        matrix: utilsBg.deformMatrix
+                    }
+                    popouts.transform: Matrix4x4 {
+                        matrix: popoutBg.deformMatrix
+                    }
                 }
 
                 BarWrapper {
@@ -170,5 +296,18 @@ Variants {
                 }
             }
         }
+    }
+
+    component PanelBg: BlobRect {
+        required property Item panel
+        required property Item bar
+        property real deformAmount: 0.15
+
+        x: panel.x + bar.implicitWidth
+        y: panel.y + Config.border.thickness
+        implicitWidth: panel.width
+        implicitHeight: panel.height
+        radius: Config.border.rounding
+        deformScale: deformAmount / 10000
     }
 }

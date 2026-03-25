@@ -24,8 +24,9 @@ Item {
 
     onMaxHeightChanged: timer.start()
 
-    visible: height > 0
-    implicitHeight: 0
+    visible: anchors.bottomMargin > -implicitHeight - 5
+    anchors.bottomMargin: -implicitHeight - 5
+    implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth
 
     onShouldBeActiveChanged: {
@@ -43,28 +44,30 @@ Item {
         id: showAnim
 
         Anim {
-            target: root
-            property: "implicitHeight"
-            to: root.contentHeight
+            target: root.anchors
+            property: "bottomMargin"
+            to: 0
             duration: Appearance.anim.durations.expressiveDefaultSpatial
             easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
         }
-        ScriptAction {
-            script: root.implicitHeight = Qt.binding(() => content.implicitHeight)
-        }
+        // ScriptAction {
+        //     script: root.implicitHeight = Qt.binding(() => content.implicitHeight)
+        // }
     }
 
     SequentialAnimation {
         id: hideAnim
 
-        ScriptAction {
-            script: root.implicitHeight = root.implicitHeight
-        }
+        // ScriptAction {
+        //     script: root.implicitHeight = root.implicitHeight
+        // }
         Anim {
-            target: root
-            property: "implicitHeight"
-            to: 0
-            easing.bezierCurve: Appearance.anim.curves.emphasized
+            target: root.anchors
+            property: "bottomMargin"
+            to: -content.implicitHeight - 5
+            // easing.bezierCurve: Appearance.anim.curves.emphasized
+            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
         }
     }
 

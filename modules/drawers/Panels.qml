@@ -42,8 +42,8 @@ Item {
         visibilities: root.visibilities
 
         anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: session.width + sidebar.width
+        anchors.right: session.left
+        // anchors.rightMargin: session.width + sidebar.width
     }
 
     Notifications.Wrapper {
@@ -66,8 +66,8 @@ Item {
         panels: root
 
         anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: sidebar.width
+        anchors.right: sidebar.left
+        // anchors.rightMargin: sidebar.width
     }
 
     Launcher.Wrapper {

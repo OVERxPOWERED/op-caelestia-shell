@@ -22,8 +22,9 @@ Item {
     }
     readonly property bool shouldBeActive: visibilities.sidebar || (visibilities.utilities && Config.utilities.enabled && !(visibilities.session && Config.session.enabled))
 
-    visible: height > 0
-    implicitHeight: 0
+    visible: anchors.bottomMargin > -implicitHeight - 5
+    anchors.bottomMargin: -implicitHeight - 5
+    implicitHeight: content.implicitHeight
     implicitWidth: sidebar.visible ? sidebar.width : Config.utilities.sizes.width
 
     onStateChanged: {
@@ -38,32 +39,33 @@ Item {
         when: root.shouldBeActive
 
         PropertyChanges {
-            root.implicitHeight: content.implicitHeight + Appearance.padding.large * 2
+            root.anchors.bottomMargin: 0
         }
     }
 
     transitions: [
         Transition {
-            from: ""
-            to: "visible"
+            // from: ""
+            // to: "visible"
 
             Anim {
-                target: root
-                property: "implicitHeight"
+                target: root.anchors
+                property: "bottomMargin"
                 duration: Appearance.anim.durations.expressiveDefaultSpatial
                 easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
             }
-        },
-        Transition {
-            from: "visible"
-            to: ""
-
-            Anim {
-                target: root
-                property: "implicitHeight"
-                easing.bezierCurve: Appearance.anim.curves.emphasized
-            }
         }
+        // Transition {
+        //     from: "visible"
+        //     to: ""
+
+        //     Anim {
+        //         target: root
+        //         property: "implicitHeight"
+        //         easing.bezierCurve: Appearance.anim.curves.emphasized
+        //     }
+        // }
+
     ]
 
     Timer {

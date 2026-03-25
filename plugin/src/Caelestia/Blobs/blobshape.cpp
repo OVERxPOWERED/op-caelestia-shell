@@ -70,8 +70,15 @@ void BlobShape::geometryChange(
     const QRectF& newGeometry, const QRectF& oldGeometry) {
     QQuickItem::geometryChange(newGeometry, oldGeometry);
     updateCenteredDeformMatrix();
-    if (m_group)
-        m_group->markDirty();
+    if (m_group) {
+        // Only trigger redraw if the change is visually meaningful
+        const auto dx = std::abs(newGeometry.x() - oldGeometry.x());
+        const auto dy = std::abs(newGeometry.y() - oldGeometry.y());
+        const auto dw = std::abs(newGeometry.width() - oldGeometry.width());
+        const auto dh = std::abs(newGeometry.height() - oldGeometry.height());
+        if (dx > 0.5 || dy > 0.5 || dw > 0.5 || dh > 0.5)
+            m_group->markShapeDirty(this);
+    }
 }
 
 void BlobShape::updateCenteredDeformMatrix() {
@@ -210,9 +217,6 @@ void BlobShape::updatePolish() {
 
     auto* inv = m_group->invertedRect();
     if (inv) {
-        m_cachedHasInverted = true;
-        m_cachedInvertedRadius = static_cast<float>(inv->radius());
-
         const QPointF invScene = inv->mapToScene(QPointF(0, 0));
         const float outerCX =
             static_cast<float>(invScene.x() + inv->width() / 2.0);
@@ -234,15 +238,35 @@ void BlobShape::updatePolish() {
             outerHH -
             static_cast<float>((inv->borderTop() + inv->borderBottom()) / 2.0);
 
-        m_cachedInvertedOuter[0] = outerCX;
-        m_cachedInvertedOuter[1] = outerCY;
-        m_cachedInvertedOuter[2] = outerHW;
-        m_cachedInvertedOuter[3] = outerHH;
+        // Check if this rect is near the border (within 2x smoothing of inner edge)
+        bool nearBorder = isInvertedRect();
+        if (!nearBorder) {
+            const float margin = pad * 2.0f;
+            const float myCX = m_cachedPaddedX + m_cachedPaddedW * 0.5f;
+            const float myCY = m_cachedPaddedY + m_cachedPaddedH * 0.5f;
+            const float myHW = m_cachedPaddedW * 0.5f;
+            const float myHH = m_cachedPaddedH * 0.5f;
+            // Near border if any edge of padded rect is within margin of inner edge
+            nearBorder = (myCX - myHW < innerCX - innerHW + margin) ||
+                (myCX + myHW > innerCX + innerHW - margin) ||
+                (myCY - myHH < innerCY - innerHH + margin) ||
+                (myCY + myHH > innerCY + innerHH - margin);
+        }
 
-        m_cachedInvertedInner[0] = innerCX;
-        m_cachedInvertedInner[1] = innerCY;
-        m_cachedInvertedInner[2] = innerHW;
-        m_cachedInvertedInner[3] = innerHH;
+        if (nearBorder) {
+            m_cachedHasInverted = true;
+            m_cachedInvertedRadius = static_cast<float>(inv->radius());
+
+            m_cachedInvertedOuter[0] = outerCX;
+            m_cachedInvertedOuter[1] = outerCY;
+            m_cachedInvertedOuter[2] = outerHW;
+            m_cachedInvertedOuter[3] = outerHH;
+
+            m_cachedInvertedInner[0] = innerCX;
+            m_cachedInvertedInner[1] = innerCY;
+            m_cachedInvertedInner[2] = innerHW;
+            m_cachedInvertedInner[3] = innerHH;
+        }
     }
 
     // Pre-compute corner fill factors (moves O(N²) work from GPU to CPU)

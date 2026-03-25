@@ -38,6 +38,7 @@ public:
     BlobInvertedRect* invertedRect() const { return m_invertedRect; }
 
     void markDirty();
+    void markShapeDirty(BlobShape* source);
     void ensurePhysicsUpdated();
 
 signals:

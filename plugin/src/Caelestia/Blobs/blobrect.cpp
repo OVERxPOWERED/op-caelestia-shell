@@ -16,13 +16,30 @@ void BlobRect::updatePolish() {
     BlobShape::updatePolish();
 
     if (m_physicsActive) {
-        QMetaObject::invokeMethod(
-            this,
-            [this]() {
-                if (m_physicsActive && m_group)
-                    m_group->markDirty();
-            },
-            Qt::QueuedConnection);
+        // Check if deformation is visually imperceptible
+        float totalDelta = std::abs(m_dm00 - 1.0f) + std::abs(m_dm01)
+            + std::abs(m_dm11 - 1.0f);
+        float totalVel =
+            std::abs(m_dmVel00) + std::abs(m_dmVel01) + std::abs(m_dmVel11);
+
+        if (totalDelta < 0.004f && totalVel < 0.05f) {
+            // Snap to rest, no visible deformation
+            m_dm00 = 1.0f;
+            m_dm01 = 0.0f;
+            m_dm11 = 1.0f;
+            m_dmVel00 = m_dmVel01 = m_dmVel11 = 0.0f;
+            m_deformMatrix = QMatrix4x4();
+            updateCenteredDeformMatrix();
+            m_physicsActive = false;
+        } else {
+            QMetaObject::invokeMethod(
+                this,
+                [this]() {
+                    if (m_physicsActive && m_group)
+                        m_group->markDirty();
+                },
+                Qt::QueuedConnection);
+        }
     }
 }
 

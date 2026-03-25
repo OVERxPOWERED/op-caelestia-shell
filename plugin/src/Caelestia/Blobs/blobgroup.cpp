@@ -66,6 +66,40 @@ void BlobGroup::markDirty() {
     }
 }
 
+void BlobGroup::markShapeDirty(BlobShape* source) {
+    m_physicsUpdated = false;
+
+    source->polish();
+    source->update();
+
+    // Use cached padded rects to find spatial neighbors
+    const float pad = static_cast<float>(m_smoothing) * 2.0f;
+    const QRectF srcRect(
+        static_cast<double>(source->m_cachedPaddedX - pad),
+        static_cast<double>(source->m_cachedPaddedY - pad),
+        static_cast<double>(source->m_cachedPaddedW + pad * 2.0f),
+        static_cast<double>(source->m_cachedPaddedH + pad * 2.0f));
+
+    for (auto* shape : std::as_const(m_shapes)) {
+        if (shape == source)
+            continue;
+        const QRectF otherRect(
+            static_cast<double>(shape->m_cachedPaddedX),
+            static_cast<double>(shape->m_cachedPaddedY),
+            static_cast<double>(shape->m_cachedPaddedW),
+            static_cast<double>(shape->m_cachedPaddedH));
+        if (srcRect.intersects(otherRect)) {
+            shape->polish();
+            shape->update();
+        }
+    }
+
+    if (m_invertedRect && static_cast<BlobShape*>(m_invertedRect) != source) {
+        static_cast<BlobShape*>(m_invertedRect)->polish();
+        static_cast<BlobShape*>(m_invertedRect)->update();
+    }
+}
+
 void BlobGroup::ensurePhysicsUpdated() {
     if (m_physicsUpdated)
         return;

@@ -203,7 +203,7 @@ void main() {
         }
 
         mergedSdf = sminNoBulge(mergedSdf, d, smoothFactor);
-        if (d < smoothFactor && d < minDist) {
+        if (d < minDist) {
             minDist = d;
             owner = i;
         }
@@ -277,10 +277,11 @@ void main() {
         }
     }
 
-    // Each renderer only outputs pixels it owns
+    // Each renderer only outputs pixels it owns, but allow rendering
+    // blend zones to prevent gaps (mergedSdf < smoothFactor means in blend)
     // myIndex == -1: inverted rect renders border-owned pixels
     // myIndex >= 0: individual rect renders its owned pixels
-    if (owner != myIndex)
+    if (owner != myIndex && mergedSdf > smoothFactor)
         discard;
 
     float fw = fwidth(mergedSdf);

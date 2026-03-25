@@ -85,6 +85,11 @@ void main() {
         // Offset center for asymmetric deformation
         vec2 center = rect.xy + props.yz;
 
+        // AABB early-out: skip rects far from this pixel
+        vec2 extent = sh.xy + vec2(smoothFactor * 1.5);
+        if (abs(pixel.x - center.x) > extent.x || abs(pixel.y - center.y) > extent.y)
+            continue;
+
         // Apply pre-computed inverse deformation to the evaluation point
         mat2 invDeform = mat2(invDm.xy, invDm.zw);
         vec2 transformedPixel = center + invDeform * (pixel - center);
@@ -156,6 +161,12 @@ void main() {
                 vec4 jP = rectData[j * 5 + 1];
                 vec2 jSh = rectData[j * 5 + 3].xy;
                 vec2 jC = jR.xy + jP.yz;
+
+                // Skip non-adjacent rects
+                float sinkRange = smoothFactor * 1.5;
+                if (abs(center.x - jC.x) > iSh.x + jSh.x + sinkRange ||
+                    abs(center.y - jC.y) > iSh.y + jSh.y + sinkRange)
+                    continue;
 
                 // Penetration of j past i's edges (positive = past)
                 float pT = (jC.y + jSh.y) - (center.y - iSh.y) - sinkOff;
@@ -266,9 +277,10 @@ void main() {
         }
     }
 
-    // myIndex == -1: inverted rect renders everything (frame + blobs)
-    // myIndex >= 0: individual rect renders only its owned pixels
-    if (myIndex >= 0 && owner != myIndex)
+    // Each renderer only outputs pixels it owns
+    // myIndex == -1: inverted rect renders border-owned pixels
+    // myIndex >= 0: individual rect renders its owned pixels
+    if (owner != myIndex)
         discard;
 
     float fw = fwidth(mergedSdf);

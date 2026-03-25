@@ -153,7 +153,6 @@ Variants {
                 PanelBg {
                     id: dashBg
 
-                    group: blobGroup
                     panel: panels.dashboard
                     bar: bar
                     deformAmount: 0.1
@@ -162,7 +161,6 @@ Variants {
                 PanelBg {
                     id: launcherBg
 
-                    group: blobGroup
                     panel: panels.launcher
                     bar: bar
                     deformAmount: 0.1
@@ -171,7 +169,6 @@ Variants {
                 PanelBg {
                     id: sessionBg
 
-                    group: blobGroup
                     panel: panels.session
                     bar: bar
                     deformAmount: 0.25
@@ -180,7 +177,6 @@ Variants {
                 PanelBg {
                     id: sidebarBg
 
-                    group: blobGroup
                     panel: panels.sidebar
                     bar: bar
                     deformAmount: 0
@@ -189,7 +185,6 @@ Variants {
                 PanelBg {
                     id: osdBg
 
-                    group: blobGroup
                     panel: panels.osd
                     bar: bar
                     deformAmount: 0.3
@@ -198,7 +193,6 @@ Variants {
                 PanelBg {
                     id: notifsBg
 
-                    group: blobGroup
                     panel: panels.notifications
                     bar: bar
                 }
@@ -206,7 +200,6 @@ Variants {
                 PanelBg {
                     id: utilsBg
 
-                    group: blobGroup
                     panel: panels.utilities
                     bar: bar
                 }
@@ -214,7 +207,6 @@ Variants {
                 PanelBg {
                     id: popoutBg
 
-                    group: blobGroup
                     panel: panels.popouts
                     bar: bar
 
@@ -306,6 +298,7 @@ Variants {
         required property Item bar
         property real deformAmount: 0.15
 
+        group: panel.width > 0 && panel.height > 0 ? blobGroup : null
         x: panel.x + bar.implicitWidth
         y: panel.y + Config.border.thickness
         implicitWidth: panel.width

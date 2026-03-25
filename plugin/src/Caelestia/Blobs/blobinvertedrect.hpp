@@ -45,6 +45,8 @@ signals:
 protected:
     bool isInvertedRect() const override { return true; }
 
+    QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*) override;
+
     void registerWithGroup() override;
     void unregisterFromGroup() override;
 

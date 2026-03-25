@@ -102,10 +102,6 @@ void BlobShape::updatePolish() {
     // Ensure all shapes have up-to-date physics (only once per frame)
     m_group->ensurePhysicsUpdated();
 
-    // When inverted rect renders everything, skip spatial query for others
-    if (!isInvertedRect() && m_group->invertedRect())
-        return;
-
     const QPointF scenePos = mapToScene(QPointF(0, 0));
     const float pad = static_cast<float>(m_group->smoothing());
 
@@ -140,6 +136,10 @@ void BlobShape::updatePolish() {
 
     for (BlobShape* other : m_group->shapes()) {
         if (other->isInvertedRect())
+            continue;
+
+        // Skip zero-size rects
+        if (other->width() <= 0 || other->height() <= 0)
             continue;
 
         const QPointF otherScene = other->mapToScene(QPointF(0, 0));
@@ -295,12 +295,6 @@ void BlobShape::updatePolish() {
 
 QSGNode* BlobShape::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*) {
     if (!m_group) {
-        delete oldNode;
-        return nullptr;
-    }
-
-    // When an inverted rect exists, it renders everything in a single pass
-    if (!isInvertedRect() && m_group->invertedRect()) {
         delete oldNode;
         return nullptr;
     }

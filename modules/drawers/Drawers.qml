@@ -153,6 +153,7 @@ Variants {
                 PanelBg {
                     id: dashBg
 
+                    blobGroup: blobGroup
                     panel: panels.dashboard
                     bar: bar
                     deformAmount: 0.1
@@ -161,6 +162,7 @@ Variants {
                 PanelBg {
                     id: launcherBg
 
+                    blobGroup: blobGroup
                     panel: panels.launcher
                     bar: bar
                     deformAmount: 0.1
@@ -169,6 +171,7 @@ Variants {
                 PanelBg {
                     id: sessionBg
 
+                    blobGroup: blobGroup
                     panel: panels.session
                     bar: bar
                     deformAmount: 0.25
@@ -177,6 +180,7 @@ Variants {
                 PanelBg {
                     id: sidebarBg
 
+                    blobGroup: blobGroup
                     panel: panels.sidebar
                     bar: bar
                     deformAmount: 0
@@ -185,6 +189,7 @@ Variants {
                 PanelBg {
                     id: osdBg
 
+                    blobGroup: blobGroup
                     panel: panels.osd
                     bar: bar
                     deformAmount: 0.3
@@ -193,6 +198,7 @@ Variants {
                 PanelBg {
                     id: notifsBg
 
+                    blobGroup: blobGroup
                     panel: panels.notifications
                     bar: bar
                 }
@@ -200,6 +206,7 @@ Variants {
                 PanelBg {
                     id: utilsBg
 
+                    blobGroup: blobGroup
                     panel: panels.utilities
                     bar: bar
                 }
@@ -207,6 +214,7 @@ Variants {
                 PanelBg {
                     id: popoutBg
 
+                    blobGroup: blobGroup
                     panel: panels.popouts
                     bar: bar
 
@@ -294,6 +302,7 @@ Variants {
     }
 
     component PanelBg: BlobRect {
+        required property BlobGroup blobGroup
         required property Item panel
         required property Item bar
         property real deformAmount: 0.15

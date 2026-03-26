@@ -21,8 +21,10 @@ Item {
     required property Bar.BarWrapper bar
 
     readonly property alias osd: osd
+    readonly property alias osdWrapper: osdWrapper
     readonly property alias notifications: notifications
     readonly property alias session: session
+    readonly property alias sessionWrapper: sessionWrapper
     readonly property alias launcher: launcher
     readonly property alias dashboard: dashboard
     readonly property alias popouts: popouts
@@ -34,16 +36,27 @@ Item {
     anchors.margins: Config.border.thickness
     anchors.leftMargin: bar.implicitWidth
 
-    Osd.Wrapper {
-        id: osd
-
-        clip: session.width > 0 || sidebar.width > 0
-        screen: root.screen
-        visibilities: root.visibilities
+    Item {
+        id: osdWrapper
 
         anchors.verticalCenter: parent.verticalCenter
-        anchors.right: session.left
-        // anchors.rightMargin: session.width + sidebar.width
+        anchors.right: parent.right
+        anchors.rightMargin: sessionWrapper.anchors.rightMargin + session.width * (1 - session.offsetScale)
+        clip: sidebar.visible || session.visible
+
+        implicitWidth: osd.implicitWidth
+        implicitHeight: osd.implicitHeight
+
+        Osd.Wrapper {
+            id: osd
+
+            screen: root.screen
+            visibilities: root.visibilities
+            sidebarOrSessionVisible: sidebar.visible || session.visible
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+        }
     }
 
     Notifications.Wrapper {
@@ -58,16 +71,26 @@ Item {
         anchors.right: parent.right
     }
 
-    Session.Wrapper {
-        id: session
-
-        clip: sidebar.width > 0
-        visibilities: root.visibilities
-        panels: root
+    Item {
+        id: sessionWrapper
 
         anchors.verticalCenter: parent.verticalCenter
-        anchors.right: sidebar.left
-        // anchors.rightMargin: sidebar.width
+        anchors.right: parent.right
+        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)
+        clip: sidebar.visible
+
+        implicitWidth: session.implicitWidth
+        implicitHeight: session.implicitHeight
+
+        Session.Wrapper {
+            id: session
+
+            visibilities: root.visibilities
+            sidebarVisible: sidebar.visible
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+        }
     }
 
     Launcher.Wrapper {
@@ -131,7 +154,6 @@ Item {
         id: sidebar
 
         visibilities: root.visibilities
-        panels: root
 
         anchors.top: notifications.bottom
         anchors.bottom: utilities.top

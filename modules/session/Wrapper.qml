@@ -8,47 +8,31 @@ Item {
     id: root
 
     required property DrawerVisibilities visibilities
-    required property var panels
+    required property bool sidebarVisible
     readonly property real nonAnimWidth: content.implicitWidth
 
-    visible: anchors.rightMargin > -implicitWidth - 1
-    anchors.rightMargin: -implicitWidth - 1
+    readonly property bool shouldBeActive: visibilities.session && Config.session.enabled
+    property real offsetScale: shouldBeActive ? 0 : 1
+    property real sidebarOffset: !shouldBeActive && sidebarVisible ? 14 : 0 // TODO: there is clearly something wrong with the rect to rect edge sink
+
+    visible: offsetScale < 1
+    anchors.rightMargin: (-implicitWidth - 5 - sidebarOffset) * offsetScale
     implicitWidth: content.implicitWidth
-    implicitHeight: content.implicitHeight
+    implicitHeight: content.implicitHeight || 510 // Hard coded fallback for first open
 
-    states: State {
-        name: "visible"
-        when: root.visibilities.session && Config.session.enabled
-
-        PropertyChanges {
-            root.anchors.rightMargin: 0
+    Behavior on offsetScale {
+        Anim {
+            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
         }
     }
 
-    transitions: [
-        Transition {
-            // from: ""
-            // to: "visible"
-
-            Anim {
-                target: root.anchors
-                property: "rightMargin"
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-            }
+    Behavior on sidebarOffset {
+        Anim {
+            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
         }
-        // Transition {
-        //     from: "visible"
-        //     to: ""
-
-        //     Anim {
-        //         target: root
-        //         property: "implicitWidth"
-        //         easing.bezierCurve: root.panels.osd.width > 0 ? Appearance.anim.curves.expressiveDefaultSpatial : Appearance.anim.curves.emphasized
-        //     }
-        // }
-
-
-    ]
+    }
 
     Loader {
         id: content
@@ -56,7 +40,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
 
-        Component.onCompleted: active = Qt.binding(() => (root.visibilities.session && Config.session.enabled) || root.visible)
+        active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
             visibilities: root.visibilities

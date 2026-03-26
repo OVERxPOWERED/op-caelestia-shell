@@ -172,9 +172,10 @@ Variants {
                     id: sessionBg
 
                     blobGroup: blobGroup
-                    panel: panels.session
+                    panel: panels.sessionWrapper
                     bar: bar
                     deformAmount: 0.25
+                    x: panels.sessionWrapper.x + panels.session.x + bar.implicitWidth
                 }
 
                 PanelBg {
@@ -190,9 +191,10 @@ Variants {
                     id: osdBg
 
                     blobGroup: blobGroup
-                    panel: panels.osd
+                    panel: panels.osdWrapper
                     bar: bar
                     deformAmount: 0.3
+                    x: panels.osdWrapper.x + panels.osd.x + bar.implicitWidth
                 }
 
                 PanelBg {

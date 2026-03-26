@@ -11,9 +11,13 @@ Item {
 
     required property ShellScreen screen
     required property DrawerVisibilities visibilities
+    required property bool sidebarOrSessionVisible
+
     property bool hovered
     readonly property Brightness.Monitor monitor: Brightness.getMonitorForScreen(root.screen)
     readonly property bool shouldBeActive: visibilities.osd && Config.osd.enabled && !(visibilities.utilities && Config.utilities.enabled)
+    property real offsetScale: shouldBeActive ? 0 : 1
+    property real sidebarOffset: !shouldBeActive && sidebarOrSessionVisible ? 16 : 0
 
     property real volume
     property bool muted
@@ -34,44 +38,24 @@ Item {
         brightness = root.monitor?.brightness ?? 0;
     }
 
-    visible: anchors.rightMargin > -implicitWidth
-    anchors.rightMargin: -implicitWidth
+    visible: offsetScale < 1
+    anchors.rightMargin: (-implicitWidth - 5 - sidebarOffset) * offsetScale
     implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight
 
-    states: State {
-        name: "visible"
-        when: root.shouldBeActive
-
-        PropertyChanges {
-            root.anchors.rightMargin: 0
+    Behavior on offsetScale {
+        Anim {
+            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
         }
     }
 
-    transitions: [
-        Transition {
-            // from: ""
-            // to: "visible"
-
-            Anim {
-                target: root.anchors
-                property: "rightMargin"
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-            }
+    Behavior on sidebarOffset {
+        Anim {
+            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
         }
-        // Transition {
-        //     from: "visible"
-        //     to: ""
-
-        //     Anim {
-        //         target: root
-        //         property: "implicitWidth"
-        //         easing.bezierCurve: Appearance.anim.curves.emphasized
-        //     }
-        // }
-
-
-    ]
+    }
 
     Connections {
         function onMutedChanged(): void {
@@ -122,7 +106,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
 
-        Component.onCompleted: active = Qt.binding(() => root.shouldBeActive || root.visible)
+        active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
             monitor: root.monitor

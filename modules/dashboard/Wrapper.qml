@@ -29,63 +29,18 @@ Item {
     }
 
     readonly property real nonAnimHeight: state === "visible" ? ((content.item as Content)?.nonAnimHeight ?? 0) : 0
+    readonly property bool shouldBeActive: visibilities.dashboard && Config.dashboard.enabled
+    property real offsetScale: shouldBeActive ? 0 : 1
 
-    visible: anchors.topMargin > -implicitHeight - 5
-    anchors.topMargin: -implicitHeight - 5
+    visible: offsetScale < 1
+    anchors.topMargin: (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight
-    implicitWidth: content.implicitWidth
+    implicitWidth: content.implicitWidth || 854 // Hard coded fallback for first open
 
-    onStateChanged: {
-        if (state === "visible" && timer.running) {
-            timer.triggered();
-            timer.stop();
-        }
-    }
-
-    states: State {
-        name: "visible"
-        when: root.visibilities.dashboard && Config.dashboard.enabled
-
-        PropertyChanges {
-            // root.implicitHeight: content.implicitHeight
-            root.anchors.topMargin: 0
-        }
-    }
-
-    transitions: [
-        Transition {
-            // from: ""
-            // to: "visible"
-
-            Anim {
-                target: root.anchors
-                property: "topMargin"
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-            }
-        }
-        // Transition {
-        //     from: "visible"
-        //     to: ""
-
-        //     Anim {
-        //         target: root.anchors
-        //         property: "topMargin"
-        //         easing.bezierCurve: Appearance.anim.curves.emphasized
-        //     }
-        // }
-
-
-    ]
-
-    Timer {
-        id: timer
-
-        running: true
-        interval: Appearance.anim.durations.extraLarge
-        onTriggered: {
-            content.active = Qt.binding(() => (root.visibilities.dashboard && Config.dashboard.enabled) || root.visible);
-            content.visible = true;
+    Behavior on offsetScale {
+        Anim {
+            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
         }
     }
 
@@ -95,8 +50,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
 
-        visible: false
-        active: true
+        active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
             visibilities: root.visibilities

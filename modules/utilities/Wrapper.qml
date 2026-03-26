@@ -21,77 +21,32 @@ Item {
         reloadableId: "utilities"
     }
     readonly property bool shouldBeActive: visibilities.sidebar || (visibilities.utilities && Config.utilities.enabled && !(visibilities.session && Config.session.enabled))
+    property real offsetScale: shouldBeActive ? 0 : 1
 
-    visible: anchors.bottomMargin > -implicitHeight - 5
-    anchors.bottomMargin: -implicitHeight - 5
-    implicitHeight: content.implicitHeight
+    visible: offsetScale < 1
+    anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
+    implicitHeight: content.implicitHeight + content.anchors.margins * 2
     implicitWidth: sidebar.visible ? sidebar.width : Config.utilities.sizes.width
 
-    onStateChanged: {
-        if (state === "visible" && timer.running) {
-            timer.triggered();
-            timer.stop();
-        }
-    }
-
-    states: State {
-        name: "visible"
-        when: root.shouldBeActive
-
-        PropertyChanges {
-            root.anchors.bottomMargin: 0
-        }
-    }
-
-    transitions: [
-        Transition {
-            // from: ""
-            // to: "visible"
-
-            Anim {
-                target: root.anchors
-                property: "bottomMargin"
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-            }
-        }
-        // Transition {
-        //     from: "visible"
-        //     to: ""
-
-        //     Anim {
-        //         target: root
-        //         property: "implicitHeight"
-        //         easing.bezierCurve: Appearance.anim.curves.emphasized
-        //     }
-        // }
-
-    ]
-
-    Timer {
-        id: timer
-
-        running: true
-        interval: Appearance.anim.durations.extraLarge
-        onTriggered: {
-            content.active = Qt.binding(() => root.shouldBeActive || root.visible);
-            content.visible = true;
+    Behavior on offsetScale {
+        Anim {
+            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
         }
     }
 
     Loader {
         id: content
 
-        asynchronous: true
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.margins: Appearance.padding.large
 
-        visible: false
-        active: true
+        asynchronous: true
+        active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
-            implicitWidth: root.implicitWidth - Appearance.padding.large * 2
+            implicitWidth: root.implicitWidth - content.anchors.margins * 2
             props: root.props
             visibilities: root.visibilities
             popouts: root.popouts

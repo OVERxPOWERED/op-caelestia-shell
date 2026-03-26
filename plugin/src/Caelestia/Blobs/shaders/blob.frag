@@ -203,7 +203,7 @@ void main() {
         }
 
         mergedSdf = sminNoBulge(mergedSdf, d, smoothFactor);
-        if (d < minDist) {
+        if (d < smoothFactor && d < minDist) {
             minDist = d;
             owner = i;
         }

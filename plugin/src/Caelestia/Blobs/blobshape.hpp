@@ -12,8 +12,7 @@ class BlobShape : public QQuickItem {
     Q_OBJECT
     Q_PROPERTY(BlobGroup* group READ group WRITE setGroup NOTIFY groupChanged)
     Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
-    Q_PROPERTY(
-        QMatrix4x4 deformMatrix READ deformMatrix NOTIFY deformMatrixChanged)
+    Q_PROPERTY(QMatrix4x4 deformMatrix READ deformMatrix NOTIFY deformMatrixChanged)
 
     friend class BlobGroup;
 
@@ -38,12 +37,15 @@ signals:
 
 protected:
     void componentComplete() override;
-    void geometryChange(
-        const QRectF& newGeometry, const QRectF& oldGeometry) override;
+    void geometryChange(const QRectF& newGeometry, const QRectF& oldGeometry) override;
     void updatePolish() override;
     QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*) override;
 
     virtual bool isInvertedRect() const { return false; }
+
+    virtual bool isExcluded(const BlobShape* /*other*/) const { return false; }
+
+    virtual void cornerRadii(float out[4]) const;
 
     virtual void updatePhysics() {}
 

@@ -11,8 +11,7 @@ class BlobInvertedRect;
 class BlobGroup : public QObject {
     Q_OBJECT
     QML_ELEMENT
-    Q_PROPERTY(qreal smoothing READ smoothing WRITE setSmoothing NOTIFY
-            smoothingChanged)
+    Q_PROPERTY(qreal smoothing READ smoothing WRITE setSmoothing NOTIFY smoothingChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
 
 public:

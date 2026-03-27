@@ -7,8 +7,7 @@ QSGMaterialType* BlobMaterial::type() const {
     return &s_type;
 }
 
-QSGMaterialShader* BlobMaterial::createShader(
-    QSGRendererInterface::RenderMode) const {
+QSGMaterialShader* BlobMaterial::createShader(QSGRendererInterface::RenderMode) const {
     return new BlobMaterialShader;
 }
 
@@ -25,8 +24,7 @@ BlobMaterialShader::BlobMaterialShader() {
     setShaderFileName(FragmentStage, QStringLiteral(":/shaders/blob.frag.qsb"));
 }
 
-bool BlobMaterialShader::updateUniformData(
-    RenderState& state, QSGMaterial* newMaterial, QSGMaterial* oldMaterial) {
+bool BlobMaterialShader::updateUniformData(RenderState& state, QSGMaterial* newMaterial, QSGMaterial* oldMaterial) {
     Q_UNUSED(oldMaterial);
     auto* mat = static_cast<BlobMaterial*>(newMaterial);
     QByteArray* buf = state.uniformData();
@@ -85,13 +83,13 @@ bool BlobMaterialShader::updateUniformData(
         const auto& r = mat->m_rects[i];
         const int base = 160 + i * 80;
         const float d0[4] = { r.cx, r.cy, r.hw, r.hh };
-        const float d1[4] = { r.radius, r.offsetX, r.offsetY, r.minEig };
+        const float d1[4] = { 0.0f, r.offsetX, r.offsetY, r.minEig };
         const float d3[4] = { r.screenHalfX, r.screenHalfY, 0.0f, 0.0f };
         memcpy(buf->data() + base, d0, 16);
         memcpy(buf->data() + base + 16, d1, 16);
         memcpy(buf->data() + base + 32, r.invDeform, 16);
         memcpy(buf->data() + base + 48, d3, 16);
-        memcpy(buf->data() + base + 64, r.cornerFill, 16);
+        memcpy(buf->data() + base + 64, r.radius, 16);
     }
 
     return true;

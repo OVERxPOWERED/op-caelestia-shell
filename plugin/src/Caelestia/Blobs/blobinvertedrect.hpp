@@ -7,14 +7,10 @@
 class BlobInvertedRect : public BlobShape {
     Q_OBJECT
     QML_ELEMENT
-    Q_PROPERTY(qreal borderLeft READ borderLeft WRITE setBorderLeft NOTIFY
-            borderLeftChanged)
-    Q_PROPERTY(qreal borderRight READ borderRight WRITE setBorderRight NOTIFY
-            borderRightChanged)
-    Q_PROPERTY(qreal borderTop READ borderTop WRITE setBorderTop NOTIFY
-            borderTopChanged)
-    Q_PROPERTY(qreal borderBottom READ borderBottom WRITE setBorderBottom NOTIFY
-            borderBottomChanged)
+    Q_PROPERTY(qreal borderLeft READ borderLeft WRITE setBorderLeft NOTIFY borderLeftChanged)
+    Q_PROPERTY(qreal borderRight READ borderRight WRITE setBorderRight NOTIFY borderRightChanged)
+    Q_PROPERTY(qreal borderTop READ borderTop WRITE setBorderTop NOTIFY borderTopChanged)
+    Q_PROPERTY(qreal borderBottom READ borderBottom WRITE setBorderBottom NOTIFY borderBottomChanged)
 
 public:
     explicit BlobInvertedRect(QQuickItem* parent = nullptr);

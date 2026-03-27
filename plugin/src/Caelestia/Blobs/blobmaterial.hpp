@@ -6,22 +6,20 @@
 
 struct BlobRectData {
     float cx = 0, cy = 0, hw = 0, hh = 0;
-    float radius = 0;
     float offsetX = 0, offsetY = 0;
     float minEig = 1.0f;
     // Inverse of 2x2 deformation matrix, column-major for GLSL
     float invDeform[4] = { 1, 0, 0, 1 };
     // Screen-space AABB half-extents of the deformed rect
     float screenHalfX = 0, screenHalfY = 0;
-    // Pre-computed corner fill factors (tr, br, bl, tl)
-    float cornerFill[4] = { 1, 1, 1, 1 };
+    // Effective per-corner radii (tr, br, bl, tl), pre-computed on CPU
+    float radius[4] = { 0, 0, 0, 0 };
 };
 
 class BlobMaterial : public QSGMaterial {
 public:
     QSGMaterialType* type() const override;
-    QSGMaterialShader* createShader(
-        QSGRendererInterface::RenderMode) const override;
+    QSGMaterialShader* createShader(QSGRendererInterface::RenderMode) const override;
     int compare(const QSGMaterial* other) const override;
 
     float m_paddedX = 0;
@@ -42,6 +40,5 @@ public:
 class BlobMaterialShader : public QSGMaterialShader {
 public:
     BlobMaterialShader();
-    bool updateUniformData(RenderState& state, QSGMaterial* newMaterial,
-        QSGMaterial* oldMaterial) override;
+    bool updateUniformData(RenderState& state, QSGMaterial* newMaterial, QSGMaterial* oldMaterial) override;
 };

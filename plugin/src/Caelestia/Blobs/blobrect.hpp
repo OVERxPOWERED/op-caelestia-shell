@@ -3,17 +3,22 @@
 #include "blobshape.hpp"
 
 #include <qelapsedtimer.h>
+#include <qpointer.h>
 #include <qqmlengine.h>
+#include <qqmllist.h>
 
 class BlobRect : public BlobShape {
     Q_OBJECT
     QML_ELEMENT
-    Q_PROPERTY(qreal stiffness READ stiffness WRITE setStiffness NOTIFY
-            stiffnessChanged)
+    Q_PROPERTY(qreal stiffness READ stiffness WRITE setStiffness NOTIFY stiffnessChanged)
+    Q_PROPERTY(qreal damping READ damping WRITE setDamping NOTIFY dampingChanged)
+    Q_PROPERTY(qreal deformScale READ deformScale WRITE setDeformScale NOTIFY deformScaleChanged)
+    Q_PROPERTY(QQmlListProperty<BlobRect> exclude READ exclude NOTIFY excludeChanged)
+    Q_PROPERTY(qreal topLeftRadius READ topLeftRadius WRITE setTopLeftRadius NOTIFY topLeftRadiusChanged)
+    Q_PROPERTY(qreal topRightRadius READ topRightRadius WRITE setTopRightRadius NOTIFY topRightRadiusChanged)
+    Q_PROPERTY(qreal bottomLeftRadius READ bottomLeftRadius WRITE setBottomLeftRadius NOTIFY bottomLeftRadiusChanged)
     Q_PROPERTY(
-        qreal damping READ damping WRITE setDamping NOTIFY dampingChanged)
-    Q_PROPERTY(qreal deformScale READ deformScale WRITE setDeformScale NOTIFY
-            deformScaleChanged)
+        qreal bottomRightRadius READ bottomRightRadius WRITE setBottomRightRadius NOTIFY bottomRightRadiusChanged)
 
 public:
     explicit BlobRect(QQuickItem* parent = nullptr);
@@ -46,10 +51,36 @@ public:
         }
     }
 
+    QQmlListProperty<BlobRect> exclude();
+
+    bool isExcluded(const BlobShape* other) const override;
+    void cornerRadii(float out[4]) const override;
+
+    qreal topLeftRadius() const { return m_topLeftRadius; }
+
+    void setTopLeftRadius(qreal r);
+
+    qreal topRightRadius() const { return m_topRightRadius; }
+
+    void setTopRightRadius(qreal r);
+
+    qreal bottomLeftRadius() const { return m_bottomLeftRadius; }
+
+    void setBottomLeftRadius(qreal r);
+
+    qreal bottomRightRadius() const { return m_bottomRightRadius; }
+
+    void setBottomRightRadius(qreal r);
+
 signals:
     void stiffnessChanged();
     void dampingChanged();
     void deformScaleChanged();
+    void excludeChanged();
+    void topLeftRadiusChanged();
+    void topRightRadiusChanged();
+    void bottomLeftRadiusChanged();
+    void bottomRightRadiusChanged();
 
 protected:
     void updatePolish() override;
@@ -78,4 +109,18 @@ private:
     qreal m_stiffness = 200.0;
     qreal m_damping = 16.0;
     qreal m_deformScale = 0.0005;
+
+    qreal m_topLeftRadius = -1;
+    qreal m_topRightRadius = -1;
+    qreal m_bottomLeftRadius = -1;
+    qreal m_bottomRightRadius = -1;
+
+    QList<QPointer<BlobRect>> m_exclude;
+
+    static void excludeAppend(QQmlListProperty<BlobRect>* prop, BlobRect* rect);
+    static qsizetype excludeCount(QQmlListProperty<BlobRect>* prop);
+    static BlobRect* excludeAt(QQmlListProperty<BlobRect>* prop, qsizetype index);
+    static void excludeClear(QQmlListProperty<BlobRect>* prop);
+    static void excludeReplace(QQmlListProperty<BlobRect>* prop, qsizetype index, BlobRect* rect);
+    static void excludeRemoveLast(QQmlListProperty<BlobRect>* prop);
 };

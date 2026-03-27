@@ -80,7 +80,7 @@ void main() {
         vec4 props = rectData[i * 5 + 1];    // radius, offsetX, offsetY, minEig
         vec4 invDm = rectData[i * 5 + 2];    // inverse deform matrix
         vec4 sh = rectData[i * 5 + 3];       // screenHalfX, screenHalfY, 0, 0
-        vec4 fills = rectData[i * 5 + 4];    // f_tr, f_br, f_bl, f_tl
+        vec4 radii = rectData[i * 5 + 4];    // effective per-corner radii (tr, br, bl, tl)
 
         // Offset center for asymmetric deformation
         vec2 center = rect.xy + props.yz;
@@ -94,10 +94,7 @@ void main() {
         mat2 invDeform = mat2(invDm.xy, invDm.zw);
         vec2 transformedPixel = center + invDeform * (pixel - center);
 
-        // Use pre-computed corner fill factors
-        float br = props.x;
-        float minR = 2.0;
-        vec4 radii = max(br * fills, vec4(minR));
+        // Use pre-computed effective per-corner radii
         float d = sdRoundedBox4(transformedPixel, center, rect.zw, radii);
 
         // Use pre-computed minimum eigenvalue for SDF correction

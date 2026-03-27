@@ -13,21 +13,36 @@ BlobInvertedRect::BlobInvertedRect(QQuickItem* parent)
 
 static void setFrameIndices(quint16* idx) {
     // Top strip: 0-1-4, 1-5-4
-    idx[0] = 0; idx[1] = 1; idx[2] = 4;
-    idx[3] = 1; idx[4] = 5; idx[5] = 4;
+    idx[0] = 0;
+    idx[1] = 1;
+    idx[2] = 4;
+    idx[3] = 1;
+    idx[4] = 5;
+    idx[5] = 4;
     // Right strip: 1-2-5, 2-6-5
-    idx[6] = 1; idx[7] = 2; idx[8] = 5;
-    idx[9] = 2; idx[10] = 6; idx[11] = 5;
+    idx[6] = 1;
+    idx[7] = 2;
+    idx[8] = 5;
+    idx[9] = 2;
+    idx[10] = 6;
+    idx[11] = 5;
     // Bottom strip: 2-3-6, 3-7-6
-    idx[12] = 2; idx[13] = 3; idx[14] = 6;
-    idx[15] = 3; idx[16] = 7; idx[17] = 6;
+    idx[12] = 2;
+    idx[13] = 3;
+    idx[14] = 6;
+    idx[15] = 3;
+    idx[16] = 7;
+    idx[17] = 6;
     // Left strip: 3-0-7, 0-4-7
-    idx[18] = 3; idx[19] = 0; idx[20] = 7;
-    idx[21] = 0; idx[22] = 4; idx[23] = 7;
+    idx[18] = 3;
+    idx[19] = 0;
+    idx[20] = 7;
+    idx[21] = 0;
+    idx[22] = 4;
+    idx[23] = 7;
 }
 
-QSGNode* BlobInvertedRect::updatePaintNode(
-    QSGNode* oldNode, UpdatePaintNodeData*) {
+QSGNode* BlobInvertedRect::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*) {
     if (!m_group) {
         delete oldNode;
         return nullptr;
@@ -55,9 +70,8 @@ QSGNode* BlobInvertedRect::updatePaintNode(
         delete oldNode;
         node = new QSGGeometryNode;
 
-        auto* geometry = new QSGGeometry(
-            QSGGeometry::defaultAttributes_TexturedPoint2D(), 8, 24,
-            QSGGeometry::UnsignedShortType);
+        auto* geometry =
+            new QSGGeometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 8, 24, QSGGeometry::UnsignedShortType);
         geometry->setDrawingMode(QSGGeometry::DrawTriangles);
         node->setGeometry(geometry);
         node->setFlag(QSGNode::OwnsGeometry);
@@ -105,13 +119,10 @@ QSGNode* BlobInvertedRect::updatePaintNode(
     material->m_color = m_group->color();
     material->m_hasInverted = m_cachedHasInverted ? 1 : 0;
     material->m_invertedRadius = m_cachedInvertedRadius;
-    memcpy(material->m_invertedOuter, m_cachedInvertedOuter,
-        sizeof(m_cachedInvertedOuter));
-    memcpy(material->m_invertedInner, m_cachedInvertedInner,
-        sizeof(m_cachedInvertedInner));
+    memcpy(material->m_invertedOuter, m_cachedInvertedOuter, sizeof(m_cachedInvertedOuter));
+    memcpy(material->m_invertedInner, m_cachedInvertedInner, sizeof(m_cachedInvertedInner));
 
-    const int count =
-        static_cast<int>(qMin(m_cachedRects.size(), qsizetype(16)));
+    const int count = static_cast<int>(qMin(m_cachedRects.size(), qsizetype(16)));
     material->m_rectCount = count;
     for (int i = 0; i < count; ++i)
         material->m_rects[i] = m_cachedRects[i];

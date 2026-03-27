@@ -166,6 +166,15 @@ Variants {
                     panel: panels.sidebar
                     bar: bar
                     deformAmount: 0
+                    height: panel.height + 1
+                    exclude: [utilsBg]
+                    bottomLeftRadius: panels.sidebar.visible ? 0 : radius
+
+                    Behavior on bottomLeftRadius {
+                        Anim {
+                            duration: Appearance.anim.durations.expressiveDefaultSpatial
+                        }
+                    }
                 }
 
                 PanelBg {
@@ -193,6 +202,14 @@ Variants {
                     blobGroup: blobGroup
                     panel: panels.utilities
                     bar: bar
+                    exclude: [sidebarBg]
+                    topLeftRadius: panels.sidebar.visible ? 0 : radius
+
+                    Behavior on topLeftRadius {
+                        Anim {
+                            duration: Appearance.anim.durations.expressiveDefaultSpatial
+                        }
+                    }
                 }
 
                 PanelBg {

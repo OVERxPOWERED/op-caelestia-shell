@@ -166,8 +166,8 @@ Variants {
                     panel: panels.sidebar
                     bar: bar
                     deformAmount: 0
-                    height: panel.height + 1
-                    exclude: [utilsBg]
+                    height: panel.height + 2
+                    exclude: panels.sidebar.offsetScale > 0 ? [] : [utilsBg]
                     bottomLeftRadius: panels.sidebar.visible ? 0 : radius
 
                     Behavior on bottomLeftRadius {
@@ -202,7 +202,7 @@ Variants {
                     blobGroup: blobGroup
                     panel: panels.utilities
                     bar: bar
-                    exclude: [sidebarBg]
+                    exclude: panels.sidebar.offsetScale > 0 ? [] : [sidebarBg]
                     topLeftRadius: panels.sidebar.visible ? 0 : radius
 
                     Behavior on topLeftRadius {

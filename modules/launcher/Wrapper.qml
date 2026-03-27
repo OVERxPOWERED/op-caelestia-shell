@@ -51,7 +51,6 @@ Item {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
 
-        asynchronous: true
         active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {

@@ -156,6 +156,7 @@ Variants {
                     bar: bar
                     deformAmount: 0.25
                     x: panels.sessionWrapper.x + panels.session.x + bar.implicitWidth
+                    implicitWidth: panels.session.width
                 }
 
                 PanelBg {
@@ -175,6 +176,7 @@ Variants {
                     bar: bar
                     deformAmount: 0.3
                     x: panels.osdWrapper.x + panels.osd.x + bar.implicitWidth
+                    implicitWidth: panels.osd.width
                 }
 
                 PanelBg {

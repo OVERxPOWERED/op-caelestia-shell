@@ -44,7 +44,7 @@ Item {
         anchors.rightMargin: sessionWrapper.anchors.rightMargin + session.width * (1 - session.offsetScale)
         clip: sidebar.visible || session.visible
 
-        implicitWidth: osd.implicitWidth
+        implicitWidth: osd.implicitWidth * (1 - osd.offsetScale)
         implicitHeight: osd.implicitHeight
 
         Osd.Wrapper {
@@ -64,8 +64,8 @@ Item {
 
         visibilities: root.visibilities
         sidebarPanel: sidebar
-        osdPanel: osd
-        sessionPanel: session
+        osdPanel: osdWrapper
+        sessionPanel: sessionWrapper
 
         anchors.top: parent.top
         anchors.right: parent.right
@@ -79,7 +79,7 @@ Item {
         anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)
         clip: sidebar.visible
 
-        implicitWidth: session.implicitWidth
+        implicitWidth: session.implicitWidth * (1 - session.offsetScale)
         implicitHeight: session.implicitHeight
 
         Session.Wrapper {

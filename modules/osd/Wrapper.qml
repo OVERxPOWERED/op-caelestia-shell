@@ -41,6 +41,7 @@ Item {
     anchors.rightMargin: (-implicitWidth - 5) * offsetScale
     implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight
+    opacity: 1 - offsetScale
 
     Behavior on offsetScale {
         Anim {
@@ -98,6 +99,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
 
+        asynchronous: true
         active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {

@@ -27,6 +27,7 @@ Item {
     anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight + content.anchors.margins * 2
     implicitWidth: sidebar.visible ? sidebar.width : Config.utilities.sizes.width
+    opacity: 1 - offsetScale
 
     Behavior on offsetScale {
         Anim {

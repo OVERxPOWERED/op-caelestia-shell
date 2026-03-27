@@ -16,6 +16,7 @@ Item {
     visible: offsetScale < 1
     anchors.rightMargin: (-implicitWidth - 5) * offsetScale
     implicitWidth: Config.sidebar.sizes.width
+    opacity: 1 - offsetScale
 
     Behavior on offsetScale {
         Anim {

@@ -128,7 +128,7 @@ Singleton {
             const forecastList = [];
             for (let i = 0; i < json.daily.time.length; i++)
                 forecastList.push({
-                    date: json.daily.time[i],
+                    date: json.daily.time[i].replace(/-/g, "/"),
                     maxTempC: Math.round(json.daily.temperature_2m_max[i]),
                     maxTempF: Math.round(toFahrenheit(json.daily.temperature_2m_max[i])),
                     minTempC: Math.round(json.daily.temperature_2m_min[i]),
@@ -141,7 +141,8 @@ Singleton {
             const hourlyList = [];
             const now = new Date();
             for (let i = 0; i < json.hourly.time.length; i++) {
-                const time = new Date(json.hourly.time[i]);
+                const time = new Date(json.hourly.time[i].replace("T", " "));
+
                 if (time < now)
                     continue;
 

@@ -2,9 +2,9 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import qs.modules.launcher.services
 import qs.components
 import qs.config
+import qs.modules.launcher.services
 
 Item {
     id: root

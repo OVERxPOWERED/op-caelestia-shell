@@ -30,6 +30,7 @@ public:
     void setRadius(qreal r);
 
     QMatrix4x4 deformMatrix() const { return m_centeredDeformMatrix; }
+
     QMatrix4x4 rawDeformMatrix() const { return m_deformMatrix; }
 
 signals:

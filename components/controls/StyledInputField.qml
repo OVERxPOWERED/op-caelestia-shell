@@ -13,8 +13,7 @@ Item {
     property var validator: null
     property bool readOnly: false
     property int horizontalAlignment: TextInput.AlignHCenter
-    property int implicitWidth: 70
-    property bool enabled: true
+    implicitWidth: 70
 
     // Expose activeFocus through alias to avoid FINAL property override
     readonly property alias hasFocus: inputField.activeFocus

@@ -4,8 +4,8 @@ import QtQuick
 import Quickshell
 import qs.components
 import qs.config
-import qs.modules.bar.popouts as BarPopouts
 import qs.modules.sidebar as Sidebar
+import qs.modules.bar.popouts as BarPopouts
 
 Item {
     id: root

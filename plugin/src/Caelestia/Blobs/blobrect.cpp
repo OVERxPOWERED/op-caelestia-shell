@@ -27,6 +27,7 @@ void BlobRect::updatePolish() {
             m_dm11 = 1.0f;
             m_dmVel00 = m_dmVel01 = m_dmVel11 = 0.0f;
             m_deformMatrix = QMatrix4x4();
+            emit rawDeformMatrixChanged();
             updateCenteredDeformMatrix();
             m_physicsActive = false;
         } else {
@@ -113,6 +114,7 @@ void BlobRect::updatePhysics() {
     m_dm11 += m_dmVel11 * dt;
 
     m_deformMatrix = QMatrix4x4(m_dm00, m_dm01, 0, 0, m_dm01, m_dm11, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+    emit rawDeformMatrixChanged();
     updateCenteredDeformMatrix();
 
     checkAtRest(speed);
@@ -235,6 +237,7 @@ void BlobRect::checkAtRest(float speed) {
         m_dmVel01 = 0.0f;
         m_dmVel11 = 0.0f;
         m_deformMatrix = QMatrix4x4(); // identity
+        emit rawDeformMatrixChanged();
         updateCenteredDeformMatrix();
         m_physicsActive = false;
     }

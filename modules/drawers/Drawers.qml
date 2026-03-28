@@ -166,7 +166,7 @@ Variants {
                     panel: panels.sidebar
                     bar: bar
                     deformAmount: 0.05
-                    height: panel.height + 2
+                    implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + 2
                     exclude: panels.sidebar.offsetScale > 0.08 ? [] : [utilsBg]
                     bottomLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
                 }
@@ -246,6 +246,8 @@ Variants {
                     screen: scope.modelData
                     visibilities: visibilities
                     bar: bar
+
+                    utilities.horizontalStretch: (sidebarBg.rawDeformMatrix.m11 - 1) / 2 + 1
 
                     dashboard.transform: Matrix4x4 {
                         matrix: dashBg.deformMatrix

@@ -86,8 +86,10 @@ void BlobShape::updateCenteredDeformMatrix() {
     result.translate(cx, cy);
     result *= m_deformMatrix;
     result.translate(-cx, -cy);
-    m_centeredDeformMatrix = result;
-    emit deformMatrixChanged();
+    if (m_centeredDeformMatrix != result) {
+        m_centeredDeformMatrix = result;
+        emit deformMatrixChanged();
+    }
 }
 
 void BlobShape::cornerRadii(float out[4]) const {

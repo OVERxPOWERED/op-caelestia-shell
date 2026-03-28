@@ -13,6 +13,7 @@ class BlobShape : public QQuickItem {
     Q_PROPERTY(BlobGroup* group READ group WRITE setGroup NOTIFY groupChanged)
     Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
     Q_PROPERTY(QMatrix4x4 deformMatrix READ deformMatrix NOTIFY deformMatrixChanged)
+    Q_PROPERTY(QMatrix4x4 rawDeformMatrix READ rawDeformMatrix NOTIFY rawDeformMatrixChanged)
 
     friend class BlobGroup;
 
@@ -29,11 +30,13 @@ public:
     void setRadius(qreal r);
 
     QMatrix4x4 deformMatrix() const { return m_centeredDeformMatrix; }
+    QMatrix4x4 rawDeformMatrix() const { return m_deformMatrix; }
 
 signals:
     void groupChanged();
     void radiusChanged();
     void deformMatrixChanged();
+    void rawDeformMatrixChanged();
 
 protected:
     void componentComplete() override;

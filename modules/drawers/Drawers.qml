@@ -165,16 +165,10 @@ Variants {
                     blobGroup: blobGroup
                     panel: panels.sidebar
                     bar: bar
-                    deformAmount: 0
+                    deformAmount: 0.05
                     height: panel.height + 2
-                    exclude: panels.sidebar.offsetScale > 0 ? [] : [utilsBg]
-                    bottomLeftRadius: panels.sidebar.visible ? 0 : radius
-
-                    Behavior on bottomLeftRadius {
-                        Anim {
-                            duration: Appearance.anim.durations.expressiveDefaultSpatial
-                        }
-                    }
+                    exclude: panels.sidebar.offsetScale > 0.08 ? [] : [utilsBg]
+                    bottomLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
                 }
 
                 PanelBg {
@@ -202,14 +196,9 @@ Variants {
                     blobGroup: blobGroup
                     panel: panels.utilities
                     bar: bar
-                    exclude: panels.sidebar.offsetScale > 0 ? [] : [sidebarBg]
-                    topLeftRadius: panels.sidebar.visible ? 0 : radius
-
-                    Behavior on topLeftRadius {
-                        Anim {
-                            duration: Appearance.anim.durations.expressiveDefaultSpatial
-                        }
-                    }
+                    deformAmount: panels.sidebar.visible ? 0.1 : 0.15
+                    exclude: panels.sidebar.offsetScale > 0.08 ? [] : [sidebarBg]
+                    topLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
                 }
 
                 PanelBg {

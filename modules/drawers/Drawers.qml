@@ -117,6 +117,10 @@ Variants {
                     id: blobGroup
 
                     color: Colours.palette.m3surface
+
+                    Behavior on color {
+                        CAnim {}
+                    }
                 }
 
                 BlobInvertedRect {

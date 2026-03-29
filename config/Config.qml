@@ -320,6 +320,24 @@ Singleton {
     }
 
     function serializeUtilities(): var {
+        const vpnProviders = [];
+        for (let i = 0; i < utilities.vpn.provider.length; i++) {
+            const p = utilities.vpn.provider[i];
+            const provider = {
+                displayName: p.displayName,
+                enabled: p.enabled,
+                iface: p.iface,
+                name: p.name
+            };
+            if (p.connectCmd && p.connectCmd.length > 0) {
+                provider.connectCmd = p.connectCmd;
+            }
+            if (p.disconnectCmd && p.disconnectCmd.length > 0) {
+                provider.disconnectCmd = p.disconnectCmd;
+            }
+            vpnProviders.push(provider);
+        }
+
         return {
             enabled: utilities.enabled,
             maxToasts: utilities.maxToasts,
@@ -339,7 +357,7 @@ Singleton {
             },
             vpn: {
                 enabled: utilities.vpn.enabled,
-                provider: utilities.vpn.provider
+                provider: vpnProviders
             },
             quickToggles: utilities.quickToggles
         };

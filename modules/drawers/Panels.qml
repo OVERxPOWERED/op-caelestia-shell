@@ -19,6 +19,7 @@ Item {
     required property ShellScreen screen
     required property DrawerVisibilities visibilities
     required property Bar.BarWrapper bar
+    required property real borderThickness
 
     readonly property alias osd: osd
     readonly property alias osdWrapper: osdWrapper
@@ -33,7 +34,7 @@ Item {
     readonly property alias sidebar: sidebar
 
     anchors.fill: parent
-    anchors.margins: Config.border.thickness
+    anchors.margins: root.borderThickness
     anchors.leftMargin: bar.implicitWidth
 
     Item {
@@ -123,7 +124,7 @@ Item {
             if (isDetached)
                 return (root.height - nonAnimHeight) / 2;
 
-            const off = currentCenter - Config.border.thickness - nonAnimHeight / 2;
+            const off = currentCenter - root.borderThickness - nonAnimHeight / 2;
             const diff = root.height - Math.floor(off + nonAnimHeight);
             if (diff < 0)
                 return off + diff;

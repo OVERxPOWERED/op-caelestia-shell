@@ -121,8 +121,8 @@ Singleton {
                 humidity: json.current.relative_humidity_2m,
                 windSpeed: json.current.wind_speed_10m,
                 isDay: json.current.is_day,
-                sunrise: json.daily.sunrise[0],
-                sunset: json.daily.sunset[0]
+                sunrise: json.daily.sunrise[0].replace("T", " "),
+                sunset: json.daily.sunset[0].replace("T", " ")
             };
 
             const forecastList = [];
@@ -218,7 +218,6 @@ Singleton {
         target: Config.services
     }
 
-    // Refresh current location hourly
     Timer {
         interval: 3600000 // 1 hour
         running: true

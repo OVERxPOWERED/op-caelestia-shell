@@ -1,5 +1,3 @@
-pragma ComponentBehavior: Bound
-
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Widgets
@@ -153,14 +151,10 @@ Item {
         repeat: true
         interval: 50
         onTriggered: {
-            let next = null;
-            for (let i = 0; i < notifList.repeater.count; i++) {
-                next = notifList.repeater.itemAt(i);
-                if (!next?.closed) // qmllint disable missing-property
-                    break;
-            }
-            if (next) {
-                next.closeAll(); // qmllint disable missing-property
+            const first = Notifs.notClosed[0];
+            if (first) {
+                for (const n of Notifs.notClosed.filter(n => n.appName === first.appName))
+                    n.close();
             } else {
                 stop();
             }

@@ -574,23 +574,26 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
     entry.item->setWidth(width());
     m_delegate->completeCreate();
 
-    // Shared height-change handler
-    auto onHeightChanged = [this, modelIndex] {
-        if (!m_delegates.contains(modelIndex))
+    // Shared height-change handler — captures item pointer instead of index
+    // so it remains valid after model inserts/removes/moves shift indices.
+    auto onHeightChanged = [this, item = entry.item] {
+        // Find the delegate entry by item pointer
+        for (auto it = m_delegates.begin(); it != m_delegates.end(); ++it) {
+            if (it->item != item)
+                continue;
+            const int idx = it.key();
+            const qreal h = delegateHeight(item);
+            if (idx < static_cast<int>(m_layout.size()) && !qFuzzyCompare(m_layout[idx].height, h)) {
+                const qreal oldH = m_layout[idx].height;
+                const bool wasKnown = m_layout[idx].heightKnown;
+                m_layout[idx].height = h;
+                m_layout[idx].heightKnown = true;
+                if (wasKnown)
+                    untrackHeight(oldH);
+                trackHeight(h);
+                polish();
+            }
             return;
-        auto& e = m_delegates[modelIndex];
-        if (!e.item)
-            return;
-        const qreal h = delegateHeight(e.item);
-        if (modelIndex < static_cast<int>(m_layout.size()) && !qFuzzyCompare(m_layout[modelIndex].height, h)) {
-            const qreal oldH = m_layout[modelIndex].height;
-            const bool wasKnown = m_layout[modelIndex].heightKnown;
-            m_layout[modelIndex].height = h;
-            m_layout[modelIndex].heightKnown = true;
-            if (wasKnown)
-                untrackHeight(oldH);
-            trackHeight(h);
-            polish();
         }
     };
 

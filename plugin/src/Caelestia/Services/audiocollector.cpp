@@ -3,12 +3,15 @@
 #include "service.hpp"
 #include <algorithm>
 #include <pipewire/pipewire.h>
-#include <qdebug.h>
+#include <qloggingcategory.h>
 #include <qmutex.h>
 #include <spa/param/audio/format-utils.h>
 #include <spa/param/latency-utils.h>
 #include <stop_token>
 #include <vector>
+
+Q_LOGGING_CATEGORY(lcAc, "caelestia.services.ac", QtInfoMsg)
+Q_LOGGING_CATEGORY(lcAcWorker, "caelestia.services.ac.worker", QtInfoMsg)
 
 namespace caelestia::services {
 
@@ -23,7 +26,7 @@ PipeWireWorker::PipeWireWorker(std::stop_token token, AudioCollector* collector)
 
     m_loop = pw_main_loop_new(nullptr);
     if (!m_loop) {
-        qWarning() << "PipeWireWorker::init: failed to create PipeWire main loop";
+        qCWarning(lcAcWorker) << "init: failed to create PipeWire main loop";
         pw_deinit();
         return;
     }
@@ -31,7 +34,7 @@ PipeWireWorker::PipeWireWorker(std::stop_token token, AudioCollector* collector)
     timespec timeout = { 0, 10 * SPA_NSEC_PER_MSEC };
     m_timer = pw_loop_add_timer(pw_main_loop_get_loop(m_loop), handleTimeout, this);
     if (!m_timer) {
-        qWarning() << "PipeWireWorker::init: failed to create timer";
+        qCWarning(lcAcWorker) << "init: failed to create timer";
         pw_main_loop_destroy(m_loop);
         pw_deinit();
         return;
@@ -73,7 +76,7 @@ PipeWireWorker::PipeWireWorker(std::stop_token token, AudioCollector* collector)
 
     m_stream = pw_stream_new_simple(pw_main_loop_get_loop(m_loop), "caelestia-shell", props, &events, this);
     if (!m_stream) {
-        qWarning() << "PipeWireWorker::init: failed to create stream";
+        qCWarning(lcAcWorker) << "init: failed to create stream";
         pw_main_loop_destroy(m_loop);
         pw_deinit();
         return;
@@ -84,7 +87,7 @@ PipeWireWorker::PipeWireWorker(std::stop_token token, AudioCollector* collector)
             PW_STREAM_FLAG_AUTOCONNECT | PW_STREAM_FLAG_MAP_BUFFERS | PW_STREAM_FLAG_RT_PROCESS),
         params, 1);
     if (success < 0) {
-        qWarning() << "PipeWireWorker::init: failed to connect stream";
+        qCWarning(lcAcWorker) << "init: failed to connect stream";
         pw_stream_destroy(m_stream);
         pw_main_loop_destroy(m_loop);
         pw_deinit();

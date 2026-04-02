@@ -18,6 +18,8 @@ class LazyListViewAttached : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(qreal preferredHeight READ preferredHeight WRITE setPreferredHeight NOTIFY preferredHeightChanged)
+    Q_PROPERTY(bool adding READ adding NOTIFY addingChanged)
+    Q_PROPERTY(bool removing READ removing NOTIFY removingChanged)
 
 public:
     explicit LazyListViewAttached(QObject* parent = nullptr);
@@ -25,11 +27,21 @@ public:
     [[nodiscard]] qreal preferredHeight() const;
     void setPreferredHeight(qreal height);
 
+    [[nodiscard]] bool adding() const;
+    void setAdding(bool adding);
+
+    [[nodiscard]] bool removing() const;
+    void setRemoving(bool removing);
+
 signals:
     void preferredHeightChanged();
+    void addingChanged();
+    void removingChanged();
 
 private:
     qreal m_preferredHeight = -1;
+    bool m_adding = false;
+    bool m_removing = false;
 };
 
 class LazyListView : public QQuickItem {
@@ -220,7 +232,6 @@ private:
     // Animation
     void startAddAnimation(DelegateEntry& entry);
     void startRemoveAnimation(DelegateEntry& entry);
-    void startMoveAnimation(DelegateEntry& entry, qreal fromY);
     void stopAnimation(DelegateEntry& entry);
     void onAnimationFinished();
 
@@ -256,11 +267,9 @@ private:
     QVector<ItemRecord> m_layout;
     QHash<int, DelegateEntry> m_delegates;
     QVector<DelegateEntry> m_dyingDelegates;
-    QVector<DelegateEntry> m_delegatePool;
 
     int m_activeAnimations = 0;
     bool m_componentComplete = false;
-    bool m_animateDisplacement = false;
     QSet<int> m_pendingAddAnimations;
 
     QList<QMetaObject::Connection> m_modelConnections;

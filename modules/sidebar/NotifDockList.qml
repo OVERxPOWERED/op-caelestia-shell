@@ -72,8 +72,11 @@ LazyListView {
                 }
             }
 
-            LazyListView.preferredHeight: closed ? 0 : notifInner.implicitHeight
+            LazyListView.preferredHeight: closed ? 0 : notifInner.nonAnimHeight
             implicitHeight: notifInner.implicitHeight
+
+            opacity: LazyListView.removing || closed || LazyListView.adding ? 0 : 1
+            scale: LazyListView.removing || closed ? 0.6 : LazyListView.adding ? 0 : 1
 
             hoverEnabled: true
             cursorShape: pressed ? Qt.ClosedHandCursor : undefined
@@ -112,6 +115,24 @@ LazyListView {
                 props: root.props
                 container: root.container
                 visibilities: root.visibilities
+            }
+
+            Behavior on y {
+                Anim {
+                    duration: Appearance.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                }
+            }
+
+            Behavior on opacity {
+                Anim {}
+            }
+
+            Behavior on scale {
+                Anim {
+                    duration: Appearance.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                }
             }
 
             Behavior on x {

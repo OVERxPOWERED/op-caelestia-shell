@@ -14,9 +14,28 @@
 
 namespace caelestia::components {
 
+class LazyListViewAttached : public QObject {
+    Q_OBJECT
+
+    Q_PROPERTY(qreal preferredHeight READ preferredHeight WRITE setPreferredHeight NOTIFY preferredHeightChanged)
+
+public:
+    explicit LazyListViewAttached(QObject* parent = nullptr);
+
+    [[nodiscard]] qreal preferredHeight() const;
+    void setPreferredHeight(qreal height);
+
+signals:
+    void preferredHeightChanged();
+
+private:
+    qreal m_preferredHeight = -1;
+};
+
 class LazyListView : public QQuickItem {
     Q_OBJECT
     QML_ELEMENT
+    QML_ATTACHED(LazyListViewAttached)
 
     // Model & Delegate
     Q_PROPERTY(QAbstractItemModel* model READ model WRITE setModel NOTIFY modelChanged)
@@ -58,6 +77,8 @@ class LazyListView : public QQuickItem {
 public:
     explicit LazyListView(QQuickItem* parent = nullptr);
     ~LazyListView() override;
+
+    static LazyListViewAttached* qmlAttachedProperties(QObject* object);
 
     // Model & Delegate
     [[nodiscard]] QAbstractItemModel* model() const;
@@ -167,6 +188,7 @@ private:
         QQmlContext* context = nullptr;
         bool pendingRemoval = false;
         QParallelAnimationGroup* animation = nullptr;
+        QMetaObject::Connection attachedConnection;
     };
 
     // Layout
@@ -174,6 +196,7 @@ private:
     [[nodiscard]] std::pair<int, int> computeVisibleRange() const;
     [[nodiscard]] QRectF effectiveViewport() const;
     [[nodiscard]] qreal effectiveEstimatedHeight() const;
+    [[nodiscard]] static qreal delegateHeight(QQuickItem* item);
     void trackHeight(qreal height);
     void untrackHeight(qreal height);
 
@@ -182,7 +205,6 @@ private:
     DelegateEntry createDelegate(int modelIndex);
     void destroyDelegate(DelegateEntry& entry);
     void updateDelegateData(DelegateEntry& entry);
-    void positionDelegates();
 
     // Model connection
     void connectModel();
@@ -237,6 +259,8 @@ private:
 
     int m_activeAnimations = 0;
     bool m_componentComplete = false;
+    bool m_animateDisplacement = false;
+    QSet<int> m_pendingAddAnimations;
 
     QList<QMetaObject::Connection> m_modelConnections;
 };

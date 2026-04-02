@@ -72,7 +72,8 @@ LazyListView {
                 }
             }
 
-            implicitHeight: closed ? 0 : notifInner.implicitHeight
+            LazyListView.preferredHeight: closed ? 0 : notifInner.implicitHeight
+            implicitHeight: notifInner.implicitHeight
 
             hoverEnabled: true
             cursorShape: pressed ? Qt.ClosedHandCursor : undefined
@@ -114,13 +115,6 @@ LazyListView {
             }
 
             Behavior on x {
-                Anim {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-                }
-            }
-
-            Behavior on implicitHeight {
                 Anim {
                     duration: Appearance.anim.durations.expressiveDefaultSpatial
                     easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial

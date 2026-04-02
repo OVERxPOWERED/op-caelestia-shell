@@ -375,6 +375,18 @@ void LazyListView::updatePolish() {
             entry.item->setY(targetY);
         }
     }
+
+    // Flush delegate pool — any delegates not reclaimed are truly removed
+    for (auto& pooled : m_delegatePool) {
+        pooled.pendingRemoval = true;
+        if (m_removeDuration > 0 && pooled.item) {
+            startRemoveAnimation(pooled);
+            m_dyingDelegates.append(std::move(pooled));
+        } else {
+            destroyDelegate(pooled);
+        }
+    }
+    m_delegatePool.clear();
 }
 
 // --- Layout Engine ---
@@ -492,6 +504,27 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
     if (!m_delegate || !m_model)
         return entry;
 
+    // Try to reclaim a delegate from the pool (reuse after remove+insert cycle)
+    const auto roleNames = m_model->roleNames();
+    const auto role = roleNames.isEmpty() ? Qt::DisplayRole : roleNames.constBegin().key();
+    const auto targetData = m_model->data(m_model->index(modelIndex, 0), role);
+
+    for (auto it = m_delegatePool.begin(); it != m_delegatePool.end(); ++it) {
+        if (!it->item)
+            continue;
+        const auto poolData = it->item->property("modelData");
+        if (poolData == targetData) {
+            entry = std::move(*it);
+            m_delegatePool.erase(it);
+            entry.modelIndex = modelIndex;
+            entry.pendingRemoval = false;
+            updateDelegateData(entry);
+            entry.item->setParentItem(this);
+            entry.item->setWidth(width());
+            return entry;
+        }
+    }
+
     // Use the delegate component's creation context so the delegate
     // can access ids and properties from the scope where it was defined.
     auto* compContext = m_delegate->creationContext();
@@ -502,7 +535,6 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
     entry.context = new QQmlContext(parentContext, this);
 
     // Build property map for both context properties and initial properties
-    const auto roleNames = m_model->roleNames();
     const auto index = m_model->index(modelIndex, 0);
     QVariantMap initialProps;
 
@@ -520,7 +552,6 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
 
     // Provide modelData for single-role models or if not already provided by role names
     if (!hasModelData) {
-        const auto role = roleNames.isEmpty() ? Qt::DisplayRole : roleNames.constBegin().key();
         const auto value = m_model->data(index, role);
         entry.context->setContextProperty(QStringLiteral("modelData"), value);
         initialProps.insert(QStringLiteral("modelData"), value);
@@ -649,7 +680,11 @@ void LazyListView::connectModel() {
         connect(m_model, &QAbstractItemModel::rowsMoved, this, &LazyListView::onRowsMoved),
         connect(m_model, &QAbstractItemModel::dataChanged, this, &LazyListView::onDataChanged),
         connect(m_model, &QAbstractItemModel::modelReset, this, &LazyListView::onModelReset),
-        connect(m_model, &QAbstractItemModel::layoutChanged, this, &LazyListView::onModelReset),
+        connect(m_model, &QAbstractItemModel::layoutChanged, this, [this] {
+            for (auto& entry : m_delegates)
+                updateDelegateData(entry);
+            polish();
+        }),
         connect(m_model, &QObject::destroyed, this,
             [this] {
                 m_model = nullptr;
@@ -674,6 +709,10 @@ void LazyListView::resetContent() {
     for (auto& entry : m_dyingDelegates)
         destroyDelegate(entry);
     m_dyingDelegates.clear();
+
+    for (auto& entry : m_delegatePool)
+        destroyDelegate(entry);
+    m_delegatePool.clear();
 
     if (m_activeAnimations != 0) {
         m_activeAnimations = 0;
@@ -706,7 +745,6 @@ void LazyListView::onRowsInserted(const QModelIndex& parent, int first, int last
         return;
 
     const int insertCount = last - first + 1;
-
     // Insert new layout records
     m_layout.insert(first, insertCount, ItemRecord{ 0, 0, false });
 
@@ -735,20 +773,14 @@ void LazyListView::onRowsAboutToBeRemoved(const QModelIndex& parent, int first, 
     if (parent.isValid())
         return;
 
-    // Start remove animations for visible delegates being removed
+    // Pool removed delegates — they may be reused if the model re-inserts the same data
     for (int i = first; i <= last; ++i) {
         if (!m_delegates.contains(i))
             continue;
 
         auto entry = m_delegates.take(i);
-        entry.pendingRemoval = true;
-
-        if (m_removeDuration > 0 && entry.item) {
-            startRemoveAnimation(entry);
-            m_dyingDelegates.append(std::move(entry));
-        } else {
-            destroyDelegate(entry);
-        }
+        stopAnimation(entry);
+        m_delegatePool.append(std::move(entry));
     }
 }
 
@@ -785,15 +817,48 @@ void LazyListView::onRowsRemoved(const QModelIndex& parent, int first, int last)
     polish();
 }
 
-void LazyListView::onRowsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row) {
-    Q_UNUSED(parent)
-    Q_UNUSED(start)
-    Q_UNUSED(end)
-    Q_UNUSED(destination)
-    Q_UNUSED(row)
+void LazyListView::onRowsMoved(const QModelIndex& parent, int start, int end,
+                               const QModelIndex& destination, int row) {
+    if (parent.isValid() || destination.isValid())
+        return;
 
-    // Full reset for moves — complex index remapping
-    onModelReset();
+    const int count = end - start + 1;
+    const int dest = row > start ? row - count : row;
+
+    // Reorder layout records
+    QVector<ItemRecord> moved;
+    moved.reserve(count);
+    for (int i = start; i <= end; ++i)
+        moved.append(m_layout[i]);
+    m_layout.remove(start, count);
+    for (int i = 0; i < count; ++i)
+        m_layout.insert(dest + i, moved[i]);
+
+    // Remap delegate indices to match new model order
+    QHash<int, DelegateEntry> remapped;
+    for (auto it = m_delegates.begin(); it != m_delegates.end(); ++it) {
+        int oldIdx = it.key();
+        int newIdx = oldIdx;
+
+        if (oldIdx >= start && oldIdx <= end) {
+            newIdx = dest + (oldIdx - start);
+        } else {
+            if (oldIdx > end)
+                newIdx -= count;
+            if (newIdx >= dest)
+                newIdx += count;
+        }
+
+        auto entry = std::move(it.value());
+        entry.modelIndex = newIdx;
+        if (entry.context)
+            entry.context->setContextProperty(QStringLiteral("index"), newIdx);
+        remapped.insert(newIdx, std::move(entry));
+    }
+    m_delegates = std::move(remapped);
+
+    m_animateDisplacement = true;
+    polish();
 }
 
 void LazyListView::onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) {
@@ -809,6 +874,41 @@ void LazyListView::onDataChanged(const QModelIndex& topLeft, const QModelIndex& 
 }
 
 void LazyListView::onModelReset() {
+    if (!m_model) {
+        resetContent();
+        return;
+    }
+
+    const int newRows = m_model->rowCount();
+    const int oldRows = static_cast<int>(m_layout.size());
+
+    // Check if the model data actually changed
+    if (newRows == oldRows) {
+        const auto roleNames = m_model->roleNames();
+        const auto role = roleNames.isEmpty() ? Qt::DisplayRole : roleNames.constBegin().key();
+        bool changed = false;
+
+        for (auto it = m_delegates.constBegin(); it != m_delegates.constEnd(); ++it) {
+            if (!it->item || it.key() >= newRows) {
+                changed = true;
+                break;
+            }
+            const auto newData = m_model->data(m_model->index(it.key(), 0), role);
+            const auto oldData = it->item->property("modelData");
+            if (newData != oldData) {
+                changed = true;
+                break;
+            }
+        }
+
+        if (!changed) {
+            // Model content unchanged, just refresh delegate data
+            for (auto& entry : m_delegates)
+                updateDelegateData(entry);
+            return;
+        }
+    }
+
     resetContent();
 }
 

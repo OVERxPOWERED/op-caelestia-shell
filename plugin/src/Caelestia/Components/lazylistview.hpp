@@ -256,6 +256,7 @@ private:
     QVector<ItemRecord> m_layout;
     QHash<int, DelegateEntry> m_delegates;
     QVector<DelegateEntry> m_dyingDelegates;
+    QVector<DelegateEntry> m_delegatePool;
 
     int m_activeAnimations = 0;
     bool m_componentComplete = false;

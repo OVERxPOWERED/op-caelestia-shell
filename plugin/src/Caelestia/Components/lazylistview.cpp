@@ -213,8 +213,7 @@ qreal LazyListView::delegateHeight(QQuickItem* item) {
     if (!item)
         return 0;
 
-    auto* attached = qobject_cast<LazyListViewAttached*>(
-        qmlAttachedPropertiesObject<LazyListView>(item, false));
+    auto* attached = qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(item, false));
     if (attached && attached->preferredHeight() >= 0)
         return attached->preferredHeight();
 
@@ -225,8 +224,7 @@ qreal LazyListView::delegateVisibleHeight(QQuickItem* item) {
     if (!item)
         return 0;
 
-    auto* attached = qobject_cast<LazyListViewAttached*>(
-        qmlAttachedPropertiesObject<LazyListView>(item, false));
+    auto* attached = qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(item, false));
     if (attached) {
         if (attached->visibleHeight() >= 0)
             return attached->visibleHeight();
@@ -435,7 +433,7 @@ void LazyListView::relayout() {
     qreal maxBottom = m_layout.isEmpty() ? 0 : visY - m_spacing;
 
     // Account for dying delegates still visually present
-    for (const auto& dying : m_dyingDelegates) {
+    for (const auto& dying : std::as_const(m_dyingDelegates)) {
         if (dying.item)
             maxBottom = std::max(maxBottom, dying.item->y() + delegateVisibleHeight(dying.item));
     }
@@ -600,8 +598,8 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
 
     // Set adding = true before completeCreate so bindings see it during initial evaluation.
     // Cleared after creation so the transition from true→false triggers QML Behaviors.
-    auto* addingAttached = qobject_cast<LazyListViewAttached*>(
-        qmlAttachedPropertiesObject<LazyListView>(entry.item, true));
+    auto* addingAttached =
+        qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(entry.item, true));
     if (addingAttached)
         addingAttached->setAdding(true);
 
@@ -637,13 +635,13 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
     connect(entry.item, &QQuickItem::implicitHeightChanged, this, onHeightChanged);
 
     // Watch attached properties if the delegate uses them
-    auto* attached = qobject_cast<LazyListViewAttached*>(
-        qmlAttachedPropertiesObject<LazyListView>(entry.item, false));
+    auto* attached = qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(entry.item, false));
     if (attached) {
-        entry.attachedConnection = connect(attached, &LazyListViewAttached::preferredHeightChanged,
-                                           this, onHeightChanged);
-        connect(attached, &LazyListViewAttached::visibleHeightChanged,
-                this, [this] { polish(); });
+        entry.attachedConnection =
+            connect(attached, &LazyListViewAttached::preferredHeightChanged, this, onHeightChanged);
+        connect(attached, &LazyListViewAttached::visibleHeightChanged, this, [this] {
+            polish();
+        });
     }
 
     return entry;
@@ -652,8 +650,7 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
 void LazyListView::destroyDelegate(DelegateEntry& entry) {
     if (entry.animation) {
         // Disconnect before stopping to prevent re-entrant onAnimationFinished
-        disconnect(entry.animation, &QAbstractAnimation::finished,
-                   this, &LazyListView::onAnimationFinished);
+        disconnect(entry.animation, &QAbstractAnimation::finished, this, &LazyListView::onAnimationFinished);
         entry.animation->stop();
         entry.animation = nullptr;
         --m_activeAnimations;
@@ -721,11 +718,12 @@ void LazyListView::connectModel() {
         connect(m_model, &QAbstractItemModel::rowsMoved, this, &LazyListView::onRowsMoved),
         connect(m_model, &QAbstractItemModel::dataChanged, this, &LazyListView::onDataChanged),
         connect(m_model, &QAbstractItemModel::modelReset, this, &LazyListView::onModelReset),
-        connect(m_model, &QAbstractItemModel::layoutChanged, this, [this] {
-            for (auto& entry : m_delegates)
-                updateDelegateData(entry);
-            polish();
-        }),
+        connect(m_model, &QAbstractItemModel::layoutChanged, this,
+            [this] {
+                for (auto& entry : m_delegates)
+                    updateDelegateData(entry);
+                polish();
+            }),
         connect(m_model, &QObject::destroyed, this,
             [this] {
                 m_model = nullptr;
@@ -818,8 +816,8 @@ void LazyListView::onRowsAboutToBeRemoved(const QModelIndex& parent, int first, 
 
         if (m_removeDuration > 0 && entry.item) {
             // Signal the delegate via attached property — QML handles the visual transition
-            auto* attached = qobject_cast<LazyListViewAttached*>(
-                qmlAttachedPropertiesObject<LazyListView>(entry.item, false));
+            auto* attached =
+                qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(entry.item, false));
             if (attached)
                 attached->setRemoving(true);
 
@@ -868,13 +866,11 @@ void LazyListView::onRowsRemoved(const QModelIndex& parent, int first, int last)
     }
     m_delegates = std::move(shifted);
 
-
     emit countChanged();
     polish();
 }
 
-void LazyListView::onRowsMoved(const QModelIndex& parent, int start, int end,
-                               const QModelIndex& destination, int row) {
+void LazyListView::onRowsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row) {
     if (parent.isValid() || destination.isValid())
         return;
 

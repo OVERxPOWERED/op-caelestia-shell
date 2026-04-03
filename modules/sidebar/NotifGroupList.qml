@@ -16,18 +16,8 @@ LazyListView {
     required property DrawerVisibilities visibilities
 
     readonly property real nonAnimHeight: layoutHeight
-    property bool showAllNotifs
 
     signal requestToggleExpand(expand: bool)
-
-    onExpandedChanged: {
-        if (expanded) {
-            clearTimer.stop();
-            showAllNotifs = true;
-        } else {
-            clearTimer.start();
-        }
-    }
 
     Layout.fillWidth: true
     implicitHeight: contentHeight
@@ -38,18 +28,10 @@ LazyListView {
     removeDuration: Appearance.anim.durations.normal
 
     useCustomViewport: true
-    viewport: Qt.rect(0, container.contentY - mapToItem(container.contentItem, 0, 0).y,
-                       width, container.height)
-
-    Timer {
-        id: clearTimer
-
-        interval: Appearance.anim.durations.normal
-        onTriggered: root.showAllNotifs = false
-    }
+    viewport: Qt.rect(0, container.contentY - mapToItem(container.contentItem, 0, 0).y, width, container.height)
 
     model: ScriptModel {
-        values: root.showAllNotifs ? root.notifs : root.notifs.slice(0, Config.notifs.groupPreviewNum + 1)
+        values: root.expanded ? root.notifs : root.notifs.slice(0, Config.notifs.groupPreviewNum + 1)
     }
 
     delegate: Component {

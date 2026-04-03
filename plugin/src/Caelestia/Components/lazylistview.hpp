@@ -281,6 +281,7 @@ private:
 
     int m_activeAnimations = 0;
     bool m_componentComplete = false;
+    bool m_relayoutPending = false;
     QSet<int> m_pendingAddAnimations;
 
     QList<QMetaObject::Connection> m_modelConnections;

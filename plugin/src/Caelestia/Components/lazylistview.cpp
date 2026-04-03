@@ -422,13 +422,15 @@ void LazyListView::relayout() {
     qreal y = 0;
     bool hasLayoutItem = false;
     for (auto& record : m_layout) {
-        record.targetY = y;
         const qreal layoutH = record.heightKnown ? record.height : effectiveEstimatedHeight();
         if (layoutH > 0) {
             if (hasLayoutItem)
                 y += m_spacing;
             hasLayoutItem = true;
+            record.targetY = y;
             y += layoutH;
+        } else {
+            record.targetY = y;
         }
     }
 
@@ -653,10 +655,16 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
                 if (wasKnown)
                     untrackHeight(oldH);
                 trackHeight(h);
-                // Relayout immediately so layoutHeight/contentHeight update
-                // synchronously for parent bindings, then polish for delegate sync.
-                relayout();
-                polish();
+                // Batch relayout: multiple height changes in the same event loop
+                // iteration are coalesced into a single relayout + polish.
+                if (!m_relayoutPending) {
+                    m_relayoutPending = true;
+                    QTimer::singleShot(0, this, [this] {
+                        m_relayoutPending = false;
+                        relayout();
+                        polish();
+                    });
+                }
             }
             return;
         }

@@ -149,7 +149,7 @@ Item {
         id: clearTimer
 
         repeat: true
-        interval: 50
+        interval: Math.max(15, Math.min(80, 69.8 - 12.3 * Math.log(Notifs.notClosed.length)))
         onTriggered: {
             const first = Notifs.notClosed[0];
             if (first) {

@@ -549,10 +549,19 @@ void LazyListView::syncDelegates() {
             visibleIndices.insert(i);
     }
 
-    // Collect delegates to destroy (outside visible range and not animating)
+    // Collect delegates to destroy — only if visually outside the viewport
+    const auto vp = effectiveViewport();
     QList<int> toRemove;
     for (auto it = m_delegates.begin(); it != m_delegates.end(); ++it) {
-        if (!visibleIndices.contains(it.key()) && !it->animation)
+        if (visibleIndices.contains(it.key()) || it->animation)
+            continue;
+        if (!it->item) {
+            toRemove.append(it.key());
+            continue;
+        }
+        const qreal itemTop = it->item->y();
+        const qreal itemBottom = itemTop + delegateVisibleHeight(it->item);
+        if (itemBottom < vp.top() || itemTop > vp.bottom())
             toRemove.append(it.key());
     }
 

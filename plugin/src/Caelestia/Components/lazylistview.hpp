@@ -286,6 +286,7 @@ private:
 
     QVector<ItemRecord> m_layout;
     QHash<int, DelegateEntry> m_delegates;
+    QHash<QQuickItem*, int> m_itemToIndex;
     QVector<DelegateEntry> m_dyingDelegates;
 
     int m_activeAnimations = 0;

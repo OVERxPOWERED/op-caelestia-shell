@@ -463,8 +463,9 @@ void LazyListView::relayout() {
     bool hasVisItem = false;
     for (int i = 0; i < static_cast<int>(m_layout.size()); ++i) {
         qreal h;
-        if (m_delegates.contains(i) && m_delegates[i].item)
-            h = delegateVisibleHeight(m_delegates[i].item);
+        auto dit = m_delegates.find(i);
+        if (dit != m_delegates.end() && dit->item)
+            h = delegateVisibleHeight(dit->item);
         else
             h = m_layout[i].heightKnown ? m_layout[i].height : effectiveEstimatedHeight();
         if (h > 0) {
@@ -573,7 +574,10 @@ void LazyListView::syncDelegates() {
     for (int idx : toRemove) {
         if (destroyed >= destroyBudget)
             break;
-        removedEntries.append(m_delegates.take(idx));
+        auto entry = m_delegates.take(idx);
+        if (entry.item)
+            m_itemToIndex.remove(entry.item);
+        removedEntries.append(std::move(entry));
         ++destroyed;
     }
     for (auto& entry : removedEntries)
@@ -608,6 +612,7 @@ void LazyListView::syncDelegates() {
                 layoutChanged = true;
             }
             entry.item->setY(m_layout[i].targetY - m_contentY);
+            m_itemToIndex.insert(entry.item, i);
             m_delegates.insert(i, std::move(entry));
             ++created;
         }
@@ -692,35 +697,32 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
     if (addingAttached)
         addingAttached->setAdding(false);
 
-    // Shared height-change handler — captures item pointer instead of index
-    // so it remains valid after model inserts/removes/moves shift indices.
+    // Height-change handler — uses m_itemToIndex for O(1) lookup
     auto onHeightChanged = [this, item = entry.item] {
-        // Find the delegate entry by item pointer
-        for (auto it = m_delegates.begin(); it != m_delegates.end(); ++it) {
-            if (it->item != item)
-                continue;
-            const int idx = it.key();
-            const qreal h = delegateHeight(item);
-            if (idx < static_cast<int>(m_layout.size()) && !qFuzzyCompare(m_layout[idx].height, h)) {
-                const qreal oldH = m_layout[idx].height;
-                const bool wasKnown = m_layout[idx].heightKnown;
-                m_layout[idx].height = h;
-                m_layout[idx].heightKnown = true;
-                if (wasKnown)
-                    untrackHeight(oldH);
-                trackHeight(h);
-                // Batch relayout: multiple height changes in the same event loop
-                // iteration are coalesced into a single relayout + polish.
-                if (!m_relayoutPending) {
-                    m_relayoutPending = true;
-                    QTimer::singleShot(0, this, [this] {
-                        m_relayoutPending = false;
-                        relayout();
-                        polish();
-                    });
-                }
-            }
+        auto indexIt = m_itemToIndex.find(item);
+        if (indexIt == m_itemToIndex.end())
             return;
+        const int idx = indexIt.value();
+        auto delegateIt = m_delegates.find(idx);
+        if (delegateIt == m_delegates.end() || delegateIt->item != item)
+            return;
+        const qreal h = delegateHeight(item);
+        if (idx < static_cast<int>(m_layout.size()) && !qFuzzyCompare(m_layout[idx].height, h)) {
+            const qreal oldH = m_layout[idx].height;
+            const bool wasKnown = m_layout[idx].heightKnown;
+            m_layout[idx].height = h;
+            m_layout[idx].heightKnown = true;
+            if (wasKnown)
+                untrackHeight(oldH);
+            trackHeight(h);
+            if (!m_relayoutPending) {
+                m_relayoutPending = true;
+                QTimer::singleShot(0, this, [this] {
+                    m_relayoutPending = false;
+                    relayout();
+                    polish();
+                });
+            }
         }
     };
 
@@ -837,6 +839,7 @@ void LazyListView::resetContent() {
     for (auto& entry : m_delegates)
         destroyDelegate(entry);
     m_delegates.clear();
+    m_itemToIndex.clear();
 
     for (auto& entry : m_dyingDelegates)
         destroyDelegate(entry);
@@ -883,6 +886,8 @@ void LazyListView::onRowsInserted(const QModelIndex& parent, int first, int last
         entry.modelIndex = newIdx;
         if (entry.context)
             entry.context->setContextProperty(QStringLiteral("index"), newIdx);
+        if (entry.item)
+            m_itemToIndex[entry.item] = newIdx;
         shifted.insert(newIdx, std::move(entry));
     }
     m_delegates = std::move(shifted);
@@ -904,11 +909,12 @@ void LazyListView::onRowsAboutToBeRemoved(const QModelIndex& parent, int first, 
             continue;
 
         auto entry = m_delegates.take(i);
+        if (entry.item)
+            m_itemToIndex.remove(entry.item);
         entry.pendingRemoval = true;
         stopAnimation(entry);
 
         if (m_removeDuration > 0 && entry.item) {
-            // Signal the delegate via attached property — QML handles the visual transition
             auto* attached =
                 qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(entry.item, false));
             if (attached)
@@ -955,6 +961,8 @@ void LazyListView::onRowsRemoved(const QModelIndex& parent, int first, int last)
         entry.modelIndex = newIdx;
         if (entry.context)
             entry.context->setContextProperty(QStringLiteral("index"), newIdx);
+        if (entry.item)
+            m_itemToIndex[entry.item] = newIdx;
         shifted.insert(newIdx, std::move(entry));
     }
     m_delegates = std::move(shifted);
@@ -998,6 +1006,8 @@ void LazyListView::onRowsMoved(const QModelIndex& parent, int start, int end, co
         entry.modelIndex = newIdx;
         if (entry.context)
             entry.context->setContextProperty(QStringLiteral("index"), newIdx);
+        if (entry.item)
+            m_itemToIndex[entry.item] = newIdx;
         remapped.insert(newIdx, std::move(entry));
     }
     m_delegates = std::move(remapped);

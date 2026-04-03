@@ -18,6 +18,7 @@ class LazyListViewAttached : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(qreal preferredHeight READ preferredHeight WRITE setPreferredHeight NOTIFY preferredHeightChanged)
+    Q_PROPERTY(qreal visibleHeight READ visibleHeight WRITE setVisibleHeight NOTIFY visibleHeightChanged)
     Q_PROPERTY(bool adding READ adding NOTIFY addingChanged)
     Q_PROPERTY(bool removing READ removing NOTIFY removingChanged)
 
@@ -27,6 +28,9 @@ public:
     [[nodiscard]] qreal preferredHeight() const;
     void setPreferredHeight(qreal height);
 
+    [[nodiscard]] qreal visibleHeight() const;
+    void setVisibleHeight(qreal height);
+
     [[nodiscard]] bool adding() const;
     void setAdding(bool adding);
 
@@ -35,11 +39,13 @@ public:
 
 signals:
     void preferredHeightChanged();
+    void visibleHeightChanged();
     void addingChanged();
     void removingChanged();
 
 private:
     qreal m_preferredHeight = -1;
+    qreal m_visibleHeight = -1;
     bool m_adding = false;
     bool m_removing = false;
 };
@@ -209,6 +215,7 @@ private:
     [[nodiscard]] QRectF effectiveViewport() const;
     [[nodiscard]] qreal effectiveEstimatedHeight() const;
     [[nodiscard]] static qreal delegateHeight(QQuickItem* item);
+    [[nodiscard]] static qreal delegateVisibleHeight(QQuickItem* item);
     void trackHeight(qreal height);
     void untrackHeight(qreal height);
 

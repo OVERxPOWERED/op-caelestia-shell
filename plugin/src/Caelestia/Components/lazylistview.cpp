@@ -22,6 +22,17 @@ void LazyListViewAttached::setPreferredHeight(qreal height) {
     emit preferredHeightChanged();
 }
 
+qreal LazyListViewAttached::visibleHeight() const {
+    return m_visibleHeight;
+}
+
+void LazyListViewAttached::setVisibleHeight(qreal height) {
+    if (qFuzzyCompare(m_visibleHeight, height))
+        return;
+    m_visibleHeight = height;
+    emit visibleHeightChanged();
+}
+
 bool LazyListViewAttached::adding() const {
     return m_adding;
 }
@@ -210,6 +221,22 @@ qreal LazyListView::delegateHeight(QQuickItem* item) {
     return item->implicitHeight();
 }
 
+qreal LazyListView::delegateVisibleHeight(QQuickItem* item) {
+    if (!item)
+        return 0;
+
+    auto* attached = qobject_cast<LazyListViewAttached*>(
+        qmlAttachedPropertiesObject<LazyListView>(item, false));
+    if (attached) {
+        if (attached->visibleHeight() >= 0)
+            return attached->visibleHeight();
+        if (attached->preferredHeight() >= 0)
+            return attached->preferredHeight();
+    }
+
+    return item->implicitHeight();
+}
+
 // --- Add Animation ---
 
 int LazyListView::addDuration() const {
@@ -388,15 +415,33 @@ void LazyListView::updatePolish() {
 // --- Layout Engine ---
 
 void LazyListView::relayout() {
+    // Layout positioning uses preferredHeight (final/non-animated)
     qreal y = 0;
     for (auto& record : m_layout) {
         record.targetY = y;
         y += (record.heightKnown ? record.height : effectiveEstimatedHeight()) + m_spacing;
     }
 
-    const qreal newHeight = m_layout.isEmpty() ? 0 : y - m_spacing;
-    if (!qFuzzyCompare(m_contentHeight, newHeight)) {
-        m_contentHeight = newHeight;
+    // Content height tracks actual visible heights so scrolling follows animations
+    qreal visY = 0;
+    for (int i = 0; i < static_cast<int>(m_layout.size()); ++i) {
+        qreal h;
+        if (m_delegates.contains(i) && m_delegates[i].item)
+            h = delegateVisibleHeight(m_delegates[i].item);
+        else
+            h = m_layout[i].heightKnown ? m_layout[i].height : effectiveEstimatedHeight();
+        visY += h + m_spacing;
+    }
+    qreal maxBottom = m_layout.isEmpty() ? 0 : visY - m_spacing;
+
+    // Account for dying delegates still visually present
+    for (const auto& dying : m_dyingDelegates) {
+        if (dying.item)
+            maxBottom = std::max(maxBottom, dying.item->y() + delegateVisibleHeight(dying.item));
+    }
+
+    if (!qFuzzyCompare(m_contentHeight, maxBottom)) {
+        m_contentHeight = maxBottom;
         emit contentHeightChanged();
     }
 }
@@ -591,12 +636,14 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
     // Watch implicitHeight as fallback
     connect(entry.item, &QQuickItem::implicitHeightChanged, this, onHeightChanged);
 
-    // Watch attached preferredHeight if the delegate uses it
+    // Watch attached properties if the delegate uses them
     auto* attached = qobject_cast<LazyListViewAttached*>(
         qmlAttachedPropertiesObject<LazyListView>(entry.item, false));
     if (attached) {
         entry.attachedConnection = connect(attached, &LazyListViewAttached::preferredHeightChanged,
                                            this, onHeightChanged);
+        connect(attached, &LazyListViewAttached::visibleHeightChanged,
+                this, [this] { polish(); });
     }
 
     return entry;

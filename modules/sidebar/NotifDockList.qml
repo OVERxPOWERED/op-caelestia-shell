@@ -73,6 +73,7 @@ LazyListView {
             }
 
             LazyListView.preferredHeight: closed ? 0 : notifInner.nonAnimHeight
+            LazyListView.visibleHeight: notifInner.implicitHeight
             implicitHeight: notifInner.implicitHeight
 
             opacity: LazyListView.removing || closed || LazyListView.adding ? 0 : 1

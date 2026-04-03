@@ -22,7 +22,7 @@ StyledRect {
 
     radius: Appearance.rounding.small
     color: {
-        const c = root.modelData.urgency === "critical" ? Colours.palette.m3secondaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2);
+        const c = root.modelData?.urgency === "critical" ? Colours.palette.m3secondaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2);
         return expanded ? c : Qt.alpha(c, 0);
     }
 
@@ -61,8 +61,8 @@ StyledRect {
         anchors.left: parent.left
 
         width: parent.width
-        text: root.modelData.summary
-        color: root.modelData.urgency === "critical" ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+        text: root.modelData?.summary ?? ""
+        color: root.modelData?.urgency === "critical" ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
         elide: Text.ElideRight
         wrapMode: Text.WordWrap
         maximumLineCount: 1
@@ -75,7 +75,7 @@ StyledRect {
         anchors.left: parent.left
 
         visible: false
-        text: root.modelData.summary
+        text: root.modelData?.summary ?? ""
     }
 
     WrappedLoader {
@@ -88,8 +88,8 @@ StyledRect {
         anchors.leftMargin: Appearance.spacing.small
 
         sourceComponent: StyledText {
-            text: root.modelData.body.replace(/\n/g, " ")
-            color: root.modelData.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
+            text: (root.modelData?.body ?? "").replace(/\n/g, " ")
+            color: root.modelData?.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
             elide: Text.ElideRight
         }
     }
@@ -103,7 +103,7 @@ StyledRect {
 
         sourceComponent: StyledText {
             animate: true
-            text: root.modelData.timeStr
+            text: root.modelData?.timeStr ?? ""
             color: Colours.palette.m3outline
             font.pointSize: Appearance.font.size.small
         }
@@ -138,8 +138,8 @@ StyledRect {
 
             Layout.fillWidth: true
             textFormat: Text.MarkdownText
-            text: root.modelData.body.replace(/(.)\n(?!\n)/g, "$1\n\n") || qsTr("No body here! :/")
-            color: root.modelData.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
+            text: (root.modelData?.body ?? "").replace(/(.)\n(?!\n)/g, "$1\n\n") || qsTr("No body here! :/")
+            color: root.modelData?.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
             wrapMode: Text.WordWrap
 
             onLinkActivated: link => {

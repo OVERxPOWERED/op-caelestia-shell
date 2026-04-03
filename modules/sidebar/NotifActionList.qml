@@ -101,7 +101,7 @@ Item {
                     {
                         isClose: true
                     },
-                    ...root.notif.actions,
+                    ...(root.notif?.actions ?? []),
                     {
                         isCopy: true
                     }

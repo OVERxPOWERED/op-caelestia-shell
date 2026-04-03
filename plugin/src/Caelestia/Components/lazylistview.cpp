@@ -23,7 +23,7 @@ qreal LazyListViewAttached::preferredHeight() const {
 }
 
 void LazyListViewAttached::setPreferredHeight(qreal height) {
-    if (qFuzzyCompare(m_preferredHeight, height))
+    if (qFuzzyCompare(m_preferredHeight + 1.0, height + 1.0))
         return;
     m_preferredHeight = height;
     emit preferredHeightChanged();
@@ -34,7 +34,7 @@ qreal LazyListViewAttached::visibleHeight() const {
 }
 
 void LazyListViewAttached::setVisibleHeight(qreal height) {
-    if (qFuzzyCompare(m_visibleHeight, height))
+    if (qFuzzyCompare(m_visibleHeight + 1.0, height + 1.0))
         return;
     m_visibleHeight = height;
     emit visibleHeightChanged();
@@ -452,7 +452,7 @@ void LazyListView::relayout() {
         }
     }
 
-    if (!qFuzzyCompare(m_layoutHeight, y)) {
+    if (!qFuzzyCompare(m_layoutHeight + 1.0, y + 1.0)) {
         m_layoutHeight = y;
         emit layoutHeightChanged();
     }
@@ -485,7 +485,7 @@ void LazyListView::relayout() {
             visY = std::max(visY, dying.item->y() + dyingH);
     }
 
-    if (!qFuzzyCompare(m_contentHeight, visY)) {
+    if (!qFuzzyCompare(m_contentHeight + 1.0, visY + 1.0)) {
         m_contentHeight = visY;
         emit contentHeightChanged();
     }
@@ -603,7 +603,7 @@ void LazyListView::syncDelegates() {
         auto entry = createDelegate(i);
         if (entry.item) {
             const qreal h = delegateHeight(entry.item);
-            if (!m_layout[i].heightKnown || !qFuzzyCompare(m_layout[i].height, h)) {
+            if (!m_layout[i].heightKnown || !qFuzzyCompare(m_layout[i].height + 1.0, h + 1.0)) {
                 if (m_layout[i].heightKnown)
                     untrackHeight(m_layout[i].height);
                 m_layout[i].height = h;
@@ -707,7 +707,7 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
         if (delegateIt == m_delegates.end() || delegateIt->item != item)
             return;
         const qreal h = delegateHeight(item);
-        if (idx < static_cast<int>(m_layout.size()) && !qFuzzyCompare(m_layout[idx].height, h)) {
+        if (idx < static_cast<int>(m_layout.size()) && !qFuzzyCompare(m_layout[idx].height + 1.0, h + 1.0)) {
             const qreal oldH = m_layout[idx].height;
             const bool wasKnown = m_layout[idx].heightKnown;
             m_layout[idx].height = h;

@@ -126,6 +126,10 @@ qreal LazyListView::contentHeight() const {
     return m_contentHeight;
 }
 
+qreal LazyListView::layoutHeight() const {
+    return m_layoutHeight;
+}
+
 qreal LazyListView::contentY() const {
     return m_contentY;
 }
@@ -413,33 +417,55 @@ void LazyListView::updatePolish() {
 // --- Layout Engine ---
 
 void LazyListView::relayout() {
-    // Layout positioning uses preferredHeight (final/non-animated)
+    // Layout positioning uses preferredHeight (final/non-animated).
+    // Only add spacing between items with non-zero height.
     qreal y = 0;
+    bool hasLayoutItem = false;
     for (auto& record : m_layout) {
         record.targetY = y;
-        y += (record.heightKnown ? record.height : effectiveEstimatedHeight()) + m_spacing;
+        const qreal layoutH = record.heightKnown ? record.height : effectiveEstimatedHeight();
+        if (layoutH > 0) {
+            if (hasLayoutItem)
+                y += m_spacing;
+            hasLayoutItem = true;
+            y += layoutH;
+        }
     }
 
-    // Content height tracks actual visible heights so scrolling follows animations
+    if (!qFuzzyCompare(m_layoutHeight, y)) {
+        m_layoutHeight = y;
+        emit layoutHeightChanged();
+    }
+
+    // Content height tracks actual visible heights so scrolling follows animations.
+    // Only add spacing between items with non-zero visible height.
     qreal visY = 0;
+    bool hasVisItem = false;
     for (int i = 0; i < static_cast<int>(m_layout.size()); ++i) {
         qreal h;
         if (m_delegates.contains(i) && m_delegates[i].item)
             h = delegateVisibleHeight(m_delegates[i].item);
         else
             h = m_layout[i].heightKnown ? m_layout[i].height : effectiveEstimatedHeight();
-        visY += h + m_spacing;
+        if (h > 0) {
+            if (hasVisItem)
+                visY += m_spacing;
+            hasVisItem = true;
+            visY += h;
+        }
     }
-    qreal maxBottom = m_layout.isEmpty() ? 0 : visY - m_spacing;
 
     // Account for dying delegates still visually present
     for (const auto& dying : std::as_const(m_dyingDelegates)) {
-        if (dying.item)
-            maxBottom = std::max(maxBottom, dying.item->y() + delegateVisibleHeight(dying.item));
+        if (!dying.item)
+            continue;
+        const qreal dyingH = delegateVisibleHeight(dying.item);
+        if (dyingH > 0)
+            visY = std::max(visY, dying.item->y() + dyingH);
     }
 
-    if (!qFuzzyCompare(m_contentHeight, maxBottom)) {
-        m_contentHeight = maxBottom;
+    if (!qFuzzyCompare(m_contentHeight, visY)) {
+        m_contentHeight = visY;
         emit contentHeightChanged();
     }
 }
@@ -525,7 +551,9 @@ void LazyListView::syncDelegates() {
             if (entry.item) {
                 // Measure height (prefer attached preferredHeight, fall back to implicitHeight)
                 const qreal h = delegateHeight(entry.item);
-                if (h > 0 && !m_layout[i].heightKnown) {
+                if (!m_layout[i].heightKnown || !qFuzzyCompare(m_layout[i].height, h)) {
+                    if (m_layout[i].heightKnown)
+                        untrackHeight(m_layout[i].height);
                     m_layout[i].height = h;
                     m_layout[i].heightKnown = true;
                     trackHeight(h);
@@ -625,6 +653,9 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
                 if (wasKnown)
                     untrackHeight(oldH);
                 trackHeight(h);
+                // Relayout immediately so layoutHeight/contentHeight update
+                // synchronously for parent bindings, then polish for delegate sync.
+                relayout();
                 polish();
             }
             return;

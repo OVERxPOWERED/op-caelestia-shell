@@ -62,6 +62,7 @@ class LazyListView : public QQuickItem {
     // Layout
     Q_PROPERTY(qreal spacing READ spacing WRITE setSpacing NOTIFY spacingChanged)
     Q_PROPERTY(qreal contentHeight READ contentHeight NOTIFY contentHeightChanged)
+    Q_PROPERTY(qreal layoutHeight READ layoutHeight NOTIFY layoutHeightChanged)
     Q_PROPERTY(qreal contentY READ contentY WRITE setContentY NOTIFY contentYChanged)
 
     // Viewport & Lazy Loading
@@ -110,6 +111,7 @@ public:
     void setSpacing(qreal spacing);
 
     [[nodiscard]] qreal contentHeight() const;
+    [[nodiscard]] qreal layoutHeight() const;
 
     [[nodiscard]] qreal contentY() const;
     void setContentY(qreal contentY);
@@ -170,6 +172,7 @@ signals:
     void delegateChanged();
     void spacingChanged();
     void contentHeightChanged();
+    void layoutHeightChanged();
     void contentYChanged();
     void viewportChanged();
     void useCustomViewportChanged();
@@ -248,6 +251,7 @@ private:
 
     qreal m_spacing = 0;
     qreal m_contentHeight = 0;
+    qreal m_layoutHeight = 0;
     qreal m_contentY = 0;
 
     QRectF m_viewport;

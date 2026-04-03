@@ -33,6 +33,7 @@ LazyListView {
     implicitHeight: contentHeight
 
     spacing: Math.round(Appearance.spacing.small / 2)
+    asynchronous: true
 
     removeDuration: Appearance.anim.durations.normal
 

@@ -4,6 +4,13 @@
 #include <qpropertyanimation.h>
 #include <qtimer.h>
 
+namespace {
+
+constexpr int ASYNC_BATCH_CREATE = 2;
+constexpr int ASYNC_BATCH_DESTROY = 4;
+
+} // namespace
+
 namespace caelestia::components {
 
 // --- LazyListViewAttached ---
@@ -193,6 +200,17 @@ void LazyListView::setEstimatedHeight(qreal height) {
     m_estimatedHeight = height;
     emit estimatedHeightChanged();
     polish();
+}
+
+bool LazyListView::asynchronous() const {
+    return m_asynchronous;
+}
+
+void LazyListView::setAsynchronous(bool async) {
+    if (m_asynchronous == async)
+        return;
+    m_asynchronous = async;
+    emit asynchronousChanged();
 }
 
 qreal LazyListView::effectiveEstimatedHeight() const {
@@ -531,41 +549,68 @@ void LazyListView::syncDelegates() {
             visibleIndices.insert(i);
     }
 
-    // Destroy delegates outside visible range (if not animating)
+    // Collect delegates to destroy (outside visible range and not animating)
     QList<int> toRemove;
     for (auto it = m_delegates.begin(); it != m_delegates.end(); ++it) {
-        if (!visibleIndices.contains(it.key()) && !it->animation) {
+        if (!visibleIndices.contains(it.key()) && !it->animation)
             toRemove.append(it.key());
-        }
-    }
-    for (int idx : toRemove) {
-        auto entry = m_delegates.take(idx);
-        destroyDelegate(entry);
     }
 
-    // Create delegates for newly visible indices
+    // Batch destroy
+    const int destroyBudget = m_asynchronous ? ASYNC_BATCH_DESTROY : static_cast<int>(toRemove.size());
+    QVector<DelegateEntry> removedEntries;
+    removedEntries.reserve(std::min(destroyBudget, static_cast<int>(toRemove.size())));
+    int destroyed = 0;
+    for (int idx : toRemove) {
+        if (destroyed >= destroyBudget)
+            break;
+        removedEntries.append(m_delegates.take(idx));
+        ++destroyed;
+    }
+    for (auto& entry : removedEntries)
+        destroyDelegate(entry);
+
+    // Collect indices to create
+    QList<int> toCreate;
     if (first >= 0) {
         for (int i = first; i <= last; ++i) {
-            if (m_delegates.contains(i))
-                continue;
-
-            auto entry = createDelegate(i);
-            if (entry.item) {
-                // Measure height (prefer attached preferredHeight, fall back to implicitHeight)
-                const qreal h = delegateHeight(entry.item);
-                if (!m_layout[i].heightKnown || !qFuzzyCompare(m_layout[i].height, h)) {
-                    if (m_layout[i].heightKnown)
-                        untrackHeight(m_layout[i].height);
-                    m_layout[i].height = h;
-                    m_layout[i].heightKnown = true;
-                    trackHeight(h);
-                }
-                // Position immediately so it doesn't flash at y=0
-                entry.item->setY(m_layout[i].targetY - m_contentY);
-                m_delegates.insert(i, std::move(entry));
-            }
+            if (!m_delegates.contains(i))
+                toCreate.append(i);
         }
     }
+
+    // Batch create
+    const int createBudget = m_asynchronous ? ASYNC_BATCH_CREATE : static_cast<int>(toCreate.size());
+    int created = 0;
+    bool layoutChanged = false;
+    for (int i : toCreate) {
+        if (created >= createBudget)
+            break;
+
+        auto entry = createDelegate(i);
+        if (entry.item) {
+            const qreal h = delegateHeight(entry.item);
+            if (!m_layout[i].heightKnown || !qFuzzyCompare(m_layout[i].height, h)) {
+                if (m_layout[i].heightKnown)
+                    untrackHeight(m_layout[i].height);
+                m_layout[i].height = h;
+                m_layout[i].heightKnown = true;
+                trackHeight(h);
+                layoutChanged = true;
+            }
+            entry.item->setY(m_layout[i].targetY - m_contentY);
+            m_delegates.insert(i, std::move(entry));
+            ++created;
+        }
+    }
+
+    if (layoutChanged)
+        relayout();
+
+    // If async and there's remaining work, schedule another pass
+    if (m_asynchronous &&
+        (destroyed < static_cast<int>(toRemove.size()) || created < static_cast<int>(toCreate.size())))
+        polish();
 }
 
 LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {

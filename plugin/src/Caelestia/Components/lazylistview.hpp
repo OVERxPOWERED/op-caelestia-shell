@@ -73,6 +73,9 @@ class LazyListView : public QQuickItem {
     // Sizing
     Q_PROPERTY(qreal estimatedHeight READ estimatedHeight WRITE setEstimatedHeight NOTIFY estimatedHeightChanged)
 
+    // Async
+    Q_PROPERTY(bool asynchronous READ asynchronous WRITE setAsynchronous NOTIFY asynchronousChanged)
+
     // Add Animation
     Q_PROPERTY(int addDuration READ addDuration WRITE setAddDuration NOTIFY addDurationChanged)
     Q_PROPERTY(QEasingCurve addCurve READ addCurve WRITE setAddCurve NOTIFY addCurveChanged)
@@ -130,6 +133,10 @@ public:
     [[nodiscard]] qreal estimatedHeight() const;
     void setEstimatedHeight(qreal height);
 
+    // Async
+    [[nodiscard]] bool asynchronous() const;
+    void setAsynchronous(bool async);
+
     // Add Animation
     [[nodiscard]] int addDuration() const;
     void setAddDuration(int duration);
@@ -178,6 +185,7 @@ signals:
     void useCustomViewportChanged();
     void cacheBufferChanged();
     void estimatedHeightChanged();
+    void asynchronousChanged();
     void addDurationChanged();
     void addCurveChanged();
     void addFromOpacityChanged();
@@ -261,6 +269,7 @@ private:
     qreal m_estimatedHeight = -1;
     qreal m_knownHeightSum = 0;
     int m_knownHeightCount = 0;
+    bool m_asynchronous = false;
 
     int m_addDuration = 300;
     QEasingCurve m_addCurve;

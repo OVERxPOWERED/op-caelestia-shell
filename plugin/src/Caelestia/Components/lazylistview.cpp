@@ -637,8 +637,9 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
     const auto roleNames = m_model->roleNames();
     const auto role = roleNames.isEmpty() ? Qt::DisplayRole : roleNames.constBegin().key();
 
-    // Use the delegate component's creation context so the delegate
-    // can access ids and properties from the scope where it was defined.
+    // Use the delegate component's creation context directly for beginCreate
+    // so bound components (pragma ComponentBehavior: Bound) are accepted.
+    // A per-delegate child context is kept for data updates.
     auto* compContext = m_delegate->creationContext();
     auto* parentContext = compContext ? compContext : qmlContext(this);
     if (!parentContext)
@@ -669,10 +670,15 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
         initialProps.insert(QStringLiteral("modelData"), value);
     }
 
-    auto* obj = m_delegate->beginCreate(entry.context);
+    // Use the creation context for beginCreate to satisfy bound component checks
+    // (pragma ComponentBehavior: Bound). Data is passed via setInitialProperties.
+    auto* creationCtx = compContext ? compContext : parentContext;
+    auto* obj = m_delegate->beginCreate(creationCtx);
     entry.item = qobject_cast<QQuickItem*>(obj);
 
     if (!entry.item) {
+        if (obj)
+            m_delegate->completeCreate();
         delete obj;
         delete entry.context;
         entry.context = nullptr;

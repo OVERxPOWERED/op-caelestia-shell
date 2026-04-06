@@ -130,15 +130,6 @@ StyledWindow {
             shadowColor: Qt.alpha(Colours.palette.m3shadow, Math.max(0, root.shadowOpacity))
         }
 
-        // Border {
-        //     bar: bar
-        // }
-
-        // Backgrounds {
-        //     panels: panels
-        //     bar: bar
-        // }
-
         BlobGroup {
             id: blobGroup
 

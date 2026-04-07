@@ -169,7 +169,7 @@ StyledWindow {
             id: sessionBg
 
             panel: panels.sessionWrapper
-            deformAmount: 0.25
+            deformAmount: 0.2
             x: panels.sessionWrapper.x + panels.session.x + bar.implicitWidth
             implicitWidth: panels.session.width
         }
@@ -178,7 +178,7 @@ StyledWindow {
             id: sidebarBg
 
             panel: panels.sidebar
-            deformAmount: 0.05
+            deformAmount: 0.03
             implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + 2
             exclude: panels.sidebar.offsetScale > 0.08 ? [] : [utilsBg]
             bottomLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
@@ -188,7 +188,7 @@ StyledWindow {
             id: osdBg
 
             panel: panels.osdWrapper
-            deformAmount: 0.3
+            deformAmount: 0.25
             x: panels.osdWrapper.x + panels.osd.x + bar.implicitWidth
             implicitWidth: panels.osd.width
         }

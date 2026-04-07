@@ -70,6 +70,8 @@ protected:
     QRectF m_localPaddedRect;
     QVector<BlobRectData> m_cachedRects;
     int m_cachedMyIndex = -2;
+    float m_pendingDx = 0;
+    float m_pendingDy = 0;
     bool m_cachedHasInverted = false;
     float m_cachedInvertedRadius = 0;
     float m_cachedInvertedOuter[4] = {};

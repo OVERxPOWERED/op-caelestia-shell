@@ -46,14 +46,6 @@ float smin(float a, float b, float k) {
     return min(a, b) - h * h * h * k * (1.0/6.0);
 }
 
-float sminNoBulge(float a, float b, float k) {
-    // Cubic smooth min with reduced outward expansion when shapes overlap
-    float h = max(k - abs(a - b), 0.0) / k;
-    float blend = h * h * h * k * (1.0/6.0);
-    blend *= smoothstep(-k, 0.0, min(a, b));
-    return min(a, b) - blend;
-}
-
 float smax(float a, float b, float k) {
     float h = max(k - abs(a - b), 0.0) / k;
     return max(a, b) + h * h * h * k * (1.0/6.0);
@@ -195,7 +187,7 @@ void main() {
             d -= rectSinkValue;
         }
 
-        mergedSdf = sminNoBulge(mergedSdf, d, smoothFactor);
+        mergedSdf = smin(mergedSdf, d, smoothFactor);
         if (d < smoothFactor && d < minDist) {
             minDist = d;
             owner = i;

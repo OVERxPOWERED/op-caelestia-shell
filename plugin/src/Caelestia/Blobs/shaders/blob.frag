@@ -143,60 +143,56 @@ void main() {
             d *= scale;
         }
 
-        // Rect-to-rect edge sink: indent this rect's edge where another
-        // rect is slightly past it, fading once past threshold.
-        if (rectCount > 1) {
-            vec2 iSh = sh.xy;
-            float sinkT = smoothFactor * 0.75;
-            float sinkOff = smoothFactor * (1.0 / 6.0);
-            float rectSinkVal = 0.0;
+        // Rect-to-rect edge sinks: track the same edge of neighboring rects
+        {
+            float rectSinkValue = 0.0;
+            vec2 iHalf = sh.xy;
+            float preOff = smoothFactor * (1.0/6.0);
 
             for (int j = 0; j < rectCount; j++) {
                 if (j == i) continue;
 
-                vec4 jR = rectData[j * 5];
-                vec4 jP = rectData[j * 5 + 1];
+                vec4 jRect = rectData[j * 5];
+                vec4 jProps = rectData[j * 5 + 1];
                 vec2 jSh = rectData[j * 5 + 3].xy;
-                vec2 jC = jR.xy + jP.yz;
+                vec2 jCtr = jRect.xy + jProps.yz;
 
-                // Skip non-adjacent rects
-                float sinkRange = smoothFactor * 1.5;
-                if (abs(center.x - jC.x) > iSh.x + jSh.x + sinkRange ||
-                    abs(center.y - jC.y) > iSh.y + jSh.y + sinkRange)
-                    continue;
+                // Per-edge containment: the other rect's full span on the
+                // perpendicular axis must be inside this rect for that edge.
+                bool hInside = (jCtr.y - jSh.y) >= (center.y - iHalf.y) &&
+                               (jCtr.y + jSh.y) <= (center.y + iHalf.y);
+                bool vInside = (jCtr.x - jSh.x) >= (center.x - iHalf.x) &&
+                               (jCtr.x + jSh.x) <= (center.x + iHalf.x);
 
-                // Penetration of j past i's edges (positive = past)
-                float pT = (jC.y + jSh.y) - (center.y - iSh.y) - sinkOff;
-                float pB = (center.y + iSh.y) - (jC.y - jSh.y) - sinkOff;
-                float pL = (jC.x + jSh.x) - (center.x - iSh.x) - sinkOff;
-                float pR = (center.x + iSh.x) - (jC.x - jSh.x) - sinkOff;
+                // Top/Bottom: other rect's height must be inside this rect
+                float topPen = hInside ? clamp((center.y - iHalf.y) - (jCtr.y - jSh.y) - preOff, 0.0, smoothFactor) : 0.0;
+                float botPen = hInside ? clamp((jCtr.y + jSh.y) - (center.y + iHalf.y) - preOff, 0.0, smoothFactor) : 0.0;
 
-                // Smooth bump: rises then falls, zero outside [0, sinkT]
-                float aT = smoothstep(0.0, sinkT * 0.4, pT) * (1.0 - smoothstep(sinkT * 0.5, sinkT, pT));
-                float aB = smoothstep(0.0, sinkT * 0.4, pB) * (1.0 - smoothstep(sinkT * 0.5, sinkT, pB));
-                float aL = smoothstep(0.0, sinkT * 0.4, pL) * (1.0 - smoothstep(sinkT * 0.5, sinkT, pL));
-                float aR = smoothstep(0.0, sinkT * 0.4, pR) * (1.0 - smoothstep(sinkT * 0.5, sinkT, pR));
+                // Left/Right: other rect's width must be inside this rect
+                float leftPen = vInside ? clamp((center.x - iHalf.x) - (jCtr.x - jSh.x) - preOff, 0.0, smoothFactor) : 0.0;
+                float rightPen = vInside ? clamp((jCtr.x + jSh.x) - (center.x + iHalf.x) - preOff, 0.0, smoothFactor) : 0.0;
 
-                // Lateral falloff from rect j's extent
-                float hLat = max(abs(pixel.x - jC.x) - jSh.x, 0.0);
-                float vLat = max(abs(pixel.y - jC.y) - jSh.y, 0.0);
-                float latF = smoothFactor * 2.0;
+                // Lateral distance from pixel to other rect's extent along each edge
+                float hLat = max(abs(pixel.x - jCtr.x) - jSh.x, 0.0);
+                float vLat = max(abs(pixel.y - jCtr.y) - jSh.y, 0.0);
 
-                // Perpendicular zone (near rect i's edge only)
-                float zT = 1.0 - smoothstep(center.y - iSh.y, center.y - iSh.y + smoothFactor, pixel.y);
-                float zB = smoothstep(center.y + iSh.y - smoothFactor, center.y + iSh.y, pixel.y);
-                float zL = 1.0 - smoothstep(center.x - iSh.x, center.x - iSh.x + smoothFactor, pixel.x);
-                float zR = smoothstep(center.x + iSh.x - smoothFactor, center.x + iSh.x, pixel.x);
+                // Perpendicular proximity: full strength at edge, fade inside
+                float topZone = 1.0 - smoothstep(center.y - iHalf.y, center.y - iHalf.y + smoothFactor, pixel.y);
+                float botZone = smoothstep(center.y + iHalf.y - smoothFactor, center.y + iHalf.y, pixel.y);
+                float leftZone = 1.0 - smoothstep(center.x - iHalf.x, center.x - iHalf.x + smoothFactor, pixel.x);
+                float rightZone = smoothstep(center.x + iHalf.x - smoothFactor, center.x + iHalf.x, pixel.x);
 
-                float s = max(
-                    max(aT * smoothstep(latF, 0.0, hLat) * zT,
-                        aB * smoothstep(latF, 0.0, hLat) * zB),
-                    max(aL * smoothstep(latF, 0.0, vLat) * zL,
-                        aR * smoothstep(latF, 0.0, vLat) * zR)
+                float s = smoothFactor * 2.0;
+                float sink = max(
+                    max(topPen * smoothstep(s, 0.0, hLat) * topZone,
+                        botPen * smoothstep(s, 0.0, hLat) * botZone),
+                    max(leftPen * smoothstep(s, 0.0, vLat) * leftZone,
+                        rightPen * smoothstep(s, 0.0, vLat) * rightZone)
                 );
-                rectSinkVal = max(rectSinkVal, s);
+                rectSinkValue = max(rectSinkValue, sink);
             }
-            d += rectSinkVal * smoothFactor * 0.25;
+
+            d -= rectSinkValue;
         }
 
         mergedSdf = sminNoBulge(mergedSdf, d, smoothFactor);

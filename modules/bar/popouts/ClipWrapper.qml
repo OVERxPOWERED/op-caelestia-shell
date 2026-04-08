@@ -9,6 +9,7 @@ Item {
     id: root
 
     required property ShellScreen screen
+    required property real borderThickness
 
     readonly property alias content: content
     property real offsetScale: x > 0 || content.hasCurrent ? 0 : 1
@@ -18,6 +19,18 @@ Item {
 
     implicitWidth: content.implicitWidth * (1 - offsetScale)
     implicitHeight: content.implicitHeight
+
+    x: content.isDetached ? (parent.width - content.nonAnimWidth) / 2 : 0
+    y: {
+        if (content.isDetached)
+            return (parent.height - content.nonAnimHeight) / 2;
+
+        const off = content.currentCenter - borderThickness - content.nonAnimHeight / 2;
+        const diff = parent.height - Math.floor(off + content.nonAnimHeight);
+        if (diff < 0)
+            return off + diff;
+        return Math.max(off, 0);
+    }
 
     Behavior on offsetScale {
         Anim {

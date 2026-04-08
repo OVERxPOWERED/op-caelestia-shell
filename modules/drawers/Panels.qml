@@ -119,18 +119,7 @@ Item {
         id: popoutsWrapper
 
         screen: root.screen
-
-        x: content.isDetached ? (root.width - content.nonAnimWidth) / 2 : 0
-        y: {
-            if (content.isDetached)
-                return (root.height - content.nonAnimHeight) / 2;
-
-            const off = content.currentCenter - root.borderThickness - content.nonAnimHeight / 2;
-            const diff = root.height - Math.floor(off + content.nonAnimHeight);
-            if (diff < 0)
-                return off + diff;
-            return Math.max(off, 0);
-        }
+        borderThickness: root.borderThickness
     }
 
     Utilities.Wrapper {

@@ -28,13 +28,14 @@ Item {
     readonly property alias sessionWrapper: sessionWrapper
     readonly property alias launcher: launcher
     readonly property alias dashboard: dashboard
-    readonly property alias popouts: popouts
+    readonly property alias popouts: popoutsWrapper.content
+    readonly property alias popoutsWrapper: popoutsWrapper
     readonly property alias utilities: utilities
     readonly property alias toasts: toasts
     readonly property alias sidebar: sidebar
 
     anchors.fill: parent
-    anchors.margins: root.borderThickness
+    anchors.margins: borderThickness
     anchors.leftMargin: bar.implicitWidth
 
     Item {
@@ -114,18 +115,18 @@ Item {
         anchors.top: parent.top
     }
 
-    BarPopouts.Wrapper {
-        id: popouts
+    BarPopouts.ClipWrapper {
+        id: popoutsWrapper
 
         screen: root.screen
 
-        x: isDetached ? (root.width - nonAnimWidth) / 2 : 0
+        x: content.isDetached ? (root.width - content.nonAnimWidth) / 2 : 0
         y: {
-            if (isDetached)
-                return (root.height - nonAnimHeight) / 2;
+            if (content.isDetached)
+                return (root.height - content.nonAnimHeight) / 2;
 
-            const off = currentCenter - root.borderThickness - nonAnimHeight / 2;
-            const diff = root.height - Math.floor(off + nonAnimHeight);
+            const off = content.currentCenter - root.borderThickness - content.nonAnimHeight / 2;
+            const diff = root.height - Math.floor(off + content.nonAnimHeight);
             if (diff < 0)
                 return off + diff;
             return Math.max(off, 0);
@@ -137,7 +138,7 @@ Item {
 
         visibilities: root.visibilities
         sidebar: sidebar
-        popouts: popouts
+        popouts: popoutsWrapper.content
 
         anchors.bottom: parent.bottom
         anchors.right: parent.right

@@ -211,23 +211,10 @@ StyledWindow {
         PanelBg {
             id: popoutBg
 
-            panel: panels.popouts
-            x: bar.implicitWidth - (panels.popouts.isDetached ? -(root.width - panels.popouts.shownWidth) / 2 : panels.popouts.hasCurrent ? 0 : panels.popouts.shownWidth + 5)
-            implicitWidth: panels.popouts.shownWidth
-
-            Behavior on x {
-                Anim {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-                }
-            }
-
-            Behavior on implicitWidth {
-                Anim {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-                }
-            }
+            panel: panels.popoutsWrapper
+            deformAmount: panels.popouts.isDetached ? 0.05 : panels.popouts.hasCurrent ? 0.15 : 0.1
+            x: panels.popoutsWrapper.x + panels.popouts.x + bar.implicitWidth
+            implicitWidth: panels.popouts.width
         }
     }
 

@@ -289,7 +289,7 @@ StyledWindow {
         required property Item panel
         property real deformAmount: 0.15
 
-        group: panel.width > 0 && panel.height > 0 ? blobGroup : null
+        group: blobGroup
         x: panel.x + bar.implicitWidth
         y: panel.y + root.borderThickness
         implicitWidth: panel.width

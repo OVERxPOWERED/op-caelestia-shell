@@ -80,8 +80,8 @@ LazyListView {
             LazyListView.visibleHeight: modelData?.closed || previewHidden ? 0 : notifInner.implicitHeight
             implicitHeight: notifInner.implicitHeight
 
-            opacity: LazyListView.removing || modelData?.closed || previewHidden || LazyListView.adding ? 0 : 1
-            scale: LazyListView.removing || previewHidden ? 0.7 : LazyListView.adding ? 0.7 : 1
+            opacity: previewHidden || LazyListView.adding ? 0 : 1
+            scale: previewHidden || LazyListView.adding ? 0.7 : 1
 
             hoverEnabled: true
             cursorShape: notifInner.body?.hoveredLink ? Qt.PointingHandCursor : pressed ? Qt.ClosedHandCursor : undefined

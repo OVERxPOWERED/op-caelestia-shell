@@ -169,6 +169,7 @@ private:
         qreal targetY = 0;
         qreal height = 0;
         bool heightKnown = false;
+        bool isNew = false;
     };
 
     struct DelegateEntry {

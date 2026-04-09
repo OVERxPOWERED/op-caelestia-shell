@@ -367,6 +367,12 @@ void LazyListView::updatePolish() {
     relayout();
     syncDelegates();
 
+    // Clear isNew flags — the add animation only plays for items created
+    // during the same polish cycle as their model insertion, not for
+    // delegates created later when scrolling items into the viewport.
+    for (auto& record : m_layout)
+        record.isNew = false;
+
     // Position delegates — QML Behavior on y handles the animation
     for (auto& entry : m_delegates) {
         if (!entry.item || entry.pendingRemoval || entry.pendingInsert)
@@ -652,12 +658,14 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
     entry.item->setParentItem(this);
     entry.item->setWidth(width());
 
-    // Set adding = true before completeCreate so bindings see it during initial evaluation.
+    // Only set adding = true for genuinely new model items (not viewport entries).
     // Cleared on the next frame in updatePolish when the item becomes visible.
-    auto* addingAttached =
-        qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(entry.item, true));
-    if (addingAttached)
-        addingAttached->setAdding(true);
+    if (modelIndex < static_cast<int>(m_layout.size()) && m_layout[modelIndex].isNew) {
+        auto* addingAttached =
+            qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(entry.item, true));
+        if (addingAttached)
+            addingAttached->setAdding(true);
+    }
 
     m_delegate->completeCreate();
 
@@ -852,7 +860,7 @@ void LazyListView::onRowsInserted(const QModelIndex& parent, int first, int last
 
     const int insertCount = last - first + 1;
     // Insert new layout records
-    m_layout.insert(first, insertCount, ItemRecord{ 0, 0, false });
+    m_layout.insert(first, insertCount, ItemRecord{ 0, 0, false, true });
 
     // Shift existing delegate indices
     QHash<int, DelegateEntry> shifted;

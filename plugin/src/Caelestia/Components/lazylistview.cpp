@@ -674,8 +674,7 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
     // Watch attached properties if the delegate uses them
     auto* attached = qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(entry.item, false));
     if (attached) {
-        entry.attachedConnection =
-            connect(attached, &LazyListViewAttached::preferredHeightChanged, this, onHeightChanged);
+        connect(attached, &LazyListViewAttached::preferredHeightChanged, this, onHeightChanged);
         connect(attached, &LazyListViewAttached::visibleHeightChanged, this, [this] {
             polish();
         });
@@ -685,8 +684,6 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
 }
 
 void LazyListView::destroyDelegate(DelegateEntry& entry) {
-    if (entry.attachedConnection)
-        disconnect(entry.attachedConnection);
     if (entry.item) {
         entry.item->setParentItem(nullptr);
         entry.item->setVisible(false);

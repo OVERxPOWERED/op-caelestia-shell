@@ -164,7 +164,6 @@ private:
         int modelIndex = -1;
         QQuickItem* item = nullptr;
         bool pendingRemoval = false;
-        QMetaObject::Connection attachedConnection;
     };
 
     // Layout

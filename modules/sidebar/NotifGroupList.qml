@@ -42,7 +42,7 @@ LazyListView {
 
             let count = 0;
             let i = 0;
-            const previewNum = Config.notifs.groupPreviewNum + 1;
+            const previewNum = Config.notifs.groupPreviewNum;
             while (i < root.notifs.length && count < previewNum) {
                 if (!(root.notifs[i]?.closed ?? true))
                     count++;
@@ -60,28 +60,17 @@ LazyListView {
             required property int index
             required property NotifData modelData
 
-            readonly property bool previewHidden: {
-                if (root.expanded)
-                    return false;
-
-                let extraHidden = 0;
-                for (let i = 0; i < index; i++)
-                    if (root.notifs[i]?.closed)
-                        extraHidden++;
-
-                return index >= Config.notifs.groupPreviewNum + extraHidden;
-            }
             property int startY
 
             Component.onCompleted: modelData?.lock(this)
             Component.onDestruction: modelData?.unlock(this)
 
-            LazyListView.preferredHeight: modelData?.closed || previewHidden ? 0 : notifInner.nonAnimHeight
-            LazyListView.visibleHeight: modelData?.closed || previewHidden ? 0 : notifInner.implicitHeight
+            LazyListView.preferredHeight: modelData?.closed ? 0 : notifInner.nonAnimHeight
+            LazyListView.visibleHeight: modelData?.closed ? 0 : notifInner.implicitHeight
             implicitHeight: notifInner.implicitHeight
 
-            opacity: previewHidden || LazyListView.adding ? 0 : 1
-            scale: previewHidden || LazyListView.adding ? 0.7 : 1
+            opacity: LazyListView.removing || LazyListView.adding ? 0 : 1
+            scale: LazyListView.removing || LazyListView.adding ? 0.7 : 1
 
             hoverEnabled: true
             cursorShape: notifInner.body?.hoveredLink ? Qt.PointingHandCursor : pressed ? Qt.ClosedHandCursor : undefined

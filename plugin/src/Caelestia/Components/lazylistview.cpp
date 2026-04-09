@@ -453,7 +453,9 @@ QRectF LazyListView::effectiveViewport() const {
 
     // During Flickable overshoot the viewport can extend entirely beyond content bounds,
     // causing all delegates to be culled. Clamp so it always overlaps [0, layoutHeight].
-    if (m_layoutHeight > 0) {
+    // Only needed for the built-in viewport — custom viewports represent the actual
+    // visible area and may legitimately lie entirely outside the content.
+    if (!m_useCustomViewport && m_layoutHeight > 0) {
         const qreal top = std::min(vp.y(), m_layoutHeight);
         const qreal bottom = std::max(vp.y() + vp.height(), 0.0);
         if (bottom > top)
@@ -470,6 +472,8 @@ QRectF LazyListView::effectiveViewport() const {
         const qreal bottom = std::min(vp.y() + vp.height(), m_layoutHeight);
         if (top < bottom)
             vp = QRectF(vp.x(), top, vp.width(), bottom - top);
+        else
+            return {};
     }
 
     return vp;
@@ -480,6 +484,9 @@ std::pair<int, int> LazyListView::computeVisibleRange() const {
         return { -1, -1 };
 
     const auto vp = effectiveViewport();
+    if (vp.isEmpty())
+        return { -1, -1 };
+
     const qreal vpTop = vp.y();
     const qreal vpBottom = vp.y() + vp.height();
 
@@ -533,7 +540,7 @@ void LazyListView::syncDelegates() {
     for (auto it = m_delegates.begin(); it != m_delegates.end(); ++it) {
         if (visibleIndices.contains(it.key()))
             continue;
-        if (!it->item) {
+        if (!it->item || vp.isEmpty()) {
             toRemove.append(it.key());
             continue;
         }

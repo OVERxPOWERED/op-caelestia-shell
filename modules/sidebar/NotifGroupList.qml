@@ -26,7 +26,7 @@ LazyListView {
     asynchronous: true
 
     readyDelay: 1
-    cacheBuffer: 800
+    cacheBuffer: 400
     removeDuration: Appearance.anim.durations.normal
 
     useCustomViewport: true

@@ -36,7 +36,21 @@ LazyListView {
     }
 
     model: ScriptModel {
-        values: root.expanded ? root.notifs : root.notifs.slice(0, Config.notifs.groupPreviewNum + 1)
+        values: {
+            if (root.expanded)
+                return root.notifs;
+
+            let count = 0;
+            let i = 0;
+            const previewNum = Config.notifs.groupPreviewNum + 1;
+            while (i < root.notifs.length && count < previewNum) {
+                if (!(root.notifs[i]?.closed ?? true))
+                    count++;
+                i++;
+            }
+
+            return root.notifs.slice(0, i);
+        }
     }
 
     delegate: Component {

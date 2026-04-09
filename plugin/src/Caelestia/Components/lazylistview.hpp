@@ -4,7 +4,6 @@
 #include <qhash.h>
 #include <qobject.h>
 #include <qqmlcomponent.h>
-#include <qqmlcontext.h>
 #include <qqmlintegration.h>
 #include <qquickitem.h>
 #include <qrect.h>
@@ -164,7 +163,6 @@ private:
     struct DelegateEntry {
         int modelIndex = -1;
         QQuickItem* item = nullptr;
-        QQmlContext* context = nullptr;
         bool pendingRemoval = false;
         QMetaObject::Connection attachedConnection;
     };
@@ -195,7 +193,6 @@ private:
     void onRowsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row);
     void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles);
     void onModelReset();
-
 
     // Members
     QAbstractItemModel* m_model = nullptr;

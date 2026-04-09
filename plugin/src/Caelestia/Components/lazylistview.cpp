@@ -1,6 +1,7 @@
 #include "lazylistview.hpp"
 
 #include <algorithm>
+#include <qqmlcontext.h>
 #include <qtimer.h>
 
 namespace {
@@ -572,57 +573,43 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
         return entry;
 
     const auto roleNames = m_model->roleNames();
-    const auto role = roleNames.isEmpty() ? Qt::DisplayRole : roleNames.constBegin().key();
 
-    // Use the delegate component's creation context directly for beginCreate
+    // Use the delegate component's creation context for beginCreate
     // so bound components (pragma ComponentBehavior: Bound) are accepted.
-    // A per-delegate child context is kept for data updates.
     auto* compContext = m_delegate->creationContext();
-    auto* parentContext = compContext ? compContext : qmlContext(this);
-    if (!parentContext)
+    if (!compContext)
+        compContext = qmlContext(this);
+    if (!compContext)
         return entry;
 
-    entry.context = new QQmlContext(parentContext, this);
-
-    // Build property map for both context properties and initial properties
-    const auto index = m_model->index(modelIndex, 0);
-    QVariantMap initialProps;
-
-    bool hasModelData = false;
-    for (auto it = roleNames.constBegin(); it != roleNames.constEnd(); ++it) {
-        const auto name = QString::fromUtf8(it.value());
-        const auto value = m_model->data(index, it.key());
-        entry.context->setContextProperty(name, value);
-        initialProps.insert(name, value);
-        if (name == QStringLiteral("modelData"))
-            hasModelData = true;
-    }
-    entry.context->setContextProperty(QStringLiteral("index"), modelIndex);
-    initialProps.insert(QStringLiteral("index"), modelIndex);
-
-    // Provide modelData for single-role models or if not already provided by role names
-    if (!hasModelData) {
-        const auto value = m_model->data(index, role);
-        entry.context->setContextProperty(QStringLiteral("modelData"), value);
-        initialProps.insert(QStringLiteral("modelData"), value);
-    }
-
-    // Use the creation context for beginCreate to satisfy bound component checks
-    // (pragma ComponentBehavior: Bound). Data is passed via setInitialProperties.
-    auto* creationCtx = compContext ? compContext : parentContext;
-    auto* obj = m_delegate->beginCreate(creationCtx);
+    auto* obj = m_delegate->beginCreate(compContext);
     entry.item = qobject_cast<QQuickItem*>(obj);
 
     if (!entry.item) {
         if (obj)
             m_delegate->completeCreate();
         delete obj;
-        delete entry.context;
-        entry.context = nullptr;
         return entry;
     }
 
-    // Set initial properties to satisfy required property declarations
+    // Build initial properties from model data
+    const auto index = m_model->index(modelIndex, 0);
+    QVariantMap initialProps;
+    bool hasModelData = false;
+
+    for (auto it = roleNames.constBegin(); it != roleNames.constEnd(); ++it) {
+        const auto name = QString::fromUtf8(it.value());
+        initialProps.insert(name, m_model->data(index, it.key()));
+        if (name == QStringLiteral("modelData"))
+            hasModelData = true;
+    }
+    initialProps.insert(QStringLiteral("index"), modelIndex);
+
+    if (!hasModelData) {
+        const auto role = roleNames.isEmpty() ? Qt::DisplayRole : roleNames.constBegin().key();
+        initialProps.insert(QStringLiteral("modelData"), m_model->data(index, role));
+    }
+
     m_delegate->setInitialProperties(entry.item, initialProps);
 
     entry.item->setParentItem(this);
@@ -706,14 +693,10 @@ void LazyListView::destroyDelegate(DelegateEntry& entry) {
         entry.item->deleteLater();
         entry.item = nullptr;
     }
-    if (entry.context) {
-        entry.context->deleteLater();
-        entry.context = nullptr;
-    }
 }
 
 void LazyListView::updateDelegateData(DelegateEntry& entry) {
-    if (!m_model)
+    if (!m_model || !entry.item)
         return;
 
     const auto roleNames = m_model->roleNames();
@@ -722,27 +705,16 @@ void LazyListView::updateDelegateData(DelegateEntry& entry) {
 
     for (auto it = roleNames.constBegin(); it != roleNames.constEnd(); ++it) {
         const auto name = QString::fromUtf8(it.value());
-        const auto value = m_model->data(index, it.key());
-        if (entry.context)
-            entry.context->setContextProperty(name, value);
-        if (entry.item)
-            entry.item->setProperty(name.toUtf8().constData(), value);
+        entry.item->setProperty(name.toUtf8().constData(), m_model->data(index, it.key()));
         if (name == QStringLiteral("modelData"))
             hasModelData = true;
     }
 
-    if (entry.context)
-        entry.context->setContextProperty(QStringLiteral("index"), entry.modelIndex);
-    if (entry.item)
-        entry.item->setProperty("index", entry.modelIndex);
+    entry.item->setProperty("index", entry.modelIndex);
 
     if (!hasModelData) {
         const auto role = roleNames.isEmpty() ? Qt::DisplayRole : roleNames.constBegin().key();
-        const auto value = m_model->data(index, role);
-        if (entry.context)
-            entry.context->setContextProperty(QStringLiteral("modelData"), value);
-        if (entry.item)
-            entry.item->setProperty("modelData", value);
+        entry.item->setProperty("modelData", m_model->data(index, role));
     }
 }
 
@@ -824,10 +796,10 @@ void LazyListView::onRowsInserted(const QModelIndex& parent, int first, int last
         int newIdx = it.key() >= first ? it.key() + insertCount : it.key();
         auto entry = std::move(it.value());
         entry.modelIndex = newIdx;
-        if (entry.context)
-            entry.context->setContextProperty(QStringLiteral("index"), newIdx);
-        if (entry.item)
+        if (entry.item) {
+            entry.item->setProperty("index", newIdx);
             m_itemToIndex[entry.item] = newIdx;
+        }
         shifted.insert(newIdx, std::move(entry));
     }
     m_delegates = std::move(shifted);
@@ -894,10 +866,10 @@ void LazyListView::onRowsRemoved(const QModelIndex& parent, int first, int last)
         int newIdx = it.key() > last ? it.key() - removeCount : it.key();
         auto entry = std::move(it.value());
         entry.modelIndex = newIdx;
-        if (entry.context)
-            entry.context->setContextProperty(QStringLiteral("index"), newIdx);
-        if (entry.item)
+        if (entry.item) {
+            entry.item->setProperty("index", newIdx);
             m_itemToIndex[entry.item] = newIdx;
+        }
         shifted.insert(newIdx, std::move(entry));
     }
     m_delegates = std::move(shifted);
@@ -939,10 +911,10 @@ void LazyListView::onRowsMoved(const QModelIndex& parent, int start, int end, co
 
         auto entry = std::move(it.value());
         entry.modelIndex = newIdx;
-        if (entry.context)
-            entry.context->setContextProperty(QStringLiteral("index"), newIdx);
-        if (entry.item)
+        if (entry.item) {
+            entry.item->setProperty("index", newIdx);
             m_itemToIndex[entry.item] = newIdx;
+        }
         remapped.insert(newIdx, std::move(entry));
     }
     m_delegates = std::move(remapped);

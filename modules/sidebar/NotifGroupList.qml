@@ -17,8 +17,6 @@ LazyListView {
     required property Flickable container
     required property DrawerVisibilities visibilities
 
-    readonly property real nonAnimHeight: layoutHeight
-
     signal requestToggleExpand(expand: bool)
 
     Layout.fillWidth: true
@@ -27,10 +25,14 @@ LazyListView {
     spacing: Math.round(Appearance.spacing.small / 2)
     asynchronous: true
 
+    cacheBuffer: 200
     removeDuration: Appearance.anim.durations.normal
 
     useCustomViewport: true
-    viewport: Qt.rect(0, container.contentY - mapToItem(container.contentItem, 0, 0).y, width, container.height)
+    viewport: {
+        tWatcher.transform; // mapToItem is not reactive so use this to trigger updates
+        return Qt.rect(0, container.contentY - mapToItem(container.contentItem, 0, 0).y, width, container.height);
+    }
 
     model: ScriptModel {
         values: root.expanded ? root.notifs : root.notifs.slice(0, Config.notifs.groupPreviewNum + 1)
@@ -144,5 +146,12 @@ LazyListView {
                 }
             }
         }
+    }
+
+    TransformWatcher {
+        id: tWatcher
+
+        a: root.container.contentItem
+        b: root
     }
 }

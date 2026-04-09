@@ -20,6 +20,7 @@ LazyListView {
 
     spacing: Appearance.spacing.small
     cacheBuffer: 200
+    asynchronous: true
 
     useCustomViewport: true
     viewport: Qt.rect(0, container.contentY, width, container.height)

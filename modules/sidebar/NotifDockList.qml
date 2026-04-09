@@ -23,7 +23,13 @@ LazyListView {
     cacheBuffer: 400
     asynchronous: true
 
-    onViewportAdjustNeeded: d => container.contentY += d
+    onViewportAdjustNeeded: d => {
+        if (contentYAnim.running)
+            contentYAnim.complete();
+        contentYAnim.to = Math.max(0, container.contentY + d);
+        contentYAnim.start();
+    }
+
     useCustomViewport: true
     viewport: Qt.rect(0, container.contentY, width, container.height)
 
@@ -54,7 +60,7 @@ LazyListView {
                 clearTimer.start();
             }
 
-            LazyListView.trackViewport: notifInner.expanded || notifInner.nonAnimHeight < notifInner.implicitHeight
+            LazyListView.trackViewport: !notifInner.expanded && notifInner.nonAnimHeight < notifInner.implicitHeight
             LazyListView.preferredHeight: closed ? 0 : notifInner.nonAnimHeight
             LazyListView.visibleHeight: notifInner.implicitHeight
             implicitHeight: notifInner.implicitHeight
@@ -146,5 +152,14 @@ LazyListView {
                 }
             }
         }
+    }
+
+    Anim {
+        id: contentYAnim
+
+        target: root.container
+        property: "contentY"
+        duration: Appearance.anim.durations.expressiveDefaultSpatial
+        easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
     }
 }

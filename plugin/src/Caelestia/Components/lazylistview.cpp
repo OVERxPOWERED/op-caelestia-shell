@@ -507,7 +507,19 @@ QRectF LazyListView::effectiveViewport() const {
             vp = QRectF(vp.x(), top, vp.width(), bottom - top);
     }
 
-    return vp.adjusted(0, -m_cacheBuffer, 0, m_cacheBuffer);
+    vp.adjust(0, -m_cacheBuffer, 0, m_cacheBuffer);
+
+    // Trim the cache-buffered viewport to [0, layoutHeight]. No items exist outside
+    // those bounds, so extending past them wastes budget and can cause edge thrashing
+    // when a large cache buffer reaches the opposite end of the content.
+    if (m_layoutHeight > 0) {
+        const qreal top = std::max(vp.y(), 0.0);
+        const qreal bottom = std::min(vp.y() + vp.height(), m_layoutHeight);
+        if (top < bottom)
+            vp = QRectF(vp.x(), top, vp.width(), bottom - top);
+    }
+
+    return vp;
 }
 
 std::pair<int, int> LazyListView::computeVisibleRange() const {

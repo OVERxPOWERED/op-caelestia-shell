@@ -177,6 +177,7 @@ private:
         QQuickItem* item = nullptr;
         bool pendingRemoval = false;
         bool pendingInsert = false;
+        bool readyDelayStarted = false;
     };
 
     // Layout

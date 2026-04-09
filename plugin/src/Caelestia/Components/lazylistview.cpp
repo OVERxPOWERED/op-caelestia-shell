@@ -344,23 +344,52 @@ void LazyListView::updatePolish() {
     if (!m_componentComplete || !m_model || !m_delegate)
         return;
 
-    // Flush pending inserts from the previous frame — make items visible
-    // and clear the adding flag so enter animations begin.
+    // Flush pending inserts — make items visible and clear the adding flag
+    // so enter animations begin. When readyDelay > 0 the entire insert is
+    // deferred so delegates have time to lay out before appearing.
     for (auto& entry : m_delegates) {
         if (!entry.pendingInsert || !entry.item)
             continue;
+
+        if (m_readyDelay > 0) {
+            if (!entry.readyDelayStarted) {
+                entry.readyDelayStarted = true;
+                auto* item = entry.item;
+                QTimer::singleShot(m_readyDelay, this, [this, item] {
+                    auto indexIt = m_itemToIndex.find(item);
+                    if (indexIt == m_itemToIndex.end())
+                        return;
+                    const int idx = indexIt.value();
+                    auto it = m_delegates.find(idx);
+                    if (it == m_delegates.end() || it->item != item || !it->pendingInsert)
+                        return;
+
+                    it->pendingInsert = false;
+                    it->readyDelayStarted = false;
+
+                    // Position correctly before making visible
+                    if (idx >= 0 && idx < static_cast<int>(m_layout.size()))
+                        item->setY(m_layout[idx].targetY - m_contentY);
+
+                    item->setVisible(true);
+                    auto* att =
+                        qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(item, false));
+                    if (att) {
+                        att->setAdding(false);
+                        att->setReady(true);
+                    }
+                    polish();
+                });
+            }
+            continue;
+        }
+
         entry.pendingInsert = false;
         entry.item->setVisible(true);
         auto* att = qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(entry.item, false));
         if (att) {
             att->setAdding(false);
-            if (m_readyDelay > 0) {
-                QTimer::singleShot(m_readyDelay, att, [att] {
-                    att->setReady(true);
-                });
-            } else {
-                att->setReady(true);
-            }
+            att->setReady(true);
         }
     }
 

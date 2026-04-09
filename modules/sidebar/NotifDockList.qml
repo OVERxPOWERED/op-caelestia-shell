@@ -120,6 +120,8 @@ LazyListView {
             }
 
             Behavior on y {
+                enabled: notif.LazyListView.ready
+
                 Anim {
                     duration: Appearance.anim.durations.expressiveDefaultSpatial
                     easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial

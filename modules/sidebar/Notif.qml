@@ -155,13 +155,51 @@ StyledRect {
     }
 
     component WrappedLoader: Loader {
+        id: comp
+
         required property bool shouldBeActive
 
-        opacity: shouldBeActive ? 1 : 0
-        active: opacity > 0
+        active: false
+        opacity: 0
 
-        Behavior on opacity {
-            Anim {}
+        // Makes the loader load on the same frame shouldBeActive becomes true, which ensures size is set
+        states: State {
+            name: "active"
+            when: comp.shouldBeActive
+
+            PropertyChanges {
+                comp.opacity: 1
+                comp.active: true
+            }
         }
+
+        transitions: [
+            Transition {
+                from: ""
+                to: "active"
+
+                SequentialAnimation {
+                    PropertyAction {
+                        property: "active"
+                    }
+                    Anim {
+                        property: "opacity"
+                    }
+                }
+            },
+            Transition {
+                from: "active"
+                to: ""
+
+                SequentialAnimation {
+                    Anim {
+                        property: "opacity"
+                    }
+                    PropertyAction {
+                        property: "active"
+                    }
+                }
+            }
+        ]
     }
 }

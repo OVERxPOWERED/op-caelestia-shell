@@ -16,6 +16,7 @@ class LazyListViewAttached : public QObject {
 
     Q_PROPERTY(qreal preferredHeight READ preferredHeight WRITE setPreferredHeight NOTIFY preferredHeightChanged)
     Q_PROPERTY(qreal visibleHeight READ visibleHeight WRITE setVisibleHeight NOTIFY visibleHeightChanged)
+    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(bool adding READ adding NOTIFY addingChanged)
     Q_PROPERTY(bool removing READ removing NOTIFY removingChanged)
     Q_PROPERTY(bool trackViewport READ trackViewport WRITE setTrackViewport NOTIFY trackViewportChanged)
@@ -29,6 +30,9 @@ public:
     [[nodiscard]] qreal visibleHeight() const;
     void setVisibleHeight(qreal height);
 
+    [[nodiscard]] bool ready() const;
+    void setReady(bool ready);
+
     [[nodiscard]] bool adding() const;
     void setAdding(bool adding);
 
@@ -41,6 +45,7 @@ public:
 signals:
     void preferredHeightChanged();
     void visibleHeightChanged();
+    void readyChanged();
     void addingChanged();
     void removingChanged();
     void trackViewportChanged();
@@ -48,6 +53,7 @@ signals:
 private:
     qreal m_preferredHeight = -1;
     qreal m_visibleHeight = -1;
+    bool m_ready = false;
     bool m_adding = false;
     bool m_removing = false;
     bool m_trackViewport = false;
@@ -79,8 +85,9 @@ class LazyListView : public QQuickItem {
     // Async
     Q_PROPERTY(bool asynchronous READ asynchronous WRITE setAsynchronous NOTIFY asynchronousChanged)
 
-    // Remove Animation
+    // Animation Durations
     Q_PROPERTY(int removeDuration READ removeDuration WRITE setRemoveDuration NOTIFY removeDurationChanged)
+    Q_PROPERTY(int readyDelay READ readyDelay WRITE setReadyDelay NOTIFY readyDelayChanged)
 
     // State
     Q_PROPERTY(int count READ count NOTIFY countChanged)
@@ -126,9 +133,12 @@ public:
     [[nodiscard]] bool asynchronous() const;
     void setAsynchronous(bool async);
 
-    // Remove Animation
+    // Animation Durations
     [[nodiscard]] int removeDuration() const;
     void setRemoveDuration(int duration);
+
+    [[nodiscard]] int readyDelay() const;
+    void setReadyDelay(int delay);
 
     // State
     [[nodiscard]] int count() const;
@@ -145,6 +155,7 @@ signals:
     void estimatedHeightChanged();
     void asynchronousChanged();
     void removeDurationChanged();
+    void readyDelayChanged();
     void countChanged();
     void viewportAdjustNeeded(qreal delta);
 
@@ -164,6 +175,7 @@ private:
         int modelIndex = -1;
         QQuickItem* item = nullptr;
         bool pendingRemoval = false;
+        bool pendingInsert = false;
     };
 
     // Layout
@@ -173,6 +185,7 @@ private:
     [[nodiscard]] qreal effectiveEstimatedHeight() const;
     [[nodiscard]] static qreal delegateHeight(QQuickItem* item);
     [[nodiscard]] static qreal delegateVisibleHeight(QQuickItem* item);
+    [[nodiscard]] static bool isDelegateReady(QQuickItem* item);
     void trackHeight(qreal height);
     void untrackHeight(qreal height);
 
@@ -212,6 +225,7 @@ private:
     bool m_asynchronous = false;
 
     int m_removeDuration = 300;
+    int m_readyDelay = 0;
 
     QVector<ItemRecord> m_layout;
     QHash<int, DelegateEntry> m_delegates;

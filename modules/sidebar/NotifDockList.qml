@@ -19,6 +19,7 @@ LazyListView {
     implicitHeight: contentHeight
 
     spacing: Appearance.spacing.small
+    readyDelay: 1
     cacheBuffer: 400
     asynchronous: true
 

@@ -25,6 +25,7 @@ LazyListView {
     spacing: Math.round(Appearance.spacing.small / 2)
     asynchronous: true
 
+    readyDelay: 1
     cacheBuffer: 800
     removeDuration: Appearance.anim.durations.normal
 

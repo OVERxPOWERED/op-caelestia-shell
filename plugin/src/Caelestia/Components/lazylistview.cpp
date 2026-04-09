@@ -492,10 +492,22 @@ void LazyListView::relayout() {
 }
 
 QRectF LazyListView::effectiveViewport() const {
+    QRectF vp;
     if (m_useCustomViewport)
-        return m_viewport.adjusted(0, -m_cacheBuffer, 0, m_cacheBuffer);
+        vp = m_viewport;
+    else
+        vp = QRectF(0, m_contentY, width(), height());
 
-    return QRectF(0, m_contentY - m_cacheBuffer, width(), height() + 2 * m_cacheBuffer);
+    // During Flickable overshoot the viewport can extend entirely beyond content bounds,
+    // causing all delegates to be culled. Clamp so it always overlaps [0, layoutHeight].
+    if (m_layoutHeight > 0) {
+        const qreal top = std::min(vp.y(), m_layoutHeight);
+        const qreal bottom = std::max(vp.y() + vp.height(), 0.0);
+        if (bottom > top)
+            vp = QRectF(vp.x(), top, vp.width(), bottom - top);
+    }
+
+    return vp.adjusted(0, -m_cacheBuffer, 0, m_cacheBuffer);
 }
 
 std::pair<int, int> LazyListView::computeVisibleRange() const {

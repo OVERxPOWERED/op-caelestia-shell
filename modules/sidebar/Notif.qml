@@ -26,9 +26,10 @@ StyledRect {
         return expanded ? c : Qt.alpha(c, 0);
     }
 
+    state: expanded ? "expanded" : ""
+
     states: State {
         name: "expanded"
-        when: root.expanded
 
         PropertyChanges {
             summary.anchors.margins: Appearance.padding.normal
@@ -156,7 +157,6 @@ StyledRect {
     component WrappedLoader: Loader {
         required property bool shouldBeActive
 
-        asynchronous: true
         opacity: shouldBeActive ? 1 : 0
         active: opacity > 0
 

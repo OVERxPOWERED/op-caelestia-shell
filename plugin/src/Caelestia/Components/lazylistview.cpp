@@ -1,7 +1,6 @@
 #include "lazylistview.hpp"
 
 #include <algorithm>
-#include <qpropertyanimation.h>
 #include <qtimer.h>
 
 namespace {
@@ -268,52 +267,6 @@ qreal LazyListView::delegateVisibleHeight(QQuickItem* item) {
     return item->implicitHeight();
 }
 
-// --- Add Animation ---
-
-int LazyListView::addDuration() const {
-    return m_addDuration;
-}
-
-void LazyListView::setAddDuration(int duration) {
-    if (m_addDuration == duration)
-        return;
-    m_addDuration = duration;
-    emit addDurationChanged();
-}
-
-QEasingCurve LazyListView::addCurve() const {
-    return m_addCurve;
-}
-
-void LazyListView::setAddCurve(const QEasingCurve& curve) {
-    if (m_addCurve == curve)
-        return;
-    m_addCurve = curve;
-    emit addCurveChanged();
-}
-
-qreal LazyListView::addFromOpacity() const {
-    return m_addFromOpacity;
-}
-
-void LazyListView::setAddFromOpacity(qreal opacity) {
-    if (qFuzzyCompare(m_addFromOpacity, opacity))
-        return;
-    m_addFromOpacity = opacity;
-    emit addFromOpacityChanged();
-}
-
-qreal LazyListView::addFromScale() const {
-    return m_addFromScale;
-}
-
-void LazyListView::setAddFromScale(qreal scale) {
-    if (qFuzzyCompare(m_addFromScale, scale))
-        return;
-    m_addFromScale = scale;
-    emit addFromScaleChanged();
-}
-
 // --- Remove Animation ---
 
 int LazyListView::removeDuration() const {
@@ -327,71 +280,10 @@ void LazyListView::setRemoveDuration(int duration) {
     emit removeDurationChanged();
 }
 
-QEasingCurve LazyListView::removeCurve() const {
-    return m_removeCurve;
-}
-
-void LazyListView::setRemoveCurve(const QEasingCurve& curve) {
-    if (m_removeCurve == curve)
-        return;
-    m_removeCurve = curve;
-    emit removeCurveChanged();
-}
-
-qreal LazyListView::removeToOpacity() const {
-    return m_removeToOpacity;
-}
-
-void LazyListView::setRemoveToOpacity(qreal opacity) {
-    if (qFuzzyCompare(m_removeToOpacity, opacity))
-        return;
-    m_removeToOpacity = opacity;
-    emit removeToOpacityChanged();
-}
-
-qreal LazyListView::removeToScale() const {
-    return m_removeToScale;
-}
-
-void LazyListView::setRemoveToScale(qreal scale) {
-    if (qFuzzyCompare(m_removeToScale, scale))
-        return;
-    m_removeToScale = scale;
-    emit removeToScaleChanged();
-}
-
-// --- Move Animation ---
-
-int LazyListView::moveDuration() const {
-    return m_moveDuration;
-}
-
-void LazyListView::setMoveDuration(int duration) {
-    if (m_moveDuration == duration)
-        return;
-    m_moveDuration = duration;
-    emit moveDurationChanged();
-}
-
-QEasingCurve LazyListView::moveCurve() const {
-    return m_moveCurve;
-}
-
-void LazyListView::setMoveCurve(const QEasingCurve& curve) {
-    if (m_moveCurve == curve)
-        return;
-    m_moveCurve = curve;
-    emit moveCurveChanged();
-}
-
 // --- State ---
 
 int LazyListView::count() const {
     return m_model ? m_model->rowCount() : 0;
-}
-
-bool LazyListView::settled() const {
-    return m_activeAnimations == 0;
 }
 
 // --- QQuickItem Overrides ---
@@ -589,7 +481,7 @@ void LazyListView::syncDelegates() {
     const auto vp = effectiveViewport();
     QList<int> toRemove;
     for (auto it = m_delegates.begin(); it != m_delegates.end(); ++it) {
-        if (visibleIndices.contains(it.key()) || it->animation)
+        if (visibleIndices.contains(it.key()))
             continue;
         if (!it->item) {
             toRemove.append(it.key());
@@ -806,15 +698,6 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
 }
 
 void LazyListView::destroyDelegate(DelegateEntry& entry) {
-    if (entry.animation) {
-        // Disconnect before stopping to prevent re-entrant onAnimationFinished
-        disconnect(entry.animation, &QAbstractAnimation::finished, this, &LazyListView::onAnimationFinished);
-        entry.animation->stop();
-        entry.animation = nullptr;
-        --m_activeAnimations;
-        if (m_activeAnimations == 0)
-            emit settledChanged();
-    }
     if (entry.attachedConnection)
         disconnect(entry.attachedConnection);
     if (entry.item) {
@@ -908,15 +791,9 @@ void LazyListView::resetContent() {
         destroyDelegate(entry);
     m_dyingDelegates.clear();
 
-    if (m_activeAnimations != 0) {
-        m_activeAnimations = 0;
-        emit settledChanged();
-    }
-
     // Reset pending state
     m_knownHeightSum = 0;
     m_knownHeightCount = 0;
-    m_pendingAddAnimations.clear();
 
     // Rebuild layout from model
     m_layout.clear();
@@ -955,10 +832,6 @@ void LazyListView::onRowsInserted(const QModelIndex& parent, int first, int last
     }
     m_delegates = std::move(shifted);
 
-    // Queue add animations and mark displacement
-    for (int i = first; i <= last; ++i)
-        m_pendingAddAnimations.insert(i);
-
     emit countChanged();
     polish();
 }
@@ -975,7 +848,6 @@ void LazyListView::onRowsAboutToBeRemoved(const QModelIndex& parent, int first, 
         if (entry.item)
             m_itemToIndex.remove(entry.item);
         entry.pendingRemoval = true;
-        stopAnimation(entry);
 
         if (m_removeDuration > 0 && entry.item) {
             auto* attached =
@@ -1127,131 +999,6 @@ void LazyListView::onModelReset() {
     }
 
     resetContent();
-}
-
-// --- Animation ---
-
-void LazyListView::startAddAnimation(DelegateEntry& entry) {
-    if (!entry.item || m_addDuration <= 0)
-        return;
-
-    stopAnimation(entry);
-
-    auto* group = new QParallelAnimationGroup(this);
-
-    if (!qFuzzyCompare(m_addFromOpacity, 1.0)) {
-        auto* opacityAnim = new QPropertyAnimation(entry.item, "opacity");
-        opacityAnim->setDuration(m_addDuration);
-        opacityAnim->setEasingCurve(m_addCurve);
-        opacityAnim->setStartValue(m_addFromOpacity);
-        opacityAnim->setEndValue(1.0);
-        group->addAnimation(opacityAnim);
-        entry.item->setOpacity(m_addFromOpacity);
-    }
-
-    if (!qFuzzyCompare(m_addFromScale, 1.0)) {
-        auto* scaleAnim = new QPropertyAnimation(entry.item, "scale");
-        scaleAnim->setDuration(m_addDuration);
-        scaleAnim->setEasingCurve(m_addCurve);
-        scaleAnim->setStartValue(m_addFromScale);
-        scaleAnim->setEndValue(1.0);
-        group->addAnimation(scaleAnim);
-        entry.item->setScale(m_addFromScale);
-    }
-
-    if (group->animationCount() == 0) {
-        delete group;
-        return;
-    }
-
-    entry.animation = group;
-    ++m_activeAnimations;
-    if (m_activeAnimations == 1)
-        emit settledChanged();
-
-    connect(group, &QAbstractAnimation::finished, this, &LazyListView::onAnimationFinished);
-    group->start(QAbstractAnimation::DeleteWhenStopped);
-}
-
-void LazyListView::startRemoveAnimation(DelegateEntry& entry) {
-    if (!entry.item || m_removeDuration <= 0)
-        return;
-
-    stopAnimation(entry);
-
-    auto* group = new QParallelAnimationGroup(this);
-
-    if (!qFuzzyCompare(m_removeToOpacity, 1.0)) {
-        auto* opacityAnim = new QPropertyAnimation(entry.item, "opacity");
-        opacityAnim->setDuration(m_removeDuration);
-        opacityAnim->setEasingCurve(m_removeCurve);
-        opacityAnim->setStartValue(entry.item->opacity());
-        opacityAnim->setEndValue(m_removeToOpacity);
-        group->addAnimation(opacityAnim);
-    }
-
-    if (!qFuzzyCompare(m_removeToScale, 1.0)) {
-        auto* scaleAnim = new QPropertyAnimation(entry.item, "scale");
-        scaleAnim->setDuration(m_removeDuration);
-        scaleAnim->setEasingCurve(m_removeCurve);
-        scaleAnim->setStartValue(entry.item->scale());
-        scaleAnim->setEndValue(m_removeToScale);
-        group->addAnimation(scaleAnim);
-    }
-
-    if (group->animationCount() == 0) {
-        delete group;
-        return;
-    }
-
-    entry.animation = group;
-    ++m_activeAnimations;
-    if (m_activeAnimations == 1)
-        emit settledChanged();
-
-    connect(group, &QAbstractAnimation::finished, this, &LazyListView::onAnimationFinished);
-    group->start(QAbstractAnimation::DeleteWhenStopped);
-}
-
-void LazyListView::stopAnimation(DelegateEntry& entry) {
-    if (!entry.animation)
-        return;
-
-    entry.animation->stop();
-    entry.animation = nullptr;
-
-    --m_activeAnimations;
-    if (m_activeAnimations == 0)
-        emit settledChanged();
-}
-
-void LazyListView::onAnimationFinished() {
-    auto* group = qobject_cast<QParallelAnimationGroup*>(sender());
-
-    // Clear animation pointer from live delegates
-    for (auto& entry : m_delegates) {
-        if (entry.animation == group)
-            entry.animation = nullptr;
-    }
-
-    // Clean up dying delegates whose animation finished
-    m_dyingDelegates.erase(std::remove_if(m_dyingDelegates.begin(), m_dyingDelegates.end(),
-                               [this, group](DelegateEntry& entry) {
-                                   if (entry.animation == group) {
-                                       entry.animation = nullptr;
-                                       destroyDelegate(entry);
-                                       return true;
-                                   }
-                                   return false;
-                               }),
-        m_dyingDelegates.end());
-
-    --m_activeAnimations;
-    if (m_activeAnimations == 0)
-        emit settledChanged();
-
-    // Re-sync in case viewport changed during animation
-    polish();
 }
 
 } // namespace caelestia::components

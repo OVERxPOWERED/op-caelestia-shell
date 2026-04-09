@@ -1,10 +1,8 @@
 #pragma once
 
 #include <qabstractitemmodel.h>
-#include <qeasingcurve.h>
 #include <qhash.h>
 #include <qobject.h>
-#include <qparallelanimationgroup.h>
 #include <qqmlcomponent.h>
 #include <qqmlcontext.h>
 #include <qqmlintegration.h>
@@ -82,25 +80,11 @@ class LazyListView : public QQuickItem {
     // Async
     Q_PROPERTY(bool asynchronous READ asynchronous WRITE setAsynchronous NOTIFY asynchronousChanged)
 
-    // Add Animation
-    Q_PROPERTY(int addDuration READ addDuration WRITE setAddDuration NOTIFY addDurationChanged)
-    Q_PROPERTY(QEasingCurve addCurve READ addCurve WRITE setAddCurve NOTIFY addCurveChanged)
-    Q_PROPERTY(qreal addFromOpacity READ addFromOpacity WRITE setAddFromOpacity NOTIFY addFromOpacityChanged)
-    Q_PROPERTY(qreal addFromScale READ addFromScale WRITE setAddFromScale NOTIFY addFromScaleChanged)
-
     // Remove Animation
     Q_PROPERTY(int removeDuration READ removeDuration WRITE setRemoveDuration NOTIFY removeDurationChanged)
-    Q_PROPERTY(QEasingCurve removeCurve READ removeCurve WRITE setRemoveCurve NOTIFY removeCurveChanged)
-    Q_PROPERTY(qreal removeToOpacity READ removeToOpacity WRITE setRemoveToOpacity NOTIFY removeToOpacityChanged)
-    Q_PROPERTY(qreal removeToScale READ removeToScale WRITE setRemoveToScale NOTIFY removeToScaleChanged)
-
-    // Move/Displaced Animation
-    Q_PROPERTY(int moveDuration READ moveDuration WRITE setMoveDuration NOTIFY moveDurationChanged)
-    Q_PROPERTY(QEasingCurve moveCurve READ moveCurve WRITE setMoveCurve NOTIFY moveCurveChanged)
 
     // State
     Q_PROPERTY(int count READ count NOTIFY countChanged)
-    Q_PROPERTY(bool settled READ settled NOTIFY settledChanged)
 
 public:
     explicit LazyListView(QQuickItem* parent = nullptr);
@@ -143,43 +127,12 @@ public:
     [[nodiscard]] bool asynchronous() const;
     void setAsynchronous(bool async);
 
-    // Add Animation
-    [[nodiscard]] int addDuration() const;
-    void setAddDuration(int duration);
-
-    [[nodiscard]] QEasingCurve addCurve() const;
-    void setAddCurve(const QEasingCurve& curve);
-
-    [[nodiscard]] qreal addFromOpacity() const;
-    void setAddFromOpacity(qreal opacity);
-
-    [[nodiscard]] qreal addFromScale() const;
-    void setAddFromScale(qreal scale);
-
     // Remove Animation
     [[nodiscard]] int removeDuration() const;
     void setRemoveDuration(int duration);
 
-    [[nodiscard]] QEasingCurve removeCurve() const;
-    void setRemoveCurve(const QEasingCurve& curve);
-
-    [[nodiscard]] qreal removeToOpacity() const;
-    void setRemoveToOpacity(qreal opacity);
-
-    [[nodiscard]] qreal removeToScale() const;
-    void setRemoveToScale(qreal scale);
-
-    // Move Animation
-    [[nodiscard]] int moveDuration() const;
-    void setMoveDuration(int duration);
-
-    [[nodiscard]] QEasingCurve moveCurve() const;
-    void setMoveCurve(const QEasingCurve& curve);
-
     // State
     [[nodiscard]] int count() const;
-    [[nodiscard]] bool settled() const;
-
 signals:
     void modelChanged();
     void delegateChanged();
@@ -192,18 +145,8 @@ signals:
     void cacheBufferChanged();
     void estimatedHeightChanged();
     void asynchronousChanged();
-    void addDurationChanged();
-    void addCurveChanged();
-    void addFromOpacityChanged();
-    void addFromScaleChanged();
     void removeDurationChanged();
-    void removeCurveChanged();
-    void removeToOpacityChanged();
-    void removeToScaleChanged();
-    void moveDurationChanged();
-    void moveCurveChanged();
     void countChanged();
-    void settledChanged();
     void viewportAdjustNeeded(qreal delta);
 
 protected:
@@ -223,7 +166,6 @@ private:
         QQuickItem* item = nullptr;
         QQmlContext* context = nullptr;
         bool pendingRemoval = false;
-        QParallelAnimationGroup* animation = nullptr;
         QMetaObject::Connection attachedConnection;
     };
 
@@ -254,11 +196,6 @@ private:
     void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles);
     void onModelReset();
 
-    // Animation
-    void startAddAnimation(DelegateEntry& entry);
-    void startRemoveAnimation(DelegateEntry& entry);
-    void stopAnimation(DelegateEntry& entry);
-    void onAnimationFinished();
 
     // Members
     QAbstractItemModel* m_model = nullptr;
@@ -278,28 +215,15 @@ private:
     int m_knownHeightCount = 0;
     bool m_asynchronous = false;
 
-    int m_addDuration = 300;
-    QEasingCurve m_addCurve;
-    qreal m_addFromOpacity = 0;
-    qreal m_addFromScale = 1;
-
     int m_removeDuration = 300;
-    QEasingCurve m_removeCurve;
-    qreal m_removeToOpacity = 0;
-    qreal m_removeToScale = 1;
-
-    int m_moveDuration = 300;
-    QEasingCurve m_moveCurve;
 
     QVector<ItemRecord> m_layout;
     QHash<int, DelegateEntry> m_delegates;
     QHash<QQuickItem*, int> m_itemToIndex;
     QVector<DelegateEntry> m_dyingDelegates;
 
-    int m_activeAnimations = 0;
     bool m_componentComplete = false;
     bool m_relayoutPending = false;
-    QSet<int> m_pendingAddAnimations;
 
     QList<QMetaObject::Connection> m_modelConnections;
 };

@@ -26,21 +26,7 @@ LazyListView {
     useCustomViewport: true
     viewport: Qt.rect(0, container.contentY, width, container.height)
 
-    addDuration: Appearance.anim.durations.expressiveDefaultSpatial
-    addCurve.type: Easing.BezierSpline
-    addCurve.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-    addFromOpacity: 0
-    addFromScale: 0
-
     removeDuration: Appearance.anim.durations.normal
-    removeCurve.type: Easing.BezierSpline
-    removeCurve.bezierCurve: Appearance.anim.curves.standard
-    removeToOpacity: 0
-    removeToScale: 0.6
-
-    moveDuration: Appearance.anim.durations.expressiveDefaultSpatial
-    moveCurve.type: Easing.BezierSpline
-    moveCurve.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
 
     model: ScriptModel {
         values: {

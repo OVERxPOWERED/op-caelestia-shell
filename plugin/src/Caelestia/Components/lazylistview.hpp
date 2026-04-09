@@ -21,6 +21,7 @@ class LazyListViewAttached : public QObject {
     Q_PROPERTY(qreal visibleHeight READ visibleHeight WRITE setVisibleHeight NOTIFY visibleHeightChanged)
     Q_PROPERTY(bool adding READ adding NOTIFY addingChanged)
     Q_PROPERTY(bool removing READ removing NOTIFY removingChanged)
+    Q_PROPERTY(bool trackViewport READ trackViewport WRITE setTrackViewport NOTIFY trackViewportChanged)
 
 public:
     explicit LazyListViewAttached(QObject* parent = nullptr);
@@ -37,17 +38,22 @@ public:
     [[nodiscard]] bool removing() const;
     void setRemoving(bool removing);
 
+    [[nodiscard]] bool trackViewport() const;
+    void setTrackViewport(bool track);
+
 signals:
     void preferredHeightChanged();
     void visibleHeightChanged();
     void addingChanged();
     void removingChanged();
+    void trackViewportChanged();
 
 private:
     qreal m_preferredHeight = -1;
     qreal m_visibleHeight = -1;
     bool m_adding = false;
     bool m_removing = false;
+    bool m_trackViewport = false;
 };
 
 class LazyListView : public QQuickItem {
@@ -198,6 +204,7 @@ signals:
     void moveCurveChanged();
     void countChanged();
     void settledChanged();
+    void viewportAdjustNeeded(qreal delta);
 
 protected:
     void componentComplete() override;

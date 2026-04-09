@@ -62,6 +62,17 @@ void LazyListViewAttached::setRemoving(bool removing) {
     emit removingChanged();
 }
 
+bool LazyListViewAttached::trackViewport() const {
+    return m_trackViewport;
+}
+
+void LazyListViewAttached::setTrackViewport(bool track) {
+    if (m_trackViewport == track)
+        return;
+    m_trackViewport = track;
+    emit trackViewportChanged();
+}
+
 // --- LazyListView ---
 
 LazyListView::LazyListView(QQuickItem* parent)
@@ -628,11 +639,21 @@ void LazyListView::syncDelegates() {
         if (entry.item) {
             const qreal h = delegateHeight(entry.item);
             if (!m_layout[i].heightKnown || !qFuzzyCompare(m_layout[i].height + 1.0, h + 1.0)) {
+                const qreal oldLayoutH = m_layout[i].heightKnown ? m_layout[i].height : effectiveEstimatedHeight();
                 if (m_layout[i].heightKnown)
                     untrackHeight(m_layout[i].height);
                 m_layout[i].height = h;
                 m_layout[i].heightKnown = true;
                 trackHeight(h);
+
+                // Compensate if tracked item materializes above viewport
+                auto* att =
+                    qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(entry.item, false));
+                if (att && att->trackViewport()) {
+                    const qreal vpTop = m_useCustomViewport ? m_viewport.y() : m_contentY;
+                    if (m_layout[i].targetY < vpTop)
+                        emit viewportAdjustNeeded(h - oldLayoutH);
+                }
                 layoutChanged = true;
             }
             entry.item->setY(m_layout[i].targetY - m_contentY);
@@ -745,6 +766,18 @@ LazyListView::DelegateEntry LazyListView::createDelegate(int modelIndex) {
             if (wasKnown)
                 untrackHeight(oldH);
             trackHeight(h);
+
+            // If this tracked item is above the viewport, emit a
+            // compensation delta so the consumer can adjust scroll.
+            if (wasKnown) {
+                auto* att = qobject_cast<LazyListViewAttached*>(qmlAttachedPropertiesObject<LazyListView>(item, false));
+                if (att && att->trackViewport()) {
+                    const qreal vpTop = m_useCustomViewport ? m_viewport.y() : m_contentY;
+                    if (m_layout[idx].targetY < vpTop)
+                        emit viewportAdjustNeeded(h - oldH);
+                }
+            }
+
             if (!m_relayoutPending) {
                 m_relayoutPending = true;
                 QTimer::singleShot(0, this, [this] {

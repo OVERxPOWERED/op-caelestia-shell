@@ -22,6 +22,7 @@ LazyListView {
     cacheBuffer: 400
     asynchronous: true
 
+    onViewportAdjustNeeded: d => container.contentY += d
     useCustomViewport: true
     viewport: Qt.rect(0, container.contentY, width, container.height)
 
@@ -66,6 +67,7 @@ LazyListView {
                 clearTimer.start();
             }
 
+            LazyListView.trackViewport: notifInner.expanded || notifInner.nonAnimHeight < notifInner.implicitHeight
             LazyListView.preferredHeight: closed ? 0 : notifInner.nonAnimHeight
             LazyListView.visibleHeight: notifInner.implicitHeight
             implicitHeight: notifInner.implicitHeight

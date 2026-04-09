@@ -65,8 +65,8 @@ LazyListView {
             Component.onCompleted: modelData?.lock(this)
             Component.onDestruction: modelData?.unlock(this)
 
-            LazyListView.preferredHeight: modelData?.closed ? 0 : notifInner.nonAnimHeight
-            LazyListView.visibleHeight: modelData?.closed ? 0 : notifInner.implicitHeight
+            LazyListView.preferredHeight: modelData?.closed || LazyListView.removing ? 0 : notifInner.nonAnimHeight
+            LazyListView.visibleHeight: modelData?.closed || LazyListView.removing ? 0 : notifInner.implicitHeight
             implicitHeight: notifInner.implicitHeight
 
             opacity: LazyListView.removing || LazyListView.adding ? 0 : 1

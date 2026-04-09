@@ -367,9 +367,29 @@ void LazyListView::updatePolish() {
                     it->pendingInsert = false;
                     it->readyDelayStarted = false;
 
-                    // Position correctly before making visible
-                    if (idx >= 0 && idx < static_cast<int>(m_layout.size()))
-                        item->setY(m_layout[idx].targetY - m_contentY);
+                    // Set initial y to visual position (based on current visible heights)
+                    if (idx >= 0 && idx < static_cast<int>(m_layout.size())) {
+                        qreal visualY = 0;
+                        bool hasVisItem = false;
+                        for (int i = 0; i < static_cast<int>(m_layout.size()); ++i) {
+                            qreal h;
+                            auto dit = m_delegates.find(i);
+                            if (dit != m_delegates.end() && dit->item)
+                                h = delegateVisibleHeight(dit->item);
+                            else
+                                h = m_layout[i].heightKnown ? m_layout[i].height : effectiveEstimatedHeight();
+                            if (h > 0) {
+                                if (hasVisItem)
+                                    visualY += m_spacing;
+                                hasVisItem = true;
+                            }
+                            if (i == idx)
+                                break;
+                            if (h > 0)
+                                visualY += h;
+                        }
+                        item->setY(visualY - m_contentY);
+                    }
 
                     item->setVisible(true);
                     auto* att =
@@ -378,6 +398,11 @@ void LazyListView::updatePolish() {
                         att->setAdding(false);
                         att->setReady(true);
                     }
+
+                    // Animate from visual position to layout position
+                    if (idx >= 0 && idx < static_cast<int>(m_layout.size()))
+                        item->setProperty("y", m_layout[idx].targetY - m_contentY);
+
                     polish();
                 });
             }

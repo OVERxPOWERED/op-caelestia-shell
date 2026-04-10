@@ -50,9 +50,8 @@ class GlobalConfig : public ConfigObject {
     Q_PROPERTY(AdvancedConfig* advanced READ advanced CONSTANT)
 
 public:
-    explicit GlobalConfig(QObject* parent = nullptr);
-
     static GlobalConfig* instance();
+    static GlobalConfig* create(QQmlEngine*, QJSEngine*);
 
     [[nodiscard]] AdvancedConfig* advanced() const { return m_advanced; }
 
@@ -60,6 +59,8 @@ public:
     Q_INVOKABLE void reload();
 
 private:
+    explicit GlobalConfig(QObject* parent = nullptr);
+
     AdvancedConfig* m_advanced = nullptr;
 };
 

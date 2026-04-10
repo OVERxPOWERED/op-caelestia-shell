@@ -12,12 +12,13 @@ set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qml")
 qt_standard_project_setup(REQUIRES 6.9)
 
 function(qml_module arg_TARGET)
-    cmake_parse_arguments(PARSE_ARGV 1 arg "" "URI" "SOURCES;LIBRARIES")
+    cmake_parse_arguments(PARSE_ARGV 1 arg "" "URI" "SOURCES;QML_FILES;LIBRARIES")
 
     qt_add_qml_module(${arg_TARGET}
         URI ${arg_URI}
         VERSION ${VERSION}
         SOURCES ${arg_SOURCES}
+        QML_FILES ${arg_QML_FILES}
     )
 
     qt_query_qml_module(${arg_TARGET}
@@ -58,6 +59,7 @@ qml_module(caelestia
 )
 
 add_subdirectory(Components)
+add_subdirectory(Config)
 add_subdirectory(Internal)
 add_subdirectory(Models)
 add_subdirectory(Services)

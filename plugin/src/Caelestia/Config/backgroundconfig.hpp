@@ -8,6 +8,8 @@ namespace caelestia::config {
 
 class DesktopClockBackground : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, enabled, false)
     CONFIG_PROPERTY(qreal, opacity, 0.7)
     CONFIG_PROPERTY(bool, blur, true)
@@ -19,6 +21,8 @@ public:
 
 class DesktopClockShadow : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_PROPERTY(qreal, opacity, 0.7)
     CONFIG_PROPERTY(qreal, blur, 0.4)
@@ -30,6 +34,8 @@ public:
 
 class DesktopClock : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, enabled, false)
     CONFIG_PROPERTY(qreal, scale, 1.0)
     CONFIG_PROPERTY(QString, position, QStringLiteral("bottom-right"))
@@ -46,6 +52,8 @@ public:
 
 class BackgroundVisualiser : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, enabled, false)
     CONFIG_PROPERTY(bool, autoHide, true)
     CONFIG_PROPERTY(bool, blur, false)
@@ -59,6 +67,8 @@ public:
 
 class BackgroundConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_PROPERTY(bool, wallpaperEnabled, true)
     CONFIG_SUBOBJECT(DesktopClock, desktopClock)

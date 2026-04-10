@@ -10,6 +10,8 @@ namespace caelestia::config {
 
 class GeneralApps : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(QStringList, terminal, { QStringLiteral("foot") })
     CONFIG_PROPERTY(QStringList, audio, { QStringLiteral("pavucontrol") })
     CONFIG_PROPERTY(QStringList, playback, { QStringLiteral("mpv") })
@@ -22,6 +24,8 @@ public:
 
 class GeneralIdle : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, lockBeforeSleep, true)
     CONFIG_PROPERTY(bool, inhibitWhenAudio, true)
     CONFIG_PROPERTY(QVariantList, timeouts)
@@ -33,6 +37,8 @@ public:
 
 class GeneralBattery : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(QVariantList, warnLevels)
     CONFIG_PROPERTY(int, criticalLevel, 3)
 
@@ -43,6 +49,8 @@ public:
 
 class GeneralConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(QString, logo)
     CONFIG_PROPERTY(QStringList, excludedScreens)
     CONFIG_SUBOBJECT(GeneralApps, apps)

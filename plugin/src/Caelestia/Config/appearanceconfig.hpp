@@ -15,6 +15,8 @@ class AnimDurationTokens;
 
 class AppearanceRounding : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(qreal, scale, 1)
 
     Q_PROPERTY(int small READ small NOTIFY valuesChanged)
@@ -41,6 +43,8 @@ private:
 
 class AppearanceSpacing : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(qreal, scale, 1)
 
     Q_PROPERTY(int small READ small NOTIFY valuesChanged)
@@ -69,6 +73,8 @@ private:
 
 class AppearancePadding : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(qreal, scale, 1)
 
     Q_PROPERTY(int small READ small NOTIFY valuesChanged)
@@ -97,6 +103,8 @@ private:
 
 class FontFamily : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(QString, sans, QStringLiteral("Rubik"))
     CONFIG_PROPERTY(QString, mono, QStringLiteral("CaskaydiaCove NF"))
     CONFIG_PROPERTY(QString, material, QStringLiteral("Material Symbols Rounded"))
@@ -109,6 +117,8 @@ public:
 
 class FontSize : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(qreal, scale, 1)
 
     Q_PROPERTY(int small READ small NOTIFY valuesChanged)
@@ -139,6 +149,8 @@ private:
 
 class AppearanceFont : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_SUBOBJECT(FontFamily, family)
     CONFIG_SUBOBJECT(FontSize, size)
 
@@ -151,6 +163,8 @@ public:
 
 class AnimDurations : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(qreal, scale, 1)
 
     Q_PROPERTY(int small READ small NOTIFY valuesChanged)
@@ -183,6 +197,8 @@ private:
 
 class AppearanceAnim : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(qreal, mediaGifSpeedAdjustment, 300)
     CONFIG_PROPERTY(qreal, sessionGifSpeed, 0.7)
     CONFIG_SUBOBJECT(AnimDurations, durations)
@@ -195,6 +211,8 @@ public:
 
 class AppearanceTransparency : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, enabled, false)
     CONFIG_PROPERTY(qreal, base, 0.85)
     CONFIG_PROPERTY(qreal, layers, 0.4)
@@ -206,6 +224,8 @@ public:
 
 class AppearanceConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_SUBOBJECT(AppearanceRounding, rounding)
     CONFIG_SUBOBJECT(AppearanceSpacing, spacing)
     CONFIG_SUBOBJECT(AppearancePadding, padding)

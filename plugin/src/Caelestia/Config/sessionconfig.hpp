@@ -9,6 +9,8 @@ namespace caelestia::config {
 
 class SessionIcons : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(QString, logout, QStringLiteral("logout"))
     CONFIG_PROPERTY(QString, shutdown, QStringLiteral("power_settings_new"))
     CONFIG_PROPERTY(QString, hibernate, QStringLiteral("downloading"))
@@ -21,6 +23,8 @@ public:
 
 class SessionCommands : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(QStringList, logout, { QStringLiteral("loginctl"), QStringLiteral("terminate-user"), QString() })
     CONFIG_PROPERTY(QStringList, shutdown, { QStringLiteral("systemctl"), QStringLiteral("poweroff") })
     CONFIG_PROPERTY(QStringList, hibernate, { QStringLiteral("systemctl"), QStringLiteral("hibernate") })
@@ -33,6 +37,8 @@ public:
 
 class SessionConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_PROPERTY(int, dragThreshold, 30)
     CONFIG_PROPERTY(bool, vimKeybinds, false)

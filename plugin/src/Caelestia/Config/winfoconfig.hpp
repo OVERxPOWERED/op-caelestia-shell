@@ -8,6 +8,7 @@ namespace caelestia::config {
 // All properties are in AdvancedConfig.winfo
 class WInfoConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
 
 public:
     explicit WInfoConfig(QObject* parent = nullptr)

@@ -10,6 +10,8 @@ namespace caelestia::config {
 
 class LauncherUseFuzzy : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, apps, false)
     CONFIG_PROPERTY(bool, actions, false)
     CONFIG_PROPERTY(bool, schemes, false)
@@ -23,6 +25,8 @@ public:
 
 class LauncherConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_PROPERTY(bool, showOnHover, false)
     CONFIG_PROPERTY(int, maxShown, 7)

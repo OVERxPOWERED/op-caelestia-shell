@@ -39,7 +39,6 @@ namespace caelestia::config {
 
 class ConfigObject : public QObject {
     Q_OBJECT
-    QML_ANONYMOUS
 
 public:
     explicit ConfigObject(QObject* parent = nullptr);

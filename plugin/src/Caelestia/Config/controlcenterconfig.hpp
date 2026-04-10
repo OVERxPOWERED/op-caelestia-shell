@@ -8,6 +8,7 @@ namespace caelestia::config {
 // All properties are in AdvancedConfig.controlCenter
 class ControlCenterConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
 
 public:
     explicit ControlCenterConfig(QObject* parent = nullptr)

@@ -6,6 +6,8 @@ namespace caelestia::config {
 
 class DashboardPerformance : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, showBattery, true)
     CONFIG_PROPERTY(bool, showGpu, true)
     CONFIG_PROPERTY(bool, showCpu, true)
@@ -20,6 +22,8 @@ public:
 
 class DashboardConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_PROPERTY(bool, showOnHover, true)
     CONFIG_PROPERTY(int, mediaUpdateInterval, 500)

@@ -8,6 +8,8 @@ namespace caelestia::config {
 
 class NotifsConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, expire, true)
     CONFIG_PROPERTY(QString, fullscreen, QStringLiteral("on"))
     CONFIG_PROPERTY(int, defaultExpireTimeout, 5000)

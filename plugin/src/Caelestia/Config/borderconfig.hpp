@@ -8,6 +8,8 @@ namespace caelestia::config {
 
 class BorderConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, thickness, 10)
     CONFIG_PROPERTY(int, rounding, 25)
 

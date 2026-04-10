@@ -10,6 +10,8 @@ namespace caelestia::config {
 
 class BarScrollActions : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, workspaces, true)
     CONFIG_PROPERTY(bool, volume, true)
     CONFIG_PROPERTY(bool, brightness, true)
@@ -21,6 +23,8 @@ public:
 
 class BarPopouts : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, activeWindow, true)
     CONFIG_PROPERTY(bool, tray, true)
     CONFIG_PROPERTY(bool, statusIcons, true)
@@ -32,6 +36,8 @@ public:
 
 class BarWorkspaces : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, shown, 5)
     CONFIG_PROPERTY(bool, activeIndicator, true)
     CONFIG_PROPERTY(bool, occupiedBg, false)
@@ -54,6 +60,8 @@ public:
 
 class BarActiveWindow : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, compact, false)
     CONFIG_PROPERTY(bool, inverted, false)
     CONFIG_PROPERTY(bool, showOnHover, true)
@@ -65,6 +73,8 @@ public:
 
 class BarTray : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, background, false)
     CONFIG_PROPERTY(bool, recolour, false)
     CONFIG_PROPERTY(bool, compact, false)
@@ -78,6 +88,8 @@ public:
 
 class BarStatus : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, showAudio, false)
     CONFIG_PROPERTY(bool, showMicrophone, false)
     CONFIG_PROPERTY(bool, showKbLayout, false)
@@ -94,6 +106,8 @@ public:
 
 class BarClock : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, background, false)
     CONFIG_PROPERTY(bool, showDate, false)
     CONFIG_PROPERTY(bool, showIcon, true)
@@ -105,6 +119,8 @@ public:
 
 class BarConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, persistent, true)
     CONFIG_PROPERTY(bool, showOnHover, true)
     CONFIG_PROPERTY(int, dragThreshold, 20)

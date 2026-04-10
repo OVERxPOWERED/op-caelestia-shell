@@ -6,6 +6,8 @@ namespace caelestia::config {
 
 class LockConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, recolourLogo, false)
     CONFIG_PROPERTY(bool, enableFprint, true)
     CONFIG_PROPERTY(int, maxFprintTries, 3)

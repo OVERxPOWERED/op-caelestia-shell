@@ -9,6 +9,8 @@ namespace caelestia::config {
 
 class UtilitiesToasts : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, configLoaded, true)
     CONFIG_PROPERTY(QString, fullscreen, QStringLiteral("off"))
     CONFIG_PROPERTY(bool, chargingChanged, true)
@@ -30,6 +32,8 @@ public:
 
 class UtilitiesVpn : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, enabled, false)
     CONFIG_PROPERTY(QVariantList, provider)
 
@@ -40,6 +44,8 @@ public:
 
 class UtilitiesConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_PROPERTY(int, maxToasts, 4)
     CONFIG_SUBOBJECT(UtilitiesToasts, toasts)

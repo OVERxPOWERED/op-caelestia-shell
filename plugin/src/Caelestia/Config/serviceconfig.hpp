@@ -9,6 +9,8 @@ namespace caelestia::config {
 
 class ServiceConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(QString, weatherLocation)
     CONFIG_PROPERTY(bool, useFahrenheit, false)
     CONFIG_PROPERTY(bool, useFahrenheitPerformance, false)

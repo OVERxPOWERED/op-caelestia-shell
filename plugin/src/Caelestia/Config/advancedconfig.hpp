@@ -8,6 +8,8 @@ namespace caelestia::config {
 
 class AnimCurves : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(QList<qreal>, emphasized)
     CONFIG_PROPERTY(QList<qreal>, emphasizedAccel)
     CONFIG_PROPERTY(QList<qreal>, emphasizedDecel)
@@ -34,6 +36,8 @@ public:
 
 class RoundingTokens : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, small, 12)
     CONFIG_PROPERTY(int, normal, 17)
     CONFIG_PROPERTY(int, large, 25)
@@ -46,6 +50,8 @@ public:
 
 class SpacingTokens : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, small, 7)
     CONFIG_PROPERTY(int, smaller, 10)
     CONFIG_PROPERTY(int, normal, 12)
@@ -59,6 +65,8 @@ public:
 
 class PaddingTokens : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, small, 5)
     CONFIG_PROPERTY(int, smaller, 7)
     CONFIG_PROPERTY(int, normal, 10)
@@ -72,6 +80,8 @@ public:
 
 class FontSizeTokens : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, small, 11)
     CONFIG_PROPERTY(int, smaller, 12)
     CONFIG_PROPERTY(int, normal, 13)
@@ -86,6 +96,8 @@ public:
 
 class AnimDurationTokens : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, small, 200)
     CONFIG_PROPERTY(int, normal, 400)
     CONFIG_PROPERTY(int, large, 600)
@@ -101,6 +113,8 @@ public:
 
 class AdvancedAppearance : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_SUBOBJECT(AnimCurves, curves)
     CONFIG_SUBOBJECT(RoundingTokens, rounding)
     CONFIG_SUBOBJECT(SpacingTokens, spacing)
@@ -121,6 +135,8 @@ public:
 
 class BarSizes : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, innerWidth, 40)
     CONFIG_PROPERTY(int, windowPreviewSize, 400)
     CONFIG_PROPERTY(int, trayMenuWidth, 300)
@@ -135,6 +151,8 @@ public:
 
 class AdvancedDashboard : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(bool, showDashboard, true)
     CONFIG_PROPERTY(bool, showMedia, true)
     CONFIG_PROPERTY(bool, showPerformance, true)
@@ -187,6 +205,8 @@ public:
 
 class LauncherSizes : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, itemWidth, 600)
     CONFIG_PROPERTY(int, itemHeight, 57)
     CONFIG_PROPERTY(int, wallpaperWidth, 280)
@@ -199,6 +219,8 @@ public:
 
 class NotifsSizes : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, width, 400)
     CONFIG_PROPERTY(int, image, 41)
     CONFIG_PROPERTY(int, badge, 20)
@@ -210,6 +232,8 @@ public:
 
 class OsdSizes : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, sliderWidth, 30)
     CONFIG_PROPERTY(int, sliderHeight, 150)
 
@@ -220,6 +244,8 @@ public:
 
 class SessionSizes : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, button, 80)
 
 public:
@@ -229,6 +255,8 @@ public:
 
 class SidebarSizes : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, width, 430)
 
 public:
@@ -238,6 +266,8 @@ public:
 
 class UtilitiesSizes : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(int, width, 430)
     CONFIG_PROPERTY(int, toastWidth, 430)
 
@@ -248,6 +278,8 @@ public:
 
 class LockSizes : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(qreal, heightMult, 0.7)
     CONFIG_PROPERTY(qreal, ratio, 16.0 / 9.0)
     CONFIG_PROPERTY(int, centerWidth, 600)
@@ -259,6 +291,8 @@ public:
 
 class WInfoSizes : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(qreal, heightMult, 0.7)
     CONFIG_PROPERTY(qreal, detailsWidth, 500)
 
@@ -269,6 +303,8 @@ public:
 
 class ControlCenterSizes : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(qreal, heightMult, 0.7)
     CONFIG_PROPERTY(qreal, ratio, 16.0 / 9.0)
 
@@ -279,6 +315,8 @@ public:
 
 class AdvancedConfig : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_SUBOBJECT(AdvancedAppearance, appearance)
     CONFIG_SUBOBJECT(BarSizes, bar)
     CONFIG_SUBOBJECT(AdvancedDashboard, dashboard)

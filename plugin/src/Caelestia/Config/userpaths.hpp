@@ -10,6 +10,8 @@ namespace caelestia::config {
 
 class UserPaths : public ConfigObject {
     Q_OBJECT
+    QML_ANONYMOUS
+
     CONFIG_PROPERTY(QString, wallpaperDir,
         QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QStringLiteral("/Wallpapers"))
     CONFIG_PROPERTY(QString, lyricsDir, QDir::homePath() + QStringLiteral("/Music/lyrics/"))

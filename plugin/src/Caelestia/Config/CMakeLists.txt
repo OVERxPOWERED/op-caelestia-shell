@@ -1,10 +1,10 @@
 qml_module(caelestia-config
     URI Caelestia.Config
     SOURCES
-        config.hpp config.cpp
-        configobject.hpp
+        config.cpp
+        configobject.cpp
+        appearanceconfig.cpp
         advancedconfig.hpp
-        appearanceconfig.hpp
         backgroundconfig.hpp
         barconfig.hpp
         borderconfig.hpp
@@ -21,7 +21,6 @@ qml_module(caelestia-config
         userpaths.hpp
         utilitiesconfig.hpp
         winfoconfig.hpp
-        configobject.cpp
     LIBRARIES
         Qt::Quick
 )

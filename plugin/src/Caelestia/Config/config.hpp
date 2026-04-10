@@ -1,12 +1,7 @@
 #pragma once
 
-#include <qfilesystemwatcher.h>
-#include <qjsondocument.h>
-#include <qjsonobject.h>
-#include <qobject.h>
 #include <qqmlintegration.h>
 #include <qquickitem.h>
-#include <qtimer.h>
 
 #include "advancedconfig.hpp"
 #include "appearanceconfig.hpp"
@@ -51,33 +46,21 @@ class GlobalConfig : public ConfigObject {
     CONFIG_SUBOBJECT(SidebarConfig, sidebar)
     CONFIG_SUBOBJECT(ServiceConfig, services)
     CONFIG_SUBOBJECT(UserPaths, paths)
-    CONFIG_SUBOBJECT(AdvancedConfig, advanced)
-
-    Q_PROPERTY(bool recentlySaved READ recentlySaved NOTIFY recentlySavedChanged)
+    // advanced is NOT a CONFIG_SUBOBJECT — it has its own file backend
+    Q_PROPERTY(AdvancedConfig* advanced READ advanced CONSTANT)
 
 public:
     explicit GlobalConfig(QObject* parent = nullptr);
 
     static GlobalConfig* instance();
 
-    [[nodiscard]] bool recentlySaved() const;
+    [[nodiscard]] AdvancedConfig* advanced() const { return m_advanced; }
 
     Q_INVOKABLE void save();
     Q_INVOKABLE void reload();
 
-signals:
-    void recentlySavedChanged();
-
 private:
-    void load(const QByteArray& contents);
-    void onFileChanged();
-    void writeToFile();
-
-    bool m_recentlySaved = false;
-    QString m_configPath;
-    QFileSystemWatcher m_watcher;
-    QTimer m_saveTimer;
-    QTimer m_cooldownTimer;
+    AdvancedConfig* m_advanced = nullptr;
 };
 
 class Config : public QQuickItem {

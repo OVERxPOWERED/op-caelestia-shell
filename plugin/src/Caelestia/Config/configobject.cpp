@@ -1,6 +1,10 @@
 #include "configobject.hpp"
 
+#include <qdir.h>
+#include <qfile.h>
+#include <qfileinfo.h>
 #include <qjsonarray.h>
+#include <qjsondocument.h>
 #include <qjsonvalue.h>
 #include <qloggingcategory.h>
 #include <qmetaobject.h>
@@ -102,6 +106,76 @@ QJsonObject ConfigObject::toJsonObject() const {
     }
 
     return obj;
+}
+
+void ConfigObject::setupFileBackend(const QString& path) {
+    m_filePath = path;
+
+    m_watcher = new QFileSystemWatcher(this);
+    m_saveTimer = new QTimer(this);
+    m_cooldownTimer = new QTimer(this);
+
+    m_saveTimer->setSingleShot(true);
+    m_saveTimer->setInterval(500);
+    connect(m_saveTimer, &QTimer::timeout, this, [this] {
+        QDir().mkpath(QFileInfo(m_filePath).absolutePath());
+
+        QFile file(m_filePath);
+        if (!file.open(QIODevice::WriteOnly)) {
+            qCWarning(lcConfig) << "Failed to write" << m_filePath;
+            return;
+        }
+
+        file.write(QJsonDocument(toJsonObject()).toJson(QJsonDocument::Indented));
+    });
+
+    m_cooldownTimer->setSingleShot(true);
+    m_cooldownTimer->setInterval(2000);
+    connect(m_cooldownTimer, &QTimer::timeout, this, [this] {
+        m_recentlySaved = false;
+    });
+
+    connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &ConfigObject::onFileChanged);
+
+    reloadFromFile();
+
+    if (QFile::exists(m_filePath))
+        m_watcher->addPath(m_filePath);
+}
+
+void ConfigObject::saveToFile() {
+    if (!m_saveTimer)
+        return;
+    m_saveTimer->start();
+    m_recentlySaved = true;
+    m_cooldownTimer->start();
+}
+
+void ConfigObject::reloadFromFile() {
+    QFile file(m_filePath);
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qCDebug(lcConfig) << "Failed to open" << m_filePath;
+        return;
+    }
+
+    QJsonParseError error{};
+    auto doc = QJsonDocument::fromJson(file.readAll(), &error);
+
+    if (error.error != QJsonParseError::NoError) {
+        qCWarning(lcConfig) << "Failed to parse" << m_filePath << ":" << error.errorString();
+        return;
+    }
+
+    loadFromJson(doc.object());
+}
+
+void ConfigObject::onFileChanged() {
+    if (!m_watcher->files().contains(m_filePath))
+        m_watcher->addPath(m_filePath);
+
+    if (!m_recentlySaved)
+        reloadFromFile();
 }
 
 } // namespace caelestia::config

@@ -6,76 +6,93 @@
 
 namespace caelestia::config {
 
+// Forward declare token types from advancedconfig.hpp
+class RoundingTokens;
+class SpacingTokens;
+class PaddingTokens;
+class FontSizeTokens;
+class AnimDurationTokens;
+
 class AppearanceRounding : public ConfigObject {
     Q_OBJECT
     CONFIG_PROPERTY(qreal, scale, 1)
 
-    Q_PROPERTY(int small READ small NOTIFY scaleChanged)
-    Q_PROPERTY(int normal READ normal NOTIFY scaleChanged)
-    Q_PROPERTY(int large READ large NOTIFY scaleChanged)
-    Q_PROPERTY(int full READ full NOTIFY scaleChanged)
+    Q_PROPERTY(int small READ small NOTIFY valuesChanged)
+    Q_PROPERTY(int normal READ normal NOTIFY valuesChanged)
+    Q_PROPERTY(int large READ large NOTIFY valuesChanged)
+    Q_PROPERTY(int full READ full NOTIFY valuesChanged)
 
 public:
     explicit AppearanceRounding(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 
-    [[nodiscard]] int small() const { return static_cast<int>(12 * m_scale); }
+    void bindTokens(RoundingTokens* tokens);
 
-    [[nodiscard]] int normal() const { return static_cast<int>(17 * m_scale); }
+    [[nodiscard]] int small() const;
+    [[nodiscard]] int normal() const;
+    [[nodiscard]] int large() const;
+    [[nodiscard]] int full() const;
 
-    [[nodiscard]] int large() const { return static_cast<int>(25 * m_scale); }
+    Q_SIGNAL void valuesChanged();
 
-    [[nodiscard]] int full() const { return static_cast<int>(1000 * m_scale); }
+private:
+    RoundingTokens* m_tokens = nullptr;
 };
 
 class AppearanceSpacing : public ConfigObject {
     Q_OBJECT
     CONFIG_PROPERTY(qreal, scale, 1)
 
-    Q_PROPERTY(int small READ small NOTIFY scaleChanged)
-    Q_PROPERTY(int smaller READ smaller NOTIFY scaleChanged)
-    Q_PROPERTY(int normal READ normal NOTIFY scaleChanged)
-    Q_PROPERTY(int larger READ larger NOTIFY scaleChanged)
-    Q_PROPERTY(int large READ large NOTIFY scaleChanged)
+    Q_PROPERTY(int small READ small NOTIFY valuesChanged)
+    Q_PROPERTY(int smaller READ smaller NOTIFY valuesChanged)
+    Q_PROPERTY(int normal READ normal NOTIFY valuesChanged)
+    Q_PROPERTY(int larger READ larger NOTIFY valuesChanged)
+    Q_PROPERTY(int large READ large NOTIFY valuesChanged)
 
 public:
     explicit AppearanceSpacing(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 
-    [[nodiscard]] int small() const { return static_cast<int>(7 * m_scale); }
+    void bindTokens(SpacingTokens* tokens);
 
-    [[nodiscard]] int smaller() const { return static_cast<int>(10 * m_scale); }
+    [[nodiscard]] int small() const;
+    [[nodiscard]] int smaller() const;
+    [[nodiscard]] int normal() const;
+    [[nodiscard]] int larger() const;
+    [[nodiscard]] int large() const;
 
-    [[nodiscard]] int normal() const { return static_cast<int>(12 * m_scale); }
+    Q_SIGNAL void valuesChanged();
 
-    [[nodiscard]] int larger() const { return static_cast<int>(15 * m_scale); }
-
-    [[nodiscard]] int large() const { return static_cast<int>(20 * m_scale); }
+private:
+    SpacingTokens* m_tokens = nullptr;
 };
 
 class AppearancePadding : public ConfigObject {
     Q_OBJECT
     CONFIG_PROPERTY(qreal, scale, 1)
 
-    Q_PROPERTY(int small READ small NOTIFY scaleChanged)
-    Q_PROPERTY(int smaller READ smaller NOTIFY scaleChanged)
-    Q_PROPERTY(int normal READ normal NOTIFY scaleChanged)
-    Q_PROPERTY(int larger READ larger NOTIFY scaleChanged)
-    Q_PROPERTY(int large READ large NOTIFY scaleChanged)
+    Q_PROPERTY(int small READ small NOTIFY valuesChanged)
+    Q_PROPERTY(int smaller READ smaller NOTIFY valuesChanged)
+    Q_PROPERTY(int normal READ normal NOTIFY valuesChanged)
+    Q_PROPERTY(int larger READ larger NOTIFY valuesChanged)
+    Q_PROPERTY(int large READ large NOTIFY valuesChanged)
 
 public:
     explicit AppearancePadding(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 
-    [[nodiscard]] int small() const { return static_cast<int>(5 * m_scale); }
+    void bindTokens(PaddingTokens* tokens);
 
-    [[nodiscard]] int smaller() const { return static_cast<int>(7 * m_scale); }
+    [[nodiscard]] int small() const;
+    [[nodiscard]] int smaller() const;
+    [[nodiscard]] int normal() const;
+    [[nodiscard]] int larger() const;
+    [[nodiscard]] int large() const;
 
-    [[nodiscard]] int normal() const { return static_cast<int>(10 * m_scale); }
+    Q_SIGNAL void valuesChanged();
 
-    [[nodiscard]] int larger() const { return static_cast<int>(12 * m_scale); }
-
-    [[nodiscard]] int large() const { return static_cast<int>(15 * m_scale); }
+private:
+    PaddingTokens* m_tokens = nullptr;
 };
 
 class FontFamily : public ConfigObject {
@@ -94,28 +111,30 @@ class FontSize : public ConfigObject {
     Q_OBJECT
     CONFIG_PROPERTY(qreal, scale, 1)
 
-    Q_PROPERTY(int small READ small NOTIFY scaleChanged)
-    Q_PROPERTY(int smaller READ smaller NOTIFY scaleChanged)
-    Q_PROPERTY(int normal READ normal NOTIFY scaleChanged)
-    Q_PROPERTY(int larger READ larger NOTIFY scaleChanged)
-    Q_PROPERTY(int large READ large NOTIFY scaleChanged)
-    Q_PROPERTY(int extraLarge READ extraLarge NOTIFY scaleChanged)
+    Q_PROPERTY(int small READ small NOTIFY valuesChanged)
+    Q_PROPERTY(int smaller READ smaller NOTIFY valuesChanged)
+    Q_PROPERTY(int normal READ normal NOTIFY valuesChanged)
+    Q_PROPERTY(int larger READ larger NOTIFY valuesChanged)
+    Q_PROPERTY(int large READ large NOTIFY valuesChanged)
+    Q_PROPERTY(int extraLarge READ extraLarge NOTIFY valuesChanged)
 
 public:
     explicit FontSize(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 
-    [[nodiscard]] int small() const { return static_cast<int>(11 * m_scale); }
+    void bindTokens(FontSizeTokens* tokens);
 
-    [[nodiscard]] int smaller() const { return static_cast<int>(12 * m_scale); }
+    [[nodiscard]] int small() const;
+    [[nodiscard]] int smaller() const;
+    [[nodiscard]] int normal() const;
+    [[nodiscard]] int larger() const;
+    [[nodiscard]] int large() const;
+    [[nodiscard]] int extraLarge() const;
 
-    [[nodiscard]] int normal() const { return static_cast<int>(13 * m_scale); }
+    Q_SIGNAL void valuesChanged();
 
-    [[nodiscard]] int larger() const { return static_cast<int>(15 * m_scale); }
-
-    [[nodiscard]] int large() const { return static_cast<int>(18 * m_scale); }
-
-    [[nodiscard]] int extraLarge() const { return static_cast<int>(28 * m_scale); }
+private:
+    FontSizeTokens* m_tokens = nullptr;
 };
 
 class AppearanceFont : public ConfigObject {
@@ -134,31 +153,32 @@ class AnimDurations : public ConfigObject {
     Q_OBJECT
     CONFIG_PROPERTY(qreal, scale, 1)
 
-    Q_PROPERTY(int small READ small NOTIFY scaleChanged)
-    Q_PROPERTY(int normal READ normal NOTIFY scaleChanged)
-    Q_PROPERTY(int large READ large NOTIFY scaleChanged)
-    Q_PROPERTY(int extraLarge READ extraLarge NOTIFY scaleChanged)
-    Q_PROPERTY(int expressiveFastSpatial READ expressiveFastSpatial NOTIFY scaleChanged)
-    Q_PROPERTY(int expressiveDefaultSpatial READ expressiveDefaultSpatial NOTIFY scaleChanged)
-    Q_PROPERTY(int expressiveSlowSpatial READ expressiveSlowSpatial NOTIFY scaleChanged)
+    Q_PROPERTY(int small READ small NOTIFY valuesChanged)
+    Q_PROPERTY(int normal READ normal NOTIFY valuesChanged)
+    Q_PROPERTY(int large READ large NOTIFY valuesChanged)
+    Q_PROPERTY(int extraLarge READ extraLarge NOTIFY valuesChanged)
+    Q_PROPERTY(int expressiveFastSpatial READ expressiveFastSpatial NOTIFY valuesChanged)
+    Q_PROPERTY(int expressiveDefaultSpatial READ expressiveDefaultSpatial NOTIFY valuesChanged)
+    Q_PROPERTY(int expressiveSlowSpatial READ expressiveSlowSpatial NOTIFY valuesChanged)
 
 public:
     explicit AnimDurations(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 
-    [[nodiscard]] int small() const { return static_cast<int>(200 * m_scale); }
+    void bindTokens(AnimDurationTokens* tokens);
 
-    [[nodiscard]] int normal() const { return static_cast<int>(400 * m_scale); }
+    [[nodiscard]] int small() const;
+    [[nodiscard]] int normal() const;
+    [[nodiscard]] int large() const;
+    [[nodiscard]] int extraLarge() const;
+    [[nodiscard]] int expressiveFastSpatial() const;
+    [[nodiscard]] int expressiveDefaultSpatial() const;
+    [[nodiscard]] int expressiveSlowSpatial() const;
 
-    [[nodiscard]] int large() const { return static_cast<int>(600 * m_scale); }
+    Q_SIGNAL void valuesChanged();
 
-    [[nodiscard]] int extraLarge() const { return static_cast<int>(1000 * m_scale); }
-
-    [[nodiscard]] int expressiveFastSpatial() const { return static_cast<int>(350 * m_scale); }
-
-    [[nodiscard]] int expressiveDefaultSpatial() const { return static_cast<int>(500 * m_scale); }
-
-    [[nodiscard]] int expressiveSlowSpatial() const { return static_cast<int>(650 * m_scale); }
+private:
+    AnimDurationTokens* m_tokens = nullptr;
 };
 
 class AppearanceAnim : public ConfigObject {

@@ -32,14 +32,91 @@ public:
         , m_expressiveSlowSpatial({ 0.39, 1.29, 0.35, 0.98, 1, 1 }) {}
 };
 
+class RoundingTokens : public ConfigObject {
+    Q_OBJECT
+    CONFIG_PROPERTY(int, small, 12)
+    CONFIG_PROPERTY(int, normal, 17)
+    CONFIG_PROPERTY(int, large, 25)
+    CONFIG_PROPERTY(int, full, 1000)
+
+public:
+    explicit RoundingTokens(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
+class SpacingTokens : public ConfigObject {
+    Q_OBJECT
+    CONFIG_PROPERTY(int, small, 7)
+    CONFIG_PROPERTY(int, smaller, 10)
+    CONFIG_PROPERTY(int, normal, 12)
+    CONFIG_PROPERTY(int, larger, 15)
+    CONFIG_PROPERTY(int, large, 20)
+
+public:
+    explicit SpacingTokens(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
+class PaddingTokens : public ConfigObject {
+    Q_OBJECT
+    CONFIG_PROPERTY(int, small, 5)
+    CONFIG_PROPERTY(int, smaller, 7)
+    CONFIG_PROPERTY(int, normal, 10)
+    CONFIG_PROPERTY(int, larger, 12)
+    CONFIG_PROPERTY(int, large, 15)
+
+public:
+    explicit PaddingTokens(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
+class FontSizeTokens : public ConfigObject {
+    Q_OBJECT
+    CONFIG_PROPERTY(int, small, 11)
+    CONFIG_PROPERTY(int, smaller, 12)
+    CONFIG_PROPERTY(int, normal, 13)
+    CONFIG_PROPERTY(int, larger, 15)
+    CONFIG_PROPERTY(int, large, 18)
+    CONFIG_PROPERTY(int, extraLarge, 28)
+
+public:
+    explicit FontSizeTokens(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
+class AnimDurationTokens : public ConfigObject {
+    Q_OBJECT
+    CONFIG_PROPERTY(int, small, 200)
+    CONFIG_PROPERTY(int, normal, 400)
+    CONFIG_PROPERTY(int, large, 600)
+    CONFIG_PROPERTY(int, extraLarge, 1000)
+    CONFIG_PROPERTY(int, expressiveFastSpatial, 350)
+    CONFIG_PROPERTY(int, expressiveDefaultSpatial, 500)
+    CONFIG_PROPERTY(int, expressiveSlowSpatial, 650)
+
+public:
+    explicit AnimDurationTokens(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
 class AdvancedAppearance : public ConfigObject {
     Q_OBJECT
     CONFIG_SUBOBJECT(AnimCurves, curves)
+    CONFIG_SUBOBJECT(RoundingTokens, rounding)
+    CONFIG_SUBOBJECT(SpacingTokens, spacing)
+    CONFIG_SUBOBJECT(PaddingTokens, padding)
+    CONFIG_SUBOBJECT(FontSizeTokens, fontSize)
+    CONFIG_SUBOBJECT(AnimDurationTokens, animDurations)
 
 public:
     explicit AdvancedAppearance(QObject* parent = nullptr)
         : ConfigObject(parent)
-        , m_curves(new AnimCurves(this)) {}
+        , m_curves(new AnimCurves(this))
+        , m_rounding(new RoundingTokens(this))
+        , m_spacing(new SpacingTokens(this))
+        , m_padding(new PaddingTokens(this))
+        , m_fontSize(new FontSizeTokens(this))
+        , m_animDurations(new AnimDurationTokens(this)) {}
 };
 
 class BarSizes : public ConfigObject {

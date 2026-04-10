@@ -58,6 +58,8 @@ public:
     Q_INVOKABLE void save();
     Q_INVOKABLE void reload();
 
+    ~GlobalConfig() override;
+
 private:
     explicit GlobalConfig(QObject* parent = nullptr);
 

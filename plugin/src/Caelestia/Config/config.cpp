@@ -1,10 +1,13 @@
 #include "config.hpp"
 
+#include <qqmlengine.h>
 #include <qstandardpaths.h>
 
 namespace caelestia::config {
 
 namespace {
+
+GlobalConfig* s_instance = nullptr;
 
 QString configDir() {
     return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/caelestia/");
@@ -32,6 +35,9 @@ GlobalConfig::GlobalConfig(QObject* parent)
     , m_services(new ServiceConfig(this))
     , m_paths(new UserPaths(this))
     , m_advanced(new AdvancedConfig(this)) {
+    // Set global instance
+    s_instance = this;
+
     // Bind token base values from advanced config to appearance computed properties
     auto* adv = m_advanced->appearance();
     m_appearance->rounding()->bindTokens(adv->rounding());
@@ -45,13 +51,18 @@ GlobalConfig::GlobalConfig(QObject* parent)
     m_advanced->setupFileBackend(configDir() + QStringLiteral("advanced.json"));
 }
 
-GlobalConfig* GlobalConfig::instance() {
-    static GlobalConfig instance;
-    return &instance;
+GlobalConfig::~GlobalConfig() {
+    // Clear global instance
+    s_instance = nullptr;
 }
 
-GlobalConfig* GlobalConfig::create(QQmlEngine*, QJSEngine*) {
-    return instance();
+GlobalConfig* GlobalConfig::instance() {
+    return s_instance;
+}
+
+GlobalConfig* GlobalConfig::create(QQmlEngine* engine, QJSEngine*) {
+    auto* config = new GlobalConfig(engine);
+    return config;
 }
 
 void GlobalConfig::save() {

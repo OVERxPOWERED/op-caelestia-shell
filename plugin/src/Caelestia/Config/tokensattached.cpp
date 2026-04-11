@@ -7,11 +7,15 @@
 
 namespace caelestia::config {
 
-static const AppearanceConfig* resolveAppearance(ConfigScope* scope) {
+namespace {
+
+const AppearanceConfig* resolveAppearance(ConfigScope* scope) {
     if (scope && scope->config())
         return scope->config()->appearance();
     return GlobalConfig::instance()->appearance();
 }
+
+} // namespace
 
 Tokens::Tokens(ConfigScope* scope, QObject* parent)
     : QObject(parent)

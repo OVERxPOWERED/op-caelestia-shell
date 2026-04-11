@@ -3,6 +3,7 @@
 #include "configobject.hpp"
 
 #include <qlist.h>
+#include <qquickitem.h>
 
 namespace caelestia::config {
 
@@ -288,7 +289,8 @@ public:
 
 class TokenConfig : public ConfigObject {
     Q_OBJECT
-    QML_ANONYMOUS
+    QML_ELEMENT
+    QML_SINGLETON
 
     CONFIG_SUBOBJECT(AppearanceTokens, appearance)
     CONFIG_SUBOBJECT(BarTokens, bar)
@@ -304,20 +306,27 @@ class TokenConfig : public ConfigObject {
     CONFIG_SUBOBJECT(ControlCenterTokens, controlCenter)
 
 public:
-    explicit TokenConfig(QObject* parent = nullptr)
-        : ConfigObject(parent)
-        , m_appearance(new AppearanceTokens(this))
-        , m_bar(new BarTokens(this))
-        , m_dashboard(new DashboardTokens(this))
-        , m_launcher(new LauncherTokens(this))
-        , m_notifs(new NotifsTokens(this))
-        , m_osd(new OsdTokens(this))
-        , m_session(new SessionTokens(this))
-        , m_sidebar(new SidebarTokens(this))
-        , m_utilities(new UtilitiesTokens(this))
-        , m_lock(new LockTokens(this))
-        , m_winfo(new WInfoTokens(this))
-        , m_controlCenter(new ControlCenterTokens(this)) {}
+    static TokenConfig* instance();
+    static TokenConfig* create(QQmlEngine*, QJSEngine*);
+
+    Q_INVOKABLE void save();
+    Q_INVOKABLE void reload();
+
+    ~TokenConfig() override;
+
+private:
+    explicit TokenConfig(QObject* parent = nullptr);
+};
+
+class Tokens : public QQuickItem {
+    Q_OBJECT
+    QML_ELEMENT
+    QML_ATTACHED(Tokens)
+
+public:
+    explicit Tokens(QQuickItem* parent = nullptr);
+
+    static Tokens* qmlAttachedProperties(QObject* object);
 };
 
 } // namespace caelestia::config

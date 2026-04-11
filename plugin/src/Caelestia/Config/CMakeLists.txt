@@ -4,7 +4,7 @@ qml_module(caelestia-config
         config.cpp
         configobject.cpp
         appearanceconfig.cpp
-        tokensconfig.hpp
+        tokens.cpp
         backgroundconfig.hpp
         barconfig.hpp
         borderconfig.hpp

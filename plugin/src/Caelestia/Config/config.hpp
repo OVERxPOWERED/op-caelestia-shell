@@ -17,7 +17,6 @@
 #include "serviceconfig.hpp"
 #include "sessionconfig.hpp"
 #include "sidebarconfig.hpp"
-#include "tokensconfig.hpp"
 #include "userpaths.hpp"
 #include "utilitiesconfig.hpp"
 #include "winfoconfig.hpp"
@@ -46,14 +45,10 @@ class GlobalConfig : public ConfigObject {
     CONFIG_SUBOBJECT(SidebarConfig, sidebar)
     CONFIG_SUBOBJECT(ServiceConfig, services)
     CONFIG_SUBOBJECT(UserPaths, paths)
-    // tokens is NOT a CONFIG_SUBOBJECT — it has its own file backend
-    Q_PROPERTY(TokenConfig* tokens READ tokens CONSTANT)
 
 public:
     static GlobalConfig* instance();
     static GlobalConfig* create(QQmlEngine*, QJSEngine*);
-
-    [[nodiscard]] TokenConfig* tokens() const { return m_tokens; }
 
     Q_INVOKABLE void save();
     Q_INVOKABLE void reload();
@@ -62,8 +57,6 @@ public:
 
 private:
     explicit GlobalConfig(QObject* parent = nullptr);
-
-    TokenConfig* m_tokens = nullptr;
 };
 
 class Config : public QQuickItem {

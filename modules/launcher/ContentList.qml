@@ -32,7 +32,7 @@ Item {
             name: "apps"
 
             PropertyChanges {
-                root.implicitWidth: Tokens.sizes.launcher.itemWidth
+                root.implicitWidth: root.Tokens.sizes.launcher.itemWidth
                 root.implicitHeight: Math.min(root.maxHeight, appList.implicitHeight > 0 ? appList.implicitHeight : empty.implicitHeight)
                 appList.active: true
             }
@@ -46,8 +46,8 @@ Item {
             name: "wallpapers"
 
             PropertyChanges {
-                root.implicitWidth: Math.max(Tokens.sizes.launcher.itemWidth * 1.2, wallpaperList.implicitWidth)
-                root.implicitHeight: Tokens.sizes.launcher.wallpaperHeight
+                root.implicitWidth: Math.max(root.Tokens.sizes.launcher.itemWidth * 1.2, wallpaperList.implicitWidth)
+                root.implicitHeight: root.Tokens.sizes.launcher.wallpaperHeight
                 wallpaperList.active: true
             }
         }

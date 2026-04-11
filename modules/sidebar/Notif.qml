@@ -32,12 +32,12 @@ StyledRect {
         name: "expanded"
 
         PropertyChanges {
-            summary.anchors.margins: Tokens.padding.normal
-            dummySummary.anchors.margins: Tokens.padding.normal
-            compactBody.anchors.margins: Tokens.padding.normal
-            timeStr.anchors.margins: Tokens.padding.normal
-            expandedContent.anchors.margins: Tokens.padding.normal
-            summary.width: root.width - Tokens.padding.normal * 2 - timeStr.implicitWidth - Tokens.spacing.small
+            summary.anchors.margins: root.Tokens.padding.normal
+            dummySummary.anchors.margins: root.Tokens.padding.normal
+            compactBody.anchors.margins: root.Tokens.padding.normal
+            timeStr.anchors.margins: root.Tokens.padding.normal
+            expandedContent.anchors.margins: root.Tokens.padding.normal
+            summary.width: root.width - root.Tokens.padding.normal * 2 - timeStr.implicitWidth - root.Tokens.spacing.small
             summary.maximumLineCount: Number.MAX_SAFE_INTEGER
         }
     }

@@ -31,7 +31,7 @@ Item {
             when: root.session.navExpanded
 
             PropertyChanges {
-                layout.spacing: Tokens.spacing.small
+                layout.spacing: root.Tokens.spacing.small
             }
         }
 
@@ -148,7 +148,7 @@ Item {
                 expandedLabel.opacity: 1
                 smallLabel.opacity: 0
                 background.implicitWidth: icon.implicitWidth + icon.anchors.leftMargin * 2 + expandedLabel.anchors.leftMargin + expandedLabel.implicitWidth
-                background.implicitHeight: icon.implicitHeight + Tokens.padding.normal * 2
+                background.implicitHeight: icon.implicitHeight + root.Tokens.padding.normal * 2
                 item.implicitHeight: background.implicitHeight
             }
         }

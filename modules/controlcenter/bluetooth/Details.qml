@@ -167,7 +167,7 @@ StyledFlickable {
                                             PropertyChanges {
                                                 renameDevice.implicitHeight: deviceNameEdit.implicitHeight
                                                 renameLabel.opacity: 0
-                                                deviceNameEdit.padding: Tokens.padding.normal
+                                                deviceNameEdit.padding: root.Tokens.padding.normal
                                             }
                                         }
 
@@ -481,7 +481,7 @@ StyledFlickable {
                     when: root.session.bt.fabMenuOpen
 
                     PropertyChanges {
-                        fabMenuItem.implicitWidth: fabMenuItemInner.implicitWidth + Tokens.padding.large * 2
+                        fabMenuItem.implicitWidth: fabMenuItemInner.implicitWidth + root.Tokens.padding.large * 2
                         fabMenuItem.opacity: 1
                         fabMenuItemInner.opacity: 1
                     }

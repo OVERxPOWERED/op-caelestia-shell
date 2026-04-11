@@ -62,24 +62,41 @@ TokenConfig* TokenConfig::create(QQmlEngine* engine, QJSEngine*) {
 
 // Tokens (attached type)
 
-Tokens::Tokens(ConfigScope* scope, QObject* parent)
-    : QObject(parent)
-    , m_scope(scope) {
-    connectScope();
-}
-
-void Tokens::connectScope() {
-    if (!m_scope)
-        return;
-    connect(m_scope, &ConfigScope::configChanged, this, &Tokens::sourceChanged);
-}
-
 // Resolve appearance from per-monitor GlobalConfig overlay or global GlobalConfig
 static const AppearanceConfig* resolveAppearance(ConfigScope* scope) {
     if (scope && scope->config())
         return scope->config()->appearance();
     auto* global = GlobalConfig::instance();
     return global ? global->appearance() : nullptr;
+}
+
+Tokens::Tokens(ConfigScope* scope, QObject* parent)
+    : QObject(parent)
+    , m_scope(scope)
+    , m_anim(new AnimTokens(this)) {
+    connectScope();
+    bindAnim();
+}
+
+void Tokens::connectScope() {
+    if (!m_scope)
+        return;
+    connect(m_scope, &ConfigScope::configChanged, this, &Tokens::sourceChanged);
+    connect(m_scope, &ConfigScope::configChanged, this, &Tokens::bindAnim);
+}
+
+void Tokens::bindAnim() {
+    auto* appearance = resolveAppearance(m_scope);
+    if (!appearance)
+        return;
+
+    // Bind durations from resolved GlobalConfig appearance
+    m_anim->bindDurations(appearance->anim()->durations());
+
+    // Bind curves from TokenConfig
+    auto* tokens = TokenConfig::instance();
+    if (tokens)
+        m_anim->bindCurves(tokens->appearance()->curves());
 }
 
 const AppearanceRounding* Tokens::rounding() const {
@@ -100,11 +117,6 @@ const AppearancePadding* Tokens::padding() const {
 const AppearanceFont* Tokens::font() const {
     auto* a = resolveAppearance(m_scope);
     return a ? a->font() : nullptr;
-}
-
-const AppearanceAnim* Tokens::anim() const {
-    auto* a = resolveAppearance(m_scope);
-    return a ? a->anim() : nullptr;
 }
 
 const AppearanceTransparency* Tokens::transparency() const {

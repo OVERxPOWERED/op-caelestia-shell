@@ -61,6 +61,9 @@ GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObj
         setupFileBackend(filePath);
     if (fallback)
         syncFromGlobal(fallback);
+
+    // Bind appearance computed properties to token base values
+    bindAppearanceTokens();
 }
 
 GlobalConfig* GlobalConfig::instance() {

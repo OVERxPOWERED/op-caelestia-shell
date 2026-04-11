@@ -8,6 +8,7 @@ PanelWindow {
     id: root
 
     required property string name
+    readonly property alias configScope: scope
     default property alias contentData: scope.data
 
     WlrLayershell.namespace: `caelestia-${name}`

@@ -30,9 +30,9 @@ StyledWindow {
         }
         return monitor?.activeWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false;
     }
-    property real borderThickness: hasFullscreen ? 0 : Config.border.thickness
-    readonly property real borderLayoutThickness: hasFullscreen ? 0 : Config.border.thickness
-    property real borderRounding: hasFullscreen ? 0 : Config.border.rounding
+    property real borderThickness: hasFullscreen ? 0 : configScope.Config.border.thickness
+    readonly property real borderLayoutThickness: hasFullscreen ? 0 : configScope.Config.border.thickness
+    property real borderRounding: hasFullscreen ? 0 : configScope.Config.border.rounding
     property real shadowOpacity: hasFullscreen ? 0 : 0.7
 
     readonly property int dragMaskPadding: {
@@ -44,8 +44,8 @@ StyledWindow {
 
         const thresholds = [];
         for (const panel of ["dashboard", "launcher", "session", "sidebar"])
-            if (Config[panel].enabled)
-                thresholds.push(Config[panel].dragThreshold);
+            if (configScope.Config[panel].enabled)
+                thresholds.push(configScope.Config[panel].dragThreshold);
         return Math.max(...thresholds);
     }
 

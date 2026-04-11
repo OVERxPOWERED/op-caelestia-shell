@@ -6,8 +6,6 @@
 
 namespace caelestia::config {
 
-MonitorConfigManager* MonitorConfigManager::s_instance = nullptr;
-
 namespace {
 
 QString monitorConfigDir(const QString& screen) {
@@ -18,52 +16,34 @@ QString monitorConfigDir(const QString& screen) {
 } // namespace
 
 MonitorConfigManager::MonitorConfigManager(QObject* parent)
-    : QObject(parent) {
-    s_instance = this;
-}
-
-MonitorConfigManager::~MonitorConfigManager() {
-    s_instance = nullptr;
-}
+    : QObject(parent) {}
 
 MonitorConfigManager* MonitorConfigManager::instance() {
-    return s_instance;
+    static MonitorConfigManager instance;
+    return &instance;
 }
 
-MonitorConfigManager* MonitorConfigManager::create(QQmlEngine* engine, QJSEngine*) {
-    return new MonitorConfigManager(engine);
+MonitorConfigManager* MonitorConfigManager::create(QQmlEngine*, QJSEngine*) {
+    QQmlEngine::setObjectOwnership(instance(), QQmlEngine::CppOwnership);
+    return instance();
 }
 
 GlobalConfig* MonitorConfigManager::configForScreen(const QString& screen) {
-    auto it = m_overlays.find(screen);
-    if (it != m_overlays.end() && it->config)
-        return it->config;
-
-    auto* global = GlobalConfig::instance();
-    if (!global)
-        return nullptr;
-
-    auto dir = monitorConfigDir(screen);
-    auto* overlay = new GlobalConfig(global, dir + QStringLiteral("shell.json"), this);
-
-    m_overlays[screen].config = overlay;
-    return overlay;
+    auto& overlay = m_overlays[screen];
+    if (!overlay.config) {
+        auto dir = monitorConfigDir(screen);
+        overlay.config = new GlobalConfig(GlobalConfig::instance(), dir + QStringLiteral("shell.json"), this);
+    }
+    return overlay.config;
 }
 
 TokenConfig* MonitorConfigManager::tokensForScreen(const QString& screen) {
-    auto it = m_overlays.find(screen);
-    if (it != m_overlays.end() && it->tokens)
-        return it->tokens;
-
-    auto* global = TokenConfig::instance();
-    if (!global)
-        return nullptr;
-
-    auto dir = monitorConfigDir(screen);
-    auto* overlay = new TokenConfig(global, dir + QStringLiteral("shell-tokens.json"), this);
-
-    m_overlays[screen].tokens = overlay;
-    return overlay;
+    auto& overlay = m_overlays[screen];
+    if (!overlay.tokens) {
+        auto dir = monitorConfigDir(screen);
+        overlay.tokens = new TokenConfig(TokenConfig::instance(), dir + QStringLiteral("shell-tokens.json"), this);
+    }
+    return overlay.tokens;
 }
 
 } // namespace caelestia::config

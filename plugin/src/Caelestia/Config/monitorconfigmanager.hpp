@@ -21,8 +21,6 @@ public:
     [[nodiscard]] Q_INVOKABLE GlobalConfig* configForScreen(const QString& screen);
     [[nodiscard]] Q_INVOKABLE TokenConfig* tokensForScreen(const QString& screen);
 
-    ~MonitorConfigManager() override;
-
 private:
     explicit MonitorConfigManager(QObject* parent = nullptr);
 
@@ -32,7 +30,6 @@ private:
     };
 
     QHash<QString, ScreenOverlay> m_overlays;
-    static MonitorConfigManager* s_instance;
 };
 
 } // namespace caelestia::config

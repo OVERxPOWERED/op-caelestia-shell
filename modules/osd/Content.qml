@@ -38,8 +38,8 @@ Item {
                     Audio.decrementVolume();
             }
 
-            implicitWidth: Config.osd.sizes.sliderWidth
-            implicitHeight: Config.osd.sizes.sliderHeight
+            implicitWidth: Tokens.sizes.osd.sliderWidth
+            implicitHeight: Tokens.sizes.osd.sliderHeight
 
             FilledSlider {
                 anchors.fill: parent
@@ -63,8 +63,8 @@ Item {
                         Audio.decrementSourceVolume();
                 }
 
-                implicitWidth: Config.osd.sizes.sliderWidth
-                implicitHeight: Config.osd.sizes.sliderHeight
+                implicitWidth: Tokens.sizes.osd.sliderWidth
+                implicitHeight: Tokens.sizes.osd.sliderHeight
 
                 FilledSlider {
                     anchors.fill: parent
@@ -92,8 +92,8 @@ Item {
                         monitor.setBrightness(monitor.brightness - Config.services.brightnessIncrement);
                 }
 
-                implicitWidth: Config.osd.sizes.sliderWidth
-                implicitHeight: Config.osd.sizes.sliderHeight
+                implicitWidth: Tokens.sizes.osd.sliderWidth
+                implicitHeight: Tokens.sizes.osd.sliderHeight
 
                 FilledSlider {
                     anchors.fill: parent
@@ -110,7 +110,7 @@ Item {
         required property bool shouldBeActive
 
         asynchronous: true
-        Layout.preferredHeight: shouldBeActive ? Config.osd.sizes.sliderHeight : 0
+        Layout.preferredHeight: shouldBeActive ? Tokens.sizes.osd.sliderHeight : 0
         opacity: shouldBeActive ? 1 : 0
         active: opacity > 0
         visible: active

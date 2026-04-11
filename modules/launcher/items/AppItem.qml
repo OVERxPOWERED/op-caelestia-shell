@@ -13,7 +13,7 @@ Item {
     required property DesktopEntry modelData
     required property DrawerVisibilities visibilities
 
-    implicitHeight: Config.launcher.sizes.itemHeight
+    implicitHeight: Tokens.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right

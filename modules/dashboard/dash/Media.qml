@@ -16,7 +16,7 @@ Item {
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
-    implicitWidth: Config.dashboard.sizes.mediaWidth
+    implicitWidth: Tokens.sizes.dashboard.mediaWidth
 
     Behavior on playerProgress {
         Anim {
@@ -42,16 +42,16 @@ Item {
         ShapePath {
             fillColor: "transparent"
             strokeColor: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-            strokeWidth: Config.dashboard.sizes.mediaProgressThickness
+            strokeWidth: Tokens.sizes.dashboard.mediaProgressThickness
             capStyle: Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
             PathAngleArc {
                 centerX: cover.x + cover.width / 2
                 centerY: cover.y + cover.height / 2
-                radiusX: (cover.width + Config.dashboard.sizes.mediaProgressThickness) / 2 + Tokens.spacing.small
-                radiusY: (cover.height + Config.dashboard.sizes.mediaProgressThickness) / 2 + Tokens.spacing.small
-                startAngle: -90 - Config.dashboard.sizes.mediaProgressSweep / 2
-                sweepAngle: Config.dashboard.sizes.mediaProgressSweep
+                radiusX: (cover.width + Tokens.sizes.dashboard.mediaProgressThickness) / 2 + Tokens.spacing.small
+                radiusY: (cover.height + Tokens.sizes.dashboard.mediaProgressThickness) / 2 + Tokens.spacing.small
+                startAngle: -90 - Tokens.sizes.dashboard.mediaProgressSweep / 2
+                sweepAngle: Tokens.sizes.dashboard.mediaProgressSweep
             }
 
             Behavior on strokeColor {
@@ -62,16 +62,16 @@ Item {
         ShapePath {
             fillColor: "transparent"
             strokeColor: Colours.palette.m3primary
-            strokeWidth: Config.dashboard.sizes.mediaProgressThickness
+            strokeWidth: Tokens.sizes.dashboard.mediaProgressThickness
             capStyle: Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
             PathAngleArc {
                 centerX: cover.x + cover.width / 2
                 centerY: cover.y + cover.height / 2
-                radiusX: (cover.width + Config.dashboard.sizes.mediaProgressThickness) / 2 + Tokens.spacing.small
-                radiusY: (cover.height + Config.dashboard.sizes.mediaProgressThickness) / 2 + Tokens.spacing.small
-                startAngle: -90 - Config.dashboard.sizes.mediaProgressSweep / 2
-                sweepAngle: Config.dashboard.sizes.mediaProgressSweep * root.playerProgress
+                radiusX: (cover.width + Tokens.sizes.dashboard.mediaProgressThickness) / 2 + Tokens.spacing.small
+                radiusY: (cover.height + Tokens.sizes.dashboard.mediaProgressThickness) / 2 + Tokens.spacing.small
+                startAngle: -90 - Tokens.sizes.dashboard.mediaProgressSweep / 2
+                sweepAngle: Tokens.sizes.dashboard.mediaProgressSweep * root.playerProgress
             }
 
             Behavior on strokeColor {
@@ -86,7 +86,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Tokens.padding.large + Config.dashboard.sizes.mediaProgressThickness + Tokens.spacing.small
+        anchors.margins: Tokens.padding.large + Tokens.sizes.dashboard.mediaProgressThickness + Tokens.spacing.small
 
         implicitHeight: width
         color: Colours.tPalette.m3surfaceContainerHigh

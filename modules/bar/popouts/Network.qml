@@ -20,7 +20,7 @@ ColumnLayout {
     property bool showPasswordDialog: false
 
     spacing: Tokens.spacing.small
-    width: Config.bar.sizes.networkWidth
+    width: Tokens.sizes.bar.networkWidth
 
     // Wireless section
     StyledText {

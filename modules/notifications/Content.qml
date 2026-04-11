@@ -19,7 +19,7 @@ Item {
     anchors.bottom: parent.bottom
     anchors.right: parent.right
 
-    implicitWidth: Config.notifs.sizes.width + padding * 2
+    implicitWidth: Tokens.sizes.notifs.width + padding * 2
     implicitHeight: {
         const count = list.count;
         if (count === 0)
@@ -170,7 +170,7 @@ Item {
             Anim {
                 target: notif
                 property: "x"
-                to: (notif.x >= 0 ? Config.notifs.sizes.width : -Config.notifs.sizes.width) * 2
+                to: (notif.x >= 0 ? Tokens.sizes.notifs.width : -Tokens.sizes.notifs.width) * 2
                 duration: Tokens.anim.durations.normal
                 easing.bezierCurve: Tokens.anim.curves.emphasized
             }

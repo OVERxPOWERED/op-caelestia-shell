@@ -9,7 +9,7 @@ Item {
     required property var modelData
     required property var list
 
-    implicitHeight: Config.launcher.sizes.itemHeight
+    implicitHeight: Tokens.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right

@@ -34,7 +34,7 @@ GridLayout {
     Rect {
         Layout.row: 0
         Layout.columnSpan: 2
-        Layout.preferredWidth: Config.dashboard.sizes.weatherWidth
+        Layout.preferredWidth: Tokens.sizes.dashboard.weatherWidth
         Layout.fillHeight: true
 
         radius: Tokens.rounding.large * 1.5

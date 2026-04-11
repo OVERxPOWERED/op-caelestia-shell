@@ -11,7 +11,7 @@ StyledRect {
     readonly property color colour: Colours.palette.m3tertiary
     readonly property int padding: Config.bar.clock.background ? Tokens.padding.normal : Tokens.padding.small
 
-    implicitWidth: Config.bar.sizes.innerWidth
+    implicitWidth: Tokens.sizes.bar.innerWidth
     implicitHeight: layout.implicitHeight + root.padding * 2
 
     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Config.bar.clock.background ? Colours.tPalette.m3surfaceContainer.a : 0)

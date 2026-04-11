@@ -53,7 +53,7 @@ StyledRect {
     readonly property int nonAnimHeight: {
         const headerHeight = header.implicitHeight + (root.expanded ? Math.round(Tokens.spacing.small / 2) : 0);
         const columnHeight = headerHeight + notifList.layoutHeight + column.Layout.topMargin + column.Layout.bottomMargin;
-        return Math.round(Math.max(Config.notifs.sizes.image, columnHeight) + Tokens.padding.normal * 2);
+        return Math.round(Math.max(Tokens.sizes.notifs.image, columnHeight) + Tokens.padding.normal * 2);
     }
     readonly property bool expanded: props.expandedNotifs.includes(modelData)
 
@@ -91,8 +91,8 @@ StyledRect {
 
         Item {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            implicitWidth: Config.notifs.sizes.image
-            implicitHeight: Config.notifs.sizes.image
+            implicitWidth: Tokens.sizes.notifs.image
+            implicitHeight: Tokens.sizes.notifs.image
 
             Component {
                 id: imageComp
@@ -100,12 +100,12 @@ StyledRect {
                 Image {
                     source: Qt.resolvedUrl(root.image)
                     fillMode: Image.PreserveAspectCrop
-                    sourceSize.width: Config.notifs.sizes.image
-                    sourceSize.height: Config.notifs.sizes.image
+                    sourceSize.width: Tokens.sizes.notifs.image
+                    sourceSize.height: Tokens.sizes.notifs.image
                     cache: false
                     asynchronous: true
-                    width: Config.notifs.sizes.image
-                    height: Config.notifs.sizes.image
+                    width: Tokens.sizes.notifs.image
+                    height: Tokens.sizes.notifs.image
                 }
             }
 
@@ -113,7 +113,7 @@ StyledRect {
                 id: appIconComp
 
                 ColouredIcon {
-                    implicitSize: Math.round(Config.notifs.sizes.image * 0.6)
+                    implicitSize: Math.round(Tokens.sizes.notifs.image * 0.6)
                     source: Quickshell.iconPath(root.appIcon)
                     colour: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
                     layer.enabled: root.appIcon.endsWith("symbolic")
@@ -149,15 +149,15 @@ StyledRect {
                 active: root.appIcon && root.image
 
                 sourceComponent: StyledRect {
-                    implicitWidth: Config.notifs.sizes.badge
-                    implicitHeight: Config.notifs.sizes.badge
+                    implicitWidth: Tokens.sizes.notifs.badge
+                    implicitHeight: Tokens.sizes.notifs.badge
 
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.urgency === NotificationUrgency.Low ? Colours.palette.m3surfaceContainerHigh : Colours.palette.m3secondaryContainer
                     radius: Tokens.rounding.full
 
                     ColouredIcon {
                         anchors.centerIn: parent
-                        implicitSize: Math.round(Config.notifs.sizes.badge * 0.6)
+                        implicitSize: Math.round(Tokens.sizes.notifs.badge * 0.6)
                         source: Quickshell.iconPath(root.appIcon)
                         colour: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
                         layer.enabled: root.appIcon.endsWith("symbolic")

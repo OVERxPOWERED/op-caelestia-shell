@@ -24,10 +24,10 @@ StyledRect {
 
     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.normal
-    implicitWidth: Config.notifs.sizes.width
+    implicitWidth: Tokens.sizes.notifs.width
     implicitHeight: inner.implicitHeight
 
-    x: Config.notifs.sizes.width
+    x: Tokens.sizes.notifs.width
     Component.onCompleted: {
         x = 0;
         modelData.lock(this);
@@ -68,7 +68,7 @@ StyledRect {
             if (!containsMouse)
                 root.modelData.timer.start();
 
-            if (Math.abs(root.x) < Config.notifs.sizes.width * Config.notifs.clearThreshold)
+            if (Math.abs(root.x) < Tokens.sizes.notifs.width * Config.notifs.clearThreshold)
                 root.x = 0;
             else
                 root.modelData.popup = false;
@@ -114,21 +114,21 @@ StyledRect {
 
                 anchors.left: parent.left
                 anchors.top: parent.top
-                width: Config.notifs.sizes.image
-                height: Config.notifs.sizes.image
+                width: Tokens.sizes.notifs.image
+                height: Tokens.sizes.notifs.image
                 visible: root.hasImage || root.hasAppIcon
 
                 sourceComponent: ClippingRectangle {
                     radius: Tokens.rounding.full
-                    implicitWidth: Config.notifs.sizes.image
-                    implicitHeight: Config.notifs.sizes.image
+                    implicitWidth: Tokens.sizes.notifs.image
+                    implicitHeight: Tokens.sizes.notifs.image
 
                     Image {
                         anchors.fill: parent
                         source: Qt.resolvedUrl(root.modelData.image)
                         fillMode: Image.PreserveAspectCrop
-                        sourceSize.width: Config.notifs.sizes.image
-                        sourceSize.height: Config.notifs.sizes.image
+                        sourceSize.width: Tokens.sizes.notifs.image
+                        sourceSize.height: Tokens.sizes.notifs.image
                         cache: false
                         asynchronous: true
                     }
@@ -149,8 +149,8 @@ StyledRect {
                 sourceComponent: StyledRect {
                     radius: Tokens.rounding.full
                     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.modelData.urgency === NotificationUrgency.Low ? Colours.layer(Colours.palette.m3surfaceContainerHighest, 2) : Colours.palette.m3secondaryContainer
-                    implicitWidth: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
-                    implicitHeight: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
+                    implicitWidth: root.hasImage ? Tokens.sizes.notifs.badge : Tokens.sizes.notifs.image
+                    implicitHeight: root.hasImage ? Tokens.sizes.notifs.badge : Tokens.sizes.notifs.image
 
                     Loader {
                         id: icon

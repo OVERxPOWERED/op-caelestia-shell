@@ -20,7 +20,7 @@ StyledRect {
     radius: Tokens.rounding.full
 
     clip: true
-    implicitWidth: Config.bar.sizes.innerWidth
+    implicitWidth: Tokens.sizes.bar.innerWidth
     implicitHeight: iconColumn.implicitHeight + Tokens.padding.normal * 2 - (Config.bar.status.showLockStatus && !Hypr.capsLock && !Hypr.numLock ? iconColumn.spacing : 0)
 
     ColumnLayout {

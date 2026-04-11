@@ -18,7 +18,7 @@ Item {
     required property DrawerVisibilities visibilities
     readonly property bool needsKeyboard: lyricMenuOpen
 
-    readonly property real nonAnimHeight: Math.max(cover.implicitHeight + Config.dashboard.sizes.mediaVisualiserSize * 2, lyricMenuOpen ? lyricMenu.implicitHeight : details.implicitHeight, bongocat.implicitHeight) + Tokens.padding.large * 2
+    readonly property real nonAnimHeight: Math.max(cover.implicitHeight + Tokens.sizes.dashboard.mediaVisualiserSize * 2, lyricMenuOpen ? lyricMenu.implicitHeight : details.implicitHeight, bongocat.implicitHeight) + Tokens.padding.large * 2
     readonly property real detailsHeightWithoutLyrics: details.implicitHeight - lyricsViewInDetails.implicitHeight
 
     property bool lyricMenuOpen: false
@@ -52,7 +52,7 @@ Item {
         }
     }
 
-    implicitWidth: cover.implicitWidth + Config.dashboard.sizes.mediaVisualiserSize * 2 + details.implicitWidth + details.anchors.leftMargin + bongocat.implicitWidth + bongocat.anchors.leftMargin * 2 + Tokens.padding.large * 2
+    implicitWidth: cover.implicitWidth + Tokens.sizes.dashboard.mediaVisualiserSize * 2 + details.implicitWidth + details.anchors.leftMargin + bongocat.implicitWidth + bongocat.anchors.leftMargin * 2 + Tokens.padding.large * 2
     implicitHeight: nonAnimHeight
 
     Behavior on implicitHeight {
@@ -111,7 +111,7 @@ Item {
         property color colour: Colours.palette.m3primary
 
         anchors.fill: cover
-        anchors.margins: -Config.dashboard.sizes.mediaVisualiserSize
+        anchors.margins: -Tokens.sizes.dashboard.mediaVisualiserSize
 
         asynchronous: true
         preferredRendererType: Shape.CurveRenderer
@@ -132,7 +132,7 @@ Item {
             readonly property real value: Math.max(1e-3, Math.min(1, Audio.cava.values[modelData]))
 
             readonly property real angle: modelData * 2 * Math.PI / Config.services.visualiserBars
-            readonly property real magnitude: value * Config.dashboard.sizes.mediaVisualiserSize
+            readonly property real magnitude: value * Tokens.sizes.dashboard.mediaVisualiserSize
             readonly property real cos: Math.cos(angle)
             readonly property real sin: Math.sin(angle)
 
@@ -159,10 +159,10 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: Tokens.padding.large + Config.dashboard.sizes.mediaVisualiserSize
+        anchors.leftMargin: Tokens.padding.large + Tokens.sizes.dashboard.mediaVisualiserSize
 
-        implicitWidth: Config.dashboard.sizes.mediaCoverArtSize
-        implicitHeight: Config.dashboard.sizes.mediaCoverArtSize
+        implicitWidth: Tokens.sizes.dashboard.mediaCoverArtSize
+        implicitHeight: Tokens.sizes.dashboard.mediaCoverArtSize
 
         color: Colours.tPalette.m3surfaceContainerHigh
         radius: Infinity

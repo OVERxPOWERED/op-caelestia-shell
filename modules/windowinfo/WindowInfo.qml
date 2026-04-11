@@ -13,7 +13,7 @@ Item {
     required property HyprlandToplevel client
 
     implicitWidth: child.implicitWidth
-    implicitHeight: screen.height * Config.winfo.sizes.heightMult
+    implicitHeight: screen.height * Tokens.sizes.winfo.heightMult
 
     RowLayout {
         id: child
@@ -31,7 +31,7 @@ Item {
         ColumnLayout {
             spacing: Tokens.spacing.normal
 
-            Layout.preferredWidth: Config.winfo.sizes.detailsWidth
+            Layout.preferredWidth: Tokens.sizes.winfo.detailsWidth
             Layout.fillHeight: true
 
             StyledRect {

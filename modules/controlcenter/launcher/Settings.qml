@@ -178,25 +178,25 @@ ColumnLayout {
 
         PropertyRow {
             label: qsTr("Item width")
-            value: qsTr("%1 px").arg(Config.launcher.sizes.itemWidth)
+            value: qsTr("%1 px").arg(Tokens.sizes.launcher.itemWidth)
         }
 
         PropertyRow {
             showTopMargin: true
             label: qsTr("Item height")
-            value: qsTr("%1 px").arg(Config.launcher.sizes.itemHeight)
+            value: qsTr("%1 px").arg(Tokens.sizes.launcher.itemHeight)
         }
 
         PropertyRow {
             showTopMargin: true
             label: qsTr("Wallpaper width")
-            value: qsTr("%1 px").arg(Config.launcher.sizes.wallpaperWidth)
+            value: qsTr("%1 px").arg(Tokens.sizes.launcher.wallpaperWidth)
         }
 
         PropertyRow {
             showTopMargin: true
             label: qsTr("Wallpaper height")
-            value: qsTr("%1 px").arg(Config.launcher.sizes.wallpaperHeight)
+            value: qsTr("%1 px").arg(Tokens.sizes.launcher.wallpaperHeight)
         }
     }
 

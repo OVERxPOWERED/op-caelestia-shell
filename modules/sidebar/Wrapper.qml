@@ -15,7 +15,7 @@ Item {
 
     visible: offsetScale < 1
     anchors.rightMargin: (-implicitWidth - 5) * offsetScale
-    implicitWidth: Config.sidebar.sizes.width
+    implicitWidth: Tokens.sizes.sidebar.width
     opacity: 1 - offsetScale
 
     Behavior on offsetScale {
@@ -37,7 +37,7 @@ Item {
         active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
-            implicitWidth: Config.sidebar.sizes.width - Tokens.padding.large * 2
+            implicitWidth: Tokens.sizes.sidebar.width - Tokens.padding.large * 2
             props: root.props
             visibilities: root.visibilities
         }

@@ -22,7 +22,7 @@ Item {
             Qalculator.evalAsync(math);
     }
 
-    implicitHeight: Config.launcher.sizes.itemHeight
+    implicitHeight: Tokens.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right

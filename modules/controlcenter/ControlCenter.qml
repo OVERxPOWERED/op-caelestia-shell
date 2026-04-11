@@ -27,8 +27,8 @@ Item {
 
     signal close
 
-    implicitWidth: implicitHeight * Config.controlCenter.sizes.ratio
-    implicitHeight: screen.height * Config.controlCenter.sizes.heightMult
+    implicitWidth: implicitHeight * Tokens.sizes.controlCenter.ratio
+    implicitHeight: screen.height * Tokens.sizes.controlCenter.heightMult
 
     GridLayout {
         anchors.fill: parent

@@ -182,7 +182,7 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                implicitHeight: parent.height + Config.dashboard.sizes.tabIndicatorSpacing * 2
+                implicitHeight: parent.height + Tokens.sizes.dashboard.tabIndicatorSpacing * 2
 
                 color: "transparent"
                 radius: Tokens.rounding.small

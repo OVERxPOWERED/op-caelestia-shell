@@ -23,7 +23,7 @@ Item {
         return false;
     }
 
-    implicitWidth: Config.utilities.sizes.toastWidth - Tokens.padding.normal * 2
+    implicitWidth: Tokens.sizes.utilities.toastWidth - Tokens.padding.normal * 2
     implicitHeight: {
         let h = -spacing;
         for (let i = 0; i < repeater.count; i++) {

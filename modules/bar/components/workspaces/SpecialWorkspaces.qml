@@ -284,7 +284,7 @@ Item {
             asynchronous: true
 
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.preferredHeight: Config.bar.sizes.innerWidth - Tokens.padding.small * 2
+            Layout.preferredHeight: Tokens.sizes.bar.innerWidth - Tokens.padding.small * 2
 
             sourceComponent: ws.icon.length === 1 ? letterComp : iconComp
 

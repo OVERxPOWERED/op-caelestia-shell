@@ -52,7 +52,7 @@ Item {
         color: Colours.tPalette.m3surfaceContainer
         radius: Tokens.rounding.normal
 
-        implicitWidth: Config.launcher.sizes.wallpaperWidth
+        implicitWidth: Tokens.sizes.launcher.wallpaperWidth
         implicitHeight: implicitWidth / 16 * 9
 
         MaterialIcon {

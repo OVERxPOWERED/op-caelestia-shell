@@ -120,7 +120,7 @@ Row {
                 id: icon
 
                 anchors.left: parent.left
-                anchors.leftMargin: (Config.dashboard.sizes.infoIconSize - implicitWidth) / 2
+                anchors.leftMargin: (Tokens.sizes.dashboard.infoIconSize - implicitWidth) / 2
 
                 source: SysInfo.osLogo
                 implicitSize: Math.floor(Tokens.font.size.normal * 1.34)
@@ -136,7 +136,7 @@ Row {
                 text: `:  ${SysInfo.osPrettyName || SysInfo.osName}`
                 font.pointSize: Tokens.font.size.normal
 
-                width: Config.dashboard.sizes.infoWidth
+                width: Tokens.sizes.dashboard.infoWidth
                 elide: Text.ElideRight
             }
         }
@@ -170,7 +170,7 @@ Row {
             id: icon
 
             anchors.left: parent.left
-            anchors.leftMargin: (Config.dashboard.sizes.infoIconSize - implicitWidth) / 2
+            anchors.leftMargin: (Tokens.sizes.dashboard.infoIconSize - implicitWidth) / 2
 
             fill: 1
             text: line.icon
@@ -187,7 +187,7 @@ Row {
             text: `:  ${line.text}`
             font.pointSize: Tokens.font.size.normal
 
-            width: Config.dashboard.sizes.infoWidth
+            width: Tokens.sizes.dashboard.infoWidth
             elide: Text.ElideRight
         }
     }

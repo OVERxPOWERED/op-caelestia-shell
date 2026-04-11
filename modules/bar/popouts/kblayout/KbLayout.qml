@@ -15,7 +15,7 @@ ColumnLayout {
     }
 
     spacing: Tokens.spacing.small
-    width: Config.bar.sizes.kbLayoutWidth
+    width: Tokens.sizes.bar.kbLayoutWidth
 
     Component.onCompleted: kb.start()
 

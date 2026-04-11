@@ -95,8 +95,8 @@ Item {
                 captureSource: Hypr.activeToplevel?.wayland ?? null // qmllint disable unresolved-type
                 live: visible
 
-                constraintSize.width: Config.bar.sizes.windowPreviewSize
-                constraintSize.height: Config.bar.sizes.windowPreviewSize
+                constraintSize.width: Tokens.sizes.bar.windowPreviewSize
+                constraintSize.height: Tokens.sizes.bar.windowPreviewSize
             }
         }
     }

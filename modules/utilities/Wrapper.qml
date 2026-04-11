@@ -29,7 +29,7 @@ Item {
     visible: offsetScale < 1
     anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight + content.anchors.margins * 2
-    implicitWidth: sidebar.width * (1 - sidebar.offsetScale) * horizontalStretch * sidebarLerp + Config.utilities.sizes.width * (1 - sidebarLerp)
+    implicitWidth: sidebar.width * (1 - sidebar.offsetScale) * horizontalStretch * sidebarLerp + Tokens.sizes.utilities.width * (1 - sidebarLerp)
     opacity: 1 - offsetScale
 
     states: State {

@@ -268,14 +268,15 @@ void ConfigObject::setupFileBackend(const QString& path) {
         if (!file.open(QIODevice::WriteOnly)) {
             qCWarning(lcConfig, "Failed to write %s", qUtf8Printable(m_filePath));
             if (auto* root = qobject_cast<RootConfig*>(this))
-                emit root->fileSaveFailed(QStringLiteral("Failed to open file for writing"));
+                emit root->saveFailed(QStringLiteral("Failed to open file for writing"));
             return;
         }
 
         auto json = toJsonObject();
         file.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
+        file.close();
         if (auto* root = qobject_cast<RootConfig*>(this))
-            emit root->fileSaved();
+            emit root->saved();
     });
 
     m_cooldownTimer->setSingleShot(true);
@@ -355,9 +356,9 @@ void ConfigObject::onFileChanged() {
         bool ok = reloadFromFile();
         if (auto* root = qobject_cast<RootConfig*>(this)) {
             if (ok)
-                emit root->fileLoaded();
+                emit root->loaded();
             else
-                emit root->fileLoadFailed(QStringLiteral("Failed to load config file"));
+                emit root->loadFailed(QStringLiteral("Failed to load config file"));
         }
     }
 }
@@ -373,7 +374,7 @@ void RootConfig::save() {
 
 void RootConfig::reload() {
     if (reloadFromFile())
-        emit fileLoaded();
+        emit loaded();
 }
 
 } // namespace caelestia::config

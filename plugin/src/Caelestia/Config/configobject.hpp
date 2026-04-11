@@ -126,10 +126,10 @@ public:
     Q_INVOKABLE void reload();
 
 signals:
-    void fileLoaded();
-    void fileLoadFailed(const QString& error);
-    void fileSaved();
-    void fileSaveFailed(const QString& error);
+    void loaded();
+    void loadFailed(const QString& error);
+    void saved();
+    void saveFailed(const QString& error);
 };
 
 } // namespace caelestia::config

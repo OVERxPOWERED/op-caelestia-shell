@@ -4,6 +4,7 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qjsondocument.h>
+#include <qmetaobject.h>
 #include <qstandardpaths.h>
 
 namespace caelestia::config {
@@ -18,6 +19,35 @@ QString watchRoot() {
 
 RootConfig::RootConfig(QObject* parent)
     : ConfigObject(parent) {}
+
+QStringList RootConfig::collectUnknownKeys(const ConfigObject* obj, const QJsonObject& json) {
+    QStringList unknown;
+    const auto* meta = obj->metaObject();
+
+    QSet<QString> known;
+    for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i)
+        known.insert(QString::fromUtf8(meta->property(i).name()));
+
+    for (auto it = json.begin(); it != json.end(); ++it) {
+        if (!known.contains(it.key())) {
+            unknown.append(it.key());
+        } else if (it.value().isObject()) {
+            int idx = meta->indexOfProperty(it.key().toUtf8().constData());
+            if (idx >= 0) {
+                auto prop = meta->property(idx);
+                auto value = prop.read(obj);
+                auto* subObj = value.value<ConfigObject*>();
+                if (subObj) {
+                    const auto subUnknown = collectUnknownKeys(subObj, it.value().toObject());
+                    for (const auto& subKey : subUnknown)
+                        unknown.append(it.key() + QStringLiteral(".") + subKey);
+                }
+            }
+        }
+    }
+
+    return unknown;
+}
 
 void RootConfig::setupFileBackend(const QString& path, const QString& screen) {
     m_filePath = path;
@@ -157,7 +187,13 @@ std::optional<QString> RootConfig::reloadFromFile() {
     qCDebug(lcConfig) << "Reloading" << metaObject()->className() << "from" << m_filePath;
 
     clearLoadedKeys();
-    loadFromJson(doc.object());
+
+    auto jsonObj = doc.object();
+    const auto unknownKeys = collectUnknownKeys(this, jsonObj);
+    for (const auto& key : unknownKeys)
+        emit unknownOption(key, m_screen);
+
+    loadFromJson(jsonObj);
 
     return QString(); // success
 }

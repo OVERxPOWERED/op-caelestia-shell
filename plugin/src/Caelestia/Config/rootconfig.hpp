@@ -31,8 +31,10 @@ signals:
     void loadFailed(const QString& error, const QString& screen);
     void saved(const QString& screen);
     void saveFailed(const QString& error, const QString& screen);
+    void unknownOption(const QString& key, const QString& screen);
 
 private:
+    static QStringList collectUnknownKeys(const ConfigObject* obj, const QJsonObject& json);
     void updateWatch();
     void onWatcherEvent();
 

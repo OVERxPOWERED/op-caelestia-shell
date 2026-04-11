@@ -39,6 +39,7 @@ GlobalConfig* MonitorConfigManager::configForScreen(const QString& screen) {
         connect(overlay.config, &GlobalConfig::saved, global, &GlobalConfig::saved);
         connect(overlay.config, &GlobalConfig::loadFailed, global, &GlobalConfig::loadFailed);
         connect(overlay.config, &GlobalConfig::saveFailed, global, &GlobalConfig::saveFailed);
+        connect(overlay.config, &GlobalConfig::unknownOption, global, &GlobalConfig::unknownOption);
     }
     return overlay.config;
 }
@@ -55,6 +56,7 @@ TokenConfig* MonitorConfigManager::tokensForScreen(const QString& screen) {
         connect(overlay.tokens, &TokenConfig::saved, global, &TokenConfig::saved);
         connect(overlay.tokens, &TokenConfig::loadFailed, global, &TokenConfig::loadFailed);
         connect(overlay.tokens, &TokenConfig::saveFailed, global, &TokenConfig::saveFailed);
+        connect(overlay.tokens, &TokenConfig::unknownOption, global, &TokenConfig::unknownOption);
     }
     return overlay.tokens;
 }

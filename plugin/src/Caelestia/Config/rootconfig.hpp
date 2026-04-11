@@ -42,6 +42,7 @@ private:
     QTimer* m_saveTimer = nullptr;
     QTimer* m_cooldownTimer = nullptr;
     QTimer* m_retryTimer = nullptr;
+    QTimer* m_reloadDebounce = nullptr;
     int m_parseRetries = 0;
 };
 

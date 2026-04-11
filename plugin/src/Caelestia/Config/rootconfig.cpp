@@ -47,6 +47,11 @@ void RootConfig::setupFileBackend(const QString& path) {
         m_recentlySaved = false;
     });
 
+    m_reloadDebounce = new QTimer(this);
+    m_reloadDebounce->setSingleShot(true);
+    m_reloadDebounce->setInterval(50);
+    connect(m_reloadDebounce, &QTimer::timeout, this, &RootConfig::reload);
+
     connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &RootConfig::onFileChanged);
 
     qCDebug(lcConfig) << "Setting up file backend for" << metaObject()->className() << "at" << path;
@@ -105,13 +110,8 @@ void RootConfig::onFileChanged() {
     if (!m_watcher->files().contains(m_filePath))
         m_watcher->addPath(m_filePath);
 
-    if (!m_recentlySaved) {
-        m_parseRetries = 0;
-        if (m_retryTimer)
-            m_retryTimer->stop();
-
-        reload();
-    }
+    if (!m_recentlySaved)
+        m_reloadDebounce->start();
 }
 
 void RootConfig::save() {

@@ -11,7 +11,7 @@ Scope {
         }
 
         function onLoadFailed(error: string): void {
-            Toaster.toast(qsTr("Failed to read config file"), error, "settings_alert", Toast.Warning);
+            Toaster.toast(qsTr("Failed to parse config"), error, "settings_alert", Toast.Warning);
         }
 
         function onSaveFailed(error: string): void {
@@ -23,7 +23,7 @@ Scope {
 
     Connections {
         function onLoadFailed(error: string): void {
-            Toaster.toast(qsTr("Failed to read token config file"), error, "settings_alert", Toast.Warning);
+            Toaster.toast(qsTr("Failed to parse token config"), error, "settings_alert", Toast.Warning);
         }
 
         target: TokenConfig

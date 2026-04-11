@@ -123,6 +123,11 @@ void RootConfig::saveToFile() {
 std::optional<QString> RootConfig::reloadFromFile() {
     QFile file(m_filePath);
 
+    if (!file.exists()) {
+        qCDebug(lcConfig) << "File does not exist:" << m_filePath;
+        return std::nullopt;
+    }
+
     if (!file.open(QIODevice::ReadOnly)) {
         auto err = QStringLiteral("Failed to open %1: %2").arg(m_filePath, file.errorString());
         qCDebug(lcConfig, "%s", qUtf8Printable(err));
@@ -143,7 +148,7 @@ std::optional<QString> RootConfig::reloadFromFile() {
 
         qCWarning(lcConfig, "Failed to parse %s: %s", qUtf8Printable(m_filePath), qUtf8Printable(error.errorString()));
         m_parseRetries = 0;
-        return error.errorString();
+        return QStringLiteral("JSON parse error: %1").arg(error.errorString());
     }
 
     m_parseRetries = 0;

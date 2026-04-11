@@ -20,17 +20,7 @@ QString configDir() {
 TokenConfig::TokenConfig(QObject* parent)
     : RootConfig(parent)
     , m_appearance(new AppearanceTokens(this))
-    , m_bar(new BarTokens(this))
-    , m_dashboard(new DashboardTokens(this))
-    , m_launcher(new LauncherTokens(this))
-    , m_notifs(new NotifsTokens(this))
-    , m_osd(new OsdTokens(this))
-    , m_session(new SessionTokens(this))
-    , m_sidebar(new SidebarTokens(this))
-    , m_utilities(new UtilitiesTokens(this))
-    , m_lock(new LockTokens(this))
-    , m_winfo(new WInfoTokens(this))
-    , m_controlCenter(new ControlCenterTokens(this)) {
+    , m_sizes(new SizeTokens(this)) {
     s_instance = this;
 
     setupFileBackend(configDir() + QStringLiteral("shell-tokens.json"));
@@ -43,17 +33,7 @@ TokenConfig::TokenConfig(QObject* parent)
 TokenConfig::TokenConfig(TokenConfig* fallback, const QString& filePath, QObject* parent)
     : RootConfig(parent)
     , m_appearance(new AppearanceTokens(this))
-    , m_bar(new BarTokens(this))
-    , m_dashboard(new DashboardTokens(this))
-    , m_launcher(new LauncherTokens(this))
-    , m_notifs(new NotifsTokens(this))
-    , m_osd(new OsdTokens(this))
-    , m_session(new SessionTokens(this))
-    , m_sidebar(new SidebarTokens(this))
-    , m_utilities(new UtilitiesTokens(this))
-    , m_lock(new LockTokens(this))
-    , m_winfo(new WInfoTokens(this))
-    , m_controlCenter(new ControlCenterTokens(this)) {
+    , m_sizes(new SizeTokens(this)) {
     setSparse(true);
     if (!filePath.isEmpty())
         setupFileBackend(filePath);
@@ -130,6 +110,13 @@ const AppearanceAnim* Tokens::anim() const {
 const AppearanceTransparency* Tokens::transparency() const {
     auto* a = resolveAppearance(m_scope);
     return a ? a->transparency() : nullptr;
+}
+
+const SizeTokens* Tokens::sizes() const {
+    if (m_scope && m_scope->tokens())
+        return m_scope->tokens()->sizes();
+    auto* global = TokenConfig::instance();
+    return global ? global->sizes() : nullptr;
 }
 
 Tokens* Tokens::qmlAttachedProperties(QObject* object) {

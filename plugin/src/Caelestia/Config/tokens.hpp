@@ -290,12 +290,10 @@ public:
         : ConfigObject(parent) {}
 };
 
-class TokenConfig : public RootConfig {
+class SizeTokens : public ConfigObject {
     Q_OBJECT
-    QML_ELEMENT
-    QML_SINGLETON
+    QML_ANONYMOUS
 
-    CONFIG_SUBOBJECT(AppearanceTokens, appearance)
     CONFIG_SUBOBJECT(BarTokens, bar)
     CONFIG_SUBOBJECT(DashboardTokens, dashboard)
     CONFIG_SUBOBJECT(LauncherTokens, launcher)
@@ -307,6 +305,30 @@ class TokenConfig : public RootConfig {
     CONFIG_SUBOBJECT(LockTokens, lock)
     CONFIG_SUBOBJECT(WInfoTokens, winfo)
     CONFIG_SUBOBJECT(ControlCenterTokens, controlCenter)
+
+public:
+    explicit SizeTokens(QObject* parent = nullptr)
+        : ConfigObject(parent)
+        , m_bar(new BarTokens(this))
+        , m_dashboard(new DashboardTokens(this))
+        , m_launcher(new LauncherTokens(this))
+        , m_notifs(new NotifsTokens(this))
+        , m_osd(new OsdTokens(this))
+        , m_session(new SessionTokens(this))
+        , m_sidebar(new SidebarTokens(this))
+        , m_utilities(new UtilitiesTokens(this))
+        , m_lock(new LockTokens(this))
+        , m_winfo(new WInfoTokens(this))
+        , m_controlCenter(new ControlCenterTokens(this)) {}
+};
+
+class TokenConfig : public RootConfig {
+    Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
+
+    CONFIG_SUBOBJECT(AppearanceTokens, appearance)
+    CONFIG_SUBOBJECT(SizeTokens, sizes)
 
 public:
     static TokenConfig* instance();
@@ -336,6 +358,7 @@ class Tokens : public QObject {
     Q_PROPERTY(const caelestia::config::AppearanceFont* font READ font NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::AppearanceAnim* anim READ anim NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::AppearanceTransparency* transparency READ transparency NOTIFY sourceChanged)
+    Q_PROPERTY(const caelestia::config::SizeTokens* sizes READ sizes NOTIFY sourceChanged)
 
 public:
     explicit Tokens(ConfigScope* scope, QObject* parent = nullptr);
@@ -346,6 +369,7 @@ public:
     [[nodiscard]] const AppearanceFont* font() const;
     [[nodiscard]] const AppearanceAnim* anim() const;
     [[nodiscard]] const AppearanceTransparency* transparency() const;
+    [[nodiscard]] const SizeTokens* sizes() const;
 
     static Tokens* qmlAttachedProperties(QObject* object);
 

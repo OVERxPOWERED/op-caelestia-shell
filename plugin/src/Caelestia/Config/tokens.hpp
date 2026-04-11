@@ -158,10 +158,6 @@ class DashboardTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(bool, showDashboard, true)
-    CONFIG_PROPERTY(bool, showMedia, true)
-    CONFIG_PROPERTY(bool, showPerformance, true)
-    CONFIG_PROPERTY(bool, showWeather, true)
     CONFIG_PROPERTY(int, tabIndicatorHeight, 3)
     CONFIG_PROPERTY(int, tabIndicatorSpacing, 5)
     CONFIG_PROPERTY(int, infoWidth, 200)

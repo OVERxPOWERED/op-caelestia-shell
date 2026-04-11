@@ -55,16 +55,27 @@ TokenConfig::TokenConfig(TokenConfig* fallback, const QString& filePath, QObject
     , m_winfo(new WInfoTokens(this))
     , m_controlCenter(new ControlCenterTokens(this)) {
     setSparse(true);
-    setupFileBackend(filePath);
-    syncFromGlobal(fallback);
+    if (!filePath.isEmpty())
+        setupFileBackend(filePath);
+    if (fallback)
+        syncFromGlobal(fallback);
 }
 
 TokenConfig::~TokenConfig() {
-    s_instance = nullptr;
+    if (m_defaults)
+        m_defaults->deleteLater();
+    if (s_instance == this)
+        s_instance = nullptr;
 }
 
 TokenConfig* TokenConfig::instance() {
     return s_instance;
+}
+
+TokenConfig* TokenConfig::defaults() {
+    if (!m_defaults)
+        m_defaults = new TokenConfig(nullptr, QString()); // Non-singleton constructor
+    return m_defaults;
 }
 
 TokenConfig* TokenConfig::create(QQmlEngine* engine, QJSEngine*) {

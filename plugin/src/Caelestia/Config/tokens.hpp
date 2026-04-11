@@ -309,6 +309,7 @@ class TokenConfig : public ConfigObject {
 
 public:
     static TokenConfig* instance();
+    [[nodiscard]] Q_INVOKABLE TokenConfig* defaults();
     static TokenConfig* create(QQmlEngine*, QJSEngine*);
 
     Q_INVOKABLE void save();
@@ -319,7 +320,9 @@ public:
 private:
     friend class MonitorConfigManager;
     explicit TokenConfig(QObject* parent = nullptr);
-    explicit TokenConfig(TokenConfig* fallback, const QString& filePath, QObject* parent);
+    explicit TokenConfig(TokenConfig* fallback, const QString& filePath, QObject* parent = nullptr);
+
+    TokenConfig* m_defaults = nullptr;
 };
 
 class Tokens : public QObject {

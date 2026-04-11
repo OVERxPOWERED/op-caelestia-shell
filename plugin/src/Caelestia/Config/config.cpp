@@ -66,17 +66,27 @@ GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObj
     , m_services(new ServiceConfig(this))
     , m_paths(new UserPaths(this)) {
     setSparse(true);
-    setupFileBackend(filePath);
-    syncFromGlobal(fallback);
+    if (!filePath.isEmpty())
+        setupFileBackend(filePath);
+    if (fallback)
+        syncFromGlobal(fallback);
 }
 
 GlobalConfig::~GlobalConfig() {
-    // Clear global instance
-    s_instance = nullptr;
+    if (m_defaults)
+        m_defaults->deleteLater();
+    if (s_instance == this)
+        s_instance = nullptr;
 }
 
 GlobalConfig* GlobalConfig::instance() {
     return s_instance;
+}
+
+GlobalConfig* GlobalConfig::defaults() {
+    if (!m_defaults)
+        m_defaults = new GlobalConfig(nullptr, QString()); // Non-singleton constructor
+    return m_defaults;
 }
 
 void GlobalConfig::bindAppearanceTokens() {

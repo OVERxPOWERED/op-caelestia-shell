@@ -47,6 +47,7 @@ class GlobalConfig : public ConfigObject {
 
 public:
     static GlobalConfig* instance();
+    [[nodiscard]] Q_INVOKABLE GlobalConfig* defaults();
     static GlobalConfig* create(QQmlEngine*, QJSEngine*);
 
     Q_INVOKABLE void save();
@@ -59,8 +60,9 @@ public:
 private:
     friend class MonitorConfigManager;
     explicit GlobalConfig(QObject* parent = nullptr);
-    explicit GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObject* parent);
+    explicit GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObject* parent = nullptr);
 
+    GlobalConfig* m_defaults = nullptr;
     bool m_tokensBound = false;
 };
 

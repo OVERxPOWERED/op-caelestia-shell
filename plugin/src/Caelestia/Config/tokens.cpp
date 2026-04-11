@@ -99,7 +99,8 @@ void Tokens::connectScope() {
     const Type* Tokens::name() const {                                                                                 \
         if (m_scope && m_scope->tokens())                                                                              \
             return m_scope->tokens()->name();                                                                          \
-        return TokenConfig::instance()->name();                                                                        \
+        auto* global = TokenConfig::instance();                                                                        \
+        return global ? global->name() : nullptr;                                                                      \
     }
 
 TOKENS_ATTACHED_GETTER(AppearanceTokens, appearance)
@@ -118,6 +119,11 @@ TOKENS_ATTACHED_GETTER(ControlCenterTokens, controlCenter)
 #undef TOKENS_ATTACHED_GETTER
 
 Tokens* Tokens::qmlAttachedProperties(QObject* object) {
+    // Ensure TokenConfig singleton is created before any attached property access
+    if (!TokenConfig::instance()) {
+        if (auto* engine = qmlEngine(object))
+            engine->singletonInstance<TokenConfig*>("Caelestia.Config", "TokenConfig");
+    }
     return new Tokens(ConfigScope::find(object), object);
 }
 

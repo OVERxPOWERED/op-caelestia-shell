@@ -140,7 +140,8 @@ void Config::connectScope() {
     const Type* Config::name() const {                                                                                 \
         if (m_scope && m_scope->config())                                                                              \
             return m_scope->config()->name();                                                                          \
-        return GlobalConfig::instance()->name();                                                                       \
+        auto* global = GlobalConfig::instance();                                                                       \
+        return global ? global->name() : nullptr;                                                                      \
     }
 
 CONFIG_ATTACHED_GETTER(AppearanceConfig, appearance)
@@ -164,6 +165,11 @@ CONFIG_ATTACHED_GETTER(UserPaths, paths)
 #undef CONFIG_ATTACHED_GETTER
 
 Config* Config::qmlAttachedProperties(QObject* object) {
+    // Ensure GlobalConfig singleton is created before any attached property access
+    if (!GlobalConfig::instance()) {
+        if (auto* engine = qmlEngine(object))
+            engine->singletonInstance<GlobalConfig*>("Caelestia.Config", "GlobalConfig");
+    }
     return new Config(ConfigScope::find(object), object);
 }
 

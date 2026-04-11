@@ -335,7 +335,8 @@ public:
 private:
     friend class MonitorConfigManager;
     explicit TokenConfig(QObject* parent = nullptr);
-    explicit TokenConfig(TokenConfig* fallback, const QString& filePath, QObject* parent = nullptr);
+    explicit TokenConfig(
+        TokenConfig* fallback, const QString& filePath, const QString& screen = {}, QObject* parent = nullptr);
 
     TokenConfig* m_defaults = nullptr;
 };

@@ -22,12 +22,12 @@ TokenConfig::TokenConfig(QObject* parent)
     setupFileBackend(configDir() + QStringLiteral("shell-tokens.json"));
 }
 
-TokenConfig::TokenConfig(TokenConfig* fallback, const QString& filePath, QObject* parent)
+TokenConfig::TokenConfig(TokenConfig* fallback, const QString& filePath, const QString& screen, QObject* parent)
     : RootConfig(parent)
     , m_appearance(new AppearanceTokens(this))
     , m_sizes(new SizeTokens(this)) {
     if (!filePath.isEmpty())
-        setupFileBackend(filePath);
+        setupFileBackend(filePath, screen);
     if (fallback)
         syncFromGlobal(fallback);
 }
@@ -39,7 +39,7 @@ TokenConfig* TokenConfig::instance() {
 
 TokenConfig* TokenConfig::defaults() {
     if (!m_defaults)
-        m_defaults = new TokenConfig(nullptr, QString(), this); // Non-singleton constructor
+        m_defaults = new TokenConfig(nullptr, QString(), QString(), this);
     return m_defaults;
 }
 

@@ -56,7 +56,8 @@ public:
 private:
     friend class MonitorConfigManager;
     explicit GlobalConfig(QObject* parent = nullptr);
-    explicit GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObject* parent = nullptr);
+    explicit GlobalConfig(
+        GlobalConfig* fallback, const QString& filePath, const QString& screen = {}, QObject* parent = nullptr);
 
     GlobalConfig* m_defaults = nullptr;
     bool m_tokensBound = false;

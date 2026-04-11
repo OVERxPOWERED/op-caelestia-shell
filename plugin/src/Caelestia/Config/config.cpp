@@ -37,7 +37,7 @@ GlobalConfig::GlobalConfig(QObject* parent)
     setupFileBackend(configDir() + QStringLiteral("shell.json"));
 }
 
-GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObject* parent)
+GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, const QString& screen, QObject* parent)
     : RootConfig(parent)
     , m_appearance(new AppearanceConfig(this))
     , m_general(new GeneralConfig(this))
@@ -57,7 +57,7 @@ GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObj
     , m_services(new ServiceConfig(this))
     , m_paths(new UserPaths(this)) {
     if (!filePath.isEmpty())
-        setupFileBackend(filePath);
+        setupFileBackend(filePath, screen);
     if (fallback)
         syncFromGlobal(fallback);
 
@@ -73,7 +73,7 @@ GlobalConfig* GlobalConfig::instance() {
 
 GlobalConfig* GlobalConfig::defaults() {
     if (!m_defaults)
-        m_defaults = new GlobalConfig(nullptr, QString(), this); // Non-singleton constructor
+        m_defaults = new GlobalConfig(nullptr, QString(), QString(), this);
     return m_defaults;
 }
 

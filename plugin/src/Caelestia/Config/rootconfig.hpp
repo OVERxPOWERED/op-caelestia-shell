@@ -16,7 +16,7 @@ class RootConfig : public ConfigObject {
 public:
     explicit RootConfig(QObject* parent = nullptr);
 
-    void setupFileBackend(const QString& path);
+    void setupFileBackend(const QString& path, const QString& screen = {});
     void saveToFile();
     // Returns nullopt if retrying, empty string on success, error message on failure.
     [[nodiscard]] std::optional<QString> reloadFromFile();
@@ -27,16 +27,17 @@ public:
     Q_INVOKABLE void reload();
 
 signals:
-    void loaded();
-    void loadFailed(const QString& error);
-    void saved();
-    void saveFailed(const QString& error);
+    void loaded(const QString& screen);
+    void loadFailed(const QString& error, const QString& screen);
+    void saved(const QString& screen);
+    void saveFailed(const QString& error, const QString& screen);
 
 private:
     void updateWatch();
     void onWatcherEvent();
 
     QString m_filePath;
+    QString m_screen;
     QString m_watchedDir;
     bool m_recentlySaved = false;
 

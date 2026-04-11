@@ -19,8 +19,9 @@ QString watchRoot() {
 RootConfig::RootConfig(QObject* parent)
     : ConfigObject(parent) {}
 
-void RootConfig::setupFileBackend(const QString& path) {
+void RootConfig::setupFileBackend(const QString& path, const QString& screen) {
     m_filePath = path;
+    m_screen = screen;
 
     m_watcher = new QFileSystemWatcher(this);
     m_saveTimer = new QTimer(this);
@@ -40,7 +41,7 @@ void RootConfig::setupFileBackend(const QString& path) {
         if (!file.open(QIODevice::WriteOnly)) {
             auto err = QStringLiteral("Failed to write %1: %2").arg(m_filePath, file.errorString());
             qCWarning(lcConfig, "%s", qUtf8Printable(err));
-            emit saveFailed(err);
+            emit saveFailed(err, m_screen);
             return;
         }
 
@@ -51,7 +52,7 @@ void RootConfig::setupFileBackend(const QString& path) {
         // Update watches — save may have created directories
         updateWatch();
 
-        emit saved();
+        emit saved(m_screen);
     });
 
     m_cooldownTimer->setSingleShot(true);
@@ -169,9 +170,9 @@ void RootConfig::reload() {
     auto result = reloadFromFile();
     if (result.has_value()) {
         if (result->isEmpty())
-            emit loaded();
+            emit loaded(m_screen);
         else
-            emit loadFailed(*result);
+            emit loadFailed(*result, m_screen);
     }
 }
 

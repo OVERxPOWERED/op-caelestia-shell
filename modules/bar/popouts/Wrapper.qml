@@ -32,13 +32,16 @@ Item {
     property string detachedMode
     property string queuedMode
 
-    property int animLength: Tokens.anim.durations.expressiveDefaultSpatial
-    property easingCurve animCurve: Tokens.anim.expressiveDefaultSpatial
+    // Dummy object so Tokens attached prop resolves to global config
+    // Anim configs are not per-monitor
+    readonly property QtObject dummy: QtObject {}
+    property int animLength: dummy.Tokens.anim.durations.expressiveDefaultSpatial
+    property easingCurve animCurve: dummy.Tokens.anim.expressiveDefaultSpatial
 
     function setAnims(detach: bool): void {
         const type = `expressive${detach ? "Slow" : "Default"}Spatial`;
-        animLength = Tokens.anim.durations[type];
-        animCurve = Tokens.anim[type];
+        animLength = dummy.Tokens.anim.durations[type];
+        animCurve = dummy.Tokens.anim[type];
     }
 
     function detach(mode: string): void {

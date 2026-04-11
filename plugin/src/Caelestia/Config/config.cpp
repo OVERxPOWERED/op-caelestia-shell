@@ -80,6 +80,9 @@ GlobalConfig* GlobalConfig::instance() {
 }
 
 void GlobalConfig::bindAppearanceTokens() {
+    if (m_tokensBound)
+        return;
+
     auto* tokens = TokenConfig::instance();
     if (!tokens) {
         qCDebug(lcConfig) << "GlobalConfig::bindAppearanceTokens: TokenConfig not yet available";
@@ -93,6 +96,7 @@ void GlobalConfig::bindAppearanceTokens() {
     m_appearance->padding()->bindTokens(tokenAppearance->padding());
     m_appearance->font()->size()->bindTokens(tokenAppearance->fontSize());
     m_appearance->anim()->durations()->bindTokens(tokenAppearance->animDurations());
+    m_tokensBound = true;
 }
 
 GlobalConfig* GlobalConfig::create(QQmlEngine* engine, QJSEngine* jsEngine) {

@@ -60,6 +60,8 @@ private:
     friend class MonitorConfigManager;
     explicit GlobalConfig(QObject* parent = nullptr);
     explicit GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObject* parent);
+
+    bool m_tokensBound = false;
 };
 
 class ConfigScope;

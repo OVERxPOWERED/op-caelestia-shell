@@ -161,6 +161,7 @@ void ConfigObject::syncFromGlobal(ConfigObject* global) {
         if (!m_loadedKeys.contains(key)) {
             auto val = prop.read(global);
             prop.write(this, val);
+            m_loadedKeys.remove(key); // setter added it — remove since this is a synced value
             qCDebug(lcConfig) << "  Synced" << key << "=" << val << "from global";
         } else {
             qCDebug(lcConfig) << "  Keeping loaded" << key << "=" << prop.read(this);
@@ -206,8 +207,10 @@ void ConfigObject::resyncFromGlobal() {
         if (!prop.isWritable())
             continue;
 
-        if (!m_loadedKeys.contains(key))
+        if (!m_loadedKeys.contains(key)) {
             prop.write(this, prop.read(m_global));
+            m_loadedKeys.remove(key); // setter added it — remove since this is a synced value
+        }
     }
 }
 
@@ -219,6 +222,9 @@ void ConfigObject::onGlobalPropertiesChanged(const QMap<QString, QVariant>& chan
         int idx = metaObject()->indexOfProperty(it.key().toUtf8().constData());
         if (idx >= 0) {
             metaObject()->property(idx).write(this, it.value());
+            // Remove the key that was added by markPropertyLoaded in the setter —
+            // this is a synced value, not an explicit override
+            m_loadedKeys.remove(it.key());
             qCDebug(lcConfig) << metaObject()->className() << "synced" << it.key() << "=" << it.value()
                               << "from global change";
         }

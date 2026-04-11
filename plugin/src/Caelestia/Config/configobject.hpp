@@ -105,6 +105,8 @@ private:
     QFileSystemWatcher* m_watcher = nullptr;
     QTimer* m_saveTimer = nullptr;
     QTimer* m_cooldownTimer = nullptr;
+    QTimer* m_retryTimer = nullptr;
+    int m_parseRetries = 0;
 
     // Per-monitor overlay state
     ConfigObject* m_global = nullptr;

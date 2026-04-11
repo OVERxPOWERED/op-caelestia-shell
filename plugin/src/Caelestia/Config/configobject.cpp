@@ -285,6 +285,11 @@ void ConfigObject::setupFileBackend(const QString& path) {
     m_watcher = new QFileSystemWatcher(this);
     m_saveTimer = new QTimer(this);
     m_cooldownTimer = new QTimer(this);
+    m_retryTimer = new QTimer(this);
+
+    m_retryTimer->setSingleShot(true);
+    m_retryTimer->setInterval(50);
+    connect(m_retryTimer, &QTimer::timeout, this, &ConfigObject::reloadFromFile);
 
     m_saveTimer->setSingleShot(true);
     m_saveTimer->setInterval(500);
@@ -337,9 +342,19 @@ void ConfigObject::reloadFromFile() {
     auto doc = QJsonDocument::fromJson(file.readAll(), &error);
 
     if (error.error != QJsonParseError::NoError) {
-        qCWarning(lcConfig) << "Failed to parse" << m_filePath << ":" << error.errorString();
+        if (m_retryTimer && m_parseRetries < 3) {
+            m_parseRetries++;
+            qCDebug(lcConfig, "Failed to parse %s: %s - retrying (%d/3)", qPrintable(m_filePath),
+                qPrintable(error.errorString()), m_parseRetries);
+            m_retryTimer->start();
+        } else {
+            qCWarning(lcConfig, "Failed to parse %s: %s", qPrintable(m_filePath), qPrintable(error.errorString()));
+            m_parseRetries = 0;
+        }
         return;
     }
+
+    m_parseRetries = 0;
 
     qCDebug(lcConfig) << "Reloading" << metaObject()->className() << "from" << m_filePath;
 
@@ -357,8 +372,12 @@ void ConfigObject::onFileChanged() {
     if (!m_watcher->files().contains(m_filePath))
         m_watcher->addPath(m_filePath);
 
-    if (!m_recentlySaved)
+    if (!m_recentlySaved) {
+        m_parseRetries = 0;
+        if (m_retryTimer)
+            m_retryTimer->stop();
         reloadFromFile();
+    }
 }
 
 } // namespace caelestia::config

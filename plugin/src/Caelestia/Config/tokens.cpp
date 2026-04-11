@@ -9,8 +9,6 @@ namespace caelestia::config {
 
 namespace {
 
-TokenConfig* s_instance = nullptr;
-
 QString configDir() {
     return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/caelestia/");
 }
@@ -21,13 +19,7 @@ TokenConfig::TokenConfig(QObject* parent)
     : RootConfig(parent)
     , m_appearance(new AppearanceTokens(this))
     , m_sizes(new SizeTokens(this)) {
-    s_instance = this;
-
     setupFileBackend(configDir() + QStringLiteral("shell-tokens.json"));
-
-    // If GlobalConfig was created before us, trigger its binding
-    if (auto* global = GlobalConfig::instance())
-        global->bindAppearanceTokens();
 }
 
 TokenConfig::TokenConfig(TokenConfig* fallback, const QString& filePath, QObject* parent)
@@ -41,13 +33,9 @@ TokenConfig::TokenConfig(TokenConfig* fallback, const QString& filePath, QObject
         syncFromGlobal(fallback);
 }
 
-TokenConfig::~TokenConfig() {
-    if (s_instance == this)
-        s_instance = nullptr;
-}
-
 TokenConfig* TokenConfig::instance() {
-    return s_instance;
+    static TokenConfig instance;
+    return &instance;
 }
 
 TokenConfig* TokenConfig::defaults() {
@@ -56,8 +44,9 @@ TokenConfig* TokenConfig::defaults() {
     return m_defaults;
 }
 
-TokenConfig* TokenConfig::create(QQmlEngine* engine, QJSEngine*) {
-    return new TokenConfig(engine);
+TokenConfig* TokenConfig::create(QQmlEngine*, QJSEngine*) {
+    QQmlEngine::setObjectOwnership(instance(), QQmlEngine::CppOwnership);
+    return instance();
 }
 
 // Tokens (attached type)
@@ -132,11 +121,6 @@ const SizeTokens* Tokens::sizes() const {
 }
 
 Tokens* Tokens::qmlAttachedProperties(QObject* object) {
-    // Ensure GlobalConfig singleton is created before any attached property access
-    if (!GlobalConfig::instance()) {
-        if (auto* engine = qmlEngine(object))
-            engine->singletonInstance<GlobalConfig*>("Caelestia.Config", "GlobalConfig");
-    }
     return new Tokens(ConfigScope::find(object), object);
 }
 

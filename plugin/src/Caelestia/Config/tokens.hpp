@@ -332,8 +332,6 @@ public:
     [[nodiscard]] Q_INVOKABLE TokenConfig* defaults();
     static TokenConfig* create(QQmlEngine*, QJSEngine*);
 
-    ~TokenConfig() override;
-
 private:
     friend class MonitorConfigManager;
     explicit TokenConfig(QObject* parent = nullptr);

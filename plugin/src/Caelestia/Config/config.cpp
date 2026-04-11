@@ -9,8 +9,6 @@ namespace caelestia::config {
 
 namespace {
 
-GlobalConfig* s_instance = nullptr;
-
 QString configDir() {
     return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/caelestia/");
 }
@@ -36,14 +34,7 @@ GlobalConfig::GlobalConfig(QObject* parent)
     , m_sidebar(new SidebarConfig(this))
     , m_services(new ServiceConfig(this))
     , m_paths(new UserPaths(this)) {
-    // Set global instance
-    s_instance = this;
-
     setupFileBackend(configDir() + QStringLiteral("shell.json"));
-
-    // If TokenConfig was created before us, bind now
-    if (TokenConfig::instance())
-        bindAppearanceTokens();
 }
 
 GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObject* parent)
@@ -72,13 +63,10 @@ GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObj
         syncFromGlobal(fallback);
 }
 
-GlobalConfig::~GlobalConfig() {
-    if (s_instance == this)
-        s_instance = nullptr;
-}
-
 GlobalConfig* GlobalConfig::instance() {
-    return s_instance;
+    static GlobalConfig instance;
+    instance.bindAppearanceTokens();
+    return &instance;
 }
 
 GlobalConfig* GlobalConfig::defaults() {
@@ -91,14 +79,8 @@ void GlobalConfig::bindAppearanceTokens() {
     if (m_tokensBound)
         return;
 
-    auto* tokens = TokenConfig::instance();
-    if (!tokens) {
-        qCDebug(lcConfig) << "GlobalConfig::bindAppearanceTokens: TokenConfig not yet available";
-        return;
-    }
-
     qCDebug(lcConfig) << "GlobalConfig::bindAppearanceTokens: binding appearance to token values";
-    auto* tokenAppearance = tokens->appearance();
+    auto* const tokenAppearance = TokenConfig::instance()->appearance();
     m_appearance->rounding()->bindTokens(tokenAppearance->rounding());
     m_appearance->spacing()->bindTokens(tokenAppearance->spacing());
     m_appearance->padding()->bindTokens(tokenAppearance->padding());
@@ -107,17 +89,9 @@ void GlobalConfig::bindAppearanceTokens() {
     m_tokensBound = true;
 }
 
-GlobalConfig* GlobalConfig::create(QQmlEngine* engine, QJSEngine* jsEngine) {
-    auto* config = new GlobalConfig(engine);
-
-    // Ensure TokenConfig is created — appearance computed properties depend on token binding.
-    if (!TokenConfig::instance())
-        TokenConfig::create(engine, jsEngine);
-
-    // Bind now that both singletons exist
-    config->bindAppearanceTokens();
-
-    return config;
+GlobalConfig* GlobalConfig::create(QQmlEngine*, QJSEngine*) {
+    QQmlEngine::setObjectOwnership(instance(), QQmlEngine::CppOwnership);
+    return instance();
 }
 
 // Config (attached type)
@@ -140,8 +114,7 @@ void Config::connectScope() {
     const Type* Config::name() const {                                                                                 \
         if (m_scope && m_scope->config())                                                                              \
             return m_scope->config()->name();                                                                          \
-        auto* global = GlobalConfig::instance();                                                                       \
-        return global ? global->name() : nullptr;                                                                      \
+        return GlobalConfig::instance()->name();                                                                       \
     }
 
 CONFIG_ATTACHED_GETTER(AppearanceConfig, appearance)
@@ -165,11 +138,6 @@ CONFIG_ATTACHED_GETTER(UserPaths, paths)
 #undef CONFIG_ATTACHED_GETTER
 
 Config* Config::qmlAttachedProperties(QObject* object) {
-    // Ensure GlobalConfig singleton is created before any attached property access
-    if (!GlobalConfig::instance()) {
-        if (auto* engine = qmlEngine(object))
-            engine->singletonInstance<GlobalConfig*>("Caelestia.Config", "GlobalConfig");
-    }
     return new Config(ConfigScope::find(object), object);
 }
 

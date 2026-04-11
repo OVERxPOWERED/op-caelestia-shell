@@ -50,8 +50,6 @@ public:
     [[nodiscard]] Q_INVOKABLE GlobalConfig* defaults();
     static GlobalConfig* create(QQmlEngine*, QJSEngine*);
 
-    ~GlobalConfig() override;
-
     void bindAppearanceTokens();
 
 private:

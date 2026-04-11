@@ -21,6 +21,9 @@ ConfigObject::ConfigObject(QObject* parent)
 void ConfigObject::loadFromJson(const QJsonObject& obj) {
     const auto* meta = metaObject();
 
+    qCDebug(lcConfig) << "Loading JSON into" << meta->className() << "with" << obj.keys().size()
+                      << "keys:" << obj.keys();
+
     for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
         auto prop = meta->property(i);
         const auto key = QString::fromUtf8(prop.name());
@@ -35,6 +38,7 @@ void ConfigObject::loadFromJson(const QJsonObject& obj) {
         auto* subObj = current.value<ConfigObject*>();
 
         if (subObj) {
+            qCDebug(lcConfig) << "  Recursing into sub-object" << key;
             subObj->loadFromJson(jsonVal.toObject());
             continue;
         }
@@ -51,12 +55,14 @@ void ConfigObject::loadFromJson(const QJsonObject& obj) {
                 list.append(v.toString());
             prop.write(this, QVariant::fromValue(list));
             m_loadedKeys.insert(key);
+            qCDebug(lcConfig) << "  Loaded" << key << "=" << list;
             continue;
         }
 
         // For all other types, let Qt's variant conversion handle it
         prop.write(this, jsonVal.toVariant());
         m_loadedKeys.insert(key);
+        qCDebug(lcConfig) << "  Loaded" << key << "=" << jsonVal.toVariant();
     }
 }
 
@@ -177,11 +183,13 @@ void ConfigObject::clearLoadedKeys() {
 void ConfigObject::syncFromGlobal(ConfigObject* global) {
     m_global = global;
 
+    const auto* meta = metaObject();
+    qCDebug(lcConfig) << "Syncing" << meta->className() << "from global, loaded keys:" << m_loadedKeys;
+
     // Connect batched change signal (single connection per ConfigObject pair)
     connect(global, &ConfigObject::propertiesChanged, this, &ConfigObject::onGlobalPropertiesChanged);
 
     // Initial sync: copy all non-loaded property values from global
-    const auto* meta = metaObject();
     for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
         auto prop = meta->property(i);
         const auto key = QString::fromUtf8(prop.name());
@@ -200,8 +208,13 @@ void ConfigObject::syncFromGlobal(ConfigObject* global) {
         if (!prop.isWritable())
             continue;
 
-        if (!m_loadedKeys.contains(key))
-            prop.write(this, prop.read(global));
+        if (!m_loadedKeys.contains(key)) {
+            auto val = prop.read(global);
+            prop.write(this, val);
+            qCDebug(lcConfig) << "  Synced" << key << "=" << val << "from global";
+        } else {
+            qCDebug(lcConfig) << "  Keeping loaded" << key << "=" << prop.read(this);
+        }
     }
 }
 
@@ -236,8 +249,11 @@ void ConfigObject::onGlobalPropertiesChanged(const QMap<QString, QVariant>& chan
             continue;
 
         int idx = metaObject()->indexOfProperty(it.key().toUtf8().constData());
-        if (idx >= 0)
+        if (idx >= 0) {
             metaObject()->property(idx).write(this, it.value());
+            qCDebug(lcConfig) << metaObject()->className() << "synced" << it.key() << "=" << it.value()
+                              << "from global change";
+        }
     }
 }
 
@@ -293,6 +309,8 @@ void ConfigObject::setupFileBackend(const QString& path) {
 
     connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &ConfigObject::onFileChanged);
 
+    qCDebug(lcConfig) << "Setting up file backend for" << metaObject()->className() << "at" << path;
+
     reloadFromFile();
 
     if (QFile::exists(m_filePath))
@@ -323,12 +341,16 @@ void ConfigObject::reloadFromFile() {
         return;
     }
 
+    qCDebug(lcConfig) << "Reloading" << metaObject()->className() << "from" << m_filePath;
+
     clearLoadedKeys();
     loadFromJson(doc.object());
 
     // Re-sync non-loaded properties from global after reload
-    if (m_global)
+    if (m_global) {
+        qCDebug(lcConfig) << "Re-syncing" << metaObject()->className() << "from global after reload";
         resyncFromGlobal();
+    }
 }
 
 void ConfigObject::onFileChanged() {

@@ -171,7 +171,7 @@ ColumnLayout {
                         Behavior on scale {
                             Anim {
                                 duration: Tokens.anim.durations.expressiveFastSpatial
-                                easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                                easing: Tokens.anim.expressiveFastSpatial
                             }
                         }
                     }
@@ -251,14 +251,14 @@ ColumnLayout {
                         Behavior on scale {
                             Anim {
                                 duration: Tokens.anim.durations.expressiveFastSpatial
-                                easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                                easing: Tokens.anim.expressiveFastSpatial
                             }
                         }
 
                         Behavior on implicitHeight {
                             Anim {
                                 duration: Tokens.anim.durations.expressiveDefaultSpatial
-                                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                                easing: Tokens.anim.expressiveDefaultSpatial
                             }
                         }
                     }
@@ -315,8 +315,7 @@ ColumnLayout {
                     transitions: Transition {
                         AnchorAnimation {
                             duration: Tokens.anim.durations.normal
-                            easing.type: Easing.BezierSpline
-                            easing.bezierCurve: Tokens.anim.curves.standard
+                            easing: Tokens.anim.standard
                         }
                         Anim {
                             properties: "implicitHeight,opacity,padding"
@@ -406,7 +405,7 @@ ColumnLayout {
                     Behavior on scale {
                         Anim {
                             duration: Tokens.anim.durations.expressiveFastSpatial
-                            easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                            easing: Tokens.anim.expressiveFastSpatial
                         }
                     }
                 }

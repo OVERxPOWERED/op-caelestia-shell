@@ -159,12 +159,12 @@ StyledRect {
         inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
         toggle: true
         radiusAnim.duration: Tokens.anim.durations.expressiveFastSpatial
-        radiusAnim.easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+        radiusAnim.easing: Tokens.anim.expressiveFastSpatial
 
         Behavior on Layout.preferredWidth {
             Anim {
                 duration: Tokens.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                easing: Tokens.anim.expressiveFastSpatial
             }
         }
     }

@@ -172,7 +172,7 @@ Item {
                 property: "x"
                 to: (notif.x >= 0 ? Tokens.sizes.notifs.width : -Tokens.sizes.notifs.width) * 2
                 duration: Tokens.anim.durations.normal
-                easing.bezierCurve: Tokens.anim.curves.emphasized
+                easing: Tokens.anim.emphasized
             }
             PropertyAction {
                 target: wrapper
@@ -200,7 +200,6 @@ Item {
 
     component Anim: NumberAnimation {
         duration: Tokens.anim.durations.expressiveDefaultSpatial
-        easing.type: Easing.BezierSpline
-        easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+        easing: Tokens.anim.expressiveDefaultSpatial
     }
 }

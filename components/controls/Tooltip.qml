@@ -101,7 +101,7 @@ Popup {
             from: 0
             to: 1
             duration: Tokens.anim.durations.expressiveFastSpatial
-            easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+            easing: Tokens.anim.expressiveFastSpatial
         }
     }
 
@@ -111,7 +111,7 @@ Popup {
             from: 1
             to: 0
             duration: Tokens.anim.durations.expressiveFastSpatial
-            easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+            easing: Tokens.anim.expressiveFastSpatial
         }
     }
 

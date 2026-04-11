@@ -196,7 +196,7 @@ Loader {
             Behavior on scale {
                 Anim {
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
             }
         }

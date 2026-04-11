@@ -132,14 +132,14 @@ StyledRect {
                             property: "scale"
                             to: 0.7
                             duration: Tokens.anim.durations.small
-                            easing.bezierCurve: Tokens.anim.curves.standardAccel
+                            easing: Tokens.anim.standardAccel
                         }
                         Anim {
                             target: listOrControls
                             property: "opacity"
                             to: 0
                             duration: Tokens.anim.durations.small
-                            easing.bezierCurve: Tokens.anim.curves.standardAccel
+                            easing: Tokens.anim.standardAccel
                         }
                     }
                     PropertyAction {
@@ -159,14 +159,14 @@ StyledRect {
                             property: "scale"
                             to: 1
                             duration: Tokens.anim.durations.small
-                            easing.bezierCurve: Tokens.anim.curves.standardDecel
+                            easing: Tokens.anim.standardDecel
                         }
                         Anim {
                             target: listOrControls
                             property: "opacity"
                             to: 1
                             duration: Tokens.anim.durations.small
-                            easing.bezierCurve: Tokens.anim.curves.standardDecel
+                            easing: Tokens.anim.standardDecel
                         }
                     }
                 }
@@ -219,13 +219,13 @@ StyledRect {
                         from: 1
                         to: 0
                         duration: Tokens.anim.durations.large
-                        easing.bezierCurve: Tokens.anim.curves.emphasizedAccel
+                        easing: Tokens.anim.emphasizedAccel
                     }
                     Anim {
                         from: 0
                         to: 1
                         duration: Tokens.anim.durations.extraLarge
-                        easing.bezierCurve: Tokens.anim.curves.emphasizedDecel
+                        easing: Tokens.anim.emphasizedDecel
                     }
                 }
             }

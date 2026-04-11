@@ -117,7 +117,7 @@ Item {
 
         Behavior on Layout.preferredHeight {
             Anim {
-                easing.bezierCurve: Tokens.anim.curves.emphasized
+                easing: Tokens.anim.emphasized
             }
         }
 

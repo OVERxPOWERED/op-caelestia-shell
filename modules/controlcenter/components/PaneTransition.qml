@@ -21,8 +21,7 @@ SequentialAnimation {
             from: root.opacityFrom
             to: root.opacityTo
             duration: Tokens.anim.durations.normal / 2
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Tokens.anim.curves.standardAccel
+            easing: Tokens.anim.standardAccel
         }
 
         NumberAnimation {
@@ -31,8 +30,7 @@ SequentialAnimation {
             from: root.scaleFrom
             to: root.scaleTo
             duration: Tokens.anim.durations.normal / 2
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Tokens.anim.curves.standardAccel
+            easing: Tokens.anim.standardAccel
         }
     }
 
@@ -54,8 +52,7 @@ SequentialAnimation {
             from: root.opacityTo
             to: root.opacityFrom
             duration: Tokens.anim.durations.normal / 2
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Tokens.anim.curves.standardDecel
+            easing: Tokens.anim.standardDecel
         }
 
         NumberAnimation {
@@ -64,8 +61,7 @@ SequentialAnimation {
             from: root.scaleTo
             to: root.scaleFrom
             duration: Tokens.anim.durations.normal / 2
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Tokens.anim.curves.standardDecel
+            easing: Tokens.anim.standardDecel
         }
     }
 }

@@ -501,12 +501,12 @@ Item {
         Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.smaller : 0)
         radius: stateLayer.pressed ? Tokens.rounding.small / 2 : internalChecked ? Tokens.rounding.small : implicitHeight / 2
         radiusAnim.duration: Tokens.anim.durations.expressiveFastSpatial
-        radiusAnim.easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+        radiusAnim.easing: Tokens.anim.expressiveFastSpatial
 
         Behavior on Layout.preferredWidth {
             Anim {
                 duration: Tokens.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                easing: Tokens.anim.expressiveFastSpatial
             }
         }
     }

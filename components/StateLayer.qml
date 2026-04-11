@@ -63,7 +63,7 @@ MouseArea {
             properties: "implicitWidth,implicitHeight"
             from: 0
             to: rippleAnim.radius * 2
-            easing.bezierCurve: Tokens.anim.curves.standardDecel
+            easing: Tokens.anim.standardDecel
         }
         Anim {
             target: ripple

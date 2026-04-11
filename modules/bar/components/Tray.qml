@@ -49,7 +49,7 @@ StyledRect {
                 properties: "scale"
                 from: 0
                 to: 1
-                easing.bezierCurve: Tokens.anim.curves.standardDecel
+                easing: Tokens.anim.standardDecel
             }
         }
 
@@ -57,7 +57,7 @@ StyledRect {
             Anim {
                 properties: "scale"
                 to: 1
-                easing.bezierCurve: Tokens.anim.curves.standardDecel
+                easing: Tokens.anim.standardDecel
             }
             Anim {
                 properties: "x,y"
@@ -117,7 +117,7 @@ StyledRect {
     Behavior on implicitHeight {
         Anim {
             duration: Tokens.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+            easing: Tokens.anim.expressiveDefaultSpatial
         }
     }
 }

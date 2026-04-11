@@ -97,7 +97,7 @@ Slider {
                         property: "scale"
                         to: 0
                         duration: Tokens.anim.durations.normal / 2
-                        easing.bezierCurve: Tokens.anim.curves.standardAccel
+                        easing: Tokens.anim.standardAccel
                     }
                     ScriptAction {
                         script: icon.update()
@@ -107,7 +107,7 @@ Slider {
                         property: "scale"
                         to: 1
                         duration: Tokens.anim.durations.normal / 2
-                        easing.bezierCurve: Tokens.anim.curves.standardDecel
+                        easing: Tokens.anim.standardDecel
                     }
                 }
             }

@@ -33,12 +33,12 @@ Item {
     property string queuedMode
 
     property int animLength: Tokens.anim.durations.expressiveDefaultSpatial
-    property list<real> animCurve: Tokens.anim.curves.expressiveDefaultSpatial
+    property easingCurve animCurve: Tokens.anim.expressiveDefaultSpatial
 
     function setAnims(detach: bool): void {
         const type = `expressive${detach ? "Slow" : "Default"}Spatial`;
         animLength = Tokens.anim.durations[type];
-        animCurve = Tokens.anim.curves[type];
+        animCurve = Tokens.anim[type];
     }
 
     function detach(mode: string): void {
@@ -140,7 +140,7 @@ Item {
     Behavior on implicitWidth {
         Anim {
             duration: root.animLength
-            easing.bezierCurve: root.animCurve
+            easing: root.animCurve
         }
     }
 
@@ -149,7 +149,7 @@ Item {
 
         Anim {
             duration: root.animLength
-            easing.bezierCurve: root.animCurve
+            easing: root.animCurve
         }
     }
 

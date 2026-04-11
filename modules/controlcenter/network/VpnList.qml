@@ -382,14 +382,14 @@ ColumnLayout {
                     from: 0
                     to: 1
                     duration: Tokens.anim.durations.normal
-                    easing.bezierCurve: Tokens.anim.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
                 Anim {
                     property: "scale"
                     from: 0.7
                     to: 1
                     duration: Tokens.anim.durations.normal
-                    easing.bezierCurve: Tokens.anim.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
             }
         }
@@ -401,14 +401,14 @@ ColumnLayout {
                     from: 1
                     to: 0
                     duration: Tokens.anim.durations.small
-                    easing.bezierCurve: Tokens.anim.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
                 Anim {
                     property: "scale"
                     from: 1
                     to: 0.7
                     duration: Tokens.anim.durations.small
-                    easing.bezierCurve: Tokens.anim.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
             }
         }
@@ -435,7 +435,7 @@ ColumnLayout {
             Behavior on implicitHeight {
                 Anim {
                     duration: Tokens.anim.durations.normal
-                    easing.bezierCurve: Tokens.anim.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
             }
         }
@@ -446,7 +446,7 @@ ColumnLayout {
             Behavior on implicitHeight {
                 Anim {
                     duration: Tokens.anim.durations.normal
-                    easing.bezierCurve: Tokens.anim.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
             }
 
@@ -461,7 +461,7 @@ ColumnLayout {
                 Behavior on opacity {
                     Anim {
                         duration: Tokens.anim.durations.small
-                        easing.bezierCurve: Tokens.anim.curves.emphasized
+                        easing: Tokens.anim.emphasized
                     }
                 }
 
@@ -584,7 +584,7 @@ ColumnLayout {
                 Behavior on opacity {
                     Anim {
                         duration: Tokens.anim.durations.small
-                        easing.bezierCurve: Tokens.anim.curves.emphasized
+                        easing: Tokens.anim.emphasized
                     }
                 }
 
@@ -823,7 +823,7 @@ ColumnLayout {
                     property: "opacity"
                     to: 0
                     duration: Tokens.anim.durations.small
-                    easing.bezierCurve: Tokens.anim.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
             }
 
@@ -839,7 +839,7 @@ ColumnLayout {
                     property: "opacity"
                     to: 1
                     duration: Tokens.anim.durations.small
-                    easing.bezierCurve: Tokens.anim.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
             }
         }

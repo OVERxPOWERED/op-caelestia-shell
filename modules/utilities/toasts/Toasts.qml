@@ -112,7 +112,7 @@ Item {
             from: 0
             to: 1
             duration: Tokens.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+            easing: Tokens.anim.expressiveDefaultSpatial
         }
 
         ParallelAnimation {
@@ -149,7 +149,7 @@ Item {
         Behavior on anchors.bottomMargin {
             Anim {
                 duration: Tokens.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                easing: Tokens.anim.expressiveDefaultSpatial
             }
         }
     }

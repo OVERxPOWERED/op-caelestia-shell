@@ -194,14 +194,14 @@ Item {
         Behavior on Layout.preferredWidth {
             Anim {
                 duration: Tokens.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                easing: Tokens.anim.expressiveFastSpatial
             }
         }
 
         Behavior on radius {
             Anim {
                 duration: Tokens.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                easing: Tokens.anim.expressiveFastSpatial
             }
         }
     }

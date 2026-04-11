@@ -174,8 +174,7 @@ StyledFlickable {
                                         transitions: Transition {
                                             AnchorAnimation {
                                                 duration: Tokens.anim.durations.normal
-                                                easing.type: Easing.BezierSpline
-                                                easing.bezierCurve: Tokens.anim.curves.standard
+                                                easing: Tokens.anim.standard
                                             }
                                             Anim {
                                                 properties: "implicitHeight,opacity,padding"
@@ -266,7 +265,7 @@ StyledFlickable {
                                         Behavior on scale {
                                             Anim {
                                                 duration: Tokens.anim.durations.expressiveFastSpatial
-                                                easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                                                easing: Tokens.anim.expressiveFastSpatial
                                             }
                                         }
                                     }
@@ -500,7 +499,7 @@ StyledFlickable {
                                 Anim {
                                     property: "implicitWidth"
                                     duration: Tokens.anim.durations.expressiveFastSpatial
-                                    easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                                    easing: Tokens.anim.expressiveFastSpatial
                                 }
                                 Anim {
                                     property: "opacity"
@@ -520,7 +519,7 @@ StyledFlickable {
                                 Anim {
                                     property: "implicitWidth"
                                     duration: Tokens.anim.durations.expressiveFastSpatial
-                                    easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                                    easing: Tokens.anim.expressiveFastSpatial
                                 }
                                 Anim {
                                     property: "opacity"
@@ -613,7 +612,7 @@ StyledFlickable {
                 Anim {
                     properties: "implicitWidth,implicitHeight"
                     duration: Tokens.anim.durations.expressiveFastSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                    easing: Tokens.anim.expressiveFastSpatial
                 }
                 Anim {
                     properties: "radius,font.pointSize"

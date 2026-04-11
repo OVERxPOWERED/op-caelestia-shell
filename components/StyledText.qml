@@ -29,12 +29,12 @@ Text {
         SequentialAnimation {
             Anim {
                 to: root.animateFrom
-                easing.bezierCurve: Tokens.anim.curves.standardAccel
+                easing: Tokens.anim.standardAccel
             }
             PropertyAction {}
             Anim {
                 to: root.animateTo
-                easing.bezierCurve: Tokens.anim.curves.standardDecel
+                easing: Tokens.anim.standardDecel
             }
         }
     }
@@ -43,6 +43,5 @@ Text {
         target: root
         property: root.animateProp
         duration: root.animateDuration / 2
-        easing.type: Easing.BezierSpline
     }
 }

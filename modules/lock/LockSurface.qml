@@ -34,7 +34,7 @@ WlSessionLockSurface {
                 properties: "implicitWidth,implicitHeight"
                 to: lockContent.size
                 duration: Tokens.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                easing: Tokens.anim.expressiveDefaultSpatial
             }
             Anim {
                 target: lockBg
@@ -46,7 +46,7 @@ WlSessionLockSurface {
                 property: "scale"
                 to: 0
                 duration: Tokens.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                easing: Tokens.anim.expressiveDefaultSpatial
             }
             Anim {
                 target: content
@@ -102,14 +102,14 @@ WlSessionLockSurface {
                     property: "scale"
                     to: 1
                     duration: Tokens.anim.durations.expressiveFastSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                    easing: Tokens.anim.expressiveFastSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "rotation"
                     to: 360
                     duration: Tokens.anim.durations.expressiveFastSpatial
-                    easing.bezierCurve: Tokens.anim.curves.standardAccel
+                    easing: Tokens.anim.standardAccel
                 }
             }
             ParallelAnimation {
@@ -117,7 +117,7 @@ WlSessionLockSurface {
                     target: lockIcon
                     property: "rotation"
                     to: 360
-                    easing.bezierCurve: Tokens.anim.curves.standardDecel
+                    easing: Tokens.anim.standardDecel
                 }
                 Anim {
                     target: lockIcon
@@ -134,7 +134,7 @@ WlSessionLockSurface {
                     property: "scale"
                     to: 1
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
                 Anim {
                     target: lockBg
@@ -146,14 +146,14 @@ WlSessionLockSurface {
                     property: "implicitWidth"
                     to: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult * Tokens.sizes.lock.ratio
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "implicitHeight"
                     to: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
             }
         }

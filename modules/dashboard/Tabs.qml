@@ -164,15 +164,14 @@ Item {
                     from: 0
                     to: rippleAnim.radius * 2
                     duration: Tokens.anim.durations.normal
-                    easing.bezierCurve: Tokens.anim.curves.standardDecel
+                    easing: Tokens.anim.standardDecel
                 }
                 Anim {
                     target: ripple
                     property: "opacity"
                     to: 0
                     duration: Tokens.anim.durations.normal
-                    easing.type: Easing.BezierSpline
-                    easing.bezierCurve: Tokens.anim.curves.standard
+                    easing: Tokens.anim.standard
                 }
             }
 

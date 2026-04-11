@@ -237,14 +237,14 @@ StyledRect {
                             Behavior on rotation {
                                 Anim {
                                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                                    easing: Tokens.anim.expressiveDefaultSpatial
                                 }
                             }
 
                             Behavior on Layout.topMargin {
                                 Anim {
                                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                                    easing: Tokens.anim.expressiveDefaultSpatial
                                 }
                             }
                         }

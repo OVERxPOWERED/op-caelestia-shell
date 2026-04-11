@@ -36,7 +36,7 @@ StyledRect {
 
     Behavior on x {
         Anim {
-            easing.bezierCurve: Tokens.anim.curves.emphasizedDecel
+            easing: Tokens.anim.emphasizedDecel
         }
     }
 
@@ -102,7 +102,7 @@ StyledRect {
             Behavior on implicitHeight {
                 Anim {
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
             }
 
@@ -217,7 +217,7 @@ StyledRect {
 
                         Behavior on sweepAngle {
                             Anim {
-                                easing.bezierCurve: Tokens.anim.curves.emphasizedDecel
+                                easing: Tokens.anim.emphasizedDecel
                             }
                         }
                     }
@@ -287,8 +287,7 @@ StyledRect {
                     }
                     AnchorAnimation {
                         duration: Tokens.anim.durations.normal
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve: Tokens.anim.curves.standard
+                        easing: Tokens.anim.standard
                     }
                 }
 
@@ -331,8 +330,7 @@ StyledRect {
                 transitions: Transition {
                     AnchorAnimation {
                         duration: Tokens.anim.durations.normal
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve: Tokens.anim.curves.standard
+                        easing: Tokens.anim.standard
                     }
                 }
             }

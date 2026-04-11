@@ -58,7 +58,7 @@ Item {
                 target: root
                 property: "implicitWidth"
                 duration: Tokens.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                easing: Tokens.anim.expressiveDefaultSpatial
             }
         },
         Transition {
@@ -68,7 +68,7 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                easing.bezierCurve: Tokens.anim.curves.emphasized
+                easing: Tokens.anim.emphasized
             }
         }
     ]

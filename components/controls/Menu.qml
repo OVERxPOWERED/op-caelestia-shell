@@ -109,7 +109,7 @@ Elevation {
     Behavior on implicitHeight {
         Anim {
             duration: Tokens.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+            easing: Tokens.anim.expressiveDefaultSpatial
         }
     }
 }

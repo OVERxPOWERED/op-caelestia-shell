@@ -149,8 +149,7 @@ Column {
             transitions: Transition {
                 AnchorAnimation {
                     duration: Tokens.anim.durations.normal
-                    easing.type: Easing.BezierSpline
-                    easing.bezierCurve: Tokens.anim.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
             }
         }

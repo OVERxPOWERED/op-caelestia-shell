@@ -86,7 +86,7 @@ Row {
 
                 Behavior on Layout.preferredWidth {
                     Anim {
-                        easing.bezierCurve: Tokens.anim.curves.emphasized
+                        easing: Tokens.anim.emphasized
                     }
                 }
             }

@@ -119,7 +119,7 @@ Item {
                 properties: "scale"
                 from: 0
                 to: 1
-                easing.bezierCurve: Tokens.anim.curves.standardDecel
+                easing: Tokens.anim.standardDecel
             }
         }
 
@@ -140,7 +140,7 @@ Item {
             Anim {
                 properties: "scale"
                 to: 1
-                easing.bezierCurve: Tokens.anim.curves.standardDecel
+                easing: Tokens.anim.standardDecel
             }
             Anim {
                 properties: "x,y"
@@ -151,7 +151,7 @@ Item {
             Anim {
                 properties: "scale"
                 to: 1
-                easing.bezierCurve: Tokens.anim.curves.standardDecel
+                easing: Tokens.anim.standardDecel
             }
             Anim {
                 properties: "x,y"
@@ -192,13 +192,13 @@ Item {
 
                 Behavior on y {
                     Anim {
-                        easing.bezierCurve: Tokens.anim.curves.emphasized
+                        easing: Tokens.anim.emphasized
                     }
                 }
 
                 Behavior on implicitHeight {
                     Anim {
-                        easing.bezierCurve: Tokens.anim.curves.emphasized
+                        easing: Tokens.anim.emphasized
                     }
                 }
             }
@@ -328,7 +328,7 @@ Item {
                         properties: "scale"
                         from: 0
                         to: 1
-                        easing.bezierCurve: Tokens.anim.curves.standardDecel
+                        easing: Tokens.anim.standardDecel
                     }
                 }
 
@@ -336,7 +336,7 @@ Item {
                     Anim {
                         properties: "scale"
                         to: 1
-                        easing.bezierCurve: Tokens.anim.curves.standardDecel
+                        easing: Tokens.anim.standardDecel
                     }
                     Anim {
                         properties: "x,y"

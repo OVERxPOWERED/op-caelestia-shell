@@ -200,14 +200,14 @@ Item {
     Behavior on implicitWidth {
         Anim {
             duration: Tokens.anim.durations.large
-            easing.bezierCurve: Tokens.anim.curves.emphasized
+            easing: Tokens.anim.emphasized
         }
     }
 
     Behavior on implicitHeight {
         Anim {
             duration: Tokens.anim.durations.large
-            easing.bezierCurve: Tokens.anim.curves.emphasized
+            easing: Tokens.anim.emphasized
         }
     }
 }

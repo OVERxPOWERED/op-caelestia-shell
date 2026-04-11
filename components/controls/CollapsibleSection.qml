@@ -56,7 +56,7 @@ ColumnLayout {
                 Behavior on rotation {
                     Anim {
                         duration: Tokens.anim.durations.small
-                        easing.bezierCurve: Tokens.anim.curves.standard
+                        easing: Tokens.anim.standard
                     }
                 }
             }
@@ -84,7 +84,7 @@ ColumnLayout {
 
         Behavior on Layout.preferredHeight {
             Anim {
-                easing.bezierCurve: Tokens.anim.curves.standard
+                easing: Tokens.anim.standard
             }
         }
 
@@ -99,7 +99,7 @@ ColumnLayout {
 
             Behavior on opacity {
                 Anim {
-                    easing.bezierCurve: Tokens.anim.curves.standard
+                    easing: Tokens.anim.standard
                 }
             }
         }
@@ -118,7 +118,7 @@ ColumnLayout {
 
             Behavior on opacity {
                 Anim {
-                    easing.bezierCurve: Tokens.anim.curves.standard
+                    easing: Tokens.anim.standard
                 }
             }
 

@@ -76,7 +76,7 @@ Item {
 
             Behavior on scale {
                 Anim {
-                    easing.bezierCurve: Tokens.anim.curves.standardDecel
+                    easing: Tokens.anim.standardDecel
                 }
             }
 

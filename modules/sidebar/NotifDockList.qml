@@ -130,7 +130,7 @@ LazyListView {
 
                 Anim {
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
             }
 
@@ -141,14 +141,14 @@ LazyListView {
             Behavior on scale {
                 Anim {
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
             }
 
             Behavior on x {
                 Anim {
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
             }
         }
@@ -160,6 +160,6 @@ LazyListView {
         target: root.container
         property: "contentY"
         duration: Tokens.anim.durations.expressiveDefaultSpatial
-        easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+        easing: Tokens.anim.expressiveDefaultSpatial
     }
 }

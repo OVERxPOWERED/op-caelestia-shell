@@ -104,7 +104,7 @@ ColumnLayout {
                     from: 0
                     to: 1
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
             }
 
@@ -127,7 +127,7 @@ ColumnLayout {
                 Anim {
                     property: "y"
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
             }
 
@@ -139,7 +139,7 @@ ColumnLayout {
                 Anim {
                     property: "y"
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
             }
         }

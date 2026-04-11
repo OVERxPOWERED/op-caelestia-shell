@@ -74,24 +74,21 @@ StyledWindow {
     Behavior on borderThickness {
         Anim {
             duration: Tokens.anim.durations.expressiveDefaultSpatial
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+            easing: Tokens.anim.expressiveDefaultSpatial
         }
     }
 
     Behavior on borderRounding {
         Anim {
             duration: Tokens.anim.durations.expressiveDefaultSpatial
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+            easing: Tokens.anim.expressiveDefaultSpatial
         }
     }
 
     Behavior on shadowOpacity {
         Anim {
             duration: Tokens.anim.durations.expressiveDefaultSpatial
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+            easing: Tokens.anim.expressiveDefaultSpatial
         }
     }
 
@@ -222,7 +219,7 @@ StyledWindow {
             Behavior on extraWidth {
                 Anim {
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
             }
         }

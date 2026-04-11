@@ -45,7 +45,7 @@ StyledRect {
     Behavior on scale {
         Anim {
             duration: Tokens.anim.durations.expressiveFastSpatial
-            easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+            easing: Tokens.anim.expressiveFastSpatial
         }
     }
 }

@@ -155,7 +155,7 @@ Item {
 
         Anim {
             duration: Tokens.anim.durations.large
-            easing.bezierCurve: Tokens.anim.curves.emphasizedDecel
+            easing: Tokens.anim.emphasizedDecel
         }
     }
 
@@ -164,7 +164,7 @@ Item {
 
         Anim {
             duration: Tokens.anim.durations.large
-            easing.bezierCurve: Tokens.anim.curves.emphasizedDecel
+            easing: Tokens.anim.emphasizedDecel
         }
     }
 }

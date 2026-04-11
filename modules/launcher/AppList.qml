@@ -43,7 +43,7 @@ StyledListView {
         Behavior on y {
             Anim {
                 duration: Tokens.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                easing: Tokens.anim.expressiveDefaultSpatial
             }
         }
     }
@@ -119,7 +119,7 @@ StyledListView {
                     from: 1
                     to: 0
                     duration: Tokens.anim.durations.small
-                    easing.bezierCurve: Tokens.anim.curves.standardAccel
+                    easing: Tokens.anim.standardAccel
                 }
                 Anim {
                     target: root
@@ -127,7 +127,7 @@ StyledListView {
                     from: 1
                     to: 0.9
                     duration: Tokens.anim.durations.small
-                    easing.bezierCurve: Tokens.anim.curves.standardAccel
+                    easing: Tokens.anim.standardAccel
                 }
             }
             PropertyAction {
@@ -141,7 +141,7 @@ StyledListView {
                     from: 0
                     to: 1
                     duration: Tokens.anim.durations.small
-                    easing.bezierCurve: Tokens.anim.curves.standardDecel
+                    easing: Tokens.anim.standardDecel
                 }
                 Anim {
                     target: root
@@ -149,7 +149,7 @@ StyledListView {
                     from: 0.9
                     to: 1
                     duration: Tokens.anim.durations.small
-                    easing.bezierCurve: Tokens.anim.curves.standardDecel
+                    easing: Tokens.anim.standardDecel
                 }
             }
             PropertyAction {

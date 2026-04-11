@@ -212,13 +212,13 @@ StyledRect {
                                 from: 1
                                 to: 0
                                 duration: Tokens.anim.durations.large
-                                easing.bezierCurve: Tokens.anim.curves.standardAccel
+                                easing: Tokens.anim.standardAccel
                             }
                             Anim {
                                 from: 0
                                 to: 1
                                 duration: Tokens.anim.durations.large
-                                easing.bezierCurve: Tokens.anim.curves.standardDecel
+                                easing: Tokens.anim.standardDecel
                             }
                         }
                     }

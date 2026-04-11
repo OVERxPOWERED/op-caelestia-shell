@@ -277,14 +277,14 @@ DeviceDetails {
                 from: 0
                 to: 1
                 duration: Tokens.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                easing: Tokens.anim.expressiveFastSpatial
             }
             Anim {
                 property: "scale"
                 from: 0.7
                 to: 1
                 duration: Tokens.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                easing: Tokens.anim.expressiveFastSpatial
             }
         }
 
@@ -294,14 +294,14 @@ DeviceDetails {
                 from: 1
                 to: 0
                 duration: Tokens.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                easing: Tokens.anim.expressiveFastSpatial
             }
             Anim {
                 property: "scale"
                 from: 1
                 to: 0.7
                 duration: Tokens.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
+                easing: Tokens.anim.expressiveFastSpatial
             }
         }
 

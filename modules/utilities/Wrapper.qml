@@ -48,7 +48,7 @@ Item {
             Anim {
                 property: "sidebarLerp"
                 duration: Tokens.anim.durations.expressiveDefaultSpatial / 2
-                easing.bezierCurve: Tokens.anim.curves.standardAccel
+                easing: Tokens.anim.standardAccel
             }
         },
         Transition {
@@ -57,7 +57,7 @@ Item {
             Anim {
                 property: "sidebarLerp"
                 duration: Tokens.anim.durations.expressiveDefaultSpatial / 2
-                easing.bezierCurve: Tokens.anim.curves.standardDecel
+                easing: Tokens.anim.standardDecel
             }
         }
     ]
@@ -65,7 +65,7 @@ Item {
     Behavior on offsetScale {
         Anim {
             duration: Tokens.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+            easing: Tokens.anim.expressiveDefaultSpatial
         }
     }
 

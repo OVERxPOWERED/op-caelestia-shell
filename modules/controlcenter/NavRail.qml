@@ -104,14 +104,14 @@ Item {
                 Behavior on implicitWidth {
                     Anim {
                         duration: Tokens.anim.durations.expressiveDefaultSpatial
-                        easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                        easing: Tokens.anim.expressiveDefaultSpatial
                     }
                 }
 
                 Behavior on implicitHeight {
                     Anim {
                         duration: Tokens.anim.durations.expressiveDefaultSpatial
-                        easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                        easing: Tokens.anim.expressiveDefaultSpatial
                     }
                 }
             }
@@ -162,7 +162,7 @@ Item {
             Anim {
                 properties: "implicitWidth,implicitHeight"
                 duration: Tokens.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
+                easing: Tokens.anim.expressiveDefaultSpatial
             }
         }
 

@@ -39,10 +39,13 @@ private:
     void updateWatch();
     void onWatcherEvent();
 
+    void connectAutoSave(ConfigObject* obj);
+
     QString m_filePath;
     QString m_screen;
     QString m_watchedDir;
     bool m_recentlySaved = false;
+    bool m_loading = false;
 
     QFileSystemWatcher* m_watcher = nullptr;
     QTimer* m_saveTimer = nullptr;

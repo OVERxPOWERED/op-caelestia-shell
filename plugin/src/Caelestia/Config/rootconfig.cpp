@@ -96,6 +96,9 @@ void RootConfig::setupFileBackend(const QString& path, const QString& screen) {
     m_reloadDebounce->setInterval(50);
     connect(m_reloadDebounce, &QTimer::timeout, this, &RootConfig::reload);
 
+    // Auto-save when any property changes (debounced by the save timer)
+    connectAutoSave(this);
+
     connect(m_watcher, &QFileSystemWatcher::directoryChanged, this, &RootConfig::onWatcherEvent);
     connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &RootConfig::onWatcherEvent);
 
@@ -109,6 +112,23 @@ void RootConfig::setupFileBackend(const QString& path, const QString& screen) {
     QTimer::singleShot(0, this, [this, result] {
         emitLoadSignals(result, false);
     });
+}
+
+void RootConfig::connectAutoSave(ConfigObject* obj) {
+    connect(obj, &ConfigObject::propertiesChanged, this, [this] {
+        if (!m_loading)
+            saveToFile();
+    });
+
+    // Recurse into sub-objects
+    const auto* meta = obj->metaObject();
+    for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
+        auto prop = meta->property(i);
+        auto value = prop.read(obj);
+        auto* subObj = value.value<ConfigObject*>();
+        if (subObj)
+            connectAutoSave(subObj);
+    }
 }
 
 void RootConfig::updateWatch() {
@@ -192,10 +212,14 @@ std::optional<QString> RootConfig::reloadFromFile() {
 
     qCDebug(lcConfig) << "Reloading" << metaObject()->className() << "from" << m_filePath;
 
+    m_loading = true;
+
     clearLoadedKeys();
 
     auto jsonObj = doc.object();
     loadFromJson(jsonObj);
+
+    m_loading = false;
 
     // Collect unknown keys — caller is responsible for emitting signals
     m_lastUnknownKeys = collectUnknownKeys(this, jsonObj);

@@ -54,6 +54,8 @@ public:
 
     ~GlobalConfig() override;
 
+    void bindAppearanceTokens();
+
 private:
     friend class MonitorConfigManager;
     explicit GlobalConfig(QObject* parent = nullptr);

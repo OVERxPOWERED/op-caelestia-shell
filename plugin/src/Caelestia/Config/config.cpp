@@ -1,5 +1,6 @@
 #include "config.hpp"
 #include "configscope.hpp"
+#include "tokens.hpp"
 
 #include <qqmlengine.h>
 #include <qstandardpaths.h>
@@ -39,6 +40,10 @@ GlobalConfig::GlobalConfig(QObject* parent)
     s_instance = this;
 
     setupFileBackend(configDir() + QStringLiteral("shell.json"));
+
+    // If TokenConfig was created before us, bind now
+    if (TokenConfig::instance())
+        bindAppearanceTokens();
 }
 
 GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObject* parent)
@@ -74,8 +79,32 @@ GlobalConfig* GlobalConfig::instance() {
     return s_instance;
 }
 
-GlobalConfig* GlobalConfig::create(QQmlEngine* engine, QJSEngine*) {
+void GlobalConfig::bindAppearanceTokens() {
+    auto* tokens = TokenConfig::instance();
+    if (!tokens) {
+        qCDebug(lcConfig) << "GlobalConfig::bindAppearanceTokens: TokenConfig not yet available";
+        return;
+    }
+
+    qCDebug(lcConfig) << "GlobalConfig::bindAppearanceTokens: binding appearance to token values";
+    auto* tokenAppearance = tokens->appearance();
+    m_appearance->rounding()->bindTokens(tokenAppearance->rounding());
+    m_appearance->spacing()->bindTokens(tokenAppearance->spacing());
+    m_appearance->padding()->bindTokens(tokenAppearance->padding());
+    m_appearance->font()->size()->bindTokens(tokenAppearance->fontSize());
+    m_appearance->anim()->durations()->bindTokens(tokenAppearance->animDurations());
+}
+
+GlobalConfig* GlobalConfig::create(QQmlEngine* engine, QJSEngine* jsEngine) {
     auto* config = new GlobalConfig(engine);
+
+    // Ensure TokenConfig is created — appearance computed properties depend on token binding.
+    if (!TokenConfig::instance())
+        TokenConfig::create(engine, jsEngine);
+
+    // Bind now that both singletons exist
+    config->bindAppearanceTokens();
+
     return config;
 }
 

@@ -33,17 +33,11 @@ TokenConfig::TokenConfig(QObject* parent)
     , m_controlCenter(new ControlCenterTokens(this)) {
     s_instance = this;
 
-    // Bind token base values to GlobalConfig appearance computed properties
-    if (auto* global = GlobalConfig::instance()) {
-        auto* appearanceConfig = global->appearance();
-        appearanceConfig->rounding()->bindTokens(m_appearance->rounding());
-        appearanceConfig->spacing()->bindTokens(m_appearance->spacing());
-        appearanceConfig->padding()->bindTokens(m_appearance->padding());
-        appearanceConfig->font()->size()->bindTokens(m_appearance->fontSize());
-        appearanceConfig->anim()->durations()->bindTokens(m_appearance->animDurations());
-    }
-
     setupFileBackend(configDir() + QStringLiteral("shell-tokens.json"));
+
+    // If GlobalConfig was created before us, trigger its binding
+    if (auto* global = GlobalConfig::instance())
+        global->bindAppearanceTokens();
 }
 
 TokenConfig::TokenConfig(TokenConfig* fallback, const QString& filePath, QObject* parent)

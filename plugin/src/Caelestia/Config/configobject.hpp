@@ -2,6 +2,7 @@
 
 #include <qfilesystemwatcher.h>
 #include <qjsonobject.h>
+#include <qloggingcategory.h>
 #include <qmap.h>
 #include <qobject.h>
 #include <qqmlintegration.h>
@@ -41,6 +42,8 @@ private:                                                                        
     Type* m_##name = nullptr;
 
 namespace caelestia::config {
+
+Q_DECLARE_LOGGING_CATEGORY(lcConfig)
 
 class ConfigObject : public QObject {
     Q_OBJECT

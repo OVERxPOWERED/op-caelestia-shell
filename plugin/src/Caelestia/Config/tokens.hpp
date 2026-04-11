@@ -317,23 +317,57 @@ public:
     ~TokenConfig() override;
 
 private:
+    friend class MonitorConfigManager;
     explicit TokenConfig(QObject* parent = nullptr);
+    explicit TokenConfig(TokenConfig* fallback, const QString& filePath, QObject* parent);
 };
 
 class Tokens : public QObject {
     Q_OBJECT
+    Q_MOC_INCLUDE("configscope.hpp")
     QML_ELEMENT
     QML_UNCREATABLE("")
     QML_ATTACHED(Tokens)
+
+    Q_PROPERTY(ConfigScope* scope READ scope NOTIFY sourceChanged)
+    Q_PROPERTY(const AppearanceTokens* appearance READ appearance NOTIFY sourceChanged)
+    Q_PROPERTY(const BarTokens* bar READ bar NOTIFY sourceChanged)
+    Q_PROPERTY(const DashboardTokens* dashboard READ dashboard NOTIFY sourceChanged)
+    Q_PROPERTY(const LauncherTokens* launcher READ launcher NOTIFY sourceChanged)
+    Q_PROPERTY(const NotifsTokens* notifs READ notifs NOTIFY sourceChanged)
+    Q_PROPERTY(const OsdTokens* osd READ osd NOTIFY sourceChanged)
+    Q_PROPERTY(const SessionTokens* session READ session NOTIFY sourceChanged)
+    Q_PROPERTY(const SidebarTokens* sidebar READ sidebar NOTIFY sourceChanged)
+    Q_PROPERTY(const UtilitiesTokens* utilities READ utilities NOTIFY sourceChanged)
+    Q_PROPERTY(const LockTokens* lock READ lock NOTIFY sourceChanged)
+    Q_PROPERTY(const WInfoTokens* winfo READ winfo NOTIFY sourceChanged)
+    Q_PROPERTY(const ControlCenterTokens* controlCenter READ controlCenter NOTIFY sourceChanged)
 
 public:
     explicit Tokens(ConfigScope* scope, QObject* parent = nullptr);
 
     [[nodiscard]] ConfigScope* scope() const { return m_scope; }
 
+    [[nodiscard]] const AppearanceTokens* appearance() const;
+    [[nodiscard]] const BarTokens* bar() const;
+    [[nodiscard]] const DashboardTokens* dashboard() const;
+    [[nodiscard]] const LauncherTokens* launcher() const;
+    [[nodiscard]] const NotifsTokens* notifs() const;
+    [[nodiscard]] const OsdTokens* osd() const;
+    [[nodiscard]] const SessionTokens* session() const;
+    [[nodiscard]] const SidebarTokens* sidebar() const;
+    [[nodiscard]] const UtilitiesTokens* utilities() const;
+    [[nodiscard]] const LockTokens* lock() const;
+    [[nodiscard]] const WInfoTokens* winfo() const;
+    [[nodiscard]] const ControlCenterTokens* controlCenter() const;
+
     static Tokens* qmlAttachedProperties(QObject* object);
 
+    Q_SIGNAL void sourceChanged();
+
 private:
+    void connectScope();
+
     ConfigScope* m_scope;
 };
 

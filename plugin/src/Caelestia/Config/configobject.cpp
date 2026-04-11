@@ -50,11 +50,13 @@ void ConfigObject::loadFromJson(const QJsonObject& obj) {
             for (const auto& v : jsonArr)
                 list.append(v.toString());
             prop.write(this, QVariant::fromValue(list));
+            m_loadedKeys.insert(key);
             continue;
         }
 
         // For all other types, let Qt's variant conversion handle it
         prop.write(this, jsonVal.toVariant());
+        m_loadedKeys.insert(key);
     }
 }
 
@@ -108,6 +110,159 @@ QJsonObject ConfigObject::toJsonObject() const {
     return obj;
 }
 
+QJsonObject ConfigObject::toSparseJsonObject() const {
+    QJsonObject obj;
+    const auto* meta = metaObject();
+
+    for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
+        const auto prop = meta->property(i);
+
+        if (!prop.isReadable())
+            continue;
+
+        const auto key = QString::fromUtf8(prop.name());
+        const auto value = prop.read(this);
+
+        // Recurse into sub-objects — include only if they have loaded keys
+        if (value.canView<ConfigObject*>()) {
+            auto* const subObj = value.value<ConfigObject*>();
+            if (subObj) {
+                auto subJson = subObj->toSparseJsonObject();
+                if (!subJson.isEmpty())
+                    obj.insert(key, subJson);
+            }
+            continue;
+        }
+
+        // Only include properties that were explicitly loaded
+        if (!m_loadedKeys.contains(key))
+            continue;
+
+        if (!prop.isWritable())
+            continue;
+
+        if (prop.metaType().id() == QMetaType::QStringList) {
+            QJsonArray arr;
+            const auto strList = value.toStringList();
+            for (const auto& s : strList)
+                arr.append(s);
+            obj.insert(key, arr);
+            continue;
+        }
+
+        if (prop.metaType().id() == QMetaType::QVariantList) {
+            obj.insert(key, QJsonArray::fromVariantList(value.toList()));
+            continue;
+        }
+
+        obj.insert(key, QJsonValue::fromVariant(value));
+    }
+
+    return obj;
+}
+
+void ConfigObject::clearLoadedKeys() {
+    m_loadedKeys.clear();
+
+    const auto* meta = metaObject();
+    for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
+        auto prop = meta->property(i);
+        auto value = prop.read(this);
+        auto* subObj = value.value<ConfigObject*>();
+        if (subObj)
+            subObj->clearLoadedKeys();
+    }
+}
+
+void ConfigObject::syncFromGlobal(ConfigObject* global) {
+    m_global = global;
+
+    // Connect batched change signal (single connection per ConfigObject pair)
+    connect(global, &ConfigObject::propertiesChanged, this, &ConfigObject::onGlobalPropertiesChanged);
+
+    // Initial sync: copy all non-loaded property values from global
+    const auto* meta = metaObject();
+    for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
+        auto prop = meta->property(i);
+        const auto key = QString::fromUtf8(prop.name());
+
+        auto current = prop.read(this);
+        auto* subObj = current.value<ConfigObject*>();
+
+        if (subObj) {
+            auto globalVal = prop.read(global);
+            auto* globalSub = globalVal.value<ConfigObject*>();
+            if (globalSub)
+                subObj->syncFromGlobal(globalSub);
+            continue;
+        }
+
+        if (!prop.isWritable())
+            continue;
+
+        if (!m_loadedKeys.contains(key))
+            prop.write(this, prop.read(global));
+    }
+}
+
+void ConfigObject::resyncFromGlobal() {
+    if (!m_global)
+        return;
+
+    const auto* meta = metaObject();
+    for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
+        auto prop = meta->property(i);
+        const auto key = QString::fromUtf8(prop.name());
+
+        auto current = prop.read(this);
+        auto* subObj = current.value<ConfigObject*>();
+
+        if (subObj) {
+            subObj->resyncFromGlobal();
+            continue;
+        }
+
+        if (!prop.isWritable())
+            continue;
+
+        if (!m_loadedKeys.contains(key))
+            prop.write(this, prop.read(m_global));
+    }
+}
+
+void ConfigObject::onGlobalPropertiesChanged(const QMap<QString, QVariant>& changed) {
+    for (auto it = changed.begin(); it != changed.end(); ++it) {
+        if (m_loadedKeys.contains(it.key()))
+            continue;
+
+        int idx = metaObject()->indexOfProperty(it.key().toUtf8().constData());
+        if (idx >= 0)
+            metaObject()->property(idx).write(this, it.value());
+    }
+}
+
+void ConfigObject::notifyPropertyChanged(const QString& name, const QVariant& value) {
+    m_pendingChanges.insert(name, value);
+
+    if (!m_batchTimer) {
+        m_batchTimer = new QTimer(this);
+        m_batchTimer->setSingleShot(true);
+        m_batchTimer->setInterval(0);
+        connect(m_batchTimer, &QTimer::timeout, this, &ConfigObject::emitBatchedChanges);
+    }
+
+    m_batchTimer->start();
+}
+
+void ConfigObject::emitBatchedChanges() {
+    if (m_pendingChanges.isEmpty())
+        return;
+
+    auto changes = std::move(m_pendingChanges);
+    m_pendingChanges.clear();
+    Q_EMIT propertiesChanged(changes);
+}
+
 void ConfigObject::setupFileBackend(const QString& path) {
     m_filePath = path;
 
@@ -126,7 +281,8 @@ void ConfigObject::setupFileBackend(const QString& path) {
             return;
         }
 
-        file.write(QJsonDocument(toJsonObject()).toJson(QJsonDocument::Indented));
+        auto json = m_sparse ? toSparseJsonObject() : toJsonObject();
+        file.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
     });
 
     m_cooldownTimer->setSingleShot(true);
@@ -167,7 +323,12 @@ void ConfigObject::reloadFromFile() {
         return;
     }
 
+    clearLoadedKeys();
     loadFromJson(doc.object());
+
+    // Re-sync non-loaded properties from global after reload
+    if (m_global)
+        resyncFromGlobal();
 }
 
 void ConfigObject::onFileChanged() {

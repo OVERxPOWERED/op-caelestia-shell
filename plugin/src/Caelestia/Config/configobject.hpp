@@ -2,9 +2,12 @@
 
 #include <qfilesystemwatcher.h>
 #include <qjsonobject.h>
+#include <qmap.h>
 #include <qobject.h>
 #include <qqmlintegration.h>
+#include <qset.h>
 #include <qtimer.h>
+#include <qvariant.h>
 
 // Declares a serialized config property with getter, setter (change-detected), signal, and member.
 #define CONFIG_PROPERTY(Type, name, ...)                                                                               \
@@ -15,8 +18,10 @@ public:                                                                         
         return m_##name;                                                                                               \
     }                                                                                                                  \
     void set_##name(const Type& val) {                                                                                 \
-        if (caelestia::config::ConfigObject::updateMember(m_##name, val))                                              \
+        if (caelestia::config::ConfigObject::updateMember(m_##name, val)) {                                            \
             Q_EMIT name##Changed();                                                                                    \
+            notifyPropertyChanged(QStringLiteral(#name), QVariant::fromValue(m_##name));                               \
+        }                                                                                                              \
     }                                                                                                                  \
     Q_SIGNAL void name##Changed();                                                                                     \
                                                                                                                        \
@@ -45,12 +50,25 @@ public:
 
     void loadFromJson(const QJsonObject& obj);
     [[nodiscard]] QJsonObject toJsonObject() const;
+    [[nodiscard]] QJsonObject toSparseJsonObject() const;
 
     // File-backed config support. Call setupFileBackend() to enable
     // automatic file watching, debounced saving, and reload.
     void setupFileBackend(const QString& path);
     void saveToFile();
     void reloadFromFile();
+
+    // Per-monitor overlay support (Qt Resolve Mask pattern).
+    // Eagerly syncs non-overridden properties from a global ConfigObject.
+    void syncFromGlobal(ConfigObject* global);
+    void resyncFromGlobal();
+    void clearLoadedKeys();
+
+    [[nodiscard]] bool isPropertyLoaded(const QString& name) const { return m_loadedKeys.contains(name); }
+
+    [[nodiscard]] bool isSparse() const { return m_sparse; }
+
+    void setSparse(bool sparse) { m_sparse = sparse; }
 
     [[nodiscard]] bool recentlySaved() const { return m_recentlySaved; }
 
@@ -66,15 +84,30 @@ public:
         return true;
     }
 
+    Q_SIGNAL void propertiesChanged(const QMap<QString, QVariant>& changed);
+
+protected:
+    void notifyPropertyChanged(const QString& name, const QVariant& value);
+
 private:
     void onFileChanged();
+    void onGlobalPropertiesChanged(const QMap<QString, QVariant>& changed);
+    void emitBatchedChanges();
 
     QString m_filePath;
     bool m_recentlySaved = false;
-    // These are heap-allocated only when setupFileBackend is called
+    bool m_sparse = false;
+
+    // File backend (heap-allocated only when setupFileBackend is called)
     QFileSystemWatcher* m_watcher = nullptr;
     QTimer* m_saveTimer = nullptr;
     QTimer* m_cooldownTimer = nullptr;
+
+    // Per-monitor overlay state
+    ConfigObject* m_global = nullptr;
+    QSet<QString> m_loadedKeys;
+    QMap<QString, QVariant> m_pendingChanges;
+    QTimer* m_batchTimer = nullptr;
 };
 
 } // namespace caelestia::config

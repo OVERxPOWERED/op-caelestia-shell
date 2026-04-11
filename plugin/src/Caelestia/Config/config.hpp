@@ -55,25 +55,69 @@ public:
     ~GlobalConfig() override;
 
 private:
+    friend class MonitorConfigManager;
     explicit GlobalConfig(QObject* parent = nullptr);
+    explicit GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObject* parent);
 };
 
 class ConfigScope;
 
 class Config : public QObject {
     Q_OBJECT
+    Q_MOC_INCLUDE("configscope.hpp")
     QML_ELEMENT
     QML_UNCREATABLE("")
     QML_ATTACHED(Config)
+
+    Q_PROPERTY(ConfigScope* scope READ scope NOTIFY sourceChanged)
+    Q_PROPERTY(const AppearanceConfig* appearance READ appearance NOTIFY sourceChanged)
+    Q_PROPERTY(const GeneralConfig* general READ general NOTIFY sourceChanged)
+    Q_PROPERTY(const BackgroundConfig* background READ background NOTIFY sourceChanged)
+    Q_PROPERTY(const BarConfig* bar READ bar NOTIFY sourceChanged)
+    Q_PROPERTY(const BorderConfig* border READ border NOTIFY sourceChanged)
+    Q_PROPERTY(const DashboardConfig* dashboard READ dashboard NOTIFY sourceChanged)
+    Q_PROPERTY(const ControlCenterConfig* controlCenter READ controlCenter NOTIFY sourceChanged)
+    Q_PROPERTY(const LauncherConfig* launcher READ launcher NOTIFY sourceChanged)
+    Q_PROPERTY(const NotifsConfig* notifs READ notifs NOTIFY sourceChanged)
+    Q_PROPERTY(const OsdConfig* osd READ osd NOTIFY sourceChanged)
+    Q_PROPERTY(const SessionConfig* session READ session NOTIFY sourceChanged)
+    Q_PROPERTY(const WInfoConfig* winfo READ winfo NOTIFY sourceChanged)
+    Q_PROPERTY(const LockConfig* lock READ lock NOTIFY sourceChanged)
+    Q_PROPERTY(const UtilitiesConfig* utilities READ utilities NOTIFY sourceChanged)
+    Q_PROPERTY(const SidebarConfig* sidebar READ sidebar NOTIFY sourceChanged)
+    Q_PROPERTY(const ServiceConfig* services READ services NOTIFY sourceChanged)
+    Q_PROPERTY(const UserPaths* paths READ paths NOTIFY sourceChanged)
 
 public:
     explicit Config(ConfigScope* scope, QObject* parent = nullptr);
 
     [[nodiscard]] ConfigScope* scope() const { return m_scope; }
 
+    [[nodiscard]] const AppearanceConfig* appearance() const;
+    [[nodiscard]] const GeneralConfig* general() const;
+    [[nodiscard]] const BackgroundConfig* background() const;
+    [[nodiscard]] const BarConfig* bar() const;
+    [[nodiscard]] const BorderConfig* border() const;
+    [[nodiscard]] const DashboardConfig* dashboard() const;
+    [[nodiscard]] const ControlCenterConfig* controlCenter() const;
+    [[nodiscard]] const LauncherConfig* launcher() const;
+    [[nodiscard]] const NotifsConfig* notifs() const;
+    [[nodiscard]] const OsdConfig* osd() const;
+    [[nodiscard]] const SessionConfig* session() const;
+    [[nodiscard]] const WInfoConfig* winfo() const;
+    [[nodiscard]] const LockConfig* lock() const;
+    [[nodiscard]] const UtilitiesConfig* utilities() const;
+    [[nodiscard]] const SidebarConfig* sidebar() const;
+    [[nodiscard]] const ServiceConfig* services() const;
+    [[nodiscard]] const UserPaths* paths() const;
+
     static Config* qmlAttachedProperties(QObject* object);
 
+    Q_SIGNAL void sourceChanged();
+
 private:
+    void connectScope();
+
     ConfigScope* m_scope;
 };
 

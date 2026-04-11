@@ -6,6 +6,7 @@ qml_module(caelestia-config
         configscope.cpp
         appearanceconfig.cpp
         tokens.cpp
+        monitorconfigmanager.cpp
         backgroundconfig.hpp
         barconfig.hpp
         borderconfig.hpp

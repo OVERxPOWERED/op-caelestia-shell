@@ -20,6 +20,7 @@ public:                                                                         
     }                                                                                                                  \
     void set_##name(const Type& val) {                                                                                 \
         if (caelestia::config::ConfigObject::updateMember(m_##name, val)) {                                            \
+            markPropertyLoaded(QStringLiteral(#name));                                                                 \
             Q_EMIT name##Changed();                                                                                    \
             notifyPropertyChanged(QStringLiteral(#name), QVariant::fromValue(m_##name));                               \
         }                                                                                                              \
@@ -68,6 +69,8 @@ public:
 
     [[nodiscard]] bool isPropertyLoaded(const QString& name) const { return m_loadedKeys.contains(name); }
 
+    Q_INVOKABLE void resetOption(const QString& name);
+
     [[nodiscard]] bool recentlySaved() const { return m_recentlySaved; }
 
     template <typename T> static bool updateMember(T& member, const T& value) {
@@ -86,6 +89,7 @@ signals:
     void propertiesChanged(const QMap<QString, QVariant>& changed);
 
 protected:
+    void markPropertyLoaded(const QString& name);
     void notifyPropertyChanged(const QString& name, const QVariant& value);
 
 private:

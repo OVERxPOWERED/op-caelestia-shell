@@ -168,6 +168,24 @@ void ConfigObject::syncFromGlobal(ConfigObject* global) {
     }
 }
 
+void ConfigObject::markPropertyLoaded(const QString& name) {
+    m_loadedKeys.insert(name);
+}
+
+void ConfigObject::resetOption(const QString& name) {
+    m_loadedKeys.remove(name);
+
+    // If synced from global, re-copy the global value
+    if (m_global) {
+        int idx = metaObject()->indexOfProperty(name.toUtf8().constData());
+        if (idx >= 0) {
+            auto prop = metaObject()->property(idx);
+            if (prop.isWritable())
+                prop.write(this, prop.read(m_global));
+        }
+    }
+}
+
 void ConfigObject::resyncFromGlobal() {
     if (!m_global)
         return;

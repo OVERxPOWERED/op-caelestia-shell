@@ -79,61 +79,11 @@ QJsonObject ConfigObject::toJsonObject() const {
         const auto key = QString::fromUtf8(prop.name());
         const auto value = prop.read(this);
 
-        // Recurse into sub-objects
-        if (value.canView<ConfigObject*>()) {
-            auto* const subObj = value.value<ConfigObject*>();
-            if (subObj)
-                obj.insert(key, subObj->toJsonObject());
-            else
-                qCWarning(lcConfig, "Unable to get sub-object when serializing config object");
-            continue;
-        }
-
-        // Skip read-only properties (computed values)
-        if (!prop.isWritable())
-            continue;
-
-        // Handle QStringList explicitly
-        if (prop.metaType().id() == QMetaType::QStringList) {
-            QJsonArray arr;
-            const auto strList = value.toStringList();
-            for (const auto& s : strList)
-                arr.append(s);
-            obj.insert(key, arr);
-            continue;
-        }
-
-        // Handle QVariantList explicitly
-        if (prop.metaType().id() == QMetaType::QVariantList) {
-            obj.insert(key, QJsonArray::fromVariantList(value.toList()));
-            continue;
-        }
-
-        // Default case
-        obj.insert(key, QJsonValue::fromVariant(value));
-    }
-
-    return obj;
-}
-
-QJsonObject ConfigObject::toSparseJsonObject() const {
-    QJsonObject obj;
-    const auto* meta = metaObject();
-
-    for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
-        const auto prop = meta->property(i);
-
-        if (!prop.isReadable())
-            continue;
-
-        const auto key = QString::fromUtf8(prop.name());
-        const auto value = prop.read(this);
-
         // Recurse into sub-objects — include only if they have loaded keys
         if (value.canView<ConfigObject*>()) {
             auto* const subObj = value.value<ConfigObject*>();
             if (subObj) {
-                auto subJson = subObj->toSparseJsonObject();
+                auto subJson = subObj->toJsonObject();
                 if (!subJson.isEmpty())
                     obj.insert(key, subJson);
             }
@@ -304,7 +254,7 @@ void ConfigObject::setupFileBackend(const QString& path) {
             return;
         }
 
-        auto json = m_sparse ? toSparseJsonObject() : toJsonObject();
+        auto json = toJsonObject();
         file.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
         if (auto* root = qobject_cast<RootConfig*>(this))
             emit root->fileSaved();

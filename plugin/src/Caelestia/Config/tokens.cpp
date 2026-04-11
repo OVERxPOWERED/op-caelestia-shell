@@ -26,7 +26,6 @@ TokenConfig::TokenConfig(TokenConfig* fallback, const QString& filePath, QObject
     : RootConfig(parent)
     , m_appearance(new AppearanceTokens(this))
     , m_sizes(new SizeTokens(this)) {
-    setSparse(true);
     if (!filePath.isEmpty())
         setupFileBackend(filePath);
     if (fallback)

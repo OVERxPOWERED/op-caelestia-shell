@@ -56,7 +56,6 @@ GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObj
     , m_sidebar(new SidebarConfig(this))
     , m_services(new ServiceConfig(this))
     , m_paths(new UserPaths(this)) {
-    setSparse(true);
     if (!filePath.isEmpty())
         setupFileBackend(filePath);
     if (fallback)

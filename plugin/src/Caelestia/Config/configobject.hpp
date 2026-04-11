@@ -53,7 +53,6 @@ public:
 
     void loadFromJson(const QJsonObject& obj);
     [[nodiscard]] QJsonObject toJsonObject() const;
-    [[nodiscard]] QJsonObject toSparseJsonObject() const;
 
     // File-backed config support. Call setupFileBackend() to enable
     // automatic file watching, debounced saving, and reload.
@@ -68,10 +67,6 @@ public:
     void clearLoadedKeys();
 
     [[nodiscard]] bool isPropertyLoaded(const QString& name) const { return m_loadedKeys.contains(name); }
-
-    [[nodiscard]] bool isSparse() const { return m_sparse; }
-
-    void setSparse(bool sparse) { m_sparse = sparse; }
 
     [[nodiscard]] bool recentlySaved() const { return m_recentlySaved; }
 
@@ -100,7 +95,6 @@ private:
 
     QString m_filePath;
     bool m_recentlySaved = false;
-    bool m_sparse = false;
 
     // File backend (heap-allocated only when setupFileBackend is called)
     QFileSystemWatcher* m_watcher = nullptr;

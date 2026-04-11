@@ -62,8 +62,6 @@ TokenConfig::TokenConfig(TokenConfig* fallback, const QString& filePath, QObject
 }
 
 TokenConfig::~TokenConfig() {
-    if (m_defaults)
-        m_defaults->deleteLater();
     if (s_instance == this)
         s_instance = nullptr;
 }
@@ -74,7 +72,7 @@ TokenConfig* TokenConfig::instance() {
 
 TokenConfig* TokenConfig::defaults() {
     if (!m_defaults)
-        m_defaults = new TokenConfig(nullptr, QString()); // Non-singleton constructor
+        m_defaults = new TokenConfig(nullptr, QString(), this); // Non-singleton constructor
     return m_defaults;
 }
 

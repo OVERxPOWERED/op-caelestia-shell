@@ -73,8 +73,6 @@ GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObj
 }
 
 GlobalConfig::~GlobalConfig() {
-    if (m_defaults)
-        m_defaults->deleteLater();
     if (s_instance == this)
         s_instance = nullptr;
 }
@@ -85,7 +83,7 @@ GlobalConfig* GlobalConfig::instance() {
 
 GlobalConfig* GlobalConfig::defaults() {
     if (!m_defaults)
-        m_defaults = new GlobalConfig(nullptr, QString()); // Non-singleton constructor
+        m_defaults = new GlobalConfig(nullptr, QString(), this); // Non-singleton constructor
     return m_defaults;
 }
 

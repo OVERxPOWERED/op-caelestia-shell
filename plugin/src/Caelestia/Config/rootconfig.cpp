@@ -102,7 +102,13 @@ void RootConfig::setupFileBackend(const QString& path, const QString& screen) {
     qCDebug(lcConfig) << "Setting up file backend for" << metaObject()->className() << "at" << path;
 
     updateWatch();
-    reload();
+
+    // Load immediately so values are available during construction.
+    // Defer signal emissions to next event loop tick so QML has time to connect.
+    auto result = reloadFromFile();
+    QTimer::singleShot(0, this, [this, result] {
+        emitLoadSignals(result, false);
+    });
 }
 
 void RootConfig::updateWatch() {
@@ -189,11 +195,10 @@ std::optional<QString> RootConfig::reloadFromFile() {
     clearLoadedKeys();
 
     auto jsonObj = doc.object();
-    const auto unknownKeys = collectUnknownKeys(this, jsonObj);
-    for (const auto& key : unknownKeys)
-        emit unknownOption(key, m_screen);
-
     loadFromJson(jsonObj);
+
+    // Collect unknown keys — caller is responsible for emitting signals
+    m_lastUnknownKeys = collectUnknownKeys(this, jsonObj);
 
     return QString(); // success
 }
@@ -202,14 +207,24 @@ void RootConfig::save() {
     saveToFile();
 }
 
-void RootConfig::reload() {
-    auto result = reloadFromFile();
-    if (result.has_value()) {
-        if (result->isEmpty())
+void RootConfig::emitLoadSignals(const std::optional<QString>& result, bool emitLoaded) {
+    if (!result.has_value())
+        return;
+
+    for (const auto& key : std::as_const(m_lastUnknownKeys))
+        emit unknownOption(key, m_screen);
+    m_lastUnknownKeys.clear();
+
+    if (result->isEmpty()) {
+        if (emitLoaded)
             emit loaded(m_screen);
-        else
-            emit loadFailed(*result, m_screen);
+    } else {
+        emit loadFailed(*result, m_screen);
     }
+}
+
+void RootConfig::reload() {
+    emitLoadSignals(reloadFromFile());
 }
 
 } // namespace caelestia::config

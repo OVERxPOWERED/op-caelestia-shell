@@ -35,6 +35,7 @@ signals:
 
 private:
     static QStringList collectUnknownKeys(const ConfigObject* obj, const QJsonObject& json);
+    void emitLoadSignals(const std::optional<QString>& result, bool emitLoaded = true);
     void updateWatch();
     void onWatcherEvent();
 
@@ -49,6 +50,7 @@ private:
     QTimer* m_retryTimer = nullptr;
     QTimer* m_reloadDebounce = nullptr;
     int m_parseRetries = 0;
+    QStringList m_lastUnknownKeys;
 };
 
 } // namespace caelestia::config

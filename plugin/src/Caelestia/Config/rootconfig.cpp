@@ -20,7 +20,7 @@ void RootConfig::setupFileBackend(const QString& path) {
 
     m_retryTimer->setSingleShot(true);
     m_retryTimer->setInterval(50);
-    connect(m_retryTimer, &QTimer::timeout, this, &RootConfig::reloadFromFile);
+    connect(m_retryTimer, &QTimer::timeout, this, &RootConfig::reload);
 
     m_saveTimer->setSingleShot(true);
     m_saveTimer->setInterval(500);
@@ -29,8 +29,9 @@ void RootConfig::setupFileBackend(const QString& path) {
 
         QFile file(m_filePath);
         if (!file.open(QIODevice::WriteOnly)) {
-            qCWarning(lcConfig, "Failed to write %s", qUtf8Printable(m_filePath));
-            emit saveFailed(QStringLiteral("Failed to open file for writing"));
+            auto err = QStringLiteral("Failed to write %1: %2").arg(m_filePath, file.errorString());
+            qCWarning(lcConfig, "%s", qUtf8Printable(err));
+            emit saveFailed(err);
             return;
         }
 
@@ -50,7 +51,7 @@ void RootConfig::setupFileBackend(const QString& path) {
 
     qCDebug(lcConfig) << "Setting up file backend for" << metaObject()->className() << "at" << path;
 
-    reloadFromFile();
+    reload();
 
     if (QFile::exists(m_filePath))
         m_watcher->addPath(m_filePath);
@@ -64,12 +65,13 @@ void RootConfig::saveToFile() {
     m_cooldownTimer->start();
 }
 
-bool RootConfig::reloadFromFile() {
+std::optional<QString> RootConfig::reloadFromFile() {
     QFile file(m_filePath);
 
     if (!file.open(QIODevice::ReadOnly)) {
-        qCDebug(lcConfig, "Failed to open %s", qUtf8Printable(m_filePath));
-        return false;
+        auto err = QStringLiteral("Failed to open %1: %2").arg(m_filePath, file.errorString());
+        qCDebug(lcConfig, "%s", qUtf8Printable(err));
+        return err;
     }
 
     QJsonParseError error{};
@@ -81,12 +83,12 @@ bool RootConfig::reloadFromFile() {
             qCDebug(lcConfig, "Failed to parse %s: %s - retrying (%d/3)", qUtf8Printable(m_filePath),
                 qUtf8Printable(error.errorString()), m_parseRetries);
             m_retryTimer->start();
-        } else {
-            qCWarning(
-                lcConfig, "Failed to parse %s: %s", qUtf8Printable(m_filePath), qUtf8Printable(error.errorString()));
-            m_parseRetries = 0;
+            return std::nullopt; // pending retry — no signal
         }
-        return false;
+
+        qCWarning(lcConfig, "Failed to parse %s: %s", qUtf8Printable(m_filePath), qUtf8Printable(error.errorString()));
+        m_parseRetries = 0;
+        return error.errorString();
     }
 
     m_parseRetries = 0;
@@ -96,7 +98,7 @@ bool RootConfig::reloadFromFile() {
     clearLoadedKeys();
     loadFromJson(doc.object());
 
-    return true;
+    return QString(); // success
 }
 
 void RootConfig::onFileChanged() {
@@ -108,10 +110,7 @@ void RootConfig::onFileChanged() {
         if (m_retryTimer)
             m_retryTimer->stop();
 
-        if (reloadFromFile())
-            emit loaded();
-        else
-            emit loadFailed(QStringLiteral("Failed to load config file"));
+        reload();
     }
 }
 
@@ -120,8 +119,13 @@ void RootConfig::save() {
 }
 
 void RootConfig::reload() {
-    if (reloadFromFile())
-        emit loaded();
+    auto result = reloadFromFile();
+    if (result.has_value()) {
+        if (result->isEmpty())
+            emit loaded();
+        else
+            emit loadFailed(*result);
+    }
 }
 
 } // namespace caelestia::config

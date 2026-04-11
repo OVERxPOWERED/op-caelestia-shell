@@ -2,6 +2,7 @@
 
 #include "configobject.hpp"
 
+#include <optional>
 #include <qfilesystemwatcher.h>
 #include <qtimer.h>
 
@@ -17,7 +18,8 @@ public:
 
     void setupFileBackend(const QString& path);
     void saveToFile();
-    bool reloadFromFile();
+    // Returns nullopt if retrying, empty string on success, error message on failure.
+    [[nodiscard]] std::optional<QString> reloadFromFile();
 
     [[nodiscard]] bool recentlySaved() const { return m_recentlySaved; }
 

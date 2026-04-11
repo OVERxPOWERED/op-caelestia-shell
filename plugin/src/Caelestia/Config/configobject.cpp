@@ -1,10 +1,6 @@
 #include "configobject.hpp"
 
-#include <qdir.h>
-#include <qfile.h>
-#include <qfileinfo.h>
 #include <qjsonarray.h>
-#include <qjsondocument.h>
 #include <qjsonvalue.h>
 #include <qloggingcategory.h>
 #include <qmetaobject.h>
@@ -14,6 +10,8 @@
 namespace caelestia::config {
 
 Q_LOGGING_CATEGORY(lcConfig, "caelestia.config", QtInfoMsg)
+
+// ConfigObject
 
 ConfigObject::ConfigObject(QObject* parent)
     : QObject(parent) {}
@@ -169,24 +167,6 @@ void ConfigObject::syncFromGlobal(ConfigObject* global) {
     }
 }
 
-void ConfigObject::markPropertyLoaded(const QString& name) {
-    m_loadedKeys.insert(name);
-}
-
-void ConfigObject::resetOption(const QString& name) {
-    m_loadedKeys.remove(name);
-
-    // If synced from global, re-copy the global value
-    if (m_global) {
-        int idx = metaObject()->indexOfProperty(name.toUtf8().constData());
-        if (idx >= 0) {
-            auto prop = metaObject()->property(idx);
-            if (prop.isWritable())
-                prop.write(this, prop.read(m_global));
-        }
-    }
-}
-
 void ConfigObject::resyncFromGlobal() {
     if (!m_global)
         return;
@@ -214,6 +194,24 @@ void ConfigObject::resyncFromGlobal() {
     }
 }
 
+void ConfigObject::markPropertyLoaded(const QString& name) {
+    m_loadedKeys.insert(name);
+}
+
+void ConfigObject::resetOption(const QString& name) {
+    m_loadedKeys.remove(name);
+
+    // If synced from global, re-copy the global value
+    if (m_global) {
+        int idx = metaObject()->indexOfProperty(name.toUtf8().constData());
+        if (idx >= 0) {
+            auto prop = metaObject()->property(idx);
+            if (prop.isWritable())
+                prop.write(this, prop.read(m_global));
+        }
+    }
+}
+
 void ConfigObject::onGlobalPropertiesChanged(const QMap<QString, QVariant>& changed) {
     for (auto it = changed.begin(); it != changed.end(); ++it) {
         if (m_loadedKeys.contains(it.key()))
@@ -222,9 +220,7 @@ void ConfigObject::onGlobalPropertiesChanged(const QMap<QString, QVariant>& chan
         int idx = metaObject()->indexOfProperty(it.key().toUtf8().constData());
         if (idx >= 0) {
             metaObject()->property(idx).write(this, it.value());
-            // Remove the key that was added by markPropertyLoaded in the setter —
-            // this is a synced value, not an explicit override
-            m_loadedKeys.remove(it.key());
+            m_loadedKeys.remove(it.key()); // setter added it — remove since this is a synced value
             qCDebug(lcConfig) << metaObject()->className() << "synced" << it.key() << "=" << it.value()
                               << "from global change";
         }
@@ -251,136 +247,6 @@ void ConfigObject::emitBatchedChanges() {
     auto changes = std::move(m_pendingChanges);
     m_pendingChanges.clear();
     emit propertiesChanged(changes);
-}
-
-void ConfigObject::setupFileBackend(const QString& path) {
-    m_filePath = path;
-
-    m_watcher = new QFileSystemWatcher(this);
-    m_saveTimer = new QTimer(this);
-    m_cooldownTimer = new QTimer(this);
-    m_retryTimer = new QTimer(this);
-
-    m_retryTimer->setSingleShot(true);
-    m_retryTimer->setInterval(50);
-    connect(m_retryTimer, &QTimer::timeout, this, &ConfigObject::reloadFromFile);
-
-    m_saveTimer->setSingleShot(true);
-    m_saveTimer->setInterval(500);
-    connect(m_saveTimer, &QTimer::timeout, this, [this] {
-        QDir().mkpath(QFileInfo(m_filePath).absolutePath());
-
-        QFile file(m_filePath);
-        if (!file.open(QIODevice::WriteOnly)) {
-            qCWarning(lcConfig, "Failed to write %s", qUtf8Printable(m_filePath));
-            if (auto* root = qobject_cast<RootConfig*>(this))
-                emit root->saveFailed(QStringLiteral("Failed to open file for writing"));
-            return;
-        }
-
-        auto json = toJsonObject();
-        file.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
-        file.close();
-        if (auto* root = qobject_cast<RootConfig*>(this))
-            emit root->saved();
-    });
-
-    m_cooldownTimer->setSingleShot(true);
-    m_cooldownTimer->setInterval(2000);
-    connect(m_cooldownTimer, &QTimer::timeout, this, [this] {
-        m_recentlySaved = false;
-    });
-
-    connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &ConfigObject::onFileChanged);
-
-    qCDebug(lcConfig) << "Setting up file backend for" << metaObject()->className() << "at" << path;
-
-    reloadFromFile();
-
-    if (QFile::exists(m_filePath))
-        m_watcher->addPath(m_filePath);
-}
-
-void ConfigObject::saveToFile() {
-    if (!m_saveTimer)
-        return;
-    m_saveTimer->start();
-    m_recentlySaved = true;
-    m_cooldownTimer->start();
-}
-
-bool ConfigObject::reloadFromFile() {
-    QFile file(m_filePath);
-
-    if (!file.open(QIODevice::ReadOnly)) {
-        qCDebug(lcConfig, "Failed to open %s", qUtf8Printable(m_filePath));
-        return false;
-    }
-
-    QJsonParseError error{};
-    auto doc = QJsonDocument::fromJson(file.readAll(), &error);
-
-    if (error.error != QJsonParseError::NoError) {
-        if (m_retryTimer && m_parseRetries < 3) {
-            m_parseRetries++;
-            qCDebug(lcConfig, "Failed to parse %s: %s - retrying (%d/3)", qUtf8Printable(m_filePath),
-                qUtf8Printable(error.errorString()), m_parseRetries);
-            m_retryTimer->start();
-        } else {
-            qCWarning(
-                lcConfig, "Failed to parse %s: %s", qUtf8Printable(m_filePath), qUtf8Printable(error.errorString()));
-            m_parseRetries = 0;
-        }
-        return false;
-    }
-
-    m_parseRetries = 0;
-
-    qCDebug(lcConfig) << "Reloading" << metaObject()->className() << "from" << m_filePath;
-
-    clearLoadedKeys();
-    loadFromJson(doc.object());
-
-    // Re-sync non-loaded properties from global after reload
-    if (m_global) {
-        qCDebug(lcConfig) << "Re-syncing" << metaObject()->className() << "from global after reload";
-        resyncFromGlobal();
-    }
-
-    return true;
-}
-
-void ConfigObject::onFileChanged() {
-    if (!m_watcher->files().contains(m_filePath))
-        m_watcher->addPath(m_filePath);
-
-    if (!m_recentlySaved) {
-        m_parseRetries = 0;
-        if (m_retryTimer)
-            m_retryTimer->stop();
-
-        bool ok = reloadFromFile();
-        if (auto* root = qobject_cast<RootConfig*>(this)) {
-            if (ok)
-                emit root->loaded();
-            else
-                emit root->loadFailed(QStringLiteral("Failed to load config file"));
-        }
-    }
-}
-
-// RootConfig
-
-RootConfig::RootConfig(QObject* parent)
-    : ConfigObject(parent) {}
-
-void RootConfig::save() {
-    saveToFile();
-}
-
-void RootConfig::reload() {
-    if (reloadFromFile())
-        emit loaded();
 }
 
 } // namespace caelestia::config

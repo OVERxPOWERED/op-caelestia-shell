@@ -3,6 +3,7 @@ qml_module(caelestia-config
     SOURCES
         config.cpp
         configobject.cpp
+        rootconfig.cpp
         configscope.cpp
         appearanceconfig.cpp
         tokens.cpp

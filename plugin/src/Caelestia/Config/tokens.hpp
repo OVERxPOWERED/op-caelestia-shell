@@ -2,7 +2,7 @@
 
 #include "anim.hpp"
 #include "appearanceconfig.hpp"
-#include "configobject.hpp"
+#include "rootconfig.hpp"
 
 #include <qlist.h>
 #include <qqmlengine.h>

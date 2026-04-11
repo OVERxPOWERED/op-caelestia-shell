@@ -13,6 +13,7 @@
 #include "lockconfig.hpp"
 #include "notifsconfig.hpp"
 #include "osdconfig.hpp"
+#include "rootconfig.hpp"
 #include "serviceconfig.hpp"
 #include "sessionconfig.hpp"
 #include "sidebarconfig.hpp"

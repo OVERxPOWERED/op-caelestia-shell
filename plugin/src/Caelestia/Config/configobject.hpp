@@ -1,6 +1,5 @@
 #pragma once
 
-#include <qfilesystemwatcher.h>
 #include <qjsonobject.h>
 #include <qloggingcategory.h>
 #include <qmap.h>
@@ -55,14 +54,7 @@ public:
     void loadFromJson(const QJsonObject& obj);
     [[nodiscard]] QJsonObject toJsonObject() const;
 
-    // File-backed config support. Call setupFileBackend() to enable
-    // automatic file watching, debounced saving, and reload.
-    void setupFileBackend(const QString& path);
-    void saveToFile();
-    bool reloadFromFile();
-
     // Per-monitor overlay support (Qt Resolve Mask pattern).
-    // Eagerly syncs non-overridden properties from a global ConfigObject.
     void syncFromGlobal(ConfigObject* global);
     void resyncFromGlobal();
     void clearLoadedKeys();
@@ -70,8 +62,6 @@ public:
     [[nodiscard]] bool isPropertyLoaded(const QString& name) const { return m_loadedKeys.contains(name); }
 
     Q_INVOKABLE void resetOption(const QString& name);
-
-    [[nodiscard]] bool recentlySaved() const { return m_recentlySaved; }
 
     template <typename T> static bool updateMember(T& member, const T& value) {
         if constexpr (std::is_floating_point_v<T>) {
@@ -93,43 +83,14 @@ protected:
     void notifyPropertyChanged(const QString& name, const QVariant& value);
 
 private:
-    void onFileChanged();
     void onGlobalPropertiesChanged(const QMap<QString, QVariant>& changed);
     void emitBatchedChanges();
-
-    QString m_filePath;
-    bool m_recentlySaved = false;
-
-    // File backend (heap-allocated only when setupFileBackend is called)
-    QFileSystemWatcher* m_watcher = nullptr;
-    QTimer* m_saveTimer = nullptr;
-    QTimer* m_cooldownTimer = nullptr;
-    QTimer* m_retryTimer = nullptr;
-    int m_parseRetries = 0;
 
     // Per-monitor overlay state
     ConfigObject* m_global = nullptr;
     QSet<QString> m_loadedKeys;
     QMap<QString, QVariant> m_pendingChanges;
     QTimer* m_batchTimer = nullptr;
-};
-
-// Intermediate base for singleton config roots (GlobalConfig, TokenConfig).
-// Provides save/reload with file lifecycle signals.
-class RootConfig : public ConfigObject {
-    Q_OBJECT
-
-public:
-    explicit RootConfig(QObject* parent = nullptr);
-
-    Q_INVOKABLE void save();
-    Q_INVOKABLE void reload();
-
-signals:
-    void loaded();
-    void loadFailed(const QString& error);
-    void saved();
-    void saveFailed(const QString& error);
 };
 
 } // namespace caelestia::config

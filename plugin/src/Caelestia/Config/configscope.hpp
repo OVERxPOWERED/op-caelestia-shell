@@ -15,8 +15,8 @@ class ConfigScope : public QQuickItem {
     QML_ELEMENT
 
     Q_PROPERTY(QString screen READ screen WRITE setScreen NOTIFY screenChanged)
-    Q_PROPERTY(GlobalConfig* config READ config NOTIFY configChanged)
-    Q_PROPERTY(TokenConfig* tokens READ tokens NOTIFY tokensChanged)
+    Q_PROPERTY(caelestia::config::GlobalConfig* config READ config NOTIFY configChanged)
+    Q_PROPERTY(caelestia::config::TokenConfig* tokens READ tokens NOTIFY tokensChanged)
 
 public:
     explicit ConfigScope(QQuickItem* parent = nullptr);

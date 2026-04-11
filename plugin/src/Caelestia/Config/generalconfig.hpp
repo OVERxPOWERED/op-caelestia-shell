@@ -52,7 +52,6 @@ class GeneralConfig : public ConfigObject {
     QML_ANONYMOUS
 
     CONFIG_PROPERTY(QString, logo)
-    CONFIG_PROPERTY(QStringList, excludedScreens)
     CONFIG_PROPERTY(qreal, mediaGifSpeedAdjustment, 300)
     CONFIG_PROPERTY(qreal, sessionGifSpeed, 0.7)
     CONFIG_SUBOBJECT(GeneralApps, apps)

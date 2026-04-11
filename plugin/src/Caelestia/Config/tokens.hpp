@@ -330,6 +330,7 @@ class TokenConfig : public RootConfig {
 public:
     static TokenConfig* instance();
     [[nodiscard]] Q_INVOKABLE TokenConfig* defaults();
+    [[nodiscard]] Q_INVOKABLE static TokenConfig* forScreen(const QString& screen);
     static TokenConfig* create(QQmlEngine*, QJSEngine*);
 
 private:
@@ -368,6 +369,8 @@ public:
     [[nodiscard]] const SizeTokens* sizes() const;
 
     [[nodiscard]] const AnimTokens* anim() const { return m_anim; }
+
+    [[nodiscard]] Q_INVOKABLE static TokenConfig* forScreen(const QString& screen);
 
     static Tokens* qmlAttachedProperties(QObject* object);
 

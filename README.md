@@ -238,6 +238,7 @@ For example, to disable the bar on DP-1:
 
 ```json
 {
+    "enabled": true,
     "appearance": {
         "anim": {
             "durations": {

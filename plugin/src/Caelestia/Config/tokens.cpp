@@ -1,6 +1,7 @@
 #include "tokens.hpp"
 #include "config.hpp"
 #include "configscope.hpp"
+#include "monitorconfigmanager.hpp"
 
 #include <qqmlengine.h>
 #include <qstandardpaths.h>
@@ -41,6 +42,10 @@ TokenConfig* TokenConfig::defaults() {
     if (!m_defaults)
         m_defaults = new TokenConfig(nullptr, QString(), QString(), this);
     return m_defaults;
+}
+
+TokenConfig* TokenConfig::forScreen(const QString& screen) {
+    return MonitorConfigManager::instance()->tokensForScreen(screen);
 }
 
 TokenConfig* TokenConfig::create(QQmlEngine*, QJSEngine*) {
@@ -117,6 +122,10 @@ const SizeTokens* Tokens::sizes() const {
         return m_scope->tokens()->sizes();
     auto* global = TokenConfig::instance();
     return global ? global->sizes() : nullptr;
+}
+
+TokenConfig* Tokens::forScreen(const QString& screen) {
+    return TokenConfig::forScreen(screen);
 }
 
 Tokens* Tokens::qmlAttachedProperties(QObject* object) {

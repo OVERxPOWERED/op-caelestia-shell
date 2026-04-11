@@ -28,6 +28,7 @@ class GlobalConfig : public RootConfig {
     QML_ELEMENT
     QML_SINGLETON
 
+    CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_SUBOBJECT(AppearanceConfig, appearance)
     CONFIG_SUBOBJECT(GeneralConfig, general)
     CONFIG_SUBOBJECT(BackgroundConfig, background)
@@ -49,6 +50,7 @@ class GlobalConfig : public RootConfig {
 public:
     static GlobalConfig* instance();
     [[nodiscard]] Q_INVOKABLE GlobalConfig* defaults();
+    [[nodiscard]] Q_INVOKABLE static GlobalConfig* forScreen(const QString& screen);
     static GlobalConfig* create(QQmlEngine*, QJSEngine*);
 
     void bindAppearanceTokens();
@@ -113,6 +115,8 @@ public:
     [[nodiscard]] const SidebarConfig* sidebar() const;
     [[nodiscard]] const ServiceConfig* services() const;
     [[nodiscard]] const UserPaths* paths() const;
+
+    [[nodiscard]] Q_INVOKABLE static GlobalConfig* forScreen(const QString& screen);
 
     static Config* qmlAttachedProperties(QObject* object);
 

@@ -1,5 +1,6 @@
 #include "config.hpp"
 #include "configscope.hpp"
+#include "monitorconfigmanager.hpp"
 #include "tokens.hpp"
 
 #include <qqmlengine.h>
@@ -91,6 +92,10 @@ void GlobalConfig::bindAppearanceTokens() {
     m_tokensBound = true;
 }
 
+GlobalConfig* GlobalConfig::forScreen(const QString& screen) {
+    return MonitorConfigManager::instance()->configForScreen(screen);
+}
+
 GlobalConfig* GlobalConfig::create(QQmlEngine*, QJSEngine*) {
     QQmlEngine::setObjectOwnership(instance(), QQmlEngine::CppOwnership);
     return instance();
@@ -138,6 +143,10 @@ CONFIG_ATTACHED_GETTER(ServiceConfig, services)
 CONFIG_ATTACHED_GETTER(UserPaths, paths)
 
 #undef CONFIG_ATTACHED_GETTER
+
+GlobalConfig* Config::forScreen(const QString& screen) {
+    return GlobalConfig::forScreen(screen);
+}
 
 Config* Config::qmlAttachedProperties(QObject* object) {
     return new Config(ConfigScope::find(object), object);

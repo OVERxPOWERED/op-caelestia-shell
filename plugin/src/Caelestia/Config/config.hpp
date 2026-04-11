@@ -3,7 +3,6 @@
 #include <qqmlintegration.h>
 #include <qquickitem.h>
 
-#include "advancedconfig.hpp"
 #include "appearanceconfig.hpp"
 #include "backgroundconfig.hpp"
 #include "barconfig.hpp"
@@ -18,6 +17,7 @@
 #include "serviceconfig.hpp"
 #include "sessionconfig.hpp"
 #include "sidebarconfig.hpp"
+#include "tokensconfig.hpp"
 #include "userpaths.hpp"
 #include "utilitiesconfig.hpp"
 #include "winfoconfig.hpp"
@@ -46,14 +46,14 @@ class GlobalConfig : public ConfigObject {
     CONFIG_SUBOBJECT(SidebarConfig, sidebar)
     CONFIG_SUBOBJECT(ServiceConfig, services)
     CONFIG_SUBOBJECT(UserPaths, paths)
-    // advanced is NOT a CONFIG_SUBOBJECT — it has its own file backend
-    Q_PROPERTY(AdvancedConfig* advanced READ advanced CONSTANT)
+    // tokens is NOT a CONFIG_SUBOBJECT — it has its own file backend
+    Q_PROPERTY(TokenConfig* tokens READ tokens CONSTANT)
 
 public:
     static GlobalConfig* instance();
     static GlobalConfig* create(QQmlEngine*, QJSEngine*);
 
-    [[nodiscard]] AdvancedConfig* advanced() const { return m_advanced; }
+    [[nodiscard]] TokenConfig* tokens() const { return m_tokens; }
 
     Q_INVOKABLE void save();
     Q_INVOKABLE void reload();
@@ -63,7 +63,7 @@ public:
 private:
     explicit GlobalConfig(QObject* parent = nullptr);
 
-    AdvancedConfig* m_advanced = nullptr;
+    TokenConfig* m_tokens = nullptr;
 };
 
 class Config : public QQuickItem {

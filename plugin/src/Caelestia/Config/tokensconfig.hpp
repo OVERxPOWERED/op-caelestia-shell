@@ -111,7 +111,7 @@ public:
         : ConfigObject(parent) {}
 };
 
-class AdvancedAppearance : public ConfigObject {
+class AppearanceTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
@@ -123,7 +123,7 @@ class AdvancedAppearance : public ConfigObject {
     CONFIG_SUBOBJECT(AnimDurationTokens, animDurations)
 
 public:
-    explicit AdvancedAppearance(QObject* parent = nullptr)
+    explicit AppearanceTokens(QObject* parent = nullptr)
         : ConfigObject(parent)
         , m_curves(new AnimCurves(this))
         , m_rounding(new RoundingTokens(this))
@@ -133,7 +133,7 @@ public:
         , m_animDurations(new AnimDurationTokens(this)) {}
 };
 
-class BarSizes : public ConfigObject {
+class BarTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
@@ -145,11 +145,11 @@ class BarSizes : public ConfigObject {
     CONFIG_PROPERTY(int, kbLayoutWidth, 320)
 
 public:
-    explicit BarSizes(QObject* parent = nullptr)
+    explicit BarTokens(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 };
 
-class AdvancedDashboard : public ConfigObject {
+class DashboardTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
@@ -157,53 +157,26 @@ class AdvancedDashboard : public ConfigObject {
     CONFIG_PROPERTY(bool, showMedia, true)
     CONFIG_PROPERTY(bool, showPerformance, true)
     CONFIG_PROPERTY(bool, showWeather, true)
-
-    Q_PROPERTY(int tabIndicatorHeight READ tabIndicatorHeight CONSTANT)
-    Q_PROPERTY(int tabIndicatorSpacing READ tabIndicatorSpacing CONSTANT)
-    Q_PROPERTY(int infoWidth READ infoWidth CONSTANT)
-    Q_PROPERTY(int infoIconSize READ infoIconSize CONSTANT)
-    Q_PROPERTY(int dateTimeWidth READ dateTimeWidth CONSTANT)
-    Q_PROPERTY(int mediaWidth READ mediaWidth CONSTANT)
-    Q_PROPERTY(int mediaProgressSweep READ mediaProgressSweep CONSTANT)
-    Q_PROPERTY(int mediaProgressThickness READ mediaProgressThickness CONSTANT)
-    Q_PROPERTY(int resourceProgessThickness READ resourceProgessThickness CONSTANT)
-    Q_PROPERTY(int weatherWidth READ weatherWidth CONSTANT)
-    Q_PROPERTY(int mediaCoverArtSize READ mediaCoverArtSize CONSTANT)
-    Q_PROPERTY(int mediaVisualiserSize READ mediaVisualiserSize CONSTANT)
-    Q_PROPERTY(int resourceSize READ resourceSize CONSTANT)
+    CONFIG_PROPERTY(int, tabIndicatorHeight, 3)
+    CONFIG_PROPERTY(int, tabIndicatorSpacing, 5)
+    CONFIG_PROPERTY(int, infoWidth, 200)
+    CONFIG_PROPERTY(int, infoIconSize, 25)
+    CONFIG_PROPERTY(int, dateTimeWidth, 110)
+    CONFIG_PROPERTY(int, mediaWidth, 200)
+    CONFIG_PROPERTY(int, mediaProgressSweep, 180)
+    CONFIG_PROPERTY(int, mediaProgressThickness, 8)
+    CONFIG_PROPERTY(int, resourceProgressThickness, 10)
+    CONFIG_PROPERTY(int, weatherWidth, 250)
+    CONFIG_PROPERTY(int, mediaCoverArtSize, 150)
+    CONFIG_PROPERTY(int, mediaVisualiserSize, 80)
+    CONFIG_PROPERTY(int, resourceSize, 200)
 
 public:
-    explicit AdvancedDashboard(QObject* parent = nullptr)
+    explicit DashboardTokens(QObject* parent = nullptr)
         : ConfigObject(parent) {}
-
-    [[nodiscard]] static int tabIndicatorHeight() { return 3; }
-
-    [[nodiscard]] static int tabIndicatorSpacing() { return 5; }
-
-    [[nodiscard]] static int infoWidth() { return 200; }
-
-    [[nodiscard]] static int infoIconSize() { return 25; }
-
-    [[nodiscard]] static int dateTimeWidth() { return 110; }
-
-    [[nodiscard]] static int mediaWidth() { return 200; }
-
-    [[nodiscard]] static int mediaProgressSweep() { return 180; }
-
-    [[nodiscard]] static int mediaProgressThickness() { return 8; }
-
-    [[nodiscard]] static int resourceProgessThickness() { return 10; }
-
-    [[nodiscard]] static int weatherWidth() { return 250; }
-
-    [[nodiscard]] static int mediaCoverArtSize() { return 150; }
-
-    [[nodiscard]] static int mediaVisualiserSize() { return 80; }
-
-    [[nodiscard]] static int resourceSize() { return 200; }
 };
 
-class LauncherSizes : public ConfigObject {
+class LauncherTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
@@ -213,11 +186,11 @@ class LauncherSizes : public ConfigObject {
     CONFIG_PROPERTY(int, wallpaperHeight, 200)
 
 public:
-    explicit LauncherSizes(QObject* parent = nullptr)
+    explicit LauncherTokens(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 };
 
-class NotifsSizes : public ConfigObject {
+class NotifsTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
@@ -226,11 +199,11 @@ class NotifsSizes : public ConfigObject {
     CONFIG_PROPERTY(int, badge, 20)
 
 public:
-    explicit NotifsSizes(QObject* parent = nullptr)
+    explicit NotifsTokens(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 };
 
-class OsdSizes : public ConfigObject {
+class OsdTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
@@ -238,33 +211,33 @@ class OsdSizes : public ConfigObject {
     CONFIG_PROPERTY(int, sliderHeight, 150)
 
 public:
-    explicit OsdSizes(QObject* parent = nullptr)
+    explicit OsdTokens(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 };
 
-class SessionSizes : public ConfigObject {
+class SessionTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
     CONFIG_PROPERTY(int, button, 80)
 
 public:
-    explicit SessionSizes(QObject* parent = nullptr)
+    explicit SessionTokens(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 };
 
-class SidebarSizes : public ConfigObject {
+class SidebarTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
     CONFIG_PROPERTY(int, width, 430)
 
 public:
-    explicit SidebarSizes(QObject* parent = nullptr)
+    explicit SidebarTokens(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 };
 
-class UtilitiesSizes : public ConfigObject {
+class UtilitiesTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
@@ -272,11 +245,11 @@ class UtilitiesSizes : public ConfigObject {
     CONFIG_PROPERTY(int, toastWidth, 430)
 
 public:
-    explicit UtilitiesSizes(QObject* parent = nullptr)
+    explicit UtilitiesTokens(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 };
 
-class LockSizes : public ConfigObject {
+class LockTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
@@ -285,11 +258,11 @@ class LockSizes : public ConfigObject {
     CONFIG_PROPERTY(int, centerWidth, 600)
 
 public:
-    explicit LockSizes(QObject* parent = nullptr)
+    explicit LockTokens(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 };
 
-class WInfoSizes : public ConfigObject {
+class WInfoTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
@@ -297,11 +270,11 @@ class WInfoSizes : public ConfigObject {
     CONFIG_PROPERTY(qreal, detailsWidth, 500)
 
 public:
-    explicit WInfoSizes(QObject* parent = nullptr)
+    explicit WInfoTokens(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 };
 
-class ControlCenterSizes : public ConfigObject {
+class ControlCenterTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
@@ -309,42 +282,42 @@ class ControlCenterSizes : public ConfigObject {
     CONFIG_PROPERTY(qreal, ratio, 16.0 / 9.0)
 
 public:
-    explicit ControlCenterSizes(QObject* parent = nullptr)
+    explicit ControlCenterTokens(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 };
 
-class AdvancedConfig : public ConfigObject {
+class TokenConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_SUBOBJECT(AdvancedAppearance, appearance)
-    CONFIG_SUBOBJECT(BarSizes, bar)
-    CONFIG_SUBOBJECT(AdvancedDashboard, dashboard)
-    CONFIG_SUBOBJECT(LauncherSizes, launcher)
-    CONFIG_SUBOBJECT(NotifsSizes, notifs)
-    CONFIG_SUBOBJECT(OsdSizes, osd)
-    CONFIG_SUBOBJECT(SessionSizes, session)
-    CONFIG_SUBOBJECT(SidebarSizes, sidebar)
-    CONFIG_SUBOBJECT(UtilitiesSizes, utilities)
-    CONFIG_SUBOBJECT(LockSizes, lock)
-    CONFIG_SUBOBJECT(WInfoSizes, winfo)
-    CONFIG_SUBOBJECT(ControlCenterSizes, controlCenter)
+    CONFIG_SUBOBJECT(AppearanceTokens, appearance)
+    CONFIG_SUBOBJECT(BarTokens, bar)
+    CONFIG_SUBOBJECT(DashboardTokens, dashboard)
+    CONFIG_SUBOBJECT(LauncherTokens, launcher)
+    CONFIG_SUBOBJECT(NotifsTokens, notifs)
+    CONFIG_SUBOBJECT(OsdTokens, osd)
+    CONFIG_SUBOBJECT(SessionTokens, session)
+    CONFIG_SUBOBJECT(SidebarTokens, sidebar)
+    CONFIG_SUBOBJECT(UtilitiesTokens, utilities)
+    CONFIG_SUBOBJECT(LockTokens, lock)
+    CONFIG_SUBOBJECT(WInfoTokens, winfo)
+    CONFIG_SUBOBJECT(ControlCenterTokens, controlCenter)
 
 public:
-    explicit AdvancedConfig(QObject* parent = nullptr)
+    explicit TokenConfig(QObject* parent = nullptr)
         : ConfigObject(parent)
-        , m_appearance(new AdvancedAppearance(this))
-        , m_bar(new BarSizes(this))
-        , m_dashboard(new AdvancedDashboard(this))
-        , m_launcher(new LauncherSizes(this))
-        , m_notifs(new NotifsSizes(this))
-        , m_osd(new OsdSizes(this))
-        , m_session(new SessionSizes(this))
-        , m_sidebar(new SidebarSizes(this))
-        , m_utilities(new UtilitiesSizes(this))
-        , m_lock(new LockSizes(this))
-        , m_winfo(new WInfoSizes(this))
-        , m_controlCenter(new ControlCenterSizes(this)) {}
+        , m_appearance(new AppearanceTokens(this))
+        , m_bar(new BarTokens(this))
+        , m_dashboard(new DashboardTokens(this))
+        , m_launcher(new LauncherTokens(this))
+        , m_notifs(new NotifsTokens(this))
+        , m_osd(new OsdTokens(this))
+        , m_session(new SessionTokens(this))
+        , m_sidebar(new SidebarTokens(this))
+        , m_utilities(new UtilitiesTokens(this))
+        , m_lock(new LockTokens(this))
+        , m_winfo(new WInfoTokens(this))
+        , m_controlCenter(new ControlCenterTokens(this)) {}
 };
 
 } // namespace caelestia::config

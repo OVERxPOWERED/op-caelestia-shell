@@ -1,5 +1,5 @@
 #include "appearanceconfig.hpp"
-#include "advancedconfig.hpp"
+#include "tokensconfig.hpp"
 
 #include <qmetaobject.h>
 

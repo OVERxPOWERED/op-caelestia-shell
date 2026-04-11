@@ -34,21 +34,21 @@ GlobalConfig::GlobalConfig(QObject* parent)
     , m_sidebar(new SidebarConfig(this))
     , m_services(new ServiceConfig(this))
     , m_paths(new UserPaths(this))
-    , m_advanced(new AdvancedConfig(this)) {
+    , m_tokens(new TokenConfig(this)) {
     // Set global instance
     s_instance = this;
 
-    // Bind token base values from advanced config to appearance computed properties
-    auto* adv = m_advanced->appearance();
-    m_appearance->rounding()->bindTokens(adv->rounding());
-    m_appearance->spacing()->bindTokens(adv->spacing());
-    m_appearance->padding()->bindTokens(adv->padding());
-    m_appearance->font()->size()->bindTokens(adv->fontSize());
-    m_appearance->anim()->durations()->bindTokens(adv->animDurations());
+    // Bind token base values from token config to appearance computed properties
+    auto* appearance = m_tokens->appearance();
+    m_appearance->rounding()->bindTokens(appearance->rounding());
+    m_appearance->spacing()->bindTokens(appearance->spacing());
+    m_appearance->padding()->bindTokens(appearance->padding());
+    m_appearance->font()->size()->bindTokens(appearance->fontSize());
+    m_appearance->anim()->durations()->bindTokens(appearance->animDurations());
 
     // Each has its own file backend
     setupFileBackend(configDir() + QStringLiteral("shell.json"));
-    m_advanced->setupFileBackend(configDir() + QStringLiteral("advanced.json"));
+    m_tokens->setupFileBackend(configDir() + QStringLiteral("shell-tokens.json"));
 }
 
 GlobalConfig::~GlobalConfig() {

@@ -1,5 +1,6 @@
 #include "tokens.hpp"
 #include "config.hpp"
+#include "configscope.hpp"
 
 #include <qqmlengine.h>
 #include <qstandardpaths.h>
@@ -67,19 +68,12 @@ void TokenConfig::reload() {
 
 // Tokens (attached type)
 
-Tokens::Tokens(QQuickItem* parent)
-    : QQuickItem(parent) {}
+Tokens::Tokens(ConfigScope* scope, QObject* parent)
+    : QObject(parent)
+    , m_scope(scope) {}
 
 Tokens* Tokens::qmlAttachedProperties(QObject* object) {
-    auto* item = qobject_cast<QQuickItem*>(object);
-
-    while (item) {
-        if (auto* tokens = qobject_cast<Tokens*>(item))
-            return tokens;
-        item = item->parentItem();
-    }
-
-    return nullptr;
+    return new Tokens(ConfigScope::find(object), object);
 }
 
 } // namespace caelestia::config

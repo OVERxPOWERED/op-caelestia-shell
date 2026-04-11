@@ -1,4 +1,5 @@
 #include "config.hpp"
+#include "configscope.hpp"
 
 #include <qqmlengine.h>
 #include <qstandardpaths.h>
@@ -64,19 +65,12 @@ void GlobalConfig::reload() {
 
 // Config (attached type)
 
-Config::Config(QQuickItem* parent)
-    : QQuickItem(parent) {}
+Config::Config(ConfigScope* scope, QObject* parent)
+    : QObject(parent)
+    , m_scope(scope) {}
 
 Config* Config::qmlAttachedProperties(QObject* object) {
-    auto* item = qobject_cast<QQuickItem*>(object);
-
-    while (item) {
-        if (auto* config = qobject_cast<Config*>(item))
-            return config;
-        item = item->parentItem();
-    }
-
-    return nullptr;
+    return new Config(ConfigScope::find(object), object);
 }
 
 } // namespace caelestia::config

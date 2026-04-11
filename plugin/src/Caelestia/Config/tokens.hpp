@@ -3,9 +3,11 @@
 #include "configobject.hpp"
 
 #include <qlist.h>
-#include <qquickitem.h>
+#include <qqmlengine.h>
 
 namespace caelestia::config {
+
+class ConfigScope;
 
 class AnimCurves : public ConfigObject {
     Q_OBJECT
@@ -318,15 +320,21 @@ private:
     explicit TokenConfig(QObject* parent = nullptr);
 };
 
-class Tokens : public QQuickItem {
+class Tokens : public QObject {
     Q_OBJECT
     QML_ELEMENT
+    QML_UNCREATABLE("")
     QML_ATTACHED(Tokens)
 
 public:
-    explicit Tokens(QQuickItem* parent = nullptr);
+    explicit Tokens(ConfigScope* scope, QObject* parent = nullptr);
+
+    [[nodiscard]] ConfigScope* scope() const { return m_scope; }
 
     static Tokens* qmlAttachedProperties(QObject* object);
+
+private:
+    ConfigScope* m_scope;
 };
 
 } // namespace caelestia::config

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <qqmlintegration.h>
-#include <qquickitem.h>
+#include <qqmlengine.h>
 
 #include "appearanceconfig.hpp"
 #include "backgroundconfig.hpp"
@@ -59,15 +58,23 @@ private:
     explicit GlobalConfig(QObject* parent = nullptr);
 };
 
-class Config : public QQuickItem {
+class ConfigScope;
+
+class Config : public QObject {
     Q_OBJECT
     QML_ELEMENT
+    QML_UNCREATABLE("")
     QML_ATTACHED(Config)
 
 public:
-    explicit Config(QQuickItem* parent = nullptr);
+    explicit Config(ConfigScope* scope, QObject* parent = nullptr);
+
+    [[nodiscard]] ConfigScope* scope() const { return m_scope; }
 
     static Config* qmlAttachedProperties(QObject* object);
+
+private:
+    ConfigScope* m_scope;
 };
 
 } // namespace caelestia::config

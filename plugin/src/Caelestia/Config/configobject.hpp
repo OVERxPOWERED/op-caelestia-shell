@@ -59,7 +59,7 @@ public:
     // automatic file watching, debounced saving, and reload.
     void setupFileBackend(const QString& path);
     void saveToFile();
-    void reloadFromFile();
+    bool reloadFromFile();
 
     // Per-monitor overlay support (Qt Resolve Mask pattern).
     // Eagerly syncs non-overridden properties from a global ConfigObject.
@@ -113,6 +113,23 @@ private:
     QSet<QString> m_loadedKeys;
     QMap<QString, QVariant> m_pendingChanges;
     QTimer* m_batchTimer = nullptr;
+};
+
+// Intermediate base for singleton config roots (GlobalConfig, TokenConfig).
+// Provides save/reload with file lifecycle signals.
+class RootConfig : public ConfigObject {
+    Q_OBJECT
+
+public:
+    explicit RootConfig(QObject* parent = nullptr);
+
+    Q_INVOKABLE void save();
+    Q_INVOKABLE void reload();
+
+    Q_SIGNAL void fileLoaded();
+    Q_SIGNAL void fileLoadFailed(const QString& error);
+    Q_SIGNAL void fileSaved();
+    Q_SIGNAL void fileSaveFailed(const QString& error);
 };
 
 } // namespace caelestia::config

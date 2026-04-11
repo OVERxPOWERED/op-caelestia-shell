@@ -289,7 +289,7 @@ public:
         : ConfigObject(parent) {}
 };
 
-class TokenConfig : public ConfigObject {
+class TokenConfig : public RootConfig {
     Q_OBJECT
     QML_ELEMENT
     QML_SINGLETON
@@ -311,9 +311,6 @@ public:
     static TokenConfig* instance();
     [[nodiscard]] Q_INVOKABLE TokenConfig* defaults();
     static TokenConfig* create(QQmlEngine*, QJSEngine*);
-
-    Q_INVOKABLE void save();
-    Q_INVOKABLE void reload();
 
     ~TokenConfig() override;
 

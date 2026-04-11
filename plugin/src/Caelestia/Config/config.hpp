@@ -22,7 +22,7 @@
 
 namespace caelestia::config {
 
-class GlobalConfig : public ConfigObject {
+class GlobalConfig : public RootConfig {
     Q_OBJECT
     QML_ELEMENT
     QML_SINGLETON
@@ -49,9 +49,6 @@ public:
     static GlobalConfig* instance();
     [[nodiscard]] Q_INVOKABLE GlobalConfig* defaults();
     static GlobalConfig* create(QQmlEngine*, QJSEngine*);
-
-    Q_INVOKABLE void save();
-    Q_INVOKABLE void reload();
 
     ~GlobalConfig() override;
 

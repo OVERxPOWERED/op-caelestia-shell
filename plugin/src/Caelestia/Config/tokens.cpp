@@ -18,7 +18,7 @@ QString configDir() {
 } // namespace
 
 TokenConfig::TokenConfig(QObject* parent)
-    : ConfigObject(parent)
+    : RootConfig(parent)
     , m_appearance(new AppearanceTokens(this))
     , m_bar(new BarTokens(this))
     , m_dashboard(new DashboardTokens(this))
@@ -41,7 +41,7 @@ TokenConfig::TokenConfig(QObject* parent)
 }
 
 TokenConfig::TokenConfig(TokenConfig* fallback, const QString& filePath, QObject* parent)
-    : ConfigObject(parent)
+    : RootConfig(parent)
     , m_appearance(new AppearanceTokens(this))
     , m_bar(new BarTokens(this))
     , m_dashboard(new DashboardTokens(this))
@@ -78,14 +78,6 @@ TokenConfig* TokenConfig::defaults() {
 
 TokenConfig* TokenConfig::create(QQmlEngine* engine, QJSEngine*) {
     return new TokenConfig(engine);
-}
-
-void TokenConfig::save() {
-    saveToFile();
-}
-
-void TokenConfig::reload() {
-    reloadFromFile();
 }
 
 // Tokens (attached type)

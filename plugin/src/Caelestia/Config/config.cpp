@@ -18,7 +18,7 @@ QString configDir() {
 } // namespace
 
 GlobalConfig::GlobalConfig(QObject* parent)
-    : ConfigObject(parent)
+    : RootConfig(parent)
     , m_appearance(new AppearanceConfig(this))
     , m_general(new GeneralConfig(this))
     , m_background(new BackgroundConfig(this))
@@ -47,7 +47,7 @@ GlobalConfig::GlobalConfig(QObject* parent)
 }
 
 GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, QObject* parent)
-    : ConfigObject(parent)
+    : RootConfig(parent)
     , m_appearance(new AppearanceConfig(this))
     , m_general(new GeneralConfig(this))
     , m_background(new BackgroundConfig(this))
@@ -118,14 +118,6 @@ GlobalConfig* GlobalConfig::create(QQmlEngine* engine, QJSEngine* jsEngine) {
     config->bindAppearanceTokens();
 
     return config;
-}
-
-void GlobalConfig::save() {
-    saveToFile();
-}
-
-void GlobalConfig::reload() {
-    reloadFromFile();
 }
 
 // Config (attached type)

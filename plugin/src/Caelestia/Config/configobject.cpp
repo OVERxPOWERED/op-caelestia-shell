@@ -298,12 +298,16 @@ void ConfigObject::setupFileBackend(const QString& path) {
 
         QFile file(m_filePath);
         if (!file.open(QIODevice::WriteOnly)) {
-            qCWarning(lcConfig) << "Failed to write" << m_filePath;
+            qCWarning(lcConfig, "Failed to write %s", qUtf8Printable(m_filePath));
+            if (auto* root = qobject_cast<RootConfig*>(this))
+                Q_EMIT root->fileSaveFailed(QStringLiteral("Failed to open file for writing"));
             return;
         }
 
         auto json = m_sparse ? toSparseJsonObject() : toJsonObject();
         file.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
+        if (auto* root = qobject_cast<RootConfig*>(this))
+            Q_EMIT root->fileSaved();
     });
 
     m_cooldownTimer->setSingleShot(true);
@@ -330,12 +334,12 @@ void ConfigObject::saveToFile() {
     m_cooldownTimer->start();
 }
 
-void ConfigObject::reloadFromFile() {
+bool ConfigObject::reloadFromFile() {
     QFile file(m_filePath);
 
     if (!file.open(QIODevice::ReadOnly)) {
-        qCDebug(lcConfig) << "Failed to open" << m_filePath;
-        return;
+        qCDebug(lcConfig, "Failed to open %s", qUtf8Printable(m_filePath));
+        return false;
     }
 
     QJsonParseError error{};
@@ -344,14 +348,15 @@ void ConfigObject::reloadFromFile() {
     if (error.error != QJsonParseError::NoError) {
         if (m_retryTimer && m_parseRetries < 3) {
             m_parseRetries++;
-            qCDebug(lcConfig, "Failed to parse %s: %s - retrying (%d/3)", qPrintable(m_filePath),
-                qPrintable(error.errorString()), m_parseRetries);
+            qCDebug(lcConfig, "Failed to parse %s: %s - retrying (%d/3)", qUtf8Printable(m_filePath),
+                qUtf8Printable(error.errorString()), m_parseRetries);
             m_retryTimer->start();
         } else {
-            qCWarning(lcConfig, "Failed to parse %s: %s", qPrintable(m_filePath), qPrintable(error.errorString()));
+            qCWarning(
+                lcConfig, "Failed to parse %s: %s", qUtf8Printable(m_filePath), qUtf8Printable(error.errorString()));
             m_parseRetries = 0;
         }
-        return;
+        return false;
     }
 
     m_parseRetries = 0;
@@ -366,6 +371,8 @@ void ConfigObject::reloadFromFile() {
         qCDebug(lcConfig) << "Re-syncing" << metaObject()->className() << "from global after reload";
         resyncFromGlobal();
     }
+
+    return true;
 }
 
 void ConfigObject::onFileChanged() {
@@ -376,8 +383,29 @@ void ConfigObject::onFileChanged() {
         m_parseRetries = 0;
         if (m_retryTimer)
             m_retryTimer->stop();
-        reloadFromFile();
+
+        bool ok = reloadFromFile();
+        if (auto* root = qobject_cast<RootConfig*>(this)) {
+            if (ok)
+                Q_EMIT root->fileLoaded();
+            else
+                Q_EMIT root->fileLoadFailed(QStringLiteral("Failed to load config file"));
+        }
     }
+}
+
+// RootConfig
+
+RootConfig::RootConfig(QObject* parent)
+    : ConfigObject(parent) {}
+
+void RootConfig::save() {
+    saveToFile();
+}
+
+void RootConfig::reload() {
+    if (reloadFromFile())
+        Q_EMIT fileLoaded();
 }
 
 } // namespace caelestia::config

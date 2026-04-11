@@ -69,7 +69,6 @@ Singleton {
 
     function toggleVisibility() {
         Config.services.showLyrics = !Config.services.showLyrics;
-        Config.save();
     }
 
     function loadLyrics() {
@@ -274,7 +273,6 @@ Singleton {
     onPreferredBackendChanged: {
         if (Config.services.lyricsBackend !== preferredBackend) {
             Config.services.lyricsBackend = preferredBackend;
-            Config.save();
         }
     }
 

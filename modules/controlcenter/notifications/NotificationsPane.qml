@@ -56,8 +56,6 @@ Item {
         Config.utilities.toasts.kbLayoutChanged = root.kbLayoutChanged;
         Config.utilities.toasts.vpnChanged = root.vpnChanged;
         Config.utilities.toasts.nowPlaying = root.nowPlaying;
-
-        Config.save();
     }
 
     anchors.fill: parent

@@ -37,7 +37,6 @@ ColumnLayout {
             checked: Config.utilities.vpn.enabled
             toggle.onToggled: {
                 Config.utilities.vpn.enabled = checked;
-                Config.save();
             }
         }
     }
@@ -149,7 +148,6 @@ ColumnLayout {
                                 }
 
                                 Config.utilities.vpn.provider = providers;
-                                Config.save();
                             }
                         }
 
@@ -176,7 +174,6 @@ ColumnLayout {
                                     }
                                 }
                                 Config.utilities.vpn.provider = providers;
-                                Config.save();
                             }
                         }
                     }
@@ -220,7 +217,6 @@ ColumnLayout {
                     interface: "wt0"
                 });
                 Config.utilities.vpn.provider = providers;
-                Config.save();
             }
         }
 
@@ -238,7 +234,6 @@ ColumnLayout {
                     interface: "tailscale0"
                 });
                 Config.utilities.vpn.provider = providers;
-                Config.save();
             }
         }
 
@@ -256,7 +251,6 @@ ColumnLayout {
                     interface: "CloudflareWARP"
                 });
                 Config.utilities.vpn.provider = providers;
-                Config.save();
             }
         }
     }

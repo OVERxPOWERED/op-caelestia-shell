@@ -91,8 +91,6 @@ Item {
 
         Config.border.rounding = root.borderRounding;
         Config.border.thickness = root.borderThickness;
-
-        Config.save();
     }
 
     anchors.fill: parent

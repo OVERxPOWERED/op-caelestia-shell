@@ -48,7 +48,6 @@ ColumnLayout {
                     }
                 }
                 Config.utilities.vpn.provider = providers;
-                Config.save();
 
                 Qt.callLater(function () {
                     VPN.toggle();
@@ -244,7 +243,6 @@ ColumnLayout {
                                             }
                                         }
                                         Config.utilities.vpn.provider = providers;
-                                        Config.save();
 
                                         Qt.callLater(function () {
                                             VPN.toggle();
@@ -294,7 +292,6 @@ ColumnLayout {
                                     }
                                 }
                                 Config.utilities.vpn.provider = providers;
-                                Config.save();
                             }
                         }
 
@@ -496,7 +493,6 @@ ColumnLayout {
                             interface: "wt0"
                         });
                         Config.utilities.vpn.provider = providers;
-                        Config.save();
                         vpnDialog.closeWithAnimation();
                     }
                 }
@@ -517,7 +513,6 @@ ColumnLayout {
                             interface: "tailscale0"
                         });
                         Config.utilities.vpn.provider = providers;
-                        Config.save();
                         vpnDialog.closeWithAnimation();
                     }
                 }
@@ -538,7 +533,6 @@ ColumnLayout {
                             interface: "CloudflareWARP"
                         });
                         Config.utilities.vpn.provider = providers;
-                        Config.save();
                         vpnDialog.closeWithAnimation();
                     }
                 }
@@ -806,7 +800,6 @@ ColumnLayout {
                             }
 
                             Config.utilities.vpn.provider = providers;
-                            Config.save();
                             vpnDialog.closeWithAnimation();
                         }
                     }

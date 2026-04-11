@@ -100,7 +100,6 @@ Item {
             });
         }
         Config.bar.entries = entries;
-        Config.save();
     }
 
     anchors.fill: parent

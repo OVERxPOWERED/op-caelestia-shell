@@ -62,7 +62,6 @@ Item {
         }
 
         Config.launcher.hiddenApps = hiddenApps;
-        Config.save();
     }
 
     function filterApps(search: string): list<var> {
@@ -626,7 +625,6 @@ Item {
                                         }
                                     }
                                     Config.launcher.favouriteApps = favouriteApps;
-                                    Config.save();
                                 }
                             }
                         }
@@ -659,7 +657,6 @@ Item {
                                         }
                                     }
                                     Config.launcher.hiddenApps = hiddenApps;
-                                    Config.save();
                                 }
                             }
                         }

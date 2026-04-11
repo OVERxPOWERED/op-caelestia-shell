@@ -116,7 +116,8 @@ public:
 
     static Config* qmlAttachedProperties(QObject* object);
 
-    Q_SIGNAL void sourceChanged();
+signals:
+    void sourceChanged();
 
 private:
     void connectScope();

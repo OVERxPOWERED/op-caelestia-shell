@@ -87,7 +87,8 @@ public:
         return true;
     }
 
-    Q_SIGNAL void propertiesChanged(const QMap<QString, QVariant>& changed);
+signals:
+    void propertiesChanged(const QMap<QString, QVariant>& changed);
 
 protected:
     void notifyPropertyChanged(const QString& name, const QVariant& value);
@@ -126,10 +127,11 @@ public:
     Q_INVOKABLE void save();
     Q_INVOKABLE void reload();
 
-    Q_SIGNAL void fileLoaded();
-    Q_SIGNAL void fileLoadFailed(const QString& error);
-    Q_SIGNAL void fileSaved();
-    Q_SIGNAL void fileSaveFailed(const QString& error);
+signals:
+    void fileLoaded();
+    void fileLoadFailed(const QString& error);
+    void fileSaved();
+    void fileSaveFailed(const QString& error);
 };
 
 } // namespace caelestia::config

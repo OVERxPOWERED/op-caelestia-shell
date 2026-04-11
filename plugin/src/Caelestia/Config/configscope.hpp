@@ -31,9 +31,10 @@ public:
 
     static ConfigScope* find(QObject* object);
 
-    Q_SIGNAL void screenChanged();
-    Q_SIGNAL void configChanged();
-    Q_SIGNAL void tokensChanged();
+signals:
+    void screenChanged();
+    void configChanged();
+    void tokensChanged();
 
 private:
     void resolveConfig();

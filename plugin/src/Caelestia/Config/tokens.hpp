@@ -363,7 +363,8 @@ public:
 
     static Tokens* qmlAttachedProperties(QObject* object);
 
-    Q_SIGNAL void sourceChanged();
+signals:
+    void sourceChanged();
 
 private:
     void connectScope();

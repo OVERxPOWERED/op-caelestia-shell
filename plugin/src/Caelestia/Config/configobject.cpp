@@ -276,7 +276,7 @@ void ConfigObject::emitBatchedChanges() {
 
     auto changes = std::move(m_pendingChanges);
     m_pendingChanges.clear();
-    Q_EMIT propertiesChanged(changes);
+    emit propertiesChanged(changes);
 }
 
 void ConfigObject::setupFileBackend(const QString& path) {
@@ -300,14 +300,14 @@ void ConfigObject::setupFileBackend(const QString& path) {
         if (!file.open(QIODevice::WriteOnly)) {
             qCWarning(lcConfig, "Failed to write %s", qUtf8Printable(m_filePath));
             if (auto* root = qobject_cast<RootConfig*>(this))
-                Q_EMIT root->fileSaveFailed(QStringLiteral("Failed to open file for writing"));
+                emit root->fileSaveFailed(QStringLiteral("Failed to open file for writing"));
             return;
         }
 
         auto json = m_sparse ? toSparseJsonObject() : toJsonObject();
         file.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
         if (auto* root = qobject_cast<RootConfig*>(this))
-            Q_EMIT root->fileSaved();
+            emit root->fileSaved();
     });
 
     m_cooldownTimer->setSingleShot(true);
@@ -387,9 +387,9 @@ void ConfigObject::onFileChanged() {
         bool ok = reloadFromFile();
         if (auto* root = qobject_cast<RootConfig*>(this)) {
             if (ok)
-                Q_EMIT root->fileLoaded();
+                emit root->fileLoaded();
             else
-                Q_EMIT root->fileLoadFailed(QStringLiteral("Failed to load config file"));
+                emit root->fileLoadFailed(QStringLiteral("Failed to load config file"));
         }
     }
 }
@@ -405,7 +405,7 @@ void RootConfig::save() {
 
 void RootConfig::reload() {
     if (reloadFromFile())
-        Q_EMIT fileLoaded();
+        emit fileLoaded();
 }
 
 } // namespace caelestia::config

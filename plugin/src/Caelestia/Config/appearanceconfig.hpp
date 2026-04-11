@@ -35,7 +35,8 @@ public:
     [[nodiscard]] int large() const;
     [[nodiscard]] int full() const;
 
-    Q_SIGNAL void valuesChanged();
+signals:
+    void valuesChanged();
 
 private:
     RoundingTokens* m_tokens = nullptr;
@@ -65,7 +66,8 @@ public:
     [[nodiscard]] int larger() const;
     [[nodiscard]] int large() const;
 
-    Q_SIGNAL void valuesChanged();
+signals:
+    void valuesChanged();
 
 private:
     SpacingTokens* m_tokens = nullptr;
@@ -95,7 +97,8 @@ public:
     [[nodiscard]] int larger() const;
     [[nodiscard]] int large() const;
 
-    Q_SIGNAL void valuesChanged();
+signals:
+    void valuesChanged();
 
 private:
     PaddingTokens* m_tokens = nullptr;
@@ -141,7 +144,8 @@ public:
     [[nodiscard]] int large() const;
     [[nodiscard]] int extraLarge() const;
 
-    Q_SIGNAL void valuesChanged();
+signals:
+    void valuesChanged();
 
 private:
     FontSizeTokens* m_tokens = nullptr;
@@ -189,7 +193,8 @@ public:
     [[nodiscard]] int expressiveDefaultSpatial() const;
     [[nodiscard]] int expressiveSlowSpatial() const;
 
-    Q_SIGNAL void valuesChanged();
+signals:
+    void valuesChanged();
 
 private:
     AnimDurationTokens* m_tokens = nullptr;

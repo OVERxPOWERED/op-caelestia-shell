@@ -11,7 +11,7 @@ void ConfigScope::setScreen(const QString& screen) {
         return;
 
     m_screen = screen;
-    Q_EMIT screenChanged();
+    emit screenChanged();
     resolveConfig();
 }
 
@@ -28,12 +28,12 @@ void ConfigScope::resolveConfig() {
 
     if (m_config != newConfig) {
         m_config = newConfig;
-        Q_EMIT configChanged();
+        emit configChanged();
     }
 
     if (m_tokens != newTokens) {
         m_tokens = newTokens;
-        Q_EMIT tokensChanged();
+        emit tokensChanged();
     }
 }
 

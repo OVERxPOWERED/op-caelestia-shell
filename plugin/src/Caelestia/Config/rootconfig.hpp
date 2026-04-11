@@ -33,9 +33,11 @@ signals:
     void saveFailed(const QString& error);
 
 private:
-    void onFileChanged();
+    void updateWatch();
+    void onWatcherEvent();
 
     QString m_filePath;
+    QString m_watchedDir;
     bool m_recentlySaved = false;
 
     QFileSystemWatcher* m_watcher = nullptr;

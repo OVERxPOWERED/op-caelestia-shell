@@ -4,8 +4,17 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qjsondocument.h>
+#include <qstandardpaths.h>
 
 namespace caelestia::config {
+
+namespace {
+
+QString watchRoot() {
+    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
+}
+
+} // namespace
 
 RootConfig::RootConfig(QObject* parent)
     : ConfigObject(parent) {}
@@ -38,6 +47,10 @@ void RootConfig::setupFileBackend(const QString& path) {
         auto json = toJsonObject();
         file.write(QJsonDocument(json).toJson(QJsonDocument::Indented));
         file.close();
+
+        // Update watches — save may have created directories
+        updateWatch();
+
         emit saved();
     });
 
@@ -52,14 +65,51 @@ void RootConfig::setupFileBackend(const QString& path) {
     m_reloadDebounce->setInterval(50);
     connect(m_reloadDebounce, &QTimer::timeout, this, &RootConfig::reload);
 
-    connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &RootConfig::onFileChanged);
+    connect(m_watcher, &QFileSystemWatcher::directoryChanged, this, &RootConfig::onWatcherEvent);
+    connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &RootConfig::onWatcherEvent);
 
     qCDebug(lcConfig) << "Setting up file backend for" << metaObject()->className() << "at" << path;
 
+    updateWatch();
     reload();
+}
 
-    if (QFile::exists(m_filePath))
-        m_watcher->addPath(m_filePath);
+void RootConfig::updateWatch() {
+    auto targetDir = QFileInfo(m_filePath).absolutePath();
+
+    // Find the nearest existing directory, walking up toward the watch root
+    auto dir = targetDir;
+    while (!QFile::exists(dir) && dir != watchRoot() && !dir.isEmpty()) {
+        auto parent = QFileInfo(dir).absolutePath();
+        if (parent == dir)
+            break; // reached filesystem root
+        dir = parent;
+    }
+
+    // Update directory watch if it changed
+    if (dir != m_watchedDir) {
+        if (!m_watchedDir.isEmpty())
+            m_watcher->removePath(m_watchedDir);
+
+        m_watchedDir = dir;
+
+        if (QFile::exists(dir))
+            m_watcher->addPath(dir);
+    }
+
+    // Watch the file itself if it exists (for in-place modifications)
+    if (QFile::exists(m_filePath)) {
+        if (!m_watcher->files().contains(m_filePath))
+            m_watcher->addPath(m_filePath);
+    }
+}
+
+void RootConfig::onWatcherEvent() {
+    // Re-evaluate what to watch — directories may have been created or deleted
+    updateWatch();
+
+    if (!m_recentlySaved)
+        m_reloadDebounce->start();
 }
 
 void RootConfig::saveToFile() {
@@ -104,14 +154,6 @@ std::optional<QString> RootConfig::reloadFromFile() {
     loadFromJson(doc.object());
 
     return QString(); // success
-}
-
-void RootConfig::onFileChanged() {
-    if (!m_watcher->files().contains(m_filePath))
-        m_watcher->addPath(m_filePath);
-
-    if (!m_recentlySaved)
-        m_reloadDebounce->start();
 }
 
 void RootConfig::save() {

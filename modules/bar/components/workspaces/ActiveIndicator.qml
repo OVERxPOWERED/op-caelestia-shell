@@ -2,7 +2,7 @@ import QtQuick
 import qs.components
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 
 StyledRect {
     id: root
@@ -42,9 +42,9 @@ StyledRect {
 
     clip: true
     y: offset + mask.y
-    implicitWidth: Config.bar.sizes.innerWidth - Appearance.padding.small * 2
+    implicitWidth: Config.bar.sizes.innerWidth - Tokens.padding.small * 2
     implicitHeight: size
-    radius: Appearance.rounding.full
+    radius: Tokens.rounding.full
     color: Colours.palette.m3primary
 
     Colouriser {
@@ -70,7 +70,7 @@ StyledRect {
         enabled: Config.bar.workspaces.activeTrail
 
         EAnim {
-            duration: Appearance.anim.durations.normal * 2
+            duration: Tokens.anim.durations.normal * 2
         }
     }
 
@@ -93,6 +93,6 @@ StyledRect {
     }
 
     component EAnim: Anim {
-        easing.bezierCurve: Appearance.anim.curves.emphasized
+        easing.bezierCurve: Tokens.anim.curves.emphasized
     }
 }

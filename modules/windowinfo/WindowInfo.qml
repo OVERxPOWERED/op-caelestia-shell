@@ -4,7 +4,7 @@ import Quickshell
 import Quickshell.Hyprland
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 
 Item {
     id: root
@@ -19,9 +19,9 @@ Item {
         id: child
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.large
+        anchors.margins: Tokens.padding.large
 
-        spacing: Appearance.spacing.normal
+        spacing: Tokens.spacing.normal
 
         Preview {
             screen: root.screen
@@ -29,7 +29,7 @@ Item {
         }
 
         ColumnLayout {
-            spacing: Appearance.spacing.normal
+            spacing: Tokens.spacing.normal
 
             Layout.preferredWidth: Config.winfo.sizes.detailsWidth
             Layout.fillHeight: true
@@ -39,7 +39,7 @@ Item {
                 Layout.fillHeight: true
 
                 color: Colours.tPalette.m3surfaceContainer
-                radius: Appearance.rounding.normal
+                radius: Tokens.rounding.normal
 
                 Details {
                     client: root.client
@@ -51,7 +51,7 @@ Item {
                 Layout.preferredHeight: buttons.implicitHeight
 
                 color: Colours.tPalette.m3surfaceContainer
-                radius: Appearance.rounding.normal
+                radius: Tokens.rounding.normal
 
                 Buttons {
                     id: buttons

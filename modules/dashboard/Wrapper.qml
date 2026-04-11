@@ -5,7 +5,7 @@ import Quickshell
 import Caelestia
 import qs.components
 import qs.components.filedialog
-import qs.config
+import Caelestia.Config
 import qs.utils
 
 Item {
@@ -40,8 +40,8 @@ Item {
 
     Behavior on offsetScale {
         Anim {
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            duration: Tokens.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
         }
     }
 

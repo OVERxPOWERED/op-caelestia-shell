@@ -8,7 +8,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 
 Loader {
     id: root
@@ -33,9 +33,9 @@ Loader {
 
         Item {
             anchors.fill: parent
-            anchors.margins: -Appearance.padding.large
-            anchors.rightMargin: -Appearance.padding.large - Config.border.thickness
-            anchors.bottomMargin: -Appearance.padding.large - Config.border.thickness
+            anchors.margins: -Tokens.padding.large
+            anchors.rightMargin: -Tokens.padding.large - Config.border.thickness
+            anchors.bottomMargin: -Tokens.padding.large - Config.border.thickness
             opacity: 0.5
 
             StyledRect {
@@ -130,15 +130,15 @@ Loader {
 
         StyledRect {
             anchors.centerIn: parent
-            radius: Appearance.rounding.large
+            radius: Tokens.rounding.large
             color: Colours.palette.m3surfaceContainerHigh
 
             scale: 0
             Component.onCompleted: scale = Qt.binding(() => root.props.recordingConfirmDelete ? 1 : 0)
 
-            width: Math.min(parent.width - Appearance.padding.large * 2, implicitWidth)
-            implicitWidth: deleteConfirmationLayout.implicitWidth + Appearance.padding.large * 3
-            implicitHeight: deleteConfirmationLayout.implicitHeight + Appearance.padding.large * 3
+            width: Math.min(parent.width - Tokens.padding.large * 2, implicitWidth)
+            implicitWidth: deleteConfirmationLayout.implicitWidth + Tokens.padding.large * 3
+            implicitHeight: deleteConfirmationLayout.implicitHeight + Tokens.padding.large * 3
 
             MouseArea {
                 anchors.fill: parent
@@ -155,26 +155,26 @@ Loader {
                 id: deleteConfirmationLayout
 
                 anchors.fill: parent
-                anchors.margins: Appearance.padding.large * 1.5
-                spacing: Appearance.spacing.normal
+                anchors.margins: Tokens.padding.large * 1.5
+                spacing: Tokens.spacing.normal
 
                 StyledText {
                     text: qsTr("Delete recording?")
-                    font.pointSize: Appearance.font.size.large
+                    font.pointSize: Tokens.font.size.large
                 }
 
                 StyledText {
                     Layout.fillWidth: true
                     text: qsTr("Recording '%1' will be permanently deleted.").arg(deleteConfirmation.path)
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Appearance.font.size.small
+                    font.pointSize: Tokens.font.size.small
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 }
 
                 RowLayout {
-                    Layout.topMargin: Appearance.spacing.normal
+                    Layout.topMargin: Tokens.spacing.normal
                     Layout.alignment: Qt.AlignRight
-                    spacing: Appearance.spacing.normal
+                    spacing: Tokens.spacing.normal
 
                     TextButton {
                         text: qsTr("Cancel")
@@ -195,8 +195,8 @@ Loader {
 
             Behavior on scale {
                 Anim {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                    duration: Tokens.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
                 }
             }
         }

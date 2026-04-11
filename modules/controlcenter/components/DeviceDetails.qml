@@ -7,7 +7,7 @@ import qs.components
 import qs.components.containers
 import qs.components.controls
 import qs.components.effects
-import qs.config
+import Caelestia.Config
 
 Item {
     id: root
@@ -30,7 +30,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        spacing: Appearance.spacing.normal
+        spacing: Tokens.spacing.normal
 
         Loader {
             id: headerLoader

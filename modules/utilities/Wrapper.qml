@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.components
-import qs.config
+import Caelestia.Config
 import qs.modules.sidebar as Sidebar
 import qs.modules.bar.popouts as BarPopouts
 
@@ -47,8 +47,8 @@ Item {
 
             Anim {
                 property: "sidebarLerp"
-                duration: Appearance.anim.durations.expressiveDefaultSpatial / 2
-                easing.bezierCurve: Appearance.anim.curves.standardAccel
+                duration: Tokens.anim.durations.expressiveDefaultSpatial / 2
+                easing.bezierCurve: Tokens.anim.curves.standardAccel
             }
         },
         Transition {
@@ -56,16 +56,16 @@ Item {
 
             Anim {
                 property: "sidebarLerp"
-                duration: Appearance.anim.durations.expressiveDefaultSpatial / 2
-                easing.bezierCurve: Appearance.anim.curves.standardDecel
+                duration: Tokens.anim.durations.expressiveDefaultSpatial / 2
+                easing.bezierCurve: Tokens.anim.curves.standardDecel
             }
         }
     ]
 
     Behavior on offsetScale {
         Anim {
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            duration: Tokens.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
         }
     }
 
@@ -74,7 +74,7 @@ Item {
 
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.margins: Appearance.padding.large
+        anchors.margins: Tokens.padding.large
 
         asynchronous: true
         active: root.shouldBeActive || root.visible

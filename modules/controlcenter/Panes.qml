@@ -13,7 +13,7 @@ import QtQuick.Layouts
 import Quickshell.Widgets
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.modules.controlcenter
 
 ClippingRectangle {
@@ -58,7 +58,7 @@ ClippingRectangle {
         Timer {
             id: animationDelayTimer
 
-            interval: Appearance.anim.durations.normal
+            interval: Tokens.anim.durations.normal
             onTriggered: {
                 layout.animationComplete = true;
             }
@@ -67,7 +67,7 @@ ClippingRectangle {
         Timer {
             id: initialOpeningTimer
 
-            interval: Appearance.anim.durations.large
+            interval: Tokens.anim.durations.large
             running: true
             onTriggered: {
                 layout.initialOpeningComplete = true;

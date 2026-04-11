@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.components
-import qs.config
+import Caelestia.Config
 import qs.modules.bar.popouts // Need to import this module so the Wrapper type is the same as others
 
 Item {
@@ -35,8 +35,8 @@ Item {
 
     Behavior on offsetScale {
         Anim {
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            duration: Tokens.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
         }
     }
 

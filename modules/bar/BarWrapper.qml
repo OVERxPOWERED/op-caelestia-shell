@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.components
-import qs.config
+import Caelestia.Config
 import qs.utils
 import qs.modules.bar.popouts as BarPopouts
 
@@ -18,7 +18,7 @@ Item {
     readonly property bool disabled: Strings.testRegexList(Config.bar.excludedScreens, screen.name)
 
     readonly property int clampedWidth: Math.max(Config.border.minThickness, implicitWidth)
-    readonly property int padding: Math.max(Appearance.padding.smaller, Config.border.thickness)
+    readonly property int padding: Math.max(Tokens.padding.smaller, Config.border.thickness)
     readonly property int contentWidth: Config.bar.sizes.innerWidth + padding * 2
     readonly property int exclusiveZone: !disabled && (Config.bar.persistent || visibilities.bar) ? contentWidth : Config.border.thickness
     readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || visibilities.bar || isHovered)
@@ -57,8 +57,8 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                duration: Tokens.anim.durations.expressiveDefaultSpatial
+                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
             }
         },
         Transition {
@@ -68,7 +68,7 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                easing.bezierCurve: Appearance.anim.curves.emphasized
+                easing.bezierCurve: Tokens.anim.curves.emphasized
             }
         }
     ]

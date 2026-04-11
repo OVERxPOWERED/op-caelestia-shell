@@ -6,7 +6,7 @@ import Quickshell.Hyprland
 import Quickshell.Wayland
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.modules.controlcenter
 import qs.modules.windowinfo
 
@@ -32,13 +32,13 @@ Item {
     property string detachedMode
     property string queuedMode
 
-    property int animLength: Appearance.anim.durations.expressiveDefaultSpatial
-    property list<real> animCurve: Appearance.anim.curves.expressiveDefaultSpatial
+    property int animLength: Tokens.anim.durations.expressiveDefaultSpatial
+    property list<real> animCurve: Tokens.anim.curves.expressiveDefaultSpatial
 
     function setAnims(detach: bool): void {
         const type = `expressive${detach ? "Slow" : "Default"}Spatial`;
-        animLength = Appearance.anim.durations[type];
-        animCurve = Appearance.anim.curves[type];
+        animLength = Tokens.anim.durations[type];
+        animCurve = Tokens.anim.curves[type];
     }
 
     function detach(mode: string): void {

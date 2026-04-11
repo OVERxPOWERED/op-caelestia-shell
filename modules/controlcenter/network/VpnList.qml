@@ -9,7 +9,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 
 ColumnLayout {
     id: root
@@ -18,7 +18,7 @@ ColumnLayout {
     property bool showHeader: true
     property int pendingSwitchIndex: -1
 
-    spacing: Appearance.spacing.normal
+    spacing: Tokens.spacing.normal
 
     Connections {
         function onConnectedChanged() {
@@ -77,7 +77,7 @@ ColumnLayout {
         Layout.preferredHeight: contentHeight
 
         interactive: false
-        spacing: Appearance.spacing.smaller
+        spacing: Tokens.spacing.smaller
 
         model: ScriptModel {
             values: Config.utilities.vpn.provider.map((provider, index) => {
@@ -104,10 +104,10 @@ ColumnLayout {
                 required property int index
 
                 width: ListView.view ? ListView.view.width : undefined
-                implicitHeight: rowLayout.implicitHeight + Appearance.padding.normal * 2
+                implicitHeight: rowLayout.implicitHeight + Tokens.padding.normal * 2
 
                 color: Qt.alpha(Colours.tPalette.m3surfaceContainer, (root.session && root.session.vpn && root.session.vpn.active === modelData) ? Colours.tPalette.m3surfaceContainer.a : 0)
-                radius: Appearance.rounding.normal
+                radius: Tokens.rounding.normal
 
                 StateLayer {
                     function onClicked(): void {
@@ -123,15 +123,15 @@ ColumnLayout {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Appearance.padding.normal
+                    anchors.margins: Tokens.padding.normal
 
-                    spacing: Appearance.spacing.normal
+                    spacing: Tokens.spacing.normal
 
                     StyledRect {
                         implicitWidth: implicitHeight
-                        implicitHeight: icon.implicitHeight + Appearance.padding.normal * 2
+                        implicitHeight: icon.implicitHeight + Tokens.padding.normal * 2
 
-                        radius: Appearance.rounding.normal
+                        radius: Tokens.rounding.normal
                         color: modelData.enabled && VPN.connected ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
 
                         MaterialIcon {
@@ -139,7 +139,7 @@ ColumnLayout {
 
                             anchors.centerIn: parent
                             text: modelData.enabled && VPN.connected ? "vpn_key" : "vpn_key_off"
-                            font.pointSize: Appearance.font.size.large
+                            font.pointSize: Tokens.font.size.large
                             fill: modelData.enabled && VPN.connected ? 1 : 0
                             color: modelData.enabled && VPN.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                         }
@@ -160,7 +160,7 @@ ColumnLayout {
 
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: Appearance.spacing.smaller
+                            spacing: Tokens.spacing.smaller
 
                             StyledText {
                                 Layout.fillWidth: true
@@ -197,7 +197,7 @@ ColumnLayout {
                                         return Colours.palette.m3tertiary;
                                     return Colours.palette.m3onSurface;
                                 }
-                                font.pointSize: Appearance.font.size.small
+                                font.pointSize: Tokens.font.size.small
                                 font.weight: modelData.enabled && VPN.connected ? 500 : 400
                                 elide: Text.ElideRight
                             }
@@ -206,9 +206,9 @@ ColumnLayout {
 
                     StyledRect {
                         implicitWidth: implicitHeight
-                        implicitHeight: connectIcon.implicitHeight + Appearance.padding.smaller * 2
+                        implicitHeight: connectIcon.implicitHeight + Tokens.padding.smaller * 2
 
-                        radius: Appearance.rounding.full
+                        radius: Tokens.rounding.full
                         color: Qt.alpha(Colours.palette.m3primaryContainer, VPN.connected && modelData.enabled ? 1 : 0)
 
                         StateLayer {
@@ -267,9 +267,9 @@ ColumnLayout {
 
                     StyledRect {
                         implicitWidth: implicitHeight
-                        implicitHeight: deleteIcon.implicitHeight + Appearance.padding.smaller * 2
+                        implicitHeight: deleteIcon.implicitHeight + Tokens.padding.smaller * 2
 
-                        radius: Appearance.rounding.full
+                        radius: Tokens.rounding.full
                         color: "transparent"
 
                         StateLayer {
@@ -366,8 +366,8 @@ ColumnLayout {
         parent: Overlay.overlay
         x: Math.round((parent.width - width) / 2)
         y: Math.round((parent.height - height) / 2)
-        implicitWidth: Math.min(400, parent.width - Appearance.padding.large * 2)
-        padding: Appearance.padding.large * 1.5
+        implicitWidth: Math.min(400, parent.width - Tokens.padding.large * 2)
+        padding: Tokens.padding.large * 1.5
 
         modal: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -381,15 +381,15 @@ ColumnLayout {
                     property: "opacity"
                     from: 0
                     to: 1
-                    duration: Appearance.anim.durations.normal
-                    easing.bezierCurve: Appearance.anim.curves.emphasized
+                    duration: Tokens.anim.durations.normal
+                    easing.bezierCurve: Tokens.anim.curves.emphasized
                 }
                 Anim {
                     property: "scale"
                     from: 0.7
                     to: 1
-                    duration: Appearance.anim.durations.normal
-                    easing.bezierCurve: Appearance.anim.curves.emphasized
+                    duration: Tokens.anim.durations.normal
+                    easing.bezierCurve: Tokens.anim.curves.emphasized
                 }
             }
         }
@@ -400,15 +400,15 @@ ColumnLayout {
                     property: "opacity"
                     from: 1
                     to: 0
-                    duration: Appearance.anim.durations.small
-                    easing.bezierCurve: Appearance.anim.curves.emphasized
+                    duration: Tokens.anim.durations.small
+                    easing.bezierCurve: Tokens.anim.curves.emphasized
                 }
                 Anim {
                     property: "scale"
                     from: 1
                     to: 0.7
-                    duration: Appearance.anim.durations.small
-                    easing.bezierCurve: Appearance.anim.curves.emphasized
+                    duration: Tokens.anim.durations.small
+                    easing.bezierCurve: Tokens.anim.curves.emphasized
                 }
             }
         }
@@ -423,7 +423,7 @@ ColumnLayout {
 
         background: StyledRect {
             color: Colours.palette.m3surfaceContainerHigh
-            radius: Appearance.rounding.large
+            radius: Tokens.rounding.large
 
             Elevation {
                 anchors.fill: parent
@@ -434,8 +434,8 @@ ColumnLayout {
 
             Behavior on implicitHeight {
                 Anim {
-                    duration: Appearance.anim.durations.normal
-                    easing.bezierCurve: Appearance.anim.curves.emphasized
+                    duration: Tokens.anim.durations.normal
+                    easing.bezierCurve: Tokens.anim.curves.emphasized
                 }
             }
         }
@@ -445,8 +445,8 @@ ColumnLayout {
 
             Behavior on implicitHeight {
                 Anim {
-                    duration: Appearance.anim.durations.normal
-                    easing.bezierCurve: Appearance.anim.curves.emphasized
+                    duration: Tokens.anim.durations.normal
+                    easing.bezierCurve: Tokens.anim.curves.emphasized
                 }
             }
 
@@ -454,20 +454,20 @@ ColumnLayout {
                 id: selectionContent
 
                 anchors.fill: parent
-                spacing: Appearance.spacing.normal
+                spacing: Tokens.spacing.normal
                 visible: vpnDialog.currentState === "selection"
                 opacity: vpnDialog.currentState === "selection" ? 1 : 0
 
                 Behavior on opacity {
                     Anim {
-                        duration: Appearance.anim.durations.small
-                        easing.bezierCurve: Appearance.anim.curves.emphasized
+                        duration: Tokens.anim.durations.small
+                        easing.bezierCurve: Tokens.anim.curves.emphasized
                     }
                 }
 
                 StyledText {
                     text: qsTr("Add VPN Provider")
-                    font.pointSize: Appearance.font.size.large
+                    font.pointSize: Tokens.font.size.large
                     font.weight: 500
                 }
 
@@ -476,11 +476,11 @@ ColumnLayout {
                     text: qsTr("Choose a provider to add")
                     wrapMode: Text.WordWrap
                     color: Colours.palette.m3outline
-                    font.pointSize: Appearance.font.size.small
+                    font.pointSize: Tokens.font.size.small
                 }
 
                 TextButton {
-                    Layout.topMargin: Appearance.spacing.normal
+                    Layout.topMargin: Tokens.spacing.normal
                     Layout.fillWidth: true
                     text: qsTr("NetBird")
                     inactiveColour: Colours.tPalette.m3surfaceContainerHigh
@@ -564,7 +564,7 @@ ColumnLayout {
                 }
 
                 TextButton {
-                    Layout.topMargin: Appearance.spacing.normal
+                    Layout.topMargin: Tokens.spacing.normal
                     Layout.fillWidth: true
                     text: qsTr("Cancel")
                     inactiveColour: Colours.palette.m3secondaryContainer
@@ -577,30 +577,30 @@ ColumnLayout {
                 id: formContent
 
                 anchors.fill: parent
-                spacing: Appearance.spacing.normal
+                spacing: Tokens.spacing.normal
                 visible: vpnDialog.currentState === "form"
                 opacity: vpnDialog.currentState === "form" ? 1 : 0
 
                 Behavior on opacity {
                     Anim {
-                        duration: Appearance.anim.durations.small
-                        easing.bezierCurve: Appearance.anim.curves.emphasized
+                        duration: Tokens.anim.durations.small
+                        easing.bezierCurve: Tokens.anim.curves.emphasized
                     }
                 }
 
                 StyledText {
                     text: vpnDialog.editIndex >= 0 ? qsTr("Edit VPN Provider") : qsTr("Add %1 VPN").arg(vpnDialog.displayName)
-                    font.pointSize: Appearance.font.size.large
+                    font.pointSize: Tokens.font.size.large
                     font.weight: 500
                 }
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Appearance.spacing.smaller / 2
+                    spacing: Tokens.spacing.smaller / 2
 
                     StyledText {
                         text: qsTr("Display Name")
-                        font.pointSize: Appearance.font.size.small
+                        font.pointSize: Tokens.font.size.small
                         color: Colours.palette.m3onSurfaceVariant
                     }
 
@@ -608,7 +608,7 @@ ColumnLayout {
                         Layout.fillWidth: true
                         implicitHeight: 40
                         color: displayNameField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                        radius: Appearance.rounding.small
+                        radius: Tokens.rounding.small
                         border.width: 1
                         border.color: displayNameField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -623,7 +623,7 @@ ColumnLayout {
                             id: displayNameField
 
                             anchors.centerIn: parent
-                            width: parent.width - Appearance.padding.normal
+                            width: parent.width - Tokens.padding.normal
                             horizontalAlignment: TextInput.AlignLeft
                             text: vpnDialog.displayName
                             onTextChanged: vpnDialog.displayName = text
@@ -633,11 +633,11 @@ ColumnLayout {
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Appearance.spacing.smaller / 2
+                    spacing: Tokens.spacing.smaller / 2
 
                     StyledText {
                         text: qsTr("Interface (e.g., wg0, torguard)")
-                        font.pointSize: Appearance.font.size.small
+                        font.pointSize: Tokens.font.size.small
                         color: Colours.palette.m3onSurfaceVariant
                     }
 
@@ -645,7 +645,7 @@ ColumnLayout {
                         Layout.fillWidth: true
                         implicitHeight: 40
                         color: interfaceNameField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                        radius: Appearance.rounding.small
+                        radius: Tokens.rounding.small
                         border.width: 1
                         border.color: interfaceNameField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -660,7 +660,7 @@ ColumnLayout {
                             id: interfaceNameField
 
                             anchors.centerIn: parent
-                            width: parent.width - Appearance.padding.normal
+                            width: parent.width - Tokens.padding.normal
                             horizontalAlignment: TextInput.AlignLeft
                             text: vpnDialog.interfaceName
                             onTextChanged: vpnDialog.interfaceName = text
@@ -670,12 +670,12 @@ ColumnLayout {
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Appearance.spacing.smaller / 2
+                    spacing: Tokens.spacing.smaller / 2
                     visible: vpnDialog.editIndex >= 0 ? (vpnDialog.connectCmd.length > 0) : (vpnDialog.providerName === "custom")
 
                     StyledText {
                         text: qsTr("Connect Command (e.g., wg-quick up wg0)")
-                        font.pointSize: Appearance.font.size.small
+                        font.pointSize: Tokens.font.size.small
                         color: Colours.palette.m3onSurfaceVariant
                     }
 
@@ -683,7 +683,7 @@ ColumnLayout {
                         Layout.fillWidth: true
                         implicitHeight: 40
                         color: connectCmdField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                        radius: Appearance.rounding.small
+                        radius: Tokens.rounding.small
                         border.width: 1
                         border.color: connectCmdField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -698,7 +698,7 @@ ColumnLayout {
                             id: connectCmdField
 
                             anchors.centerIn: parent
-                            width: parent.width - Appearance.padding.normal
+                            width: parent.width - Tokens.padding.normal
                             horizontalAlignment: TextInput.AlignLeft
                             text: vpnDialog.connectCmd
                             onTextChanged: vpnDialog.connectCmd = text
@@ -708,12 +708,12 @@ ColumnLayout {
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Appearance.spacing.smaller / 2
+                    spacing: Tokens.spacing.smaller / 2
                     visible: vpnDialog.editIndex >= 0 ? (vpnDialog.connectCmd.length > 0) : (vpnDialog.providerName === "custom")
 
                     StyledText {
                         text: qsTr("Disconnect Command (e.g., wg-quick down wg0)")
-                        font.pointSize: Appearance.font.size.small
+                        font.pointSize: Tokens.font.size.small
                         color: Colours.palette.m3onSurfaceVariant
                     }
 
@@ -721,7 +721,7 @@ ColumnLayout {
                         Layout.fillWidth: true
                         implicitHeight: 40
                         color: disconnectCmdField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                        radius: Appearance.rounding.small
+                        radius: Tokens.rounding.small
                         border.width: 1
                         border.color: disconnectCmdField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -736,7 +736,7 @@ ColumnLayout {
                             id: disconnectCmdField
 
                             anchors.centerIn: parent
-                            width: parent.width - Appearance.padding.normal
+                            width: parent.width - Tokens.padding.normal
                             horizontalAlignment: TextInput.AlignLeft
                             text: vpnDialog.disconnectCmd
                             onTextChanged: vpnDialog.disconnectCmd = text
@@ -745,9 +745,9 @@ ColumnLayout {
                 }
 
                 RowLayout {
-                    Layout.topMargin: Appearance.spacing.normal
+                    Layout.topMargin: Tokens.spacing.normal
                     Layout.fillWidth: true
-                    spacing: Appearance.spacing.normal
+                    spacing: Tokens.spacing.normal
 
                     TextButton {
                         Layout.fillWidth: true
@@ -822,8 +822,8 @@ ColumnLayout {
                     target: selectionContent
                     property: "opacity"
                     to: 0
-                    duration: Appearance.anim.durations.small
-                    easing.bezierCurve: Appearance.anim.curves.emphasized
+                    duration: Tokens.anim.durations.small
+                    easing.bezierCurve: Tokens.anim.curves.emphasized
                 }
             }
 
@@ -838,8 +838,8 @@ ColumnLayout {
                     target: formContent
                     property: "opacity"
                     to: 1
-                    duration: Appearance.anim.durations.small
-                    easing.bezierCurve: Appearance.anim.curves.emphasized
+                    duration: Tokens.anim.durations.small
+                    easing.bezierCurve: Tokens.anim.curves.emphasized
                 }
             }
         }

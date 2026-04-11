@@ -4,7 +4,7 @@ import QtQuick
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.modules.launcher.services
 
 Item {
@@ -14,8 +14,8 @@ Item {
     required property var panels
     required property real maxHeight
 
-    readonly property int padding: Appearance.padding.large
-    readonly property int rounding: Appearance.rounding.large
+    readonly property int padding: Tokens.padding.large
+    readonly property int rounding: Tokens.rounding.large
 
     implicitWidth: listWrapper.width + padding * 2
     implicitHeight: searchWrapper.height + listWrapper.height + padding * 2
@@ -47,7 +47,7 @@ Item {
         id: searchWrapper
 
         color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
-        radius: Appearance.rounding.full
+        radius: Tokens.rounding.full
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -72,11 +72,11 @@ Item {
 
             anchors.left: searchIcon.right
             anchors.right: clearIcon.left
-            anchors.leftMargin: Appearance.spacing.small
-            anchors.rightMargin: Appearance.spacing.small
+            anchors.leftMargin: Tokens.spacing.small
+            anchors.rightMargin: Tokens.spacing.small
 
-            topPadding: Appearance.padding.larger
-            bottomPadding: Appearance.padding.larger
+            topPadding: Tokens.padding.larger
+            bottomPadding: Tokens.padding.larger
 
             placeholderText: qsTr("Type \"%1\" for commands").arg(Config.launcher.actionPrefix)
 
@@ -176,13 +176,13 @@ Item {
 
             Behavior on width {
                 Anim {
-                    duration: Appearance.anim.durations.small
+                    duration: Tokens.anim.durations.small
                 }
             }
 
             Behavior on opacity {
                 Anim {
-                    duration: Appearance.anim.durations.small
+                    duration: Tokens.anim.durations.small
                 }
             }
         }

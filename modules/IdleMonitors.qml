@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import Caelestia.Internal
 import qs.services
-import qs.config
+import Caelestia.Config
 
 Scope {
     id: root

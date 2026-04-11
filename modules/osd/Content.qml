@@ -5,7 +5,7 @@ import QtQuick.Layouts
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 
 Item {
@@ -20,14 +20,14 @@ Item {
     required property bool sourceMuted
     required property real brightness
 
-    implicitWidth: layout.implicitWidth + Appearance.padding.large * 2
-    implicitHeight: layout.implicitHeight + Appearance.padding.large * 2
+    implicitWidth: layout.implicitWidth + Tokens.padding.large * 2
+    implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
 
     ColumnLayout {
         id: layout
 
         anchors.centerIn: parent
-        spacing: Appearance.spacing.normal
+        spacing: Tokens.spacing.normal
 
         // Speaker volume
         CustomMouseArea {
@@ -117,7 +117,7 @@ Item {
 
         Behavior on Layout.preferredHeight {
             Anim {
-                easing.bezierCurve: Appearance.anim.curves.emphasized
+                easing.bezierCurve: Tokens.anim.curves.emphasized
             }
         }
 

@@ -11,7 +11,7 @@ import qs.components.containers
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 
 Item {
@@ -66,9 +66,9 @@ Item {
         id: dashboardClippingRect
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.normal
+        anchors.margins: Tokens.padding.normal
         anchors.leftMargin: 0
-        anchors.rightMargin: Appearance.padding.normal
+        anchors.rightMargin: Tokens.padding.normal
 
         radius: dashboardBorder.innerRadius
         color: "transparent"
@@ -77,9 +77,9 @@ Item {
             id: dashboardLoader
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.large + Appearance.padding.normal
-            anchors.leftMargin: Appearance.padding.large
-            anchors.rightMargin: Appearance.padding.large
+            anchors.margins: Tokens.padding.large + Tokens.padding.normal
+            anchors.leftMargin: Tokens.padding.large
+            anchors.rightMargin: Tokens.padding.large
 
             asynchronous: true
             sourceComponent: dashboardContentComponent
@@ -90,7 +90,7 @@ Item {
         id: dashboardBorder
 
         leftThickness: 0
-        rightThickness: Appearance.padding.normal
+        rightThickness: Tokens.padding.normal
     }
 
     Component {
@@ -113,14 +113,14 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
 
-                spacing: Appearance.spacing.normal
+                spacing: Tokens.spacing.normal
 
                 RowLayout {
-                    spacing: Appearance.spacing.smaller
+                    spacing: Tokens.spacing.smaller
 
                     StyledText {
                         text: qsTr("Dashboard")
-                        font.pointSize: Appearance.font.size.large
+                        font.pointSize: Tokens.font.size.large
                         font.weight: 500
                     }
                 }

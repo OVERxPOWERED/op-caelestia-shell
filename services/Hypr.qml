@@ -7,7 +7,7 @@ import Quickshell.Io
 import Caelestia
 import Caelestia.Internal
 import qs.components.misc
-import qs.config
+import Caelestia.Config
 
 Singleton {
     id: root

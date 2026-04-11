@@ -2,7 +2,7 @@ import "cards"
 import QtQuick
 import QtQuick.Layouts
 import qs.components
-import qs.config
+import Caelestia.Config
 import qs.modules.bar.popouts as BarPopouts
 
 Item {
@@ -19,7 +19,7 @@ Item {
         id: layout
 
         anchors.fill: parent
-        spacing: Appearance.spacing.normal
+        spacing: Tokens.spacing.normal
 
         IdleInhibit {}
 

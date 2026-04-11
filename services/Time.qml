@@ -2,7 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
-import qs.config
+import Caelestia.Config
 
 Singleton {
     property alias enabled: clock.enabled

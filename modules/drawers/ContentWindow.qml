@@ -10,7 +10,7 @@ import Caelestia.Blobs
 import qs.components
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.modules.bar
 
 StyledWindow {
@@ -73,25 +73,25 @@ StyledWindow {
 
     Behavior on borderThickness {
         Anim {
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            duration: Tokens.anim.durations.expressiveDefaultSpatial
             easing.type: Easing.BezierSpline
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
         }
     }
 
     Behavior on borderRounding {
         Anim {
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            duration: Tokens.anim.durations.expressiveDefaultSpatial
             easing.type: Easing.BezierSpline
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
         }
     }
 
     Behavior on shadowOpacity {
         Anim {
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            duration: Tokens.anim.durations.expressiveDefaultSpatial
             easing.type: Easing.BezierSpline
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
         }
     }
 
@@ -221,8 +221,8 @@ StyledWindow {
 
             Behavior on extraWidth {
                 Anim {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                    duration: Tokens.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
                 }
             }
         }

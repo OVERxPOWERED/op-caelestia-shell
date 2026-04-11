@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import qs.components
-import qs.config
+import Caelestia.Config
 
 Item {
     id: root
@@ -20,8 +20,8 @@ Item {
 
     Behavior on offsetScale {
         Anim {
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            duration: Tokens.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
         }
     }
 
@@ -31,13 +31,13 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.margins: Appearance.padding.large
+        anchors.margins: Tokens.padding.large
         anchors.bottomMargin: 0
 
         active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
-            implicitWidth: Config.sidebar.sizes.width - Appearance.padding.large * 2
+            implicitWidth: Config.sidebar.sizes.width - Tokens.padding.large * 2
             props: root.props
             visibilities: root.visibilities
         }

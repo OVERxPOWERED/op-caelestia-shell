@@ -6,7 +6,7 @@ import QtQuick
 import Quickshell.Widgets
 import qs.components
 import qs.components.containers
-import qs.config
+import Caelestia.Config
 
 SplitPaneWithDetails {
     id: root

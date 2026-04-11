@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Wayland
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 
 Variants {
     model: Config.background.enabled ? Screens.screens : []
@@ -56,8 +56,8 @@ Variants {
             asynchronous: true
             active: Config.background.desktopClock.enabled
 
-            anchors.margins: Appearance.padding.large * 2
-            anchors.leftMargin: Appearance.padding.large * 2 + Config.bar.sizes.innerWidth + Math.max(Appearance.padding.smaller, Config.border.thickness)
+            anchors.margins: Tokens.padding.large * 2
+            anchors.leftMargin: Tokens.padding.large * 2 + Config.bar.sizes.innerWidth + Math.max(Tokens.padding.smaller, Config.border.thickness)
 
             state: Config.background.desktopClock.position
             states: [
@@ -146,8 +146,8 @@ Variants {
 
             transitions: Transition {
                 AnchorAnimation {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                    duration: Tokens.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
                 }
             }
 

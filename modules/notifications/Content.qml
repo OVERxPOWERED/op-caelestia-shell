@@ -5,7 +5,7 @@ import qs.components
 import qs.components.containers
 import qs.components.widgets
 import qs.services
-import qs.config
+import Caelestia.Config
 
 Item {
     id: root
@@ -13,7 +13,7 @@ Item {
     required property DrawerVisibilities visibilities
     required property Item osdPanel
     required property Item sessionPanel
-    readonly property int padding: Appearance.padding.large
+    readonly property int padding: Tokens.padding.large
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
@@ -25,7 +25,7 @@ Item {
         if (count === 0)
             return 0;
 
-        let height = (count - 1) * Appearance.spacing.smaller;
+        let height = (count - 1) * Tokens.spacing.smaller;
         for (let i = 0; i < count; i++)
             height += (list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0;
 
@@ -49,7 +49,7 @@ Item {
         anchors.margins: root.padding
 
         color: "transparent"
-        radius: Appearance.rounding.normal
+        radius: Tokens.rounding.normal
 
         StyledListView {
             id: list
@@ -89,9 +89,9 @@ Item {
 
                     let height = 0;
                     for (let i = 0; i < count; i++) {
-                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Appearance.spacing.smaller;
+                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Tokens.spacing.smaller;
 
-                        if (height - Appearance.spacing.smaller >= scrollY)
+                        if (height - Tokens.spacing.smaller >= scrollY)
                             return i;
                     }
 
@@ -110,9 +110,9 @@ Item {
 
                     let height = 0;
                     for (let i = count - 1; i >= 0; i--) {
-                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Appearance.spacing.smaller;
+                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Tokens.spacing.smaller;
 
-                        if (height - Appearance.spacing.smaller >= scrollY)
+                        if (height - Tokens.spacing.smaller >= scrollY)
                             return count - i - 1;
                     }
 
@@ -140,7 +140,7 @@ Item {
         }
 
         implicitWidth: notif.implicitWidth
-        implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : Appearance.spacing.smaller)
+        implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : Tokens.spacing.smaller)
 
         ListView.onRemove: removeAnim.start()
 
@@ -171,8 +171,8 @@ Item {
                 target: notif
                 property: "x"
                 to: (notif.x >= 0 ? Config.notifs.sizes.width : -Config.notifs.sizes.width) * 2
-                duration: Appearance.anim.durations.normal
-                easing.bezierCurve: Appearance.anim.curves.emphasized
+                duration: Tokens.anim.durations.normal
+                easing.bezierCurve: Tokens.anim.curves.emphasized
             }
             PropertyAction {
                 target: wrapper
@@ -183,7 +183,7 @@ Item {
 
         ClippingRectangle {
             anchors.top: parent.top
-            anchors.topMargin: wrapper.idx === 0 ? 0 : Appearance.spacing.smaller
+            anchors.topMargin: wrapper.idx === 0 ? 0 : Tokens.spacing.smaller
 
             color: "transparent"
             radius: notif.radius
@@ -199,8 +199,8 @@ Item {
     }
 
     component Anim: NumberAnimation {
-        duration: Appearance.anim.durations.expressiveDefaultSpatial
+        duration: Tokens.anim.durations.expressiveDefaultSpatial
         easing.type: Easing.BezierSpline
-        easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+        easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
     }
 }

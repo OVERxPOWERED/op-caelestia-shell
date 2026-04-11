@@ -8,14 +8,14 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 
 ColumnLayout {
     id: root
 
     required property Session session
 
-    spacing: Appearance.spacing.normal
+    spacing: Tokens.spacing.normal
 
     SettingsHeader {
         icon: "apps"
@@ -23,7 +23,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.large
+        Layout.topMargin: Tokens.spacing.large
         title: qsTr("General")
         description: qsTr("General launcher settings")
     }
@@ -67,13 +67,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.large
+        Layout.topMargin: Tokens.spacing.large
         title: qsTr("Display")
         description: qsTr("Display and appearance settings")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.small / 2
+        contentSpacing: Tokens.spacing.small / 2
 
         PropertyRow {
             label: qsTr("Max shown items")
@@ -94,13 +94,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.large
+        Layout.topMargin: Tokens.spacing.large
         title: qsTr("Prefixes")
         description: qsTr("Command prefix settings")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.small / 2
+        contentSpacing: Tokens.spacing.small / 2
 
         PropertyRow {
             label: qsTr("Special prefix")
@@ -115,7 +115,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.large
+        Layout.topMargin: Tokens.spacing.large
         title: qsTr("Fuzzy search")
         description: qsTr("Fuzzy search settings")
     }
@@ -168,13 +168,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.large
+        Layout.topMargin: Tokens.spacing.large
         title: qsTr("Sizes")
         description: qsTr("Size settings for launcher items")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.small / 2
+        contentSpacing: Tokens.spacing.small / 2
 
         PropertyRow {
             label: qsTr("Item width")
@@ -201,13 +201,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.large
+        Layout.topMargin: Tokens.spacing.large
         title: qsTr("Hidden apps")
         description: qsTr("Applications hidden from launcher")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.small / 2
+        contentSpacing: Tokens.spacing.small / 2
 
         PropertyRow {
             label: qsTr("Total hidden")

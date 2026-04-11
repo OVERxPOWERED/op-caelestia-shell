@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import qs.components
-import qs.config
+import Caelestia.Config
 
 Item {
     id: root
@@ -23,8 +23,8 @@ Item {
 
     Behavior on offsetScale {
         Anim {
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            duration: Tokens.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
         }
     }
 

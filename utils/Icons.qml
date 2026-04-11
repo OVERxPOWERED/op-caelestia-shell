@@ -3,7 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Services.Notifications
-import qs.config
+import Caelestia.Config
 
 Singleton {
     id: root

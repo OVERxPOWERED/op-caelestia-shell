@@ -4,7 +4,7 @@ import ".."
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import qs.config
+import Caelestia.Config
 import qs.utils
 
 Searcher {

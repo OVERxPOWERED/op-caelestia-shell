@@ -5,7 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 
 ColumnLayout {
@@ -18,7 +18,7 @@ ColumnLayout {
 
     readonly property bool isWorkspace: true // Flag for finding workspace children
     // Unanimated prop for others to use as reference
-    readonly property int size: implicitHeight + (hasWindows ? Appearance.padding.small : 0)
+    readonly property int size: implicitHeight + (hasWindows ? Tokens.padding.small : 0)
 
     readonly property int ws: groupOffset + index + 1
     readonly property bool isOccupied: occupied[ws] ?? false
@@ -33,7 +33,7 @@ ColumnLayout {
         id: indicator
 
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-        Layout.preferredHeight: Config.bar.sizes.innerWidth - Appearance.padding.small * 2
+        Layout.preferredHeight: Config.bar.sizes.innerWidth - Tokens.padding.small * 2
 
         animate: true
         text: {
@@ -74,7 +74,7 @@ ColumnLayout {
                     properties: "scale"
                     from: 0
                     to: 1
-                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                    easing.bezierCurve: Tokens.anim.curves.standardDecel
                 }
             }
 
@@ -82,7 +82,7 @@ ColumnLayout {
                 Anim {
                     properties: "scale"
                     to: 1
-                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                    easing.bezierCurve: Tokens.anim.curves.standardDecel
                 }
                 Anim {
                     properties: "x,y"

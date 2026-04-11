@@ -5,12 +5,12 @@ import Quickshell
 import Caelestia
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 
 Item {
     id: root
 
-    readonly property int spacing: Appearance.spacing.small
+    readonly property int spacing: Tokens.spacing.small
     property bool flag
 
     function shouldShowToast(toast: Toast): bool {
@@ -23,7 +23,7 @@ Item {
         return false;
     }
 
-    implicitWidth: Config.utilities.sizes.toastWidth - Appearance.padding.normal * 2
+    implicitWidth: Config.utilities.sizes.toastWidth - Tokens.padding.normal * 2
     implicitHeight: {
         let h = -spacing;
         for (let i = 0; i < repeater.count; i++) {
@@ -111,8 +111,8 @@ Item {
             properties: "opacity,scale"
             from: 0
             to: 1
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            duration: Tokens.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
         }
 
         ParallelAnimation {
@@ -148,8 +148,8 @@ Item {
 
         Behavior on anchors.bottomMargin {
             Anim {
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                duration: Tokens.anim.durations.expressiveDefaultSpatial
+                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
             }
         }
     }

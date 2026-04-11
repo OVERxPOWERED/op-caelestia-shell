@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Io
 import Caelestia.Models
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 
 Searcher {

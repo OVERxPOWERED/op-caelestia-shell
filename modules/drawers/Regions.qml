@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import qs.config
+import Caelestia.Config
 import qs.modules.bar as Bar
 
 Region {

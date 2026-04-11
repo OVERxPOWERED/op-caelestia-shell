@@ -11,7 +11,7 @@ import qs.components.containers
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 
 Item {
     id: root
@@ -66,9 +66,9 @@ Item {
         id: notificationsClippingRect
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.normal
+        anchors.margins: Tokens.padding.normal
         anchors.leftMargin: 0
-        anchors.rightMargin: Appearance.padding.normal
+        anchors.rightMargin: Tokens.padding.normal
 
         color: "transparent"
         radius: notificationsBorder.innerRadius
@@ -77,9 +77,9 @@ Item {
             id: notificationsLoader
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.large + Appearance.padding.normal
-            anchors.leftMargin: Appearance.padding.large
-            anchors.rightMargin: Appearance.padding.large
+            anchors.margins: Tokens.padding.large + Tokens.padding.normal
+            anchors.leftMargin: Tokens.padding.large
+            anchors.rightMargin: Tokens.padding.large
 
             sourceComponent: notificationsContentComponent
         }
@@ -89,7 +89,7 @@ Item {
         id: notificationsBorder
 
         leftThickness: 0
-        rightThickness: Appearance.padding.normal
+        rightThickness: Tokens.padding.normal
     }
 
     Component {
@@ -111,13 +111,13 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                spacing: Appearance.spacing.normal
+                spacing: Tokens.spacing.normal
 
                 ColumnLayout {
                     Layout.fillWidth: true
                     Layout.maximumWidth: 500
                     Layout.alignment: Qt.AlignTop
-                    spacing: Appearance.spacing.normal
+                    spacing: Tokens.spacing.normal
 
                     SectionContainer {
                         Layout.fillWidth: true
@@ -125,7 +125,7 @@ Item {
 
                         StyledText {
                             text: qsTr("Notifications")
-                            font.pointSize: Appearance.font.size.normal
+                            font.pointSize: Tokens.font.size.normal
                         }
 
                         SplitButtonRow {
@@ -220,7 +220,7 @@ Item {
                 ColumnLayout {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignTop
-                    spacing: Appearance.spacing.normal
+                    spacing: Tokens.spacing.normal
 
                     SectionContainer {
                         Layout.fillWidth: true
@@ -228,7 +228,7 @@ Item {
 
                         StyledText {
                             text: qsTr("Toast settings")
-                            font.pointSize: Appearance.font.size.normal
+                            font.pointSize: Tokens.font.size.normal
                         }
 
                         SplitButtonRow {
@@ -316,8 +316,8 @@ Item {
                         GridLayout {
                             Layout.fillWidth: true
                             columns: 2
-                            columnSpacing: Appearance.spacing.normal
-                            rowSpacing: Appearance.spacing.normal
+                            columnSpacing: Tokens.spacing.normal
+                            rowSpacing: Tokens.spacing.normal
 
                             SwitchRow {
                                 Layout.fillWidth: true

@@ -4,7 +4,7 @@ import QtQuick
 import Quickshell
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 
 Item {
     id: root
@@ -65,18 +65,18 @@ Item {
             anchors.horizontalCenter: root.horizontalCenter
 
             y: (start?.y ?? 0) - 1
-            implicitWidth: Config.bar.sizes.innerWidth - Appearance.padding.small * 2 + 2
+            implicitWidth: Config.bar.sizes.innerWidth - Tokens.padding.small * 2 + 2
             implicitHeight: start && end ? end.y + end.size - start.y + 2 : 0
 
             color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-            radius: Appearance.rounding.full
+            radius: Tokens.rounding.full
 
             scale: 0
             Component.onCompleted: scale = 1
 
             Behavior on scale {
                 Anim {
-                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                    easing.bezierCurve: Tokens.anim.curves.standardDecel
                 }
             }
 

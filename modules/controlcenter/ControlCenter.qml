@@ -6,13 +6,13 @@ import Quickshell
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 
 Item {
     id: root
 
     required property ShellScreen screen
-    readonly property int rounding: floating ? 0 : Appearance.rounding.normal
+    readonly property int rounding: floating ? 0 : Tokens.rounding.normal
 
     property alias floating: session.floating
     property alias active: session.active

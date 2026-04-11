@@ -5,7 +5,7 @@ import QtQuick.Effects
 import Quickshell.Wayland
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 
 WlSessionLockSurface {
     id: root
@@ -33,8 +33,8 @@ WlSessionLockSurface {
                 target: lockContent
                 properties: "implicitWidth,implicitHeight"
                 to: lockContent.size
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                duration: Tokens.anim.durations.expressiveDefaultSpatial
+                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
             }
             Anim {
                 target: lockBg
@@ -45,30 +45,30 @@ WlSessionLockSurface {
                 target: content
                 property: "scale"
                 to: 0
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                duration: Tokens.anim.durations.expressiveDefaultSpatial
+                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
             }
             Anim {
                 target: content
                 property: "opacity"
                 to: 0
-                duration: Appearance.anim.durations.small
+                duration: Tokens.anim.durations.small
             }
             Anim {
                 target: lockIcon
                 property: "opacity"
                 to: 1
-                duration: Appearance.anim.durations.large
+                duration: Tokens.anim.durations.large
             }
             Anim {
                 target: background
                 property: "opacity"
                 to: 0
-                duration: Appearance.anim.durations.large
+                duration: Tokens.anim.durations.large
             }
             SequentialAnimation {
                 PauseAnimation {
-                    duration: Appearance.anim.durations.small
+                    duration: Tokens.anim.durations.small
                 }
                 Anim {
                     target: lockContent
@@ -93,7 +93,7 @@ WlSessionLockSurface {
             target: background
             property: "opacity"
             to: 1
-            duration: Appearance.anim.durations.large
+            duration: Tokens.anim.durations.large
         }
         SequentialAnimation {
             ParallelAnimation {
@@ -101,15 +101,15 @@ WlSessionLockSurface {
                     target: lockContent
                     property: "scale"
                     to: 1
-                    duration: Appearance.anim.durations.expressiveFastSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                    duration: Tokens.anim.durations.expressiveFastSpatial
+                    easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "rotation"
                     to: 360
-                    duration: Appearance.anim.durations.expressiveFastSpatial
-                    easing.bezierCurve: Appearance.anim.curves.standardAccel
+                    duration: Tokens.anim.durations.expressiveFastSpatial
+                    easing.bezierCurve: Tokens.anim.curves.standardAccel
                 }
             }
             ParallelAnimation {
@@ -117,7 +117,7 @@ WlSessionLockSurface {
                     target: lockIcon
                     property: "rotation"
                     to: 360
-                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                    easing.bezierCurve: Tokens.anim.curves.standardDecel
                 }
                 Anim {
                     target: lockIcon
@@ -133,27 +133,27 @@ WlSessionLockSurface {
                     target: content
                     property: "scale"
                     to: 1
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                    duration: Tokens.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
                 }
                 Anim {
                     target: lockBg
                     property: "radius"
-                    to: Appearance.rounding.large * 1.5
+                    to: Tokens.rounding.large * 1.5
                 }
                 Anim {
                     target: lockContent
                     property: "implicitWidth"
                     to: (root.screen?.height ?? 0) * Config.lock.sizes.heightMult * Config.lock.sizes.ratio
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                    duration: Tokens.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "implicitHeight"
                     to: (root.screen?.height ?? 0) * Config.lock.sizes.heightMult
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                    duration: Tokens.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
                 }
             }
         }
@@ -179,8 +179,8 @@ WlSessionLockSurface {
     Item {
         id: lockContent
 
-        readonly property int size: lockIcon.implicitHeight + Appearance.padding.large * 4
-        readonly property int radius: size / 4 * Appearance.rounding.scale
+        readonly property int size: lockIcon.implicitHeight + Tokens.padding.large * 4
+        readonly property int radius: size / 4 * Tokens.rounding.scale
 
         anchors.centerIn: parent
         implicitWidth: size
@@ -210,7 +210,7 @@ WlSessionLockSurface {
 
             anchors.centerIn: parent
             text: "lock"
-            font.pointSize: Appearance.font.size.extraLarge * 4
+            font.pointSize: Tokens.font.size.extraLarge * 4
             font.bold: true
             rotation: 180
         }
@@ -219,8 +219,8 @@ WlSessionLockSurface {
             id: content
 
             anchors.centerIn: parent
-            width: (root.screen?.height ?? 0) * Config.lock.sizes.heightMult * Config.lock.sizes.ratio - Appearance.padding.large * 2
-            height: (root.screen?.height ?? 0) * Config.lock.sizes.heightMult - Appearance.padding.large * 2
+            width: (root.screen?.height ?? 0) * Config.lock.sizes.heightMult * Config.lock.sizes.ratio - Tokens.padding.large * 2
+            height: (root.screen?.height ?? 0) * Config.lock.sizes.heightMult - Tokens.padding.large * 2
 
             lock: root
             opacity: 0

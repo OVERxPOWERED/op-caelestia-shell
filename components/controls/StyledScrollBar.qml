@@ -2,7 +2,7 @@ import ".."
 import QtQuick
 import QtQuick.Templates
 import qs.services
-import qs.config
+import Caelestia.Config
 
 ScrollBar {
     id: root
@@ -45,7 +45,7 @@ ScrollBar {
             }
         }
     }
-    implicitWidth: Appearance.padding.small
+    implicitWidth: Tokens.padding.small
 
     contentItem: StyledRect {
         anchors.left: parent.left
@@ -61,7 +61,7 @@ ScrollBar {
                 return 0.6;
             return 0;
         }
-        radius: Appearance.rounding.full
+        radius: Tokens.rounding.full
         color: Colours.palette.m3secondary
 
         MouseArea {

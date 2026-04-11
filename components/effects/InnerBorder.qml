@@ -4,7 +4,7 @@ import ".."
 import QtQuick
 import QtQuick.Effects
 import qs.services
-import qs.config
+import Caelestia.Config
 
 StyledRect {
     property alias innerRadius: maskInner.radius
@@ -37,8 +37,8 @@ StyledRect {
             id: maskInner
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.normal
-            radius: Appearance.rounding.small
+            anchors.margins: Tokens.padding.normal
+            radius: Tokens.rounding.small
         }
     }
 }

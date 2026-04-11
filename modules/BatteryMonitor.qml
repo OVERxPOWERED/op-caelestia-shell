@@ -2,7 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.UPower
 import Caelestia
-import qs.config
+import Caelestia.Config
 
 Scope {
     id: root

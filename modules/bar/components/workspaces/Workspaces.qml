@@ -6,7 +6,7 @@ import QtQuick.Layouts
 import Quickshell
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 
 StyledClippingRect {
     id: root
@@ -28,10 +28,10 @@ StyledClippingRect {
     property real blur: onSpecial ? 1 : 0
 
     implicitWidth: Config.bar.sizes.innerWidth
-    implicitHeight: layout.implicitHeight + Appearance.padding.small * 2
+    implicitHeight: layout.implicitHeight + Tokens.padding.small * 2
 
     color: Colours.tPalette.m3surfaceContainer
-    radius: Appearance.rounding.full
+    radius: Tokens.rounding.full
 
     Item {
         anchors.fill: parent
@@ -51,7 +51,7 @@ StyledClippingRect {
             active: Config.bar.workspaces.occupiedBg
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.small
+            anchors.margins: Tokens.padding.small
 
             sourceComponent: OccupiedBg {
                 workspaces: workspaces
@@ -64,7 +64,7 @@ StyledClippingRect {
             id: layout
 
             anchors.centerIn: parent
-            spacing: Math.floor(Appearance.spacing.small / 2)
+            spacing: Math.floor(Tokens.spacing.small / 2)
 
             Repeater {
                 id: workspaces
@@ -118,7 +118,7 @@ StyledClippingRect {
         asynchronous: true
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.small
+        anchors.margins: Tokens.padding.small
 
         active: opacity > 0
 
@@ -140,7 +140,7 @@ StyledClippingRect {
 
     Behavior on blur {
         Anim {
-            duration: Appearance.anim.durations.small
+            duration: Tokens.anim.durations.small
         }
     }
 }

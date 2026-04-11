@@ -8,7 +8,7 @@ import QtQuick.Layouts
 import Quickshell
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 
 ColumnLayout {
     id: root
@@ -17,7 +17,7 @@ ColumnLayout {
     required property DrawerVisibilities visibilities
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
-    readonly property int vPadding: Appearance.padding.large
+    readonly property int vPadding: Tokens.padding.large
 
     function closeTray(): void {
         if (!Config.bar.tray.compact)
@@ -102,7 +102,7 @@ ColumnLayout {
         }
     }
 
-    spacing: Appearance.spacing.normal
+    spacing: Tokens.spacing.normal
 
     Repeater {
         id: repeater

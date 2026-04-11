@@ -1,10 +1,10 @@
 import QtQuick.Layouts
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 
 ColumnLayout {
-    spacing: Appearance.spacing.small
+    spacing: Tokens.spacing.small
 
     StyledText {
         text: qsTr("Capslock: %1").arg(Hypr.capsLock ? "Enabled" : "Disabled")

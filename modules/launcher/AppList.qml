@@ -6,7 +6,7 @@ import qs.components
 import qs.components.containers
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.modules.launcher.items
 import qs.modules.launcher.services
 
@@ -22,7 +22,7 @@ StyledListView {
         onValuesChanged: root.currentIndex = 0
     }
 
-    spacing: Appearance.spacing.small
+    spacing: Tokens.spacing.small
     orientation: Qt.Vertical
     implicitHeight: (Config.launcher.sizes.itemHeight + spacing) * Math.min(Config.launcher.maxShown, count) - spacing
 
@@ -32,7 +32,7 @@ StyledListView {
 
     highlightFollowsCurrentItem: false
     highlight: StyledRect {
-        radius: Appearance.rounding.normal
+        radius: Tokens.rounding.normal
         color: Colours.palette.m3onSurface
         opacity: 0.08
 
@@ -42,8 +42,8 @@ StyledListView {
 
         Behavior on y {
             Anim {
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                duration: Tokens.anim.durations.expressiveDefaultSpatial
+                easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
             }
         }
     }
@@ -118,16 +118,16 @@ StyledListView {
                     property: "opacity"
                     from: 1
                     to: 0
-                    duration: Appearance.anim.durations.small
-                    easing.bezierCurve: Appearance.anim.curves.standardAccel
+                    duration: Tokens.anim.durations.small
+                    easing.bezierCurve: Tokens.anim.curves.standardAccel
                 }
                 Anim {
                     target: root
                     property: "scale"
                     from: 1
                     to: 0.9
-                    duration: Appearance.anim.durations.small
-                    easing.bezierCurve: Appearance.anim.curves.standardAccel
+                    duration: Tokens.anim.durations.small
+                    easing.bezierCurve: Tokens.anim.curves.standardAccel
                 }
             }
             PropertyAction {
@@ -140,16 +140,16 @@ StyledListView {
                     property: "opacity"
                     from: 0
                     to: 1
-                    duration: Appearance.anim.durations.small
-                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                    duration: Tokens.anim.durations.small
+                    easing.bezierCurve: Tokens.anim.curves.standardDecel
                 }
                 Anim {
                     target: root
                     property: "scale"
                     from: 0.9
                     to: 1
-                    duration: Appearance.anim.durations.small
-                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                    duration: Tokens.anim.durations.small
+                    easing.bezierCurve: Tokens.anim.curves.standardDecel
                 }
             }
             PropertyAction {
@@ -197,7 +197,7 @@ StyledListView {
     addDisplaced: Transition {
         Anim {
             property: "y"
-            duration: Appearance.anim.durations.small
+            duration: Tokens.anim.durations.small
         }
         Anim {
             properties: "opacity,scale"

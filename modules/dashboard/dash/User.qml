@@ -4,7 +4,7 @@ import qs.components.effects
 import qs.components.filedialog
 import qs.components.images
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 
 Row {
@@ -13,14 +13,14 @@ Row {
     required property DrawerVisibilities visibilities
     required property FileDialog facePicker
 
-    padding: Appearance.padding.large
-    spacing: Appearance.spacing.normal
+    padding: Tokens.padding.large
+    spacing: Tokens.spacing.normal
 
     StyledClippingRect {
         implicitWidth: info.implicitHeight
         implicitHeight: info.implicitHeight
 
-        radius: Appearance.rounding.large
+        radius: Tokens.rounding.large
         color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
 
         MaterialIcon {
@@ -52,7 +52,7 @@ Row {
 
                 Behavior on opacity {
                     Anim {
-                        duration: Appearance.anim.durations.expressiveFastSpatial
+                        duration: Tokens.anim.durations.expressiveFastSpatial
                     }
                 }
             }
@@ -60,10 +60,10 @@ Row {
             StyledRect {
                 anchors.centerIn: parent
 
-                implicitWidth: selectIcon.implicitHeight + Appearance.padding.small * 2
-                implicitHeight: selectIcon.implicitHeight + Appearance.padding.small * 2
+                implicitWidth: selectIcon.implicitHeight + Tokens.padding.small * 2
+                implicitHeight: selectIcon.implicitHeight + Tokens.padding.small * 2
 
-                radius: Appearance.rounding.normal
+                radius: Tokens.rounding.normal
                 color: Colours.palette.m3primary
                 scale: parent.containsMouse ? 1 : 0.5
                 opacity: parent.containsMouse ? 1 : 0
@@ -85,19 +85,19 @@ Row {
 
                     text: "frame_person"
                     color: Colours.palette.m3onPrimary
-                    font.pointSize: Appearance.font.size.extraLarge
+                    font.pointSize: Tokens.font.size.extraLarge
                 }
 
                 Behavior on scale {
                     Anim {
-                        duration: Appearance.anim.durations.expressiveFastSpatial
-                        easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                        duration: Tokens.anim.durations.expressiveFastSpatial
+                        easing.bezierCurve: Tokens.anim.curves.expressiveFastSpatial
                     }
                 }
 
                 Behavior on opacity {
                     Anim {
-                        duration: Appearance.anim.durations.expressiveFastSpatial
+                        duration: Tokens.anim.durations.expressiveFastSpatial
                     }
                 }
             }
@@ -108,7 +108,7 @@ Row {
         id: info
 
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Appearance.spacing.normal
+        spacing: Tokens.spacing.normal
 
         Item {
             id: line
@@ -123,7 +123,7 @@ Row {
                 anchors.leftMargin: (Config.dashboard.sizes.infoIconSize - implicitWidth) / 2
 
                 source: SysInfo.osLogo
-                implicitSize: Math.floor(Appearance.font.size.normal * 1.34)
+                implicitSize: Math.floor(Tokens.font.size.normal * 1.34)
                 colour: Colours.palette.m3primary
             }
 
@@ -134,7 +134,7 @@ Row {
                 anchors.left: icon.right
                 anchors.leftMargin: icon.anchors.leftMargin
                 text: `:  ${SysInfo.osPrettyName || SysInfo.osName}`
-                font.pointSize: Appearance.font.size.normal
+                font.pointSize: Tokens.font.size.normal
 
                 width: Config.dashboard.sizes.infoWidth
                 elide: Text.ElideRight
@@ -175,7 +175,7 @@ Row {
             fill: 1
             text: line.icon
             color: line.colour
-            font.pointSize: Appearance.font.size.normal
+            font.pointSize: Tokens.font.size.normal
         }
 
         StyledText {
@@ -185,7 +185,7 @@ Row {
             anchors.left: icon.right
             anchors.leftMargin: icon.anchors.leftMargin
             text: `:  ${line.text}`
-            font.pointSize: Appearance.font.size.normal
+            font.pointSize: Tokens.font.size.normal
 
             width: Config.dashboard.sizes.infoWidth
             elide: Text.ElideRight

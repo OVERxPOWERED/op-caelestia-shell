@@ -3,25 +3,25 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 
 StyledRect {
     id: root
 
     readonly property color colour: Colours.palette.m3tertiary
-    readonly property int padding: Config.bar.clock.background ? Appearance.padding.normal : Appearance.padding.small
+    readonly property int padding: Config.bar.clock.background ? Tokens.padding.normal : Tokens.padding.small
 
     implicitWidth: Config.bar.sizes.innerWidth
     implicitHeight: layout.implicitHeight + root.padding * 2
 
     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Config.bar.clock.background ? Colours.tPalette.m3surfaceContainer.a : 0)
-    radius: Appearance.rounding.full
+    radius: Tokens.rounding.full
 
     Column {
         id: layout
 
         anchors.centerIn: parent
-        spacing: Appearance.spacing.small
+        spacing: Tokens.spacing.small
 
         Loader {
             asynchronous: true
@@ -43,8 +43,8 @@ StyledRect {
 
             horizontalAlignment: StyledText.AlignHCenter
             text: Time.format("ddd\nd")
-            font.pointSize: Appearance.font.size.smaller
-            font.family: Appearance.font.family.sans
+            font.pointSize: Tokens.font.size.smaller
+            font.family: Tokens.font.family.sans
             color: root.colour
         }
 
@@ -63,8 +63,8 @@ StyledRect {
 
             horizontalAlignment: StyledText.AlignHCenter
             text: Time.format(Config.services.useTwelveHourClock ? "hh\nmm\nA" : "hh\nmm")
-            font.pointSize: Appearance.font.size.smaller
-            font.family: Appearance.font.family.mono
+            font.pointSize: Tokens.font.size.smaller
+            font.family: Tokens.font.family.mono
             color: root.colour
         }
     }

@@ -15,7 +15,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.images
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 
 Item {
@@ -111,9 +111,9 @@ Item {
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.bottomMargin: Appearance.spacing.normal
+                    Layout.bottomMargin: Tokens.spacing.normal
                     text: qsTr("Wallpaper")
-                    font.pointSize: Appearance.font.size.extraLarge
+                    font.pointSize: Tokens.font.size.extraLarge
                     font.weight: 600
                 }
 
@@ -122,7 +122,7 @@ Item {
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.bottomMargin: -Appearance.padding.large * 2
+                    Layout.bottomMargin: -Tokens.padding.large * 2
 
                     asynchronous: true
                     active: {
@@ -172,14 +172,14 @@ Item {
 
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    spacing: Appearance.spacing.small
+                    spacing: Tokens.spacing.small
 
                     RowLayout {
-                        spacing: Appearance.spacing.smaller
+                        spacing: Tokens.spacing.smaller
 
                         StyledText {
                             text: qsTr("Appearance")
-                            font.pointSize: Appearance.font.size.large
+                            font.pointSize: Tokens.font.size.large
                             font.weight: 500
                         }
 

@@ -7,7 +7,7 @@ import Quickshell.Services.Notifications
 import qs.components
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 
 StyledRect {
@@ -51,9 +51,9 @@ StyledRect {
     readonly property int urgency: groupProps.urgency
 
     readonly property int nonAnimHeight: {
-        const headerHeight = header.implicitHeight + (root.expanded ? Math.round(Appearance.spacing.small / 2) : 0);
+        const headerHeight = header.implicitHeight + (root.expanded ? Math.round(Tokens.spacing.small / 2) : 0);
         const columnHeight = headerHeight + notifList.layoutHeight + column.Layout.topMargin + column.Layout.bottomMargin;
-        return Math.round(Math.max(Config.notifs.sizes.image, columnHeight) + Appearance.padding.normal * 2);
+        return Math.round(Math.max(Config.notifs.sizes.image, columnHeight) + Tokens.padding.normal * 2);
     }
     readonly property bool expanded: props.expandedNotifs.includes(modelData)
 
@@ -73,10 +73,10 @@ StyledRect {
 
     anchors.left: parent?.left
     anchors.right: parent?.right
-    implicitHeight: content.implicitHeight + Appearance.padding.normal * 2
+    implicitHeight: content.implicitHeight + Tokens.padding.normal * 2
 
     clip: true
-    radius: Appearance.rounding.normal
+    radius: Tokens.rounding.normal
     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
     RowLayout {
@@ -85,9 +85,9 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Appearance.padding.normal
+        anchors.margins: Tokens.padding.normal
 
-        spacing: Appearance.spacing.normal
+        spacing: Tokens.spacing.normal
 
         Item {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -126,14 +126,14 @@ StyledRect {
                 MaterialIcon {
                     text: Icons.getNotifIcon(root.notifs[0]?.summary, root.urgency)
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                    font.pointSize: Appearance.font.size.large
+                    font.pointSize: Tokens.font.size.large
                 }
             }
 
             StyledClippingRect {
                 anchors.fill: parent
                 color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.urgency === NotificationUrgency.Low ? Colours.layer(Colours.palette.m3surfaceContainerHigh, 3) : Colours.palette.m3secondaryContainer
-                radius: Appearance.rounding.full
+                radius: Tokens.rounding.full
 
                 Loader {
                     asynchronous: true
@@ -153,7 +153,7 @@ StyledRect {
                     implicitHeight: Config.notifs.sizes.badge
 
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.urgency === NotificationUrgency.Low ? Colours.palette.m3surfaceContainerHigh : Colours.palette.m3secondaryContainer
-                    radius: Appearance.rounding.full
+                    radius: Tokens.rounding.full
 
                     ColouredIcon {
                         anchors.centerIn: parent
@@ -169,23 +169,23 @@ StyledRect {
         ColumnLayout {
             id: column
 
-            Layout.topMargin: -Appearance.padding.small
-            Layout.bottomMargin: -Appearance.padding.small / 2
+            Layout.topMargin: -Tokens.padding.small
+            Layout.bottomMargin: -Tokens.padding.small / 2
             Layout.fillWidth: true
             spacing: 0
 
             RowLayout {
                 id: header
 
-                Layout.bottomMargin: root.expanded ? Math.round(Appearance.spacing.small / 2) : 0
+                Layout.bottomMargin: root.expanded ? Math.round(Tokens.spacing.small / 2) : 0
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.smaller
+                spacing: Tokens.spacing.smaller
 
                 StyledText {
                     Layout.fillWidth: true
                     text: root.modelData
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Appearance.font.size.small
+                    font.pointSize: Tokens.font.size.small
                     elide: Text.ElideRight
                 }
 
@@ -193,15 +193,15 @@ StyledRect {
                     animate: true
                     text: root.notifs.find(n => !n.closed)?.timeStr ?? ""
                     color: Colours.palette.m3outline
-                    font.pointSize: Appearance.font.size.small
+                    font.pointSize: Tokens.font.size.small
                 }
 
                 StyledRect {
-                    implicitWidth: expandBtn.implicitWidth + Appearance.padding.smaller * 2
-                    implicitHeight: groupCount.implicitHeight + Appearance.padding.small
+                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.smaller * 2
+                    implicitHeight: groupCount.implicitHeight + Tokens.padding.small
 
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : Colours.layer(Colours.palette.m3surfaceContainerHigh, 3)
-                    radius: Appearance.rounding.full
+                    radius: Tokens.rounding.full
 
                     StateLayer {
                         function onClicked(): void {
@@ -215,36 +215,36 @@ StyledRect {
                         id: expandBtn
 
                         anchors.centerIn: parent
-                        spacing: Appearance.spacing.small / 2
+                        spacing: Tokens.spacing.small / 2
 
                         StyledText {
                             id: groupCount
 
-                            Layout.leftMargin: Appearance.padding.small / 2
+                            Layout.leftMargin: Tokens.padding.small / 2
                             animate: true
                             text: root.notifCount
                             color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurface
-                            font.pointSize: Appearance.font.size.small
+                            font.pointSize: Tokens.font.size.small
                         }
 
                         MaterialIcon {
-                            Layout.rightMargin: -Appearance.padding.small / 2
+                            Layout.rightMargin: -Tokens.padding.small / 2
                             text: "expand_more"
                             color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurface
                             rotation: root.expanded ? 180 : 0
-                            Layout.topMargin: root.expanded ? -Math.floor(Appearance.padding.smaller / 2) : 0
+                            Layout.topMargin: root.expanded ? -Math.floor(Tokens.padding.smaller / 2) : 0
 
                             Behavior on rotation {
                                 Anim {
-                                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                                    duration: Tokens.anim.durations.expressiveDefaultSpatial
+                                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
                                 }
                             }
 
                             Behavior on Layout.topMargin {
                                 Anim {
-                                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                                    duration: Tokens.anim.durations.expressiveDefaultSpatial
+                                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
                                 }
                             }
                         }

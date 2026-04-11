@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.services
-import qs.config
+import Caelestia.Config
 
 Variants {
     model: Screens.screens

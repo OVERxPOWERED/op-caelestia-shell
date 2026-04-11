@@ -6,7 +6,7 @@ import Quickshell
 import Caelestia.Components
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 
 LazyListView {
     id: root
@@ -22,12 +22,12 @@ LazyListView {
     Layout.fillWidth: true
     implicitHeight: contentHeight
 
-    spacing: Math.round(Appearance.spacing.small / 2)
+    spacing: Math.round(Tokens.spacing.small / 2)
     asynchronous: true
 
     readyDelay: 1
     cacheBuffer: 400
-    removeDuration: Appearance.anim.durations.normal
+    removeDuration: Tokens.anim.durations.normal
 
     useCustomViewport: true
     viewport: {
@@ -132,8 +132,8 @@ LazyListView {
                 enabled: notif.LazyListView.ready
 
                 Anim {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                    duration: Tokens.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
                 }
             }
 
@@ -147,8 +147,8 @@ LazyListView {
 
             Behavior on x {
                 Anim {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                    duration: Tokens.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Tokens.anim.curves.expressiveDefaultSpatial
                 }
             }
         }

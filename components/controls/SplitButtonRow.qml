@@ -5,7 +5,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 
 StyledRect {
     id: root
@@ -21,8 +21,8 @@ StyledRect {
     signal selected(item: MenuItem)
 
     Layout.fillWidth: true
-    implicitHeight: row.implicitHeight + Appearance.padding.large * 2
-    radius: Appearance.rounding.normal
+    implicitHeight: row.implicitHeight + Tokens.padding.large * 2
+    radius: Tokens.rounding.normal
     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
     clip: false
@@ -33,8 +33,8 @@ StyledRect {
         id: row
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.large
-        spacing: Appearance.spacing.normal
+        anchors.margins: Tokens.padding.large
+        spacing: Tokens.spacing.normal
 
         StyledText {
             Layout.fillWidth: true

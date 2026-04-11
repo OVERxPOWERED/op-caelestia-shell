@@ -8,7 +8,7 @@ import Quickshell.Services.Notifications
 import Caelestia
 import qs.components.misc
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 
 Singleton {

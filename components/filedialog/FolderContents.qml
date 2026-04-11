@@ -4,13 +4,13 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
+import Caelestia.Config
 import Caelestia.Models
 import qs.components
 import qs.components.controls
 import qs.components.filedialog
 import qs.components.images
 import qs.services
-import Caelestia.Config
 import qs.utils
 
 Item {

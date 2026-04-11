@@ -1,9 +1,9 @@
 import ".."
 import QtQuick
 import QtQuick.Controls
+import Caelestia.Config
 import qs.components.effects
 import qs.services
-import Caelestia.Config
 
 Popup {
     id: root

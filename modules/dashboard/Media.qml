@@ -5,11 +5,11 @@ import QtQuick.Layouts
 import QtQuick.Shapes
 import Quickshell
 import Quickshell.Services.Mpris
+import Caelestia.Config
 import Caelestia.Services
 import qs.components
 import qs.components.controls
 import qs.services
-import Caelestia.Config
 import qs.utils
 
 Item {

@@ -11,9 +11,9 @@ import "dashboard"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Widgets
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
 import qs.modules.controlcenter
 
 ClippingRectangle {

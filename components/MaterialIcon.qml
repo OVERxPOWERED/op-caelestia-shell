@@ -1,5 +1,5 @@
-import qs.services
 import Caelestia.Config
+import qs.services
 
 StyledText {
     property real fill

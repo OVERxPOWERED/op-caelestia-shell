@@ -5,9 +5,9 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
 import Caelestia
+import Caelestia.Config
 import Caelestia.Internal
 import qs.components.misc
-import Caelestia.Config
 
 Singleton {
     id: root

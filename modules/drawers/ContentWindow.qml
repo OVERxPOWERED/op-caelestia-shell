@@ -7,10 +7,10 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
 import Caelestia.Blobs
+import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.services
-import Caelestia.Config
 import qs.modules.bar
 
 StyledWindow {

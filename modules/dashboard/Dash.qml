@@ -1,9 +1,9 @@
 import "dash"
 import QtQuick.Layouts
+import Caelestia.Config
 import qs.components
 import qs.components.filedialog
 import qs.services
-import Caelestia.Config
 
 GridLayout {
     id: root

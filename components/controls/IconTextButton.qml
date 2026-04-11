@@ -1,8 +1,8 @@
 import ".."
 import QtQuick
 import QtQuick.Layouts
-import qs.services
 import Caelestia.Config
+import qs.services
 
 StyledRect {
     id: root

@@ -1,7 +1,7 @@
 import QtQuick
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
 
 Item {
     id: root

@@ -1,8 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import qs.services
 import Caelestia.Config
+import qs.services
 
 Text {
     id: root

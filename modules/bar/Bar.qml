@@ -6,9 +6,9 @@ import "components/workspaces"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
 
 ColumnLayout {
     id: root

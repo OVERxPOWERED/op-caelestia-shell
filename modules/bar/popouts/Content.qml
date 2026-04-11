@@ -4,8 +4,8 @@ import "./kblayout"
 import QtQuick
 import Quickshell
 import Quickshell.Services.SystemTray
-import qs.components
 import Caelestia.Config
+import qs.components
 
 Item {
     id: root

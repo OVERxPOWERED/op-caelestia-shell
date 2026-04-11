@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Controls
 import Quickshell
+import Caelestia.Config
 import qs.components
 import qs.components.controls
-import Caelestia.Config
 import qs.modules.bar as Bar
 import qs.modules.bar.popouts as BarPopouts
 

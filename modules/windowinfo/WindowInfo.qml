@@ -2,9 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
 
 Item {
     id: root

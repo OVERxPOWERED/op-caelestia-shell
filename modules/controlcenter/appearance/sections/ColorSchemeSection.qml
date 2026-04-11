@@ -5,11 +5,11 @@ import "../../../launcher/services"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.components.controls
 import qs.services
-import Caelestia.Config
 
 CollapsibleSection {
     title: qsTr("Color scheme")

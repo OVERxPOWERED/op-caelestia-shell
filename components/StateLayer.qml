@@ -1,6 +1,6 @@
 import QtQuick
-import qs.services
 import Caelestia.Config
+import qs.services
 
 MouseArea {
     id: root

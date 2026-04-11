@@ -3,8 +3,8 @@ pragma ComponentBehavior: Bound
 import ".."
 import QtQuick
 import QtQuick.Effects
-import qs.services
 import Caelestia.Config
+import qs.services
 
 StyledRect {
     property alias innerRadius: maskInner.radius

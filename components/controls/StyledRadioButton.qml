@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Templates
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
 
 RadioButton {
     id: root

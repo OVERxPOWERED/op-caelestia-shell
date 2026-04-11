@@ -1,11 +1,11 @@
 import QtQuick
 import Quickshell
 import Quickshell.Widgets
+import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.components.widgets
 import qs.services
-import Caelestia.Config
 
 Item {
     id: root

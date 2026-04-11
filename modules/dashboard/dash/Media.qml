@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Shapes
+import Caelestia.Config
 import Caelestia.Services
 import qs.components
 import qs.services
-import Caelestia.Config
 import qs.utils
 
 Item {

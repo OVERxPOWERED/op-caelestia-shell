@@ -3,8 +3,8 @@ pragma ComponentBehavior: Bound
 import ".."
 import QtQuick
 import QtQuick.Controls
-import qs.services
 import Caelestia.Config
+import qs.services
 
 TextField {
     id: root

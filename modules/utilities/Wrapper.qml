@@ -2,8 +2,8 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import qs.components
 import Caelestia.Config
+import qs.components
 import qs.modules.sidebar as Sidebar
 import qs.modules.bar.popouts as BarPopouts
 

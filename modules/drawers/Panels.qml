@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
-import qs.components
 import Caelestia.Config
+import qs.components
 import qs.modules.bar as Bar
 import qs.modules.dashboard as Dashboard
 import qs.modules.launcher as Launcher

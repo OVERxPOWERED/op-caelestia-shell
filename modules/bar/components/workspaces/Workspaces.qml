@@ -4,9 +4,9 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
 
 StyledClippingRect {
     id: root

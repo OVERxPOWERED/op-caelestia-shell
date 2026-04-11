@@ -6,10 +6,10 @@ import QtQuick.Shapes
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Notifications
+import Caelestia.Config
 import qs.components
 import qs.components.effects
 import qs.services
-import Caelestia.Config
 import qs.utils
 
 StyledRect {

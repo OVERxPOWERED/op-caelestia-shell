@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
 
 ColumnLayout {
     id: root

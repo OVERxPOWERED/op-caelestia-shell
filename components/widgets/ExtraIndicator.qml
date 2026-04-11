@@ -1,8 +1,8 @@
 import ".."
 import "../effects"
 import QtQuick
-import qs.services
 import Caelestia.Config
+import qs.services
 
 StyledRect {
     required property int extra

@@ -5,8 +5,8 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Mpris
 import Caelestia
-import qs.components.misc
 import Caelestia.Config
+import qs.components.misc
 
 Singleton {
     id: root

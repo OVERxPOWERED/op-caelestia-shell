@@ -3,10 +3,10 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.UPower
+import Caelestia.Config
 import qs.components
 import qs.components.effects
 import qs.services
-import Caelestia.Config
 import qs.utils
 
 ColumnLayout {

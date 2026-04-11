@@ -1,11 +1,11 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import Caelestia.Config
 import qs.components
 import qs.components.filedialog
 import qs.components.images
 import qs.services
-import Caelestia.Config
 import qs.utils
 
 Item {

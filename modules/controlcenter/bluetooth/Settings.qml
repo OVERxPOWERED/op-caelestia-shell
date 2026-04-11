@@ -5,11 +5,11 @@ import "../components"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Bluetooth
+import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import Caelestia.Config
 
 ColumnLayout {
     id: root

@@ -3,9 +3,9 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
+import Caelestia.Config
 import qs.components.containers
 import qs.services
-import Caelestia.Config
 
 Variants {
     model: Config.background.enabled ? Screens.screens : []

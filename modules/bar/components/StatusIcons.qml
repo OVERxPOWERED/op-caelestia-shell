@@ -5,9 +5,9 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Services.UPower
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
 import qs.utils
 
 StyledRect {

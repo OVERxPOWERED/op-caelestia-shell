@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
+import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.components.misc
 import qs.services
-import Caelestia.Config
 
 GridLayout {
     id: root

@@ -3,9 +3,9 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
 
 Item {
     id: root

@@ -4,9 +4,9 @@ import ".."
 import "../components"
 import QtQuick
 import Quickshell.Widgets
+import Caelestia.Config
 import qs.components
 import qs.components.containers
-import Caelestia.Config
 
 SplitPaneWithDetails {
     id: root

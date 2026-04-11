@@ -2,8 +2,8 @@ import ".."
 import QtQuick
 import QtQuick.Shapes
 import QtQuick.Templates
-import qs.services
 import Caelestia.Config
+import qs.services
 
 Switch {
     id: root

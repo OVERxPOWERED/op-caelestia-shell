@@ -3,10 +3,10 @@ import "../components"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.UPower
+import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.services
-import Caelestia.Config
 
 SectionContainer {
     id: root

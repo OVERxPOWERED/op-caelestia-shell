@@ -2,13 +2,13 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import QtQuick
+import Caelestia.Config
 import Caelestia.Models
 import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.components.images
 import qs.services
-import Caelestia.Config
 
 GridView {
     id: root

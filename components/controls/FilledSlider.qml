@@ -2,8 +2,8 @@ import ".."
 import "../effects"
 import QtQuick
 import QtQuick.Templates
-import qs.services
 import Caelestia.Config
+import qs.services
 
 Slider {
     id: root

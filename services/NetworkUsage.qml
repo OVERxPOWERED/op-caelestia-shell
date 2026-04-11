@@ -3,8 +3,8 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Caelestia.Internal
 import Caelestia.Config
+import Caelestia.Internal
 
 Singleton {
     id: root

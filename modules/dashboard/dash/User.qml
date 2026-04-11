@@ -1,10 +1,10 @@
 import QtQuick
+import Caelestia.Config
 import qs.components
 import qs.components.effects
 import qs.components.filedialog
 import qs.components.images
 import qs.services
-import Caelestia.Config
 import qs.utils
 
 Row {

@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Effects
 import Quickshell
+import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.services
-import Caelestia.Config
 
 StyledListView {
     id: root

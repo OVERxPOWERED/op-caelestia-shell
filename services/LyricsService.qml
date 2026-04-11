@@ -68,7 +68,7 @@ Singleton {
     }
 
     function toggleVisibility() {
-        Config.services.showLyrics = !Config.services.showLyrics;
+        GlobalConfig.services.showLyrics = !Config.services.showLyrics;
     }
 
     function loadLyrics() {
@@ -272,7 +272,7 @@ Singleton {
 
     onPreferredBackendChanged: {
         if (Config.services.lyricsBackend !== preferredBackend) {
-            Config.services.lyricsBackend = preferredBackend;
+            GlobalConfig.services.lyricsBackend = preferredBackend;
         }
     }
 

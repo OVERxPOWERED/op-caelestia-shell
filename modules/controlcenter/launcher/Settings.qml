@@ -33,7 +33,7 @@ ColumnLayout {
             label: qsTr("Enabled")
             checked: Config.launcher.enabled
             toggle.onToggled: {
-                Config.launcher.enabled = checked;
+                GlobalConfig.launcher.enabled = checked;
             }
         }
 
@@ -41,7 +41,7 @@ ColumnLayout {
             label: qsTr("Show on hover")
             checked: Config.launcher.showOnHover
             toggle.onToggled: {
-                Config.launcher.showOnHover = checked;
+                GlobalConfig.launcher.showOnHover = checked;
             }
         }
 
@@ -49,7 +49,7 @@ ColumnLayout {
             label: qsTr("Vim keybinds")
             checked: Config.launcher.vimKeybinds
             toggle.onToggled: {
-                Config.launcher.vimKeybinds = checked;
+                GlobalConfig.launcher.vimKeybinds = checked;
             }
         }
 
@@ -57,7 +57,7 @@ ColumnLayout {
             label: qsTr("Enable dangerous actions")
             checked: Config.launcher.enableDangerousActions
             toggle.onToggled: {
-                Config.launcher.enableDangerousActions = checked;
+                GlobalConfig.launcher.enableDangerousActions = checked;
             }
         }
     }
@@ -121,7 +121,7 @@ ColumnLayout {
             label: qsTr("Apps")
             checked: Config.launcher.useFuzzy.apps
             toggle.onToggled: {
-                Config.launcher.useFuzzy.apps = checked;
+                GlobalConfig.launcher.useFuzzy.apps = checked;
             }
         }
 
@@ -129,7 +129,7 @@ ColumnLayout {
             label: qsTr("Actions")
             checked: Config.launcher.useFuzzy.actions
             toggle.onToggled: {
-                Config.launcher.useFuzzy.actions = checked;
+                GlobalConfig.launcher.useFuzzy.actions = checked;
             }
         }
 
@@ -137,7 +137,7 @@ ColumnLayout {
             label: qsTr("Schemes")
             checked: Config.launcher.useFuzzy.schemes
             toggle.onToggled: {
-                Config.launcher.useFuzzy.schemes = checked;
+                GlobalConfig.launcher.useFuzzy.schemes = checked;
             }
         }
 
@@ -145,7 +145,7 @@ ColumnLayout {
             label: qsTr("Variants")
             checked: Config.launcher.useFuzzy.variants
             toggle.onToggled: {
-                Config.launcher.useFuzzy.variants = checked;
+                GlobalConfig.launcher.useFuzzy.variants = checked;
             }
         }
 
@@ -153,7 +153,7 @@ ColumnLayout {
             label: qsTr("Wallpapers")
             checked: Config.launcher.useFuzzy.wallpapers
             toggle.onToggled: {
-                Config.launcher.useFuzzy.wallpapers = checked;
+                GlobalConfig.launcher.useFuzzy.wallpapers = checked;
             }
         }
     }

@@ -38,24 +38,24 @@ Item {
     property bool nowPlaying: Config.utilities.toasts.nowPlaying ?? false
 
     function saveConfig(): void {
-        Config.notifs.expire = root.notificationsExpire;
-        Config.notifs.fullscreen = root.notificationsFullscreen;
-        Config.notifs.openExpanded = root.notificationsOpenExpanded;
-        Config.notifs.defaultExpireTimeout = root.notificationsDefaultExpireTimeout;
-        Config.notifs.groupPreviewNum = root.notificationsGroupPreviewNum;
+        GlobalConfig.notifs.expire = root.notificationsExpire;
+        GlobalConfig.notifs.fullscreen = root.notificationsFullscreen;
+        GlobalConfig.notifs.openExpanded = root.notificationsOpenExpanded;
+        GlobalConfig.notifs.defaultExpireTimeout = root.notificationsDefaultExpireTimeout;
+        GlobalConfig.notifs.groupPreviewNum = root.notificationsGroupPreviewNum;
 
-        Config.utilities.maxToasts = root.maxToasts;
-        Config.utilities.toasts.fullscreen = root.toastsFullscreen;
-        Config.utilities.toasts.chargingChanged = root.chargingChanged;
-        Config.utilities.toasts.gameModeChanged = root.gameModeChanged;
-        Config.utilities.toasts.dndChanged = root.dndChanged;
-        Config.utilities.toasts.audioOutputChanged = root.audioOutputChanged;
-        Config.utilities.toasts.audioInputChanged = root.audioInputChanged;
-        Config.utilities.toasts.capsLockChanged = root.capsLockChanged;
-        Config.utilities.toasts.numLockChanged = root.numLockChanged;
-        Config.utilities.toasts.kbLayoutChanged = root.kbLayoutChanged;
-        Config.utilities.toasts.vpnChanged = root.vpnChanged;
-        Config.utilities.toasts.nowPlaying = root.nowPlaying;
+        GlobalConfig.utilities.maxToasts = root.maxToasts;
+        GlobalConfig.utilities.toasts.fullscreen = root.toastsFullscreen;
+        GlobalConfig.utilities.toasts.chargingChanged = root.chargingChanged;
+        GlobalConfig.utilities.toasts.gameModeChanged = root.gameModeChanged;
+        GlobalConfig.utilities.toasts.dndChanged = root.dndChanged;
+        GlobalConfig.utilities.toasts.audioOutputChanged = root.audioOutputChanged;
+        GlobalConfig.utilities.toasts.audioInputChanged = root.audioInputChanged;
+        GlobalConfig.utilities.toasts.capsLockChanged = root.capsLockChanged;
+        GlobalConfig.utilities.toasts.numLockChanged = root.numLockChanged;
+        GlobalConfig.utilities.toasts.kbLayoutChanged = root.kbLayoutChanged;
+        GlobalConfig.utilities.toasts.vpnChanged = root.vpnChanged;
+        GlobalConfig.utilities.toasts.nowPlaying = root.nowPlaying;
     }
 
     anchors.fill: parent

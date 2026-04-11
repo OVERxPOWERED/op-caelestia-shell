@@ -41,21 +41,21 @@ Item {
     property bool showNetwork: Config.dashboard.performance.showNetwork ?? true
 
     function saveConfig() {
-        Config.dashboard.enabled = root.enabled;
-        Config.dashboard.showOnHover = root.showOnHover;
-        Config.dashboard.mediaUpdateInterval = root.mediaUpdateInterval;
-        Config.dashboard.resourceUpdateInterval = root.resourceUpdateInterval;
-        Config.dashboard.dragThreshold = root.dragThreshold;
-        Config.dashboard.showDashboard = root.showDashboard;
-        Config.dashboard.showMedia = root.showMedia;
-        Config.dashboard.showPerformance = root.showPerformance;
-        Config.dashboard.showWeather = root.showWeather;
-        Config.dashboard.performance.showBattery = root.showBattery;
-        Config.dashboard.performance.showGpu = root.showGpu;
-        Config.dashboard.performance.showCpu = root.showCpu;
-        Config.dashboard.performance.showMemory = root.showMemory;
-        Config.dashboard.performance.showStorage = root.showStorage;
-        Config.dashboard.performance.showNetwork = root.showNetwork;
+        GlobalConfig.dashboard.enabled = root.enabled;
+        GlobalConfig.dashboard.showOnHover = root.showOnHover;
+        GlobalConfig.dashboard.mediaUpdateInterval = root.mediaUpdateInterval;
+        GlobalConfig.dashboard.resourceUpdateInterval = root.resourceUpdateInterval;
+        GlobalConfig.dashboard.dragThreshold = root.dragThreshold;
+        GlobalConfig.dashboard.showDashboard = root.showDashboard;
+        GlobalConfig.dashboard.showMedia = root.showMedia;
+        GlobalConfig.dashboard.showPerformance = root.showPerformance;
+        GlobalConfig.dashboard.showWeather = root.showWeather;
+        GlobalConfig.dashboard.performance.showBattery = root.showBattery;
+        GlobalConfig.dashboard.performance.showGpu = root.showGpu;
+        GlobalConfig.dashboard.performance.showCpu = root.showCpu;
+        GlobalConfig.dashboard.performance.showMemory = root.showMemory;
+        GlobalConfig.dashboard.performance.showStorage = root.showStorage;
+        GlobalConfig.dashboard.performance.showNetwork = root.showNetwork;
         // Note: sizes properties are readonly and cannot be modified
     }
 

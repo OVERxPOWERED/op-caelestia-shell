@@ -47,7 +47,7 @@ ColumnLayout {
                         providers.push(p);
                     }
                 }
-                Config.utilities.vpn.provider = providers;
+                GlobalConfig.utilities.vpn.provider = providers;
 
                 Qt.callLater(function () {
                     VPN.toggle();
@@ -242,7 +242,7 @@ ColumnLayout {
                                                 providers.push(p);
                                             }
                                         }
-                                        Config.utilities.vpn.provider = providers;
+                                        GlobalConfig.utilities.vpn.provider = providers;
 
                                         Qt.callLater(function () {
                                             VPN.toggle();
@@ -291,7 +291,7 @@ ColumnLayout {
                                         providers.push(reconstructed);
                                     }
                                 }
-                                Config.utilities.vpn.provider = providers;
+                                GlobalConfig.utilities.vpn.provider = providers;
                             }
                         }
 
@@ -492,7 +492,7 @@ ColumnLayout {
                             displayName: "NetBird",
                             interface: "wt0"
                         });
-                        Config.utilities.vpn.provider = providers;
+                        GlobalConfig.utilities.vpn.provider = providers;
                         vpnDialog.closeWithAnimation();
                     }
                 }
@@ -512,7 +512,7 @@ ColumnLayout {
                             displayName: "Tailscale",
                             interface: "tailscale0"
                         });
-                        Config.utilities.vpn.provider = providers;
+                        GlobalConfig.utilities.vpn.provider = providers;
                         vpnDialog.closeWithAnimation();
                     }
                 }
@@ -532,7 +532,7 @@ ColumnLayout {
                             displayName: "Cloudflare WARP",
                             interface: "CloudflareWARP"
                         });
-                        Config.utilities.vpn.provider = providers;
+                        GlobalConfig.utilities.vpn.provider = providers;
                         vpnDialog.closeWithAnimation();
                     }
                 }
@@ -799,7 +799,7 @@ ColumnLayout {
                                 providers.push(newProvider);
                             }
 
-                            Config.utilities.vpn.provider = providers;
+                            GlobalConfig.utilities.vpn.provider = providers;
                             vpnDialog.closeWithAnimation();
                         }
                     }

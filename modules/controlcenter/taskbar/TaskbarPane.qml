@@ -54,38 +54,38 @@ Item {
     property list<string> excludedScreens: Config.bar.excludedScreens ?? []
 
     function saveConfig(entryIndex, entryEnabled) {
-        Config.bar.activeWindow.compact = root.activeWindowCompact;
-        Config.bar.activeWindow.inverted = root.activeWindowInverted;
-        Config.bar.clock.background = root.clockBackground;
-        Config.bar.clock.showDate = root.clockShowDate;
-        Config.bar.clock.showIcon = root.clockShowIcon;
-        Config.bar.persistent = root.persistent;
-        Config.bar.showOnHover = root.showOnHover;
-        Config.bar.dragThreshold = root.dragThreshold;
-        Config.bar.status.showAudio = root.showAudio;
-        Config.bar.status.showMicrophone = root.showMicrophone;
-        Config.bar.status.showKbLayout = root.showKbLayout;
-        Config.bar.status.showNetwork = root.showNetwork;
-        Config.bar.status.showWifi = root.showWifi;
-        Config.bar.status.showBluetooth = root.showBluetooth;
-        Config.bar.status.showBattery = root.showBattery;
-        Config.bar.status.showLockStatus = root.showLockStatus;
-        Config.bar.tray.background = root.trayBackground;
-        Config.bar.tray.compact = root.trayCompact;
-        Config.bar.tray.recolour = root.trayRecolour;
-        Config.bar.workspaces.shown = root.workspacesShown;
-        Config.bar.workspaces.activeIndicator = root.workspacesActiveIndicator;
-        Config.bar.workspaces.occupiedBg = root.workspacesOccupiedBg;
-        Config.bar.workspaces.showWindows = root.workspacesShowWindows;
-        Config.bar.workspaces.maxWindowIcons = root.workspacesMaxWindowIcons;
-        Config.bar.workspaces.perMonitorWorkspaces = root.workspacesPerMonitor;
-        Config.bar.scrollActions.workspaces = root.scrollWorkspaces;
-        Config.bar.scrollActions.volume = root.scrollVolume;
-        Config.bar.scrollActions.brightness = root.scrollBrightness;
-        Config.bar.popouts.activeWindow = root.popoutActiveWindow;
-        Config.bar.popouts.tray = root.popoutTray;
-        Config.bar.popouts.statusIcons = root.popoutStatusIcons;
-        Config.bar.excludedScreens = root.excludedScreens;
+        GlobalConfig.bar.activeWindow.compact = root.activeWindowCompact;
+        GlobalConfig.bar.activeWindow.inverted = root.activeWindowInverted;
+        GlobalConfig.bar.clock.background = root.clockBackground;
+        GlobalConfig.bar.clock.showDate = root.clockShowDate;
+        GlobalConfig.bar.clock.showIcon = root.clockShowIcon;
+        GlobalConfig.bar.persistent = root.persistent;
+        GlobalConfig.bar.showOnHover = root.showOnHover;
+        GlobalConfig.bar.dragThreshold = root.dragThreshold;
+        GlobalConfig.bar.status.showAudio = root.showAudio;
+        GlobalConfig.bar.status.showMicrophone = root.showMicrophone;
+        GlobalConfig.bar.status.showKbLayout = root.showKbLayout;
+        GlobalConfig.bar.status.showNetwork = root.showNetwork;
+        GlobalConfig.bar.status.showWifi = root.showWifi;
+        GlobalConfig.bar.status.showBluetooth = root.showBluetooth;
+        GlobalConfig.bar.status.showBattery = root.showBattery;
+        GlobalConfig.bar.status.showLockStatus = root.showLockStatus;
+        GlobalConfig.bar.tray.background = root.trayBackground;
+        GlobalConfig.bar.tray.compact = root.trayCompact;
+        GlobalConfig.bar.tray.recolour = root.trayRecolour;
+        GlobalConfig.bar.workspaces.shown = root.workspacesShown;
+        GlobalConfig.bar.workspaces.activeIndicator = root.workspacesActiveIndicator;
+        GlobalConfig.bar.workspaces.occupiedBg = root.workspacesOccupiedBg;
+        GlobalConfig.bar.workspaces.showWindows = root.workspacesShowWindows;
+        GlobalConfig.bar.workspaces.maxWindowIcons = root.workspacesMaxWindowIcons;
+        GlobalConfig.bar.workspaces.perMonitorWorkspaces = root.workspacesPerMonitor;
+        GlobalConfig.bar.scrollActions.workspaces = root.scrollWorkspaces;
+        GlobalConfig.bar.scrollActions.volume = root.scrollVolume;
+        GlobalConfig.bar.scrollActions.brightness = root.scrollBrightness;
+        GlobalConfig.bar.popouts.activeWindow = root.popoutActiveWindow;
+        GlobalConfig.bar.popouts.tray = root.popoutTray;
+        GlobalConfig.bar.popouts.statusIcons = root.popoutStatusIcons;
+        GlobalConfig.bar.excludedScreens = root.excludedScreens;
 
         const entries = [];
         for (let i = 0; i < entriesModel.count; i++) {
@@ -99,7 +99,7 @@ Item {
                 enabled: enabled
             });
         }
-        Config.bar.entries = entries;
+        GlobalConfig.bar.entries = entries;
     }
 
     anchors.fill: parent

@@ -36,7 +36,7 @@ ColumnLayout {
             label: qsTr("VPN enabled")
             checked: Config.utilities.vpn.enabled
             toggle.onToggled: {
-                Config.utilities.vpn.enabled = checked;
+                GlobalConfig.utilities.vpn.enabled = checked;
             }
         }
     }
@@ -147,7 +147,7 @@ ColumnLayout {
                                     providers.unshift(provider);
                                 }
 
-                                Config.utilities.vpn.provider = providers;
+                                GlobalConfig.utilities.vpn.provider = providers;
                             }
                         }
 
@@ -173,7 +173,7 @@ ColumnLayout {
                                         providers.push(reconstructed);
                                     }
                                 }
-                                Config.utilities.vpn.provider = providers;
+                                GlobalConfig.utilities.vpn.provider = providers;
                             }
                         }
                     }
@@ -216,7 +216,7 @@ ColumnLayout {
                     displayName: "NetBird",
                     interface: "wt0"
                 });
-                Config.utilities.vpn.provider = providers;
+                GlobalConfig.utilities.vpn.provider = providers;
             }
         }
 
@@ -233,7 +233,7 @@ ColumnLayout {
                     displayName: "Tailscale",
                     interface: "tailscale0"
                 });
-                Config.utilities.vpn.provider = providers;
+                GlobalConfig.utilities.vpn.provider = providers;
             }
         }
 
@@ -250,7 +250,7 @@ ColumnLayout {
                     displayName: "Cloudflare WARP",
                     interface: "CloudflareWARP"
                 });
-                Config.utilities.vpn.provider = providers;
+                GlobalConfig.utilities.vpn.provider = providers;
             }
         }
     }

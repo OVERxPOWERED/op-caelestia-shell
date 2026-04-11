@@ -55,42 +55,42 @@ Item {
     property real visualiserSpacing: Config.background.visualiser.spacing ?? 1
 
     function saveConfig() {
-        Config.appearance.anim.durations.scale = root.animDurationsScale;
+        GlobalConfig.appearance.anim.durations.scale = root.animDurationsScale;
 
-        Config.appearance.font.family.material = root.fontFamilyMaterial;
-        Config.appearance.font.family.mono = root.fontFamilyMono;
-        Config.appearance.font.family.sans = root.fontFamilySans;
-        Config.appearance.font.size.scale = root.fontSizeScale;
+        GlobalConfig.appearance.font.family.material = root.fontFamilyMaterial;
+        GlobalConfig.appearance.font.family.mono = root.fontFamilyMono;
+        GlobalConfig.appearance.font.family.sans = root.fontFamilySans;
+        GlobalConfig.appearance.font.size.scale = root.fontSizeScale;
 
-        Config.appearance.padding.scale = root.paddingScale;
-        Config.appearance.rounding.scale = root.roundingScale;
-        Config.appearance.spacing.scale = root.spacingScale;
+        GlobalConfig.appearance.padding.scale = root.paddingScale;
+        GlobalConfig.appearance.rounding.scale = root.roundingScale;
+        GlobalConfig.appearance.spacing.scale = root.spacingScale;
 
-        Config.appearance.transparency.enabled = root.transparencyEnabled;
-        Config.appearance.transparency.base = root.transparencyBase;
-        Config.appearance.transparency.layers = root.transparencyLayers;
+        GlobalConfig.appearance.transparency.enabled = root.transparencyEnabled;
+        GlobalConfig.appearance.transparency.base = root.transparencyBase;
+        GlobalConfig.appearance.transparency.layers = root.transparencyLayers;
 
-        Config.background.desktopClock.enabled = root.desktopClockEnabled;
-        Config.background.enabled = root.backgroundEnabled;
-        Config.background.desktopClock.scale = root.desktopClockScale;
-        Config.background.desktopClock.position = root.desktopClockPosition;
-        Config.background.desktopClock.shadow.enabled = root.desktopClockShadowEnabled;
-        Config.background.desktopClock.shadow.opacity = root.desktopClockShadowOpacity;
-        Config.background.desktopClock.shadow.blur = root.desktopClockShadowBlur;
-        Config.background.desktopClock.background.enabled = root.desktopClockBackgroundEnabled;
-        Config.background.desktopClock.background.opacity = root.desktopClockBackgroundOpacity;
-        Config.background.desktopClock.background.blur = root.desktopClockBackgroundBlur;
-        Config.background.desktopClock.invertColors = root.desktopClockInvertColors;
+        GlobalConfig.background.desktopClock.enabled = root.desktopClockEnabled;
+        GlobalConfig.background.enabled = root.backgroundEnabled;
+        GlobalConfig.background.desktopClock.scale = root.desktopClockScale;
+        GlobalConfig.background.desktopClock.position = root.desktopClockPosition;
+        GlobalConfig.background.desktopClock.shadow.enabled = root.desktopClockShadowEnabled;
+        GlobalConfig.background.desktopClock.shadow.opacity = root.desktopClockShadowOpacity;
+        GlobalConfig.background.desktopClock.shadow.blur = root.desktopClockShadowBlur;
+        GlobalConfig.background.desktopClock.background.enabled = root.desktopClockBackgroundEnabled;
+        GlobalConfig.background.desktopClock.background.opacity = root.desktopClockBackgroundOpacity;
+        GlobalConfig.background.desktopClock.background.blur = root.desktopClockBackgroundBlur;
+        GlobalConfig.background.desktopClock.invertColors = root.desktopClockInvertColors;
 
-        Config.background.wallpaperEnabled = root.wallpaperEnabled;
+        GlobalConfig.background.wallpaperEnabled = root.wallpaperEnabled;
 
-        Config.background.visualiser.enabled = root.visualiserEnabled;
-        Config.background.visualiser.autoHide = root.visualiserAutoHide;
-        Config.background.visualiser.rounding = root.visualiserRounding;
-        Config.background.visualiser.spacing = root.visualiserSpacing;
+        GlobalConfig.background.visualiser.enabled = root.visualiserEnabled;
+        GlobalConfig.background.visualiser.autoHide = root.visualiserAutoHide;
+        GlobalConfig.background.visualiser.rounding = root.visualiserRounding;
+        GlobalConfig.background.visualiser.spacing = root.visualiserSpacing;
 
-        Config.border.rounding = root.borderRounding;
-        Config.border.thickness = root.borderThickness;
+        GlobalConfig.border.rounding = root.borderRounding;
+        GlobalConfig.border.thickness = root.borderThickness;
     }
 
     anchors.fill: parent

@@ -61,7 +61,7 @@ Item {
             }
         }
 
-        Config.launcher.hiddenApps = hiddenApps;
+        GlobalConfig.launcher.hiddenApps = hiddenApps;
     }
 
     function filterApps(search: string): list<var> {
@@ -624,7 +624,7 @@ Item {
                                             favouriteApps.splice(index, 1);
                                         }
                                     }
-                                    Config.launcher.favouriteApps = favouriteApps;
+                                    GlobalConfig.launcher.favouriteApps = favouriteApps;
                                 }
                             }
                         }
@@ -656,7 +656,7 @@ Item {
                                             hiddenApps.splice(index, 1);
                                         }
                                     }
-                                    Config.launcher.hiddenApps = hiddenApps;
+                                    GlobalConfig.launcher.hiddenApps = hiddenApps;
                                 }
                             }
                         }

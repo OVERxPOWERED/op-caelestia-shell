@@ -75,7 +75,7 @@ ColumnLayout {
             label: qsTr("VPN enabled")
             checked: Config.utilities.vpn.enabled
             toggle.onToggled: {
-                Config.utilities.vpn.enabled = checked;
+                GlobalConfig.utilities.vpn.enabled = checked;
             }
         }
 

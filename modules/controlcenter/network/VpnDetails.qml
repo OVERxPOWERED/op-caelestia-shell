@@ -85,7 +85,7 @@ DeviceDetails {
                                 }
                             }
 
-                            Config.utilities.vpn.provider = providers;
+                            GlobalConfig.utilities.vpn.provider = providers;
                         }
                     }
 
@@ -139,7 +139,7 @@ DeviceDetails {
                                         providers.push(Config.utilities.vpn.provider[i]);
                                     }
                                 }
-                                Config.utilities.vpn.provider = providers;
+                                GlobalConfig.utilities.vpn.provider = providers;
                                 root.session.vpn.active = null;
                             }
                         }
@@ -537,7 +537,7 @@ DeviceDetails {
                             }
                         }
 
-                        Config.utilities.vpn.provider = providers;
+                        GlobalConfig.utilities.vpn.provider = providers;
                         editVpnDialog.closeWithAnimation();
                     }
                 }

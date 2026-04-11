@@ -1,0 +1,82 @@
+#include "tokensattached.hpp"
+#include "anim.hpp"
+#include "config.hpp"
+#include "configscope.hpp"
+#include "monitorconfigmanager.hpp"
+#include "tokens.hpp"
+
+namespace caelestia::config {
+
+static const AppearanceConfig* resolveAppearance(ConfigScope* scope) {
+    if (scope && scope->config())
+        return scope->config()->appearance();
+    return GlobalConfig::instance()->appearance();
+}
+
+Tokens::Tokens(ConfigScope* scope, QObject* parent)
+    : QObject(parent)
+    , m_scope(scope)
+    , m_anim(new AnimTokens(this)) {
+    connectScope();
+    bindAnim();
+}
+
+void Tokens::connectScope() {
+    if (!m_scope)
+        return;
+    connect(m_scope, &ConfigScope::configChanged, this, &Tokens::sourceChanged);
+    connect(m_scope, &ConfigScope::configChanged, this, &Tokens::bindAnim);
+}
+
+void Tokens::bindAnim() {
+    auto* appearance = resolveAppearance(m_scope);
+    if (!appearance)
+        return;
+
+    m_anim->bindDurations(appearance->anim()->durations());
+
+    auto* tokens = TokenConfig::instance();
+    if (tokens)
+        m_anim->bindCurves(tokens->appearance()->curves());
+}
+
+const AppearanceRounding* Tokens::rounding() const {
+    auto* a = resolveAppearance(m_scope);
+    return a ? a->rounding() : nullptr;
+}
+
+const AppearanceSpacing* Tokens::spacing() const {
+    auto* a = resolveAppearance(m_scope);
+    return a ? a->spacing() : nullptr;
+}
+
+const AppearancePadding* Tokens::padding() const {
+    auto* a = resolveAppearance(m_scope);
+    return a ? a->padding() : nullptr;
+}
+
+const AppearanceFont* Tokens::font() const {
+    auto* a = resolveAppearance(m_scope);
+    return a ? a->font() : nullptr;
+}
+
+const AppearanceTransparency* Tokens::transparency() const {
+    auto* a = resolveAppearance(m_scope);
+    return a ? a->transparency() : nullptr;
+}
+
+const SizeTokens* Tokens::sizes() const {
+    if (m_scope && m_scope->tokens())
+        return m_scope->tokens()->sizes();
+    return TokenConfig::instance()->sizes();
+}
+
+TokenConfig* Tokens::forScreen(const QString& screen) {
+    return TokenConfig::forScreen(screen);
+}
+
+Tokens* Tokens::qmlAttachedProperties(QObject* object) {
+    return new Tokens(ConfigScope::find(object), object);
+}
+
+} // namespace caelestia::config

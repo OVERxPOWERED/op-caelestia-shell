@@ -2,11 +2,13 @@ qml_module(caelestia-config
     URI Caelestia.Config
     SOURCES
         config.cpp
+        configattached.cpp
         configobject.cpp
         rootconfig.cpp
         configscope.cpp
         appearanceconfig.cpp
         tokens.cpp
+        tokensattached.cpp
         anim.cpp
         monitorconfigmanager.cpp
         backgroundconfig.hpp

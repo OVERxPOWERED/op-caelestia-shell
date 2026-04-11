@@ -204,8 +204,6 @@ class AppearanceAnim : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(qreal, mediaGifSpeedAdjustment, 300)
-    CONFIG_PROPERTY(qreal, sessionGifSpeed, 0.7)
     CONFIG_SUBOBJECT(AnimDurations, durations)
 
 public:

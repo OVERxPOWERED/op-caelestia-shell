@@ -91,38 +91,52 @@ Tokens::Tokens(ConfigScope* scope, QObject* parent)
 void Tokens::connectScope() {
     if (!m_scope)
         return;
-    connect(m_scope, &ConfigScope::tokensChanged, this, &Tokens::sourceChanged);
     connect(m_scope, &ConfigScope::configChanged, this, &Tokens::sourceChanged);
 }
 
-#define TOKENS_ATTACHED_GETTER(Type, name)                                                                             \
-    const Type* Tokens::name() const {                                                                                 \
-        if (m_scope && m_scope->tokens())                                                                              \
-            return m_scope->tokens()->name();                                                                          \
-        auto* global = TokenConfig::instance();                                                                        \
-        return global ? global->name() : nullptr;                                                                      \
-    }
+// Resolve appearance from per-monitor GlobalConfig overlay or global GlobalConfig
+static const AppearanceConfig* resolveAppearance(ConfigScope* scope) {
+    if (scope && scope->config())
+        return scope->config()->appearance();
+    auto* global = GlobalConfig::instance();
+    return global ? global->appearance() : nullptr;
+}
 
-TOKENS_ATTACHED_GETTER(AppearanceTokens, appearance)
-TOKENS_ATTACHED_GETTER(BarTokens, bar)
-TOKENS_ATTACHED_GETTER(DashboardTokens, dashboard)
-TOKENS_ATTACHED_GETTER(LauncherTokens, launcher)
-TOKENS_ATTACHED_GETTER(NotifsTokens, notifs)
-TOKENS_ATTACHED_GETTER(OsdTokens, osd)
-TOKENS_ATTACHED_GETTER(SessionTokens, session)
-TOKENS_ATTACHED_GETTER(SidebarTokens, sidebar)
-TOKENS_ATTACHED_GETTER(UtilitiesTokens, utilities)
-TOKENS_ATTACHED_GETTER(LockTokens, lock)
-TOKENS_ATTACHED_GETTER(WInfoTokens, winfo)
-TOKENS_ATTACHED_GETTER(ControlCenterTokens, controlCenter)
+const AppearanceRounding* Tokens::rounding() const {
+    auto* a = resolveAppearance(m_scope);
+    return a ? a->rounding() : nullptr;
+}
 
-#undef TOKENS_ATTACHED_GETTER
+const AppearanceSpacing* Tokens::spacing() const {
+    auto* a = resolveAppearance(m_scope);
+    return a ? a->spacing() : nullptr;
+}
+
+const AppearancePadding* Tokens::padding() const {
+    auto* a = resolveAppearance(m_scope);
+    return a ? a->padding() : nullptr;
+}
+
+const AppearanceFont* Tokens::font() const {
+    auto* a = resolveAppearance(m_scope);
+    return a ? a->font() : nullptr;
+}
+
+const AppearanceAnim* Tokens::anim() const {
+    auto* a = resolveAppearance(m_scope);
+    return a ? a->anim() : nullptr;
+}
+
+const AppearanceTransparency* Tokens::transparency() const {
+    auto* a = resolveAppearance(m_scope);
+    return a ? a->transparency() : nullptr;
+}
 
 Tokens* Tokens::qmlAttachedProperties(QObject* object) {
-    // Ensure TokenConfig singleton is created before any attached property access
-    if (!TokenConfig::instance()) {
+    // Ensure GlobalConfig singleton is created before any attached property access
+    if (!GlobalConfig::instance()) {
         if (auto* engine = qmlEngine(object))
-            engine->singletonInstance<TokenConfig*>("Caelestia.Config", "TokenConfig");
+            engine->singletonInstance<GlobalConfig*>("Caelestia.Config", "GlobalConfig");
     }
     return new Tokens(ConfigScope::find(object), object);
 }

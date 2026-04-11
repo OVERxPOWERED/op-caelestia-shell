@@ -1,5 +1,6 @@
 #pragma once
 
+#include "appearanceconfig.hpp"
 #include "configobject.hpp"
 
 #include <qlist.h>
@@ -329,37 +330,22 @@ class Tokens : public QObject {
     QML_UNCREATABLE("")
     QML_ATTACHED(Tokens)
 
-    Q_PROPERTY(caelestia::config::ConfigScope* scope READ scope NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::AppearanceTokens* appearance READ appearance NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::BarTokens* bar READ bar NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::DashboardTokens* dashboard READ dashboard NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::LauncherTokens* launcher READ launcher NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::NotifsTokens* notifs READ notifs NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::OsdTokens* osd READ osd NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::SessionTokens* session READ session NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::SidebarTokens* sidebar READ sidebar NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::UtilitiesTokens* utilities READ utilities NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::LockTokens* lock READ lock NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::WInfoTokens* winfo READ winfo NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::ControlCenterTokens* controlCenter READ controlCenter NOTIFY sourceChanged)
+    Q_PROPERTY(const caelestia::config::AppearanceRounding* rounding READ rounding NOTIFY sourceChanged)
+    Q_PROPERTY(const caelestia::config::AppearanceSpacing* spacing READ spacing NOTIFY sourceChanged)
+    Q_PROPERTY(const caelestia::config::AppearancePadding* padding READ padding NOTIFY sourceChanged)
+    Q_PROPERTY(const caelestia::config::AppearanceFont* font READ font NOTIFY sourceChanged)
+    Q_PROPERTY(const caelestia::config::AppearanceAnim* anim READ anim NOTIFY sourceChanged)
+    Q_PROPERTY(const caelestia::config::AppearanceTransparency* transparency READ transparency NOTIFY sourceChanged)
 
 public:
     explicit Tokens(ConfigScope* scope, QObject* parent = nullptr);
 
-    [[nodiscard]] ConfigScope* scope() const { return m_scope; }
-
-    [[nodiscard]] const AppearanceTokens* appearance() const;
-    [[nodiscard]] const BarTokens* bar() const;
-    [[nodiscard]] const DashboardTokens* dashboard() const;
-    [[nodiscard]] const LauncherTokens* launcher() const;
-    [[nodiscard]] const NotifsTokens* notifs() const;
-    [[nodiscard]] const OsdTokens* osd() const;
-    [[nodiscard]] const SessionTokens* session() const;
-    [[nodiscard]] const SidebarTokens* sidebar() const;
-    [[nodiscard]] const UtilitiesTokens* utilities() const;
-    [[nodiscard]] const LockTokens* lock() const;
-    [[nodiscard]] const WInfoTokens* winfo() const;
-    [[nodiscard]] const ControlCenterTokens* controlCenter() const;
+    [[nodiscard]] const AppearanceRounding* rounding() const;
+    [[nodiscard]] const AppearanceSpacing* spacing() const;
+    [[nodiscard]] const AppearancePadding* padding() const;
+    [[nodiscard]] const AppearanceFont* font() const;
+    [[nodiscard]] const AppearanceAnim* anim() const;
+    [[nodiscard]] const AppearanceTransparency* transparency() const;
 
     static Tokens* qmlAttachedProperties(QObject* object);
 

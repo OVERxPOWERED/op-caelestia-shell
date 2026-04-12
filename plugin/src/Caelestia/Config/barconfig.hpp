@@ -45,13 +45,13 @@ class BarWorkspaces : public ConfigObject {
     CONFIG_PROPERTY(bool, showWindowsOnSpecialWorkspaces, true)
     CONFIG_PROPERTY(int, maxWindowIcons, 0)
     CONFIG_PROPERTY(bool, activeTrail, false)
-    CONFIG_PROPERTY(bool, perMonitorWorkspaces, true)
+    CONFIG_GLOBAL_PROPERTY(bool, perMonitorWorkspaces, true)
     CONFIG_PROPERTY(QString, label, QStringLiteral("  "))
     CONFIG_PROPERTY(QString, occupiedLabel, QStringLiteral("\U000f06af"))
     CONFIG_PROPERTY(QString, activeLabel, QStringLiteral("\U000f06af"))
     CONFIG_PROPERTY(QString, capitalisation, QStringLiteral("preserve"))
-    CONFIG_PROPERTY(QVariantList, specialWorkspaceIcons)
-    CONFIG_PROPERTY(QVariantList, windowIcons)
+    CONFIG_GLOBAL_PROPERTY(QVariantList, specialWorkspaceIcons)
+    CONFIG_GLOBAL_PROPERTY(QVariantList, windowIcons)
 
 public:
     explicit BarWorkspaces(QObject* parent = nullptr)
@@ -78,8 +78,8 @@ class BarTray : public ConfigObject {
     CONFIG_PROPERTY(bool, background, false)
     CONFIG_PROPERTY(bool, recolour, false)
     CONFIG_PROPERTY(bool, compact, false)
-    CONFIG_PROPERTY(QVariantList, iconSubs)
-    CONFIG_PROPERTY(QStringList, hiddenIcons)
+    CONFIG_GLOBAL_PROPERTY(QVariantList, iconSubs)
+    CONFIG_GLOBAL_PROPERTY(QStringList, hiddenIcons)
 
 public:
     explicit BarTray(QObject* parent = nullptr)

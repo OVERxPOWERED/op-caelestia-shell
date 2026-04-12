@@ -30,8 +30,8 @@ void ConfigObject::loadFromJson(const QJsonObject& obj) {
             continue;
 
         if (isGlobalOnly(key))
-            qCWarning(
-                lcConfig, "Option '%s' is global-only and will be ignored in per-monitor config", qUtf8Printable(key));
+            qCWarning(lcConfig, "Option '%s' is global-only and will be ignored in per-monitor config",
+                qUtf8Printable(propertyPath(key)));
 
         const auto jsonVal = obj.value(key);
 
@@ -208,6 +208,38 @@ void ConfigObject::resyncFromGlobal() {
             m_loadedKeys.remove(key); // setter added it — remove since this is a synced value
         }
     }
+}
+
+QString ConfigObject::propertyPath(const QString& name) const {
+    QStringList parts;
+    parts.append(name);
+
+    const QObject* obj = this;
+    while (auto* parentObj = obj->parent()) {
+        auto* parentConfig = qobject_cast<const ConfigObject*>(parentObj);
+        if (!parentConfig)
+            break;
+
+        // Find which property name this child is on the parent
+        const auto* meta = parentConfig->metaObject();
+        bool found = false;
+        for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
+            auto prop = meta->property(i);
+            auto val = prop.read(parentObj);
+            if (val.value<QObject*>() == obj) {
+                parts.prepend(QString::fromUtf8(prop.name()));
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+            break;
+
+        obj = parentObj;
+    }
+
+    return parts.join(QLatin1Char('.'));
 }
 
 bool ConfigObject::isPropertyLoaded(const QString& name) const {

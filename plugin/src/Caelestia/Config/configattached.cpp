@@ -26,6 +26,9 @@ void Config::connectScope() {
     const Type* Config::name() const {                                                                                 \
         if (m_scope && m_scope->config())                                                                              \
             return m_scope->config()->name();                                                                          \
+        if (parent())                                                                                                  \
+            qCWarning(lcConfig, "Config.%s accessed without a ConfigScope ancestor on %s", #name,                      \
+                parent()->metaObject()->className());                                                                  \
         return GlobalConfig::instance()->name();                                                                       \
     }
 

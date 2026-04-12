@@ -9,9 +9,12 @@ namespace caelestia::config {
 
 namespace {
 
-const AppearanceConfig* resolveAppearance(ConfigScope* scope) {
+const AppearanceConfig* resolveAppearance(ConfigScope* scope, const char* prop, QObject* parent) {
     if (scope && scope->config())
         return scope->config()->appearance();
+    if (parent)
+        qCWarning(lcConfig, "Tokens.%s accessed without a ConfigScope ancestor on %s", prop,
+            parent->metaObject()->className());
     return GlobalConfig::instance()->appearance();
 }
 
@@ -36,34 +39,26 @@ void Tokens::bindAnim() {
     m_anim->bindCurves(TokenConfig::instance()->appearance()->curves());
 }
 
-const AppearanceRounding* Tokens::rounding() const {
-    auto* a = resolveAppearance(m_scope);
-    return a ? a->rounding() : nullptr;
-}
+#define TOKENS_ATTACHED_GETTER(Type, name)                                                                             \
+    const Type* Tokens::name() const {                                                                                 \
+        auto* a = resolveAppearance(m_scope, #name, parent());                                                         \
+        return a ? a->name() : nullptr;                                                                                \
+    }
 
-const AppearanceSpacing* Tokens::spacing() const {
-    auto* a = resolveAppearance(m_scope);
-    return a ? a->spacing() : nullptr;
-}
+TOKENS_ATTACHED_GETTER(AppearanceRounding, rounding)
+TOKENS_ATTACHED_GETTER(AppearanceSpacing, spacing)
+TOKENS_ATTACHED_GETTER(AppearancePadding, padding)
+TOKENS_ATTACHED_GETTER(AppearanceFont, font)
+TOKENS_ATTACHED_GETTER(AppearanceTransparency, transparency)
 
-const AppearancePadding* Tokens::padding() const {
-    auto* a = resolveAppearance(m_scope);
-    return a ? a->padding() : nullptr;
-}
-
-const AppearanceFont* Tokens::font() const {
-    auto* a = resolveAppearance(m_scope);
-    return a ? a->font() : nullptr;
-}
-
-const AppearanceTransparency* Tokens::transparency() const {
-    auto* a = resolveAppearance(m_scope);
-    return a ? a->transparency() : nullptr;
-}
+#undef TOKENS_ATTACHED_GETTER
 
 const SizeTokens* Tokens::sizes() const {
     if (m_scope && m_scope->tokens())
         return m_scope->tokens()->sizes();
+    if (parent())
+        qCWarning(lcConfig, "Tokens.sizes accessed without a ConfigScope ancestor on %s",
+            parent()->metaObject()->className());
     return TokenConfig::instance()->sizes();
 }
 

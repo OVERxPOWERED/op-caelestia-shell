@@ -9,6 +9,46 @@ namespace caelestia::config {
 AnimTokens::AnimTokens(QObject* parent)
     : QObject(parent) {}
 
+QEasingCurve AnimTokens::emphasized() const {
+    return m_emphasized;
+}
+
+QEasingCurve AnimTokens::emphasizedAccel() const {
+    return m_emphasizedAccel;
+}
+
+QEasingCurve AnimTokens::emphasizedDecel() const {
+    return m_emphasizedDecel;
+}
+
+QEasingCurve AnimTokens::standard() const {
+    return m_standard;
+}
+
+QEasingCurve AnimTokens::standardAccel() const {
+    return m_standardAccel;
+}
+
+QEasingCurve AnimTokens::standardDecel() const {
+    return m_standardDecel;
+}
+
+QEasingCurve AnimTokens::expressiveFastSpatial() const {
+    return m_expressiveFastSpatial;
+}
+
+QEasingCurve AnimTokens::expressiveDefaultSpatial() const {
+    return m_expressiveDefaultSpatial;
+}
+
+QEasingCurve AnimTokens::expressiveSlowSpatial() const {
+    return m_expressiveSlowSpatial;
+}
+
+AnimDurations* AnimTokens::durations() const {
+    return m_durations;
+}
+
 QEasingCurve AnimTokens::buildCurve(const QList<qreal>& points) {
     QEasingCurve curve(QEasingCurve::BezierSpline);
 

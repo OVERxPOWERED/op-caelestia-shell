@@ -198,6 +198,18 @@ void ConfigObject::resyncFromGlobal() {
     }
 }
 
+bool ConfigObject::isPropertyLoaded(const QString& name) const {
+    return m_loadedKeys.contains(name);
+}
+
+bool ConfigObject::isOverlay() const {
+    return m_global != nullptr;
+}
+
+bool ConfigObject::isGlobalOnly(const QString& name) const {
+    return m_globalOnlyKeys.contains(name);
+}
+
 void ConfigObject::markPropertyLoaded(const QString& name) {
     m_loadedKeys.insert(name);
 }

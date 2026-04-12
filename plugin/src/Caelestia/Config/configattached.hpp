@@ -33,7 +33,7 @@ class Config : public QObject {
 public:
     explicit Config(ConfigScope* scope, QObject* parent = nullptr);
 
-    [[nodiscard]] ConfigScope* scope() const { return m_scope; }
+    [[nodiscard]] ConfigScope* scope() const;
 
     [[nodiscard]] const AppearanceConfig* appearance() const;
     [[nodiscard]] const GeneralConfig* general() const;

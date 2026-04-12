@@ -20,6 +20,10 @@ QString watchRoot() {
 RootConfig::RootConfig(QObject* parent)
     : ConfigObject(parent) {}
 
+bool RootConfig::recentlySaved() const {
+    return m_recentlySaved;
+}
+
 QStringList RootConfig::collectUnknownKeys(const ConfigObject* obj, const QJsonObject& json) {
     QStringList unknown;
     const auto* meta = obj->metaObject();

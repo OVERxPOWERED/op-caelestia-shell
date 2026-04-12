@@ -6,6 +6,18 @@ namespace caelestia::config {
 ConfigScope::ConfigScope(QQuickItem* parent)
     : QQuickItem(parent) {}
 
+QString ConfigScope::screen() const {
+    return m_screen;
+}
+
+GlobalConfig* ConfigScope::config() const {
+    return m_config;
+}
+
+TokenConfig* ConfigScope::tokens() const {
+    return m_tokens;
+}
+
 void ConfigScope::setScreen(const QString& screen) {
     if (m_screen == screen)
         return;

@@ -21,13 +21,11 @@ class ConfigScope : public QQuickItem {
 public:
     explicit ConfigScope(QQuickItem* parent = nullptr);
 
-    [[nodiscard]] QString screen() const { return m_screen; }
-
+    [[nodiscard]] QString screen() const;
     void setScreen(const QString& screen);
 
-    [[nodiscard]] GlobalConfig* config() const { return m_config; }
-
-    [[nodiscard]] TokenConfig* tokens() const { return m_tokens; }
+    [[nodiscard]] GlobalConfig* config() const;
+    [[nodiscard]] TokenConfig* tokens() const;
 
     static ConfigScope* find(QObject* object);
 

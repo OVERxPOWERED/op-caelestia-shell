@@ -31,8 +31,7 @@ public:
     [[nodiscard]] const AppearanceTransparency* transparency() const;
 
     [[nodiscard]] const SizeTokens* sizes() const;
-
-    [[nodiscard]] const AnimTokens* anim() const { return m_anim; }
+    [[nodiscard]] const AnimTokens* anim() const;
 
     [[nodiscard]] Q_INVOKABLE static TokenConfig* forScreen(const QString& screen);
 

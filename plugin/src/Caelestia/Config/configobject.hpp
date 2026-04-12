@@ -87,11 +87,9 @@ public:
     void resyncFromGlobal();
     void clearLoadedKeys();
 
-    [[nodiscard]] bool isPropertyLoaded(const QString& name) const { return m_loadedKeys.contains(name); }
-
-    [[nodiscard]] bool isOverlay() const { return m_global != nullptr; }
-
-    [[nodiscard]] bool isGlobalOnly(const QString& name) const { return m_globalOnlyKeys.contains(name); }
+    [[nodiscard]] bool isPropertyLoaded(const QString& name) const;
+    [[nodiscard]] bool isOverlay() const;
+    [[nodiscard]] bool isGlobalOnly(const QString& name) const;
 
     Q_INVOKABLE void resetOption(const QString& name);
 

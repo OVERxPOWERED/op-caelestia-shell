@@ -21,7 +21,7 @@ public:
     // Returns nullopt if retrying, empty string on success, error message on failure.
     [[nodiscard]] std::optional<QString> reloadFromFile();
 
-    [[nodiscard]] bool recentlySaved() const { return m_recentlySaved; }
+    [[nodiscard]] bool recentlySaved() const;
 
     Q_INVOKABLE void save();
     Q_INVOKABLE void reload();

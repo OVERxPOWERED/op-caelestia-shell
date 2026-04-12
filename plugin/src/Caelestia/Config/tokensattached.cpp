@@ -75,6 +75,10 @@ const SizeTokens* Tokens::sizes() const {
     return TokenConfig::instance()->sizes();
 }
 
+const AnimTokens* Tokens::anim() const {
+    return m_anim;
+}
+
 TokenConfig* Tokens::forScreen(const QString& screen) {
     return TokenConfig::forScreen(screen);
 }

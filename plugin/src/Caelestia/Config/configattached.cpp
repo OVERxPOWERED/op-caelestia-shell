@@ -11,6 +11,10 @@ Config::Config(ConfigScope* scope, QObject* parent)
     connectScope();
 }
 
+ConfigScope* Config::scope() const {
+    return m_scope;
+}
+
 void Config::connectScope() {
     if (!m_scope)
         return;

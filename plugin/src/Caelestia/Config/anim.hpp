@@ -33,25 +33,16 @@ public:
     void bindCurves(AnimCurves* curves);
     void bindDurations(AnimDurations* durations);
 
-    [[nodiscard]] QEasingCurve emphasized() const { return m_emphasized; }
-
-    [[nodiscard]] QEasingCurve emphasizedAccel() const { return m_emphasizedAccel; }
-
-    [[nodiscard]] QEasingCurve emphasizedDecel() const { return m_emphasizedDecel; }
-
-    [[nodiscard]] QEasingCurve standard() const { return m_standard; }
-
-    [[nodiscard]] QEasingCurve standardAccel() const { return m_standardAccel; }
-
-    [[nodiscard]] QEasingCurve standardDecel() const { return m_standardDecel; }
-
-    [[nodiscard]] QEasingCurve expressiveFastSpatial() const { return m_expressiveFastSpatial; }
-
-    [[nodiscard]] QEasingCurve expressiveDefaultSpatial() const { return m_expressiveDefaultSpatial; }
-
-    [[nodiscard]] QEasingCurve expressiveSlowSpatial() const { return m_expressiveSlowSpatial; }
-
-    [[nodiscard]] AnimDurations* durations() const { return m_durations; }
+    [[nodiscard]] QEasingCurve emphasized() const;
+    [[nodiscard]] QEasingCurve emphasizedAccel() const;
+    [[nodiscard]] QEasingCurve emphasizedDecel() const;
+    [[nodiscard]] QEasingCurve standard() const;
+    [[nodiscard]] QEasingCurve standardAccel() const;
+    [[nodiscard]] QEasingCurve standardDecel() const;
+    [[nodiscard]] QEasingCurve expressiveFastSpatial() const;
+    [[nodiscard]] QEasingCurve expressiveDefaultSpatial() const;
+    [[nodiscard]] QEasingCurve expressiveSlowSpatial() const;
+    [[nodiscard]] AnimDurations* durations() const;
 
 signals:
     void curvesChanged();

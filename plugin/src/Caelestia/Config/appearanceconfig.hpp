@@ -216,9 +216,9 @@ class AppearanceTransparency : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(bool, enabled, false)
-    CONFIG_PROPERTY(qreal, base, 0.85)
-    CONFIG_PROPERTY(qreal, layers, 0.4)
+    CONFIG_GLOBAL_PROPERTY(bool, enabled, false)
+    CONFIG_GLOBAL_PROPERTY(qreal, base, 0.85)
+    CONFIG_GLOBAL_PROPERTY(qreal, layers, 0.4)
 
 public:
     explicit AppearanceTransparency(QObject* parent = nullptr)

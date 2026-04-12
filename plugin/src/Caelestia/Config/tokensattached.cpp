@@ -49,9 +49,12 @@ TOKENS_ATTACHED_GETTER(AppearanceRounding, rounding)
 TOKENS_ATTACHED_GETTER(AppearanceSpacing, spacing)
 TOKENS_ATTACHED_GETTER(AppearancePadding, padding)
 TOKENS_ATTACHED_GETTER(AppearanceFont, font)
-TOKENS_ATTACHED_GETTER(AppearanceTransparency, transparency)
 
 #undef TOKENS_ATTACHED_GETTER
+
+const AppearanceTransparency* Tokens::transparency() const {
+    return GlobalConfig::instance()->appearance()->transparency(); // Transparency is always global
+}
 
 const SizeTokens* Tokens::sizes() const {
     if (m_scope && m_scope->tokens())

@@ -91,6 +91,8 @@ public:
 
     [[nodiscard]] bool isOverlay() const { return m_global != nullptr; }
 
+    [[nodiscard]] bool isGlobalOnly(const QString& name) const { return m_globalOnlyKeys.contains(name); }
+
     Q_INVOKABLE void resetOption(const QString& name);
 
     template <typename T> static bool updateMember(T& member, const T& value) {

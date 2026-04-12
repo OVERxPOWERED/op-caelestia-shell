@@ -29,7 +29,7 @@ void ConfigObject::loadFromJson(const QJsonObject& obj) {
         if (!obj.contains(key))
             continue;
 
-        if (m_global && m_globalOnlyKeys.contains(key))
+        if (m_global && isGlobalOnly(key))
             qCWarning(
                 lcConfig, "Option '%s' is global-only and will be ignored in per-monitor config", qUtf8Printable(key));
 
@@ -157,7 +157,7 @@ void ConfigObject::syncFromGlobal(ConfigObject* global) {
             continue;
         }
 
-        if (!prop.isWritable())
+        if (!prop.isWritable() || isGlobalOnly(key))
             continue;
 
         if (!m_loadedKeys.contains(key)) {
@@ -188,7 +188,7 @@ void ConfigObject::resyncFromGlobal() {
             continue;
         }
 
-        if (!prop.isWritable())
+        if (!prop.isWritable() || isGlobalOnly(key))
             continue;
 
         if (!m_loadedKeys.contains(key)) {
@@ -218,7 +218,7 @@ void ConfigObject::resetOption(const QString& name) {
 
 void ConfigObject::onGlobalPropertiesChanged(const QMap<QString, QVariant>& changed) {
     for (auto it = changed.begin(); it != changed.end(); ++it) {
-        if (m_loadedKeys.contains(it.key()))
+        if (m_loadedKeys.contains(it.key()) || isGlobalOnly(it.key()))
             continue;
 
         int idx = metaObject()->indexOfProperty(it.key().toUtf8().constData());

@@ -226,6 +226,18 @@ For example, to disable the bar on DP-1:
 }
 ```
 
+> [!NOTE]
+> Not all options are respect per-monitor overrides. Most notably, the following options will only read
+> from the global config, and ignore the respective option in per-monitor config files.
+>
+> - All animation configs are not per-monitor
+> - `general` (logo, terminal app, idle settings)
+> - `services` (weather, audio, GPU, player settings, etc.)
+> - `paths` (wallpaper dir, lyrics dir, etc.)
+> - `notifs` (notification behavior)
+> - `utilities` (individual toast enabled status, vpn configs)
+> - `launcher` (actions, favourite apps, hidden apps)
+
 ### Example configuration
 
 > [!NOTE]

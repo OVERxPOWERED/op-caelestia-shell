@@ -29,19 +29,11 @@ void Tokens::connectScope() {
     if (!m_scope)
         return;
     connect(m_scope, &ConfigScope::configChanged, this, &Tokens::sourceChanged);
-    connect(m_scope, &ConfigScope::configChanged, this, &Tokens::bindAnim);
 }
 
 void Tokens::bindAnim() {
-    auto* appearance = resolveAppearance(m_scope);
-    if (!appearance)
-        return;
-
-    m_anim->bindDurations(appearance->anim()->durations());
-
-    auto* tokens = TokenConfig::instance();
-    if (tokens)
-        m_anim->bindCurves(tokens->appearance()->curves());
+    m_anim->bindDurations(GlobalConfig::instance()->appearance()->anim()->durations());
+    m_anim->bindCurves(TokenConfig::instance()->appearance()->curves());
 }
 
 const AppearanceRounding* Tokens::rounding() const {

@@ -15,15 +15,15 @@ class AnimCurves : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(QList<qreal>, emphasized)
-    CONFIG_PROPERTY(QList<qreal>, emphasizedAccel)
-    CONFIG_PROPERTY(QList<qreal>, emphasizedDecel)
-    CONFIG_PROPERTY(QList<qreal>, standard)
-    CONFIG_PROPERTY(QList<qreal>, standardAccel)
-    CONFIG_PROPERTY(QList<qreal>, standardDecel)
-    CONFIG_PROPERTY(QList<qreal>, expressiveFastSpatial)
-    CONFIG_PROPERTY(QList<qreal>, expressiveDefaultSpatial)
-    CONFIG_PROPERTY(QList<qreal>, expressiveSlowSpatial)
+    CONFIG_GLOBAL_PROPERTY(QList<qreal>, emphasized)
+    CONFIG_GLOBAL_PROPERTY(QList<qreal>, emphasizedAccel)
+    CONFIG_GLOBAL_PROPERTY(QList<qreal>, emphasizedDecel)
+    CONFIG_GLOBAL_PROPERTY(QList<qreal>, standard)
+    CONFIG_GLOBAL_PROPERTY(QList<qreal>, standardAccel)
+    CONFIG_GLOBAL_PROPERTY(QList<qreal>, standardDecel)
+    CONFIG_GLOBAL_PROPERTY(QList<qreal>, expressiveFastSpatial)
+    CONFIG_GLOBAL_PROPERTY(QList<qreal>, expressiveDefaultSpatial)
+    CONFIG_GLOBAL_PROPERTY(QList<qreal>, expressiveSlowSpatial)
 
 public:
     explicit AnimCurves(QObject* parent = nullptr)
@@ -103,13 +103,13 @@ class AnimDurationTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(int, small, 200)
-    CONFIG_PROPERTY(int, normal, 400)
-    CONFIG_PROPERTY(int, large, 600)
-    CONFIG_PROPERTY(int, extraLarge, 1000)
-    CONFIG_PROPERTY(int, expressiveFastSpatial, 350)
-    CONFIG_PROPERTY(int, expressiveDefaultSpatial, 500)
-    CONFIG_PROPERTY(int, expressiveSlowSpatial, 650)
+    CONFIG_GLOBAL_PROPERTY(int, small, 200)
+    CONFIG_GLOBAL_PROPERTY(int, normal, 400)
+    CONFIG_GLOBAL_PROPERTY(int, large, 600)
+    CONFIG_GLOBAL_PROPERTY(int, extraLarge, 1000)
+    CONFIG_GLOBAL_PROPERTY(int, expressiveFastSpatial, 350)
+    CONFIG_GLOBAL_PROPERTY(int, expressiveDefaultSpatial, 500)
+    CONFIG_GLOBAL_PROPERTY(int, expressiveSlowSpatial, 650)
 
 public:
     explicit AnimDurationTokens(QObject* parent = nullptr)

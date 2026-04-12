@@ -169,7 +169,7 @@ class AnimDurations : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(qreal, scale, 1)
+    CONFIG_GLOBAL_PROPERTY(qreal, scale, 1)
 
     Q_PROPERTY(int small READ small NOTIFY valuesChanged)
     Q_PROPERTY(int normal READ normal NOTIFY valuesChanged)

@@ -8,11 +8,11 @@ namespace caelestia::config {
 
 class AnimCurves;
 class AnimDurations;
-class ConfigScope;
 
 class AnimTokens : public QObject {
     Q_OBJECT
-    Q_MOC_INCLUDE("appearanceconfig.hpp")
+    Q_MOC_INCLUDE("tokens.hpp")           // AnimCurves
+    Q_MOC_INCLUDE("appearanceconfig.hpp") // AnimDurations
     QML_ANONYMOUS
 
     Q_PROPERTY(QEasingCurve emphasized READ emphasized NOTIFY curvesChanged)

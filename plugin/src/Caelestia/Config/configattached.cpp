@@ -1,33 +1,56 @@
 #include "configattached.hpp"
 #include "config.hpp"
-#include "configscope.hpp"
 #include "monitorconfigmanager.hpp"
 
 namespace caelestia::config {
 
-Config::Config(ConfigScope* scope, QObject* parent)
-    : QObject(parent)
-    , m_scope(scope) {
-    connectScope();
+Config::Config(QObject* parent)
+    : QQuickAttachedPropertyPropagator(parent) {
+    initialize();
 }
 
-ConfigScope* Config::scope() const {
-    return m_scope;
+QString Config::screen() const {
+    return m_screen;
 }
 
-void Config::connectScope() {
-    if (!m_scope)
+void Config::inheritScreen(const QString& screen) {
+    if (screen == m_screen)
         return;
-    connect(m_scope, &ConfigScope::configChanged, this, &Config::sourceChanged);
-    connect(m_scope, &ConfigScope::tokensChanged, this, &Config::sourceChanged);
+
+    m_screen = screen;
+
+    if (m_screen.isEmpty())
+        m_config = nullptr;
+    else
+        m_config = MonitorConfigManager::instance()->configForScreen(m_screen);
+
+    propagateScreen();
+    emit sourceChanged();
+}
+
+void Config::propagateScreen() {
+    const auto children = attachedChildren();
+    for (auto* const child : children) {
+        auto* const config = qobject_cast<Config*>(child);
+        if (config)
+            config->inheritScreen(m_screen);
+    }
+}
+
+void Config::attachedParentChange(
+    QQuickAttachedPropertyPropagator* newParent, QQuickAttachedPropertyPropagator* oldParent) {
+    Q_UNUSED(oldParent);
+    auto* const config = qobject_cast<Config*>(newParent);
+    if (config)
+        inheritScreen(config->screen());
 }
 
 #define CONFIG_ATTACHED_GETTER(Type, name)                                                                             \
     const Type* Config::name() const {                                                                                 \
-        if (m_scope && m_scope->config())                                                                              \
-            return m_scope->config()->name();                                                                          \
+        if (m_config)                                                                                                  \
+            return m_config->name();                                                                                   \
         if (parent())                                                                                                  \
-            qCWarning(lcConfig, "Config.%s accessed without a ConfigScope ancestor on %s", #name,                      \
+            qCWarning(lcConfig, "Config.%s accessed without a screen set on %s", #name,                                \
                 parent()->metaObject()->className());                                                                  \
         return GlobalConfig::instance()->name();                                                                       \
     }
@@ -57,7 +80,7 @@ GlobalConfig* Config::forScreen(const QString& screen) {
 }
 
 Config* Config::qmlAttachedProperties(QObject* object) {
-    return new Config(ConfigScope::find(object), object);
+    return new Config(object);
 }
 
 } // namespace caelestia::config

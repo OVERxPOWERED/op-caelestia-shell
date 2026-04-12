@@ -15,6 +15,9 @@ WlSessionLockSurface {
 
     readonly property alias unlocking: unlockAnim.running
 
+    contentItem.Config.screen: screen.name
+    contentItem.Tokens.screen: screen.name
+
     color: "transparent"
 
     Connections {
@@ -159,79 +162,72 @@ WlSessionLockSurface {
         }
     }
 
-    ConfigScope {
-        id: configScope
+    ScreencopyView {
+        id: background
 
         anchors.fill: parent
-        screen: root.screen
+        captureSource: root.screen
+        opacity: 0
 
-        ScreencopyView {
-            id: background
+        layer.enabled: true
+        layer.effect: MultiEffect {
+            autoPaddingEnabled: false
+            blurEnabled: true
+            blur: 1
+            blurMax: 64
+            blurMultiplier: 1
+        }
+    }
+
+    Item {
+        id: lockContent
+
+        readonly property int size: lockIcon.implicitHeight + Tokens.padding.large * 4
+        readonly property int radius: size / 4 * Tokens.rounding.scale
+
+        anchors.centerIn: parent
+        implicitWidth: size
+        implicitHeight: size
+
+        rotation: 180
+        scale: 0
+
+        StyledRect {
+            id: lockBg
 
             anchors.fill: parent
-            captureSource: root.screen
-            opacity: 0
+            color: Colours.palette.m3surface
+            radius: parent.radius
+            opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
 
             layer.enabled: true
             layer.effect: MultiEffect {
-                autoPaddingEnabled: false
-                blurEnabled: true
-                blur: 1
-                blurMax: 64
-                blurMultiplier: 1
+                shadowEnabled: true
+                blurMax: 15
+                shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.7)
             }
         }
 
-        Item {
-            id: lockContent
-
-            readonly property int size: lockIcon.implicitHeight + Tokens.padding.large * 4
-            readonly property int radius: size / 4 * Tokens.rounding.scale
+        MaterialIcon {
+            id: lockIcon
 
             anchors.centerIn: parent
-            implicitWidth: size
-            implicitHeight: size
-
+            text: "lock"
+            font.pointSize: Tokens.font.size.extraLarge * 4
+            font.bold: true
             rotation: 180
+        }
+
+        Content {
+            id: content
+
+            anchors.centerIn: parent
+            width: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult * Tokens.sizes.lock.ratio - Tokens.padding.large * 2
+            height: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult - Tokens.padding.large * 2
+
+            lock: root
+            opacity: 0
             scale: 0
-
-            StyledRect {
-                id: lockBg
-
-                anchors.fill: parent
-                color: Colours.palette.m3surface
-                radius: parent.radius
-                opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
-
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    blurMax: 15
-                    shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.7)
-                }
-            }
-
-            MaterialIcon {
-                id: lockIcon
-
-                anchors.centerIn: parent
-                text: "lock"
-                font.pointSize: Tokens.font.size.extraLarge * 4
-                font.bold: true
-                rotation: 180
-            }
-
-            Content {
-                id: content
-
-                anchors.centerIn: parent
-                width: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult * Tokens.sizes.lock.ratio - Tokens.padding.large * 2
-                height: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult - Tokens.padding.large * 2
-
-                lock: root
-                opacity: 0
-                scale: 0
-            }
         }
     }
 }

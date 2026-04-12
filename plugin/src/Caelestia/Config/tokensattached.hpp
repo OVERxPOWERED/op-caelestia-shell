@@ -2,17 +2,20 @@
 
 #include "anim.hpp"
 #include "appearanceconfig.hpp"
-#include "configscope.hpp"
+#include "config.hpp"
 #include "tokens.hpp"
+
+#include <qquickattachedpropertypropagator.h>
 
 namespace caelestia::config {
 
-class Tokens : public QObject {
+class Tokens : public QQuickAttachedPropertyPropagator {
     Q_OBJECT
     QML_ELEMENT
     QML_UNCREATABLE("")
     QML_ATTACHED(Tokens)
 
+    Q_PROPERTY(QString screen READ screen WRITE inheritScreen NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::AppearanceRounding* rounding READ rounding NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::AppearanceSpacing* spacing READ spacing NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::AppearancePadding* padding READ padding NOTIFY sourceChanged)
@@ -22,7 +25,10 @@ class Tokens : public QObject {
     Q_PROPERTY(const caelestia::config::AnimTokens* anim READ anim NOTIFY sourceChanged)
 
 public:
-    explicit Tokens(ConfigScope* scope, QObject* parent = nullptr);
+    explicit Tokens(QObject* parent = nullptr);
+
+    [[nodiscard]] QString screen() const;
+    void inheritScreen(const QString& screen);
 
     [[nodiscard]] const AppearanceRounding* rounding() const;
     [[nodiscard]] const AppearanceSpacing* spacing() const;
@@ -40,11 +46,17 @@ public:
 signals:
     void sourceChanged();
 
+protected:
+    void attachedParentChange(
+        QQuickAttachedPropertyPropagator* newParent, QQuickAttachedPropertyPropagator* oldParent) override;
+
 private:
-    void connectScope();
+    void propagateScreen();
     void bindAnim();
 
-    ConfigScope* m_scope;
+    QString m_screen;
+    GlobalConfig* m_config = nullptr;
+    TokenConfig* m_tokens = nullptr;
     AnimTokens* m_anim = nullptr;
 };
 

@@ -1,7 +1,6 @@
 #include "tokensattached.hpp"
 #include "anim.hpp"
 #include "config.hpp"
-#include "configscope.hpp"
 #include "monitorconfigmanager.hpp"
 #include "tokens.hpp"
 
@@ -9,29 +8,60 @@ namespace caelestia::config {
 
 namespace {
 
-const AppearanceConfig* resolveAppearance(ConfigScope* scope, const char* prop, QObject* parent) {
-    if (scope && scope->config())
-        return scope->config()->appearance();
+const AppearanceConfig* resolveAppearance(GlobalConfig* config, const char* prop, QObject* parent) {
+    if (config)
+        return config->appearance();
     if (parent)
-        qCWarning(lcConfig, "Tokens.%s accessed without a ConfigScope ancestor on %s", prop,
-            parent->metaObject()->className());
+        qCWarning(lcConfig, "Tokens.%s accessed without a screen set on %s", prop, parent->metaObject()->className());
     return GlobalConfig::instance()->appearance();
 }
 
 } // namespace
 
-Tokens::Tokens(ConfigScope* scope, QObject* parent)
-    : QObject(parent)
-    , m_scope(scope)
+Tokens::Tokens(QObject* parent)
+    : QQuickAttachedPropertyPropagator(parent)
     , m_anim(new AnimTokens(this)) {
-    connectScope();
     bindAnim();
+    initialize();
 }
 
-void Tokens::connectScope() {
-    if (!m_scope)
+QString Tokens::screen() const {
+    return m_screen;
+}
+
+void Tokens::inheritScreen(const QString& screen) {
+    if (screen == m_screen)
         return;
-    connect(m_scope, &ConfigScope::configChanged, this, &Tokens::sourceChanged);
+
+    m_screen = screen;
+
+    if (m_screen.isEmpty()) {
+        m_config = nullptr;
+        m_tokens = nullptr;
+    } else {
+        m_config = MonitorConfigManager::instance()->configForScreen(m_screen);
+        m_tokens = MonitorConfigManager::instance()->tokensForScreen(m_screen);
+    }
+
+    propagateScreen();
+    emit sourceChanged();
+}
+
+void Tokens::propagateScreen() {
+    const auto children = attachedChildren();
+    for (auto* const child : children) {
+        auto* const tokens = qobject_cast<Tokens*>(child);
+        if (tokens)
+            tokens->inheritScreen(m_screen);
+    }
+}
+
+void Tokens::attachedParentChange(
+    QQuickAttachedPropertyPropagator* newParent, QQuickAttachedPropertyPropagator* oldParent) {
+    Q_UNUSED(oldParent);
+    auto* const tokens = qobject_cast<Tokens*>(newParent);
+    if (tokens)
+        inheritScreen(tokens->screen());
 }
 
 void Tokens::bindAnim() {
@@ -41,7 +71,7 @@ void Tokens::bindAnim() {
 
 #define TOKENS_ATTACHED_GETTER(Type, name)                                                                             \
     const Type* Tokens::name() const {                                                                                 \
-        auto* a = resolveAppearance(m_scope, #name, parent());                                                         \
+        auto* a = resolveAppearance(m_config, #name, parent());                                                        \
         return a ? a->name() : nullptr;                                                                                \
     }
 
@@ -57,11 +87,10 @@ const AppearanceTransparency* Tokens::transparency() const {
 }
 
 const SizeTokens* Tokens::sizes() const {
-    if (m_scope && m_scope->tokens())
-        return m_scope->tokens()->sizes();
+    if (m_tokens)
+        return m_tokens->sizes();
     if (parent())
-        qCWarning(lcConfig, "Tokens.sizes accessed without a ConfigScope ancestor on %s",
-            parent()->metaObject()->className());
+        qCWarning(lcConfig, "Tokens.sizes accessed without a screen set on %s", parent()->metaObject()->className());
     return TokenConfig::instance()->sizes();
 }
 
@@ -74,7 +103,7 @@ TokenConfig* Tokens::forScreen(const QString& screen) {
 }
 
 Tokens* Tokens::qmlAttachedProperties(QObject* object) {
-    return new Tokens(ConfigScope::find(object), object);
+    return new Tokens(object);
 }
 
 } // namespace caelestia::config

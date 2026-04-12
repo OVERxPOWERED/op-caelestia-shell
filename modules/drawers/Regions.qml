@@ -12,8 +12,8 @@ Region {
     required property Panels panels
     required property var win
 
-    readonly property real borderThickness: win.configScope.Config.border.thickness
-    readonly property real clampedThickness: win.configScope.Config.border.clampedThickness
+    readonly property real borderThickness: win.contentItem.Config.border.thickness
+    readonly property real clampedThickness: win.contentItem.Config.border.clampedThickness
 
     x: bar.clampedWidth + win.dragMaskPadding
     y: clampedThickness + win.dragMaskPadding

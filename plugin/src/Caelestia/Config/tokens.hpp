@@ -9,8 +9,6 @@
 
 namespace caelestia::config {
 
-class ConfigScope;
-
 class AnimCurves : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS

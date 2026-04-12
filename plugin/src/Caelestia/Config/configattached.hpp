@@ -1,17 +1,18 @@
 #pragma once
 
 #include "config.hpp"
-#include "configscope.hpp"
+
+#include <qquickattachedpropertypropagator.h>
 
 namespace caelestia::config {
 
-class Config : public QObject {
+class Config : public QQuickAttachedPropertyPropagator {
     Q_OBJECT
     QML_ELEMENT
     QML_UNCREATABLE("")
     QML_ATTACHED(Config)
 
-    Q_PROPERTY(caelestia::config::ConfigScope* scope READ scope NOTIFY sourceChanged)
+    Q_PROPERTY(QString screen READ screen WRITE inheritScreen NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::AppearanceConfig* appearance READ appearance NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::GeneralConfig* general READ general NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::BackgroundConfig* background READ background NOTIFY sourceChanged)
@@ -31,9 +32,10 @@ class Config : public QObject {
     Q_PROPERTY(const caelestia::config::UserPaths* paths READ paths NOTIFY sourceChanged)
 
 public:
-    explicit Config(ConfigScope* scope, QObject* parent = nullptr);
+    explicit Config(QObject* parent = nullptr);
 
-    [[nodiscard]] ConfigScope* scope() const;
+    [[nodiscard]] QString screen() const;
+    void inheritScreen(const QString& screen);
 
     [[nodiscard]] const AppearanceConfig* appearance() const;
     [[nodiscard]] const GeneralConfig* general() const;
@@ -60,10 +62,15 @@ public:
 signals:
     void sourceChanged();
 
-private:
-    void connectScope();
+protected:
+    void attachedParentChange(
+        QQuickAttachedPropertyPropagator* newParent, QQuickAttachedPropertyPropagator* oldParent) override;
 
-    ConfigScope* m_scope;
+private:
+    void propagateScreen();
+
+    QString m_screen;
+    GlobalConfig* m_config = nullptr;
 };
 
 } // namespace caelestia::config

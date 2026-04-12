@@ -5,7 +5,6 @@ qml_module(caelestia-config
         configattached.cpp
         configobject.cpp
         rootconfig.cpp
-        configscope.cpp
         appearanceconfig.cpp
         tokens.cpp
         tokensattached.cpp
@@ -29,4 +28,5 @@ qml_module(caelestia-config
         winfoconfig.hpp
     LIBRARIES
         Qt::Quick
+        Qt::QuickControls2
 )

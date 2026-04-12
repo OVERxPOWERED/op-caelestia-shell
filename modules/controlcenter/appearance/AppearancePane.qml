@@ -23,7 +23,7 @@ Item {
 
     required property Session session
 
-    property real animDurationsScale: Config.appearance.anim.durations.scale ?? 1
+    property real animDurationsScale: GlobalConfig.appearance.anim.durations.scale ?? 1
     property string fontFamilyMaterial: Config.appearance.font.family.material ?? "Material Symbols Rounded"
     property string fontFamilyMono: Config.appearance.font.family.mono ?? "CaskaydiaCove NF"
     property string fontFamilySans: Config.appearance.font.family.sans ?? "Rubik"
@@ -31,9 +31,9 @@ Item {
     property real paddingScale: Config.appearance.padding.scale ?? 1
     property real roundingScale: Config.appearance.rounding.scale ?? 1
     property real spacingScale: Config.appearance.spacing.scale ?? 1
-    property bool transparencyEnabled: Config.appearance.transparency.enabled ?? false
-    property real transparencyBase: Config.appearance.transparency.base ?? 0.85
-    property real transparencyLayers: Config.appearance.transparency.layers ?? 0.4
+    property bool transparencyEnabled: GlobalConfig.appearance.transparency.enabled ?? false
+    property real transparencyBase: GlobalConfig.appearance.transparency.base ?? 0.85
+    property real transparencyLayers: GlobalConfig.appearance.transparency.layers ?? 0.4
     property real borderRounding: Config.border.rounding ?? 1
     property real borderThickness: Config.border.thickness ?? 1
 

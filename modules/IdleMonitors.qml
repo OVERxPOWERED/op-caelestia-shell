@@ -11,7 +11,7 @@ Scope {
     id: root
 
     required property Lock lock
-    readonly property bool enabled: !Config.general.idle.inhibitWhenAudio || !Players.list.some(p => p.isPlaying)
+    readonly property bool enabled: !GlobalConfig.general.idle.inhibitWhenAudio || !Players.list.some(p => p.isPlaying)
 
     function handleIdleAction(action: var): void {
         if (!action)
@@ -29,7 +29,7 @@ Scope {
 
     LogindManager {
         onAboutToSleep: {
-            if (Config.general.idle.lockBeforeSleep)
+            if (GlobalConfig.general.idle.lockBeforeSleep)
                 root.lock.lock.locked = true;
         }
         onLockRequested: root.lock.lock.locked = true
@@ -37,7 +37,7 @@ Scope {
     }
 
     Variants {
-        model: Config.general.idle.timeouts
+        model: GlobalConfig.general.idle.timeouts
 
         IdleMonitor {
             required property var modelData

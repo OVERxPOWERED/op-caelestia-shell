@@ -26,7 +26,7 @@ Searcher {
     }
 
     list: schemes.instances
-    useFuzzy: Config.launcher.useFuzzy.schemes
+    useFuzzy: GlobalConfig.launcher.useFuzzy.schemes
     keys: ["name", "flavour"]
     weights: [0.9, 0.1]
 

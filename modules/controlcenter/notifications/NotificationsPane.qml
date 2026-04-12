@@ -18,24 +18,24 @@ Item {
 
     required property Session session
 
-    property bool notificationsExpire: Config.notifs.expire ?? true
-    property string notificationsFullscreen: Config.notifs.fullscreen ?? "on"
+    property bool notificationsExpire: GlobalConfig.notifs.expire ?? true
+    property string notificationsFullscreen: GlobalConfig.notifs.fullscreen ?? "on"
     property bool notificationsOpenExpanded: Config.notifs.openExpanded ?? false
-    property int notificationsDefaultExpireTimeout: Config.notifs.defaultExpireTimeout ?? 5000
+    property int notificationsDefaultExpireTimeout: GlobalConfig.notifs.defaultExpireTimeout ?? 5000
     property int notificationsGroupPreviewNum: Config.notifs.groupPreviewNum ?? 3
 
     property int maxToasts: Config.utilities.maxToasts ?? 4
     property string toastsFullscreen: Config.utilities.toasts.fullscreen ?? "off"
-    property bool chargingChanged: Config.utilities.toasts.chargingChanged ?? true
-    property bool gameModeChanged: Config.utilities.toasts.gameModeChanged ?? true
-    property bool dndChanged: Config.utilities.toasts.dndChanged ?? true
-    property bool audioOutputChanged: Config.utilities.toasts.audioOutputChanged ?? true
-    property bool audioInputChanged: Config.utilities.toasts.audioInputChanged ?? true
-    property bool capsLockChanged: Config.utilities.toasts.capsLockChanged ?? true
-    property bool numLockChanged: Config.utilities.toasts.numLockChanged ?? true
-    property bool kbLayoutChanged: Config.utilities.toasts.kbLayoutChanged ?? true
-    property bool vpnChanged: Config.utilities.toasts.vpnChanged ?? true
-    property bool nowPlaying: Config.utilities.toasts.nowPlaying ?? false
+    property bool chargingChanged: GlobalConfig.utilities.toasts.chargingChanged ?? true
+    property bool gameModeChanged: GlobalConfig.utilities.toasts.gameModeChanged ?? true
+    property bool dndChanged: GlobalConfig.utilities.toasts.dndChanged ?? true
+    property bool audioOutputChanged: GlobalConfig.utilities.toasts.audioOutputChanged ?? true
+    property bool audioInputChanged: GlobalConfig.utilities.toasts.audioInputChanged ?? true
+    property bool capsLockChanged: GlobalConfig.utilities.toasts.capsLockChanged ?? true
+    property bool numLockChanged: GlobalConfig.utilities.toasts.numLockChanged ?? true
+    property bool kbLayoutChanged: GlobalConfig.utilities.toasts.kbLayoutChanged ?? true
+    property bool vpnChanged: GlobalConfig.utilities.toasts.vpnChanged ?? true
+    property bool nowPlaying: GlobalConfig.utilities.toasts.nowPlaying ?? false
 
     function saveConfig(): void {
         GlobalConfig.notifs.expire = root.notificationsExpire;

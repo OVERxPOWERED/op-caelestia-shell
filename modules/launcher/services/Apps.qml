@@ -66,13 +66,13 @@ Searcher {
     }
 
     list: appDb.apps
-    useFuzzy: Config.launcher.useFuzzy.apps
+    useFuzzy: GlobalConfig.launcher.useFuzzy.apps
 
     AppDb {
         id: appDb
 
         path: `${Paths.state}/apps.sqlite`
-        favouriteApps: Config.launcher.favouriteApps
-        entries: DesktopEntries.applications.values.filter(a => !Strings.testRegexList(Config.launcher.hiddenApps, a.id))
+        favouriteApps: GlobalConfig.launcher.favouriteApps
+        entries: DesktopEntries.applications.values.filter(a => !Strings.testRegexList(GlobalConfig.launcher.hiddenApps, a.id))
     }
 }

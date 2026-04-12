@@ -21,7 +21,7 @@ DeviceDetails {
     readonly property bool providerEnabled: {
         if (!vpnProvider || vpnProvider.index === undefined)
             return false;
-        const provider = Config.utilities.vpn.provider[vpnProvider.index];
+        const provider = GlobalConfig.utilities.vpn.provider[vpnProvider.index];
         return provider && typeof provider === "object" && provider.enabled === true;
     }
 
@@ -55,8 +55,8 @@ DeviceDetails {
                             const index = root.vpnProvider.index;
 
                             // Copy providers and update enabled state
-                            for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
-                                const p = Config.utilities.vpn.provider[i];
+                            for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
+                                const p = GlobalConfig.utilities.vpn.provider[i];
                                 if (typeof p === "object") {
                                     const newProvider = {
                                         name: p.name,
@@ -115,7 +115,7 @@ DeviceDetails {
                             inactiveOnColour: Colours.palette.m3onSecondaryContainer
 
                             onClicked: {
-                                const provider = Config.utilities.vpn.provider[root.vpnProvider.index];
+                                const provider = GlobalConfig.utilities.vpn.provider[root.vpnProvider.index];
                                 editVpnDialog.editIndex = root.vpnProvider.index;
                                 editVpnDialog.providerName = root.vpnProvider.name;
                                 editVpnDialog.displayName = root.vpnProvider.displayName;
@@ -134,9 +134,9 @@ DeviceDetails {
 
                             onClicked: {
                                 const providers = [];
-                                for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
+                                for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
                                     if (i !== root.vpnProvider.index) {
-                                        providers.push(Config.utilities.vpn.provider[i]);
+                                        providers.push(GlobalConfig.utilities.vpn.provider[i]);
                                     }
                                 }
                                 GlobalConfig.utilities.vpn.provider = providers;
@@ -500,10 +500,10 @@ DeviceDetails {
 
                     onClicked: {
                         const providers = [];
-                        const oldProvider = Config.utilities.vpn.provider[editVpnDialog.editIndex];
+                        const oldProvider = GlobalConfig.utilities.vpn.provider[editVpnDialog.editIndex];
                         const wasEnabled = typeof oldProvider === "object" ? (oldProvider.enabled !== false) : true;
 
-                        for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
+                        for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
                             if (i === editVpnDialog.editIndex) {
                                 const hasCommands = editVpnDialog.connectCmd.length > 0 && editVpnDialog.disconnectCmd.length > 0;
                                 const newProvider = {
@@ -520,7 +520,7 @@ DeviceDetails {
 
                                 providers.push(newProvider);
                             } else {
-                                const p = Config.utilities.vpn.provider[i];
+                                const p = GlobalConfig.utilities.vpn.provider[i];
                                 const reconstructed = {
                                     displayName: p.displayName,
                                     enabled: p.enabled,

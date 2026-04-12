@@ -65,15 +65,15 @@ ColumnLayout {
         Layout.topMargin: Tokens.spacing.large
         title: qsTr("VPN")
         description: qsTr("VPN provider settings")
-        visible: Config.utilities.vpn.enabled || Config.utilities.vpn.provider.length > 0
+        visible: GlobalConfig.utilities.vpn.enabled || GlobalConfig.utilities.vpn.provider.length > 0
     }
 
     SectionContainer {
-        visible: Config.utilities.vpn.enabled || Config.utilities.vpn.provider.length > 0
+        visible: GlobalConfig.utilities.vpn.enabled || GlobalConfig.utilities.vpn.provider.length > 0
 
         ToggleRow {
             label: qsTr("VPN enabled")
-            checked: Config.utilities.vpn.enabled
+            checked: GlobalConfig.utilities.vpn.enabled
             toggle.onToggled: {
                 GlobalConfig.utilities.vpn.enabled = checked;
             }
@@ -82,7 +82,7 @@ ColumnLayout {
         PropertyRow {
             showTopMargin: true
             label: qsTr("Providers")
-            value: qsTr("%1").arg(Config.utilities.vpn.provider.length)
+            value: qsTr("%1").arg(GlobalConfig.utilities.vpn.provider.length)
         }
 
         TextButton {

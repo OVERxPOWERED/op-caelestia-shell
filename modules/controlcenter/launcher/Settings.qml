@@ -47,7 +47,7 @@ ColumnLayout {
 
         ToggleRow {
             label: qsTr("Vim keybinds")
-            checked: Config.launcher.vimKeybinds
+            checked: GlobalConfig.launcher.vimKeybinds
             toggle.onToggled: {
                 GlobalConfig.launcher.vimKeybinds = checked;
             }
@@ -55,7 +55,7 @@ ColumnLayout {
 
         ToggleRow {
             label: qsTr("Enable dangerous actions")
-            checked: Config.launcher.enableDangerousActions
+            checked: GlobalConfig.launcher.enableDangerousActions
             toggle.onToggled: {
                 GlobalConfig.launcher.enableDangerousActions = checked;
             }
@@ -119,7 +119,7 @@ ColumnLayout {
     SectionContainer {
         ToggleRow {
             label: qsTr("Apps")
-            checked: Config.launcher.useFuzzy.apps
+            checked: GlobalConfig.launcher.useFuzzy.apps
             toggle.onToggled: {
                 GlobalConfig.launcher.useFuzzy.apps = checked;
             }
@@ -127,7 +127,7 @@ ColumnLayout {
 
         ToggleRow {
             label: qsTr("Actions")
-            checked: Config.launcher.useFuzzy.actions
+            checked: GlobalConfig.launcher.useFuzzy.actions
             toggle.onToggled: {
                 GlobalConfig.launcher.useFuzzy.actions = checked;
             }
@@ -135,7 +135,7 @@ ColumnLayout {
 
         ToggleRow {
             label: qsTr("Schemes")
-            checked: Config.launcher.useFuzzy.schemes
+            checked: GlobalConfig.launcher.useFuzzy.schemes
             toggle.onToggled: {
                 GlobalConfig.launcher.useFuzzy.schemes = checked;
             }
@@ -143,7 +143,7 @@ ColumnLayout {
 
         ToggleRow {
             label: qsTr("Variants")
-            checked: Config.launcher.useFuzzy.variants
+            checked: GlobalConfig.launcher.useFuzzy.variants
             toggle.onToggled: {
                 GlobalConfig.launcher.useFuzzy.variants = checked;
             }
@@ -151,7 +151,7 @@ ColumnLayout {
 
         ToggleRow {
             label: qsTr("Wallpapers")
-            checked: Config.launcher.useFuzzy.wallpapers
+            checked: GlobalConfig.launcher.useFuzzy.wallpapers
             toggle.onToggled: {
                 GlobalConfig.launcher.useFuzzy.wallpapers = checked;
             }
@@ -202,7 +202,7 @@ ColumnLayout {
 
         PropertyRow {
             label: qsTr("Total hidden")
-            value: qsTr("%1").arg(Config.launcher.hiddenApps ? Config.launcher.hiddenApps.length : 0)
+            value: qsTr("%1").arg(GlobalConfig.launcher.hiddenApps ? GlobalConfig.launcher.hiddenApps.length : 0)
         }
     }
 }

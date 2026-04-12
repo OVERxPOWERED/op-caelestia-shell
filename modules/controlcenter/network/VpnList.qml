@@ -27,8 +27,8 @@ ColumnLayout {
                 root.pendingSwitchIndex = -1;
 
                 const providers = [];
-                for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
-                    const p = Config.utilities.vpn.provider[i];
+                for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
+                    const p = GlobalConfig.utilities.vpn.provider[i];
                     if (typeof p === "object") {
                         const newProvider = {
                             name: p.name,
@@ -79,7 +79,7 @@ ColumnLayout {
         spacing: Tokens.spacing.smaller
 
         model: ScriptModel {
-            values: Config.utilities.vpn.provider.map((provider, index) => {
+            values: GlobalConfig.utilities.vpn.provider.map((provider, index) => {
                 const isObject = typeof provider === "object";
                 const name = isObject ? (provider.name || "custom") : String(provider);
                 const displayName = isObject ? (provider.displayName || name) : name;
@@ -222,8 +222,8 @@ ColumnLayout {
                                         VPN.toggle();
                                     } else {
                                         const providers = [];
-                                        for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
-                                            const p = Config.utilities.vpn.provider[i];
+                                        for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
+                                            const p = GlobalConfig.utilities.vpn.provider[i];
                                             if (typeof p === "object") {
                                                 const newProvider = {
                                                     name: p.name,
@@ -273,9 +273,9 @@ ColumnLayout {
                         StateLayer {
                             function onClicked(): void {
                                 const providers = [];
-                                for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
+                                for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
                                     if (i !== modelData.index) {
-                                        const p = Config.utilities.vpn.provider[i];
+                                        const p = GlobalConfig.utilities.vpn.provider[i];
                                         const reconstructed = {
                                             name: p.name,
                                             displayName: p.displayName,
@@ -346,7 +346,7 @@ ColumnLayout {
         }
 
         function showEditForm(index: int): void {
-            const provider = Config.utilities.vpn.provider[index];
+            const provider = GlobalConfig.utilities.vpn.provider[index];
             const isObject = typeof provider === "object";
 
             editIndex = index;
@@ -484,8 +484,8 @@ ColumnLayout {
                     inactiveOnColour: Colours.palette.m3onSurface
                     onClicked: {
                         const providers = [];
-                        for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
-                            providers.push(Config.utilities.vpn.provider[i]);
+                        for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
+                            providers.push(GlobalConfig.utilities.vpn.provider[i]);
                         }
                         providers.push({
                             name: "netbird",
@@ -504,8 +504,8 @@ ColumnLayout {
                     inactiveOnColour: Colours.palette.m3onSurface
                     onClicked: {
                         const providers = [];
-                        for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
-                            providers.push(Config.utilities.vpn.provider[i]);
+                        for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
+                            providers.push(GlobalConfig.utilities.vpn.provider[i]);
                         }
                         providers.push({
                             name: "tailscale",
@@ -524,8 +524,8 @@ ColumnLayout {
                     inactiveOnColour: Colours.palette.m3onSurface
                     onClicked: {
                         const providers = [];
-                        for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
-                            providers.push(Config.utilities.vpn.provider[i]);
+                        for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
+                            providers.push(GlobalConfig.utilities.vpn.provider[i]);
                         }
                         providers.push({
                             name: "warp",
@@ -780,21 +780,21 @@ ColumnLayout {
                             }
 
                             if (vpnDialog.editIndex >= 0) {
-                                const oldProvider = Config.utilities.vpn.provider[vpnDialog.editIndex];
+                                const oldProvider = GlobalConfig.utilities.vpn.provider[vpnDialog.editIndex];
                                 if (typeof oldProvider === "object" && oldProvider.enabled !== undefined) {
                                     newProvider.enabled = oldProvider.enabled;
                                 }
 
-                                for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
+                                for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
                                     if (i === vpnDialog.editIndex) {
                                         providers.push(newProvider);
                                     } else {
-                                        providers.push(Config.utilities.vpn.provider[i]);
+                                        providers.push(GlobalConfig.utilities.vpn.provider[i]);
                                     }
                                 }
                             } else {
-                                for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
-                                    providers.push(Config.utilities.vpn.provider[i]);
+                                for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
+                                    providers.push(GlobalConfig.utilities.vpn.provider[i]);
                                 }
                                 providers.push(newProvider);
                             }

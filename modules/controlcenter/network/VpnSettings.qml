@@ -34,7 +34,7 @@ ColumnLayout {
     SectionContainer {
         ToggleRow {
             label: qsTr("VPN enabled")
-            checked: Config.utilities.vpn.enabled
+            checked: GlobalConfig.utilities.vpn.enabled
             toggle.onToggled: {
                 GlobalConfig.utilities.vpn.enabled = checked;
             }
@@ -58,7 +58,7 @@ ColumnLayout {
             spacing: Tokens.spacing.smaller
 
             model: ScriptModel {
-                values: Config.utilities.vpn.provider.map((provider, index) => {
+                values: GlobalConfig.utilities.vpn.provider.map((provider, index) => {
                     const isObject = typeof provider === "object";
                     const name = isObject ? (provider.name || "custom") : String(provider);
                     const displayName = isObject ? (provider.displayName || name) : name;
@@ -116,11 +116,11 @@ ColumnLayout {
 
                         IconButton {
                             icon: modelData.isActive ? "arrow_downward" : "arrow_upward"
-                            visible: !modelData.isActive || Config.utilities.vpn.provider.length > 1
+                            visible: !modelData.isActive || GlobalConfig.utilities.vpn.provider.length > 1
                             onClicked: {
                                 const providers = [];
-                                for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
-                                    const p = Config.utilities.vpn.provider[i];
+                                for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
+                                    const p = GlobalConfig.utilities.vpn.provider[i];
                                     const reconstructed = {
                                         name: p.name,
                                         displayName: p.displayName,
@@ -155,9 +155,9 @@ ColumnLayout {
                             icon: "delete"
                             onClicked: {
                                 const providers = [];
-                                for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
+                                for (let i = 0; i < GlobalConfig.utilities.vpn.provider.length; i++) {
                                     if (i !== index) {
-                                        const p = Config.utilities.vpn.provider[i];
+                                        const p = GlobalConfig.utilities.vpn.provider[i];
                                         const reconstructed = {
                                             name: p.name,
                                             displayName: p.displayName,
@@ -210,7 +210,7 @@ ColumnLayout {
             inactiveOnColour: Colours.palette.m3onSurface
 
             onClicked: {
-                const providers = [...Config.utilities.vpn.provider];
+                const providers = [...GlobalConfig.utilities.vpn.provider];
                 providers.push({
                     name: "netbird",
                     displayName: "NetBird",
@@ -227,7 +227,7 @@ ColumnLayout {
             inactiveOnColour: Colours.palette.m3onSurface
 
             onClicked: {
-                const providers = [...Config.utilities.vpn.provider];
+                const providers = [...GlobalConfig.utilities.vpn.provider];
                 providers.push({
                     name: "tailscale",
                     displayName: "Tailscale",
@@ -244,7 +244,7 @@ ColumnLayout {
             inactiveOnColour: Colours.palette.m3onSurface
 
             onClicked: {
-                const providers = [...Config.utilities.vpn.provider];
+                const providers = [...GlobalConfig.utilities.vpn.provider];
                 providers.push({
                     name: "warp",
                     displayName: "Cloudflare WARP",

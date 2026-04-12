@@ -37,8 +37,8 @@ Item {
 
         const appId = root.selectedApp.id || root.selectedApp.entry?.id;
 
-        root.hideFromLauncherChecked = Config.launcher.hiddenApps && Config.launcher.hiddenApps.length > 0 && Strings.testRegexList(Config.launcher.hiddenApps, appId);
-        root.favouriteChecked = Config.launcher.favouriteApps && Config.launcher.favouriteApps.length > 0 && Strings.testRegexList(Config.launcher.favouriteApps, appId);
+        root.hideFromLauncherChecked = GlobalConfig.launcher.hiddenApps && GlobalConfig.launcher.hiddenApps.length > 0 && Strings.testRegexList(GlobalConfig.launcher.hiddenApps, appId);
+        root.favouriteChecked = GlobalConfig.launcher.favouriteApps && GlobalConfig.launcher.favouriteApps.length > 0 && Strings.testRegexList(GlobalConfig.launcher.favouriteApps, appId);
     }
 
     function saveHiddenApps(isHidden) {
@@ -48,7 +48,7 @@ Item {
 
         const appId = root.selectedApp.id || root.selectedApp.entry?.id;
 
-        const hiddenApps = Config.launcher.hiddenApps ? [...Config.launcher.hiddenApps] : [];
+        const hiddenApps = GlobalConfig.launcher.hiddenApps ? [...GlobalConfig.launcher.hiddenApps] : [];
 
         if (isHidden) {
             if (!hiddenApps.includes(appId)) {
@@ -128,7 +128,7 @@ Item {
         id: allAppsDb
 
         path: `${Paths.state}/apps.sqlite`
-        favouriteApps: Config.launcher.favouriteApps
+        favouriteApps: GlobalConfig.launcher.favouriteApps
         entries: DesktopEntries.applications.values
     }
 
@@ -358,8 +358,8 @@ Item {
                                 }
 
                                 Loader {
-                                    readonly property bool isHidden: modelData ? Strings.testRegexList(Config.launcher.hiddenApps, modelData.id) : false
-                                    readonly property bool isFav: modelData ? Strings.testRegexList(Config.launcher.favouriteApps, modelData.id) : false
+                                    readonly property bool isHidden: modelData ? Strings.testRegexList(GlobalConfig.launcher.hiddenApps, modelData.id) : false
+                                    readonly property bool isFav: modelData ? Strings.testRegexList(GlobalConfig.launcher.favouriteApps, modelData.id) : false
 
                                     Layout.alignment: Qt.AlignVCenter
                                     asynchronous: true
@@ -422,8 +422,8 @@ Item {
                 onDisplayedAppChanged: {
                     if (displayedApp) {
                         const appId = displayedApp.id || displayedApp.entry?.id;
-                        root.hideFromLauncherChecked = Config.launcher.hiddenApps && Config.launcher.hiddenApps.length > 0 && Strings.testRegexList(Config.launcher.hiddenApps, appId);
-                        root.favouriteChecked = Config.launcher.favouriteApps && Config.launcher.favouriteApps.length > 0 && Strings.testRegexList(Config.launcher.favouriteApps, appId);
+                        root.hideFromLauncherChecked = GlobalConfig.launcher.hiddenApps && GlobalConfig.launcher.hiddenApps.length > 0 && Strings.testRegexList(GlobalConfig.launcher.hiddenApps, appId);
+                        root.favouriteChecked = GlobalConfig.launcher.favouriteApps && GlobalConfig.launcher.favouriteApps.length > 0 && Strings.testRegexList(GlobalConfig.launcher.favouriteApps, appId);
                     } else {
                         root.hideFromLauncherChecked = false;
                         root.favouriteChecked = false;
@@ -606,14 +606,14 @@ Item {
                             // * app isn't in favouriteApps array but marked as favourite anyway
                             // ^^^ This means that this app is favourited because of a regex check
                             //     this button can not toggle regexed apps
-                            enabled: appDetailsLayout.displayedApp !== null && !root.hideFromLauncherChecked && (Config.launcher.favouriteApps.indexOf(appDetailsLayout.displayedApp.id || appDetailsLayout.displayedApp.entry?.id) !== -1 || !root.favouriteChecked)
+                            enabled: appDetailsLayout.displayedApp !== null && !root.hideFromLauncherChecked && (GlobalConfig.launcher.favouriteApps.indexOf(appDetailsLayout.displayedApp.id || appDetailsLayout.displayedApp.entry?.id) !== -1 || !root.favouriteChecked)
                             opacity: enabled ? 1 : 0.6
                             onToggled: checked => {
                                 root.favouriteChecked = checked;
                                 const app = appDetailsLayout.displayedApp;
                                 if (app) {
                                     const appId = app.id || app.entry?.id;
-                                    const favouriteApps = Config.launcher.favouriteApps ? [...Config.launcher.favouriteApps] : [];
+                                    const favouriteApps = GlobalConfig.launcher.favouriteApps ? [...GlobalConfig.launcher.favouriteApps] : [];
                                     if (checked) {
                                         if (!favouriteApps.includes(appId)) {
                                             favouriteApps.push(appId);
@@ -638,14 +638,14 @@ Item {
                             // * app isn't in hiddenApps array but marked as hidden anyway
                             // ^^^ This means that this app is hidden because of a regex check
                             //     this button can not toggle regexed apps
-                            enabled: appDetailsLayout.displayedApp !== null && !root.favouriteChecked && (Config.launcher.hiddenApps.indexOf(appDetailsLayout.displayedApp.id || appDetailsLayout.displayedApp.entry?.id) !== -1 || !root.hideFromLauncherChecked)
+                            enabled: appDetailsLayout.displayedApp !== null && !root.favouriteChecked && (GlobalConfig.launcher.hiddenApps.indexOf(appDetailsLayout.displayedApp.id || appDetailsLayout.displayedApp.entry?.id) !== -1 || !root.hideFromLauncherChecked)
                             opacity: enabled ? 1 : 0.6
                             onToggled: checked => {
                                 root.hideFromLauncherChecked = checked;
                                 const app = appDetailsLayout.displayedApp;
                                 if (app) {
                                     const appId = app.id || app.entry?.id;
-                                    const hiddenApps = Config.launcher.hiddenApps ? [...Config.launcher.hiddenApps] : [];
+                                    const hiddenApps = GlobalConfig.launcher.hiddenApps ? [...GlobalConfig.launcher.hiddenApps] : [];
                                     if (checked) {
                                         if (!hiddenApps.includes(appId)) {
                                             hiddenApps.push(appId);

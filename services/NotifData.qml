@@ -33,7 +33,7 @@ QtObject {
     property string appName
     property string image
     property var hints // Hints are not persisted across restarts
-    property real expireTimeout: Config.notifs.defaultExpireTimeout
+    property real expireTimeout: GlobalConfig.notifs.defaultExpireTimeout
     property int urgency: NotificationUrgency.Normal
     property bool resident
     property bool hasActionIcons
@@ -41,9 +41,9 @@ QtObject {
 
     readonly property Timer timer: Timer {
         running: true
-        interval: notif.expireTimeout > 0 ? notif.expireTimeout : Config.notifs.defaultExpireTimeout
+        interval: notif.expireTimeout > 0 ? notif.expireTimeout : GlobalConfig.notifs.defaultExpireTimeout
         onTriggered: {
-            if (Config.notifs.expire)
+            if (GlobalConfig.notifs.expire)
                 notif.popup = false;
         }
     }

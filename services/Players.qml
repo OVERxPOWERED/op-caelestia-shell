@@ -37,7 +37,7 @@ Singleton {
 
     Connections {
         function onPostTrackChanged() {
-            if (!Config.utilities.toasts.nowPlaying) {
+            if (!GlobalConfig.utilities.toasts.nowPlaying) {
                 return;
             }
             if (root.active.trackArtist != "" && root.active.trackTitle != "") {

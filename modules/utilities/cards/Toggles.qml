@@ -27,7 +27,7 @@ StyledRect {
             }
 
             if (item.id === "vpn") {
-                return Config.utilities.vpn.provider.some(p => typeof p === "object" ? (p.enabled === true) : false);
+                return GlobalConfig.utilities.vpn.provider.some(p => typeof p === "object" ? (p.enabled === true) : false);
             }
 
             seenIds.add(item.id);

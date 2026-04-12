@@ -69,7 +69,7 @@ Searcher {
             description: qsTr("All colours are grayscale, no chroma.")
         }
     ]
-    useFuzzy: Config.launcher.useFuzzy.variants
+    useFuzzy: GlobalConfig.launcher.useFuzzy.variants
 
     component Variant: QtObject {
         required property string variant

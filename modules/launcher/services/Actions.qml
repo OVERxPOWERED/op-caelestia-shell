@@ -15,12 +15,12 @@ Searcher {
     }
 
     list: variants.instances
-    useFuzzy: Config.launcher.useFuzzy.actions
+    useFuzzy: GlobalConfig.launcher.useFuzzy.actions
 
     Variants {
         id: variants
 
-        model: Config.launcher.actions.filter(a => (a.enabled ?? true) && (Config.launcher.enableDangerousActions || !(a.dangerous ?? false)))
+        model: Config.launcher.actions.filter(a => (a.enabled ?? true) && (GlobalConfig.launcher.enableDangerousActions || !(a.dangerous ?? false)))
 
         Action {}
     }

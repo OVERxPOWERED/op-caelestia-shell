@@ -86,8 +86,8 @@ Item {
         id: metrics
 
         text: root.windowTitle
-        font.pointSize: Tokens.font.size.smaller
-        font.family: Tokens.font.family.mono
+        font.pointSize: root.Tokens.font.size.smaller
+        font.family: root.Tokens.font.family.mono
         elide: Qt.ElideRight
         elideWidth: root.maxHeight - icon.height
 
@@ -120,10 +120,10 @@ Item {
 
         transform: [
             Translate {
-                x: Config.bar.activeWindow.inverted ? -text.implicitWidth + text.implicitHeight : 0
+                x: root.Config.bar.activeWindow.inverted ? -text.implicitWidth + text.implicitHeight : 0
             },
             Rotation {
-                angle: Config.bar.activeWindow.inverted ? 270 : 90
+                angle: root.Config.bar.activeWindow.inverted ? 270 : 90
                 origin.x: text.implicitHeight / 2
                 origin.y: text.implicitHeight / 2
             }

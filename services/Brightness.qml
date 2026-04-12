@@ -50,13 +50,13 @@ Singleton {
     function increaseBrightness(): void {
         const monitor = getMonitor("active");
         if (monitor)
-            monitor.setBrightness(monitor.brightness + Config.services.brightnessIncrement);
+            monitor.setBrightness(monitor.brightness + GlobalConfig.services.brightnessIncrement);
     }
 
     function decreaseBrightness(): void {
         const monitor = getMonitor("active");
         if (monitor)
-            monitor.setBrightness(monitor.brightness - Config.services.brightnessIncrement);
+            monitor.setBrightness(monitor.brightness - GlobalConfig.services.brightnessIncrement);
     }
 
     onMonitorsChanged: {

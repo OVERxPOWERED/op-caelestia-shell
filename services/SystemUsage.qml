@@ -14,7 +14,7 @@ Singleton {
     property real cpuTemp
 
     // GPU properties
-    readonly property string gpuType: Config.services.gpuType.toUpperCase() || autoGpuType
+    readonly property string gpuType: GlobalConfig.services.gpuType.toUpperCase() || autoGpuType
     property string autoGpuType: "NONE"
     property string gpuName: ""
     property real gpuPerc
@@ -251,7 +251,7 @@ Singleton {
     Process {
         id: gpuTypeCheck
 
-        running: !Config.services.gpuType
+        running: !GlobalConfig.services.gpuType
         command: ["sh", "-c", "if command -v nvidia-smi &>/dev/null && nvidia-smi -L &>/dev/null; then echo NVIDIA; elif ls /sys/class/drm/card*/device/gpu_busy_percent 2>/dev/null | grep -q .; then echo GENERIC; else echo NONE; fi"]
         stdout: StdioCollector {
             onStreamFinished: root.autoGpuType = text.trim()

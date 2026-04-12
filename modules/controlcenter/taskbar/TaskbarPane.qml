@@ -43,7 +43,7 @@ Item {
     property bool workspacesOccupiedBg: Config.bar.workspaces.occupiedBg ?? false
     property bool workspacesShowWindows: Config.bar.workspaces.showWindows ?? false
     property int workspacesMaxWindowIcons: Config.bar.workspaces.maxWindowIcons ?? 0
-    property bool workspacesPerMonitor: Config.bar.workspaces.perMonitorWorkspaces ?? true
+    property bool workspacesPerMonitor: GlobalConfig.bar.workspaces.perMonitorWorkspaces ?? true
     property bool scrollWorkspaces: Config.bar.scrollActions.workspaces ?? true
     property bool scrollVolume: Config.bar.scrollActions.volume ?? true
     property bool scrollBrightness: Config.bar.scrollActions.brightness ?? true

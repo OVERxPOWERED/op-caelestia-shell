@@ -27,7 +27,7 @@ Singleton {
     readonly property var cachedCities: new Map()
 
     function reload(): void {
-        const configLocation = Config.services.weatherLocation;
+        const configLocation = GlobalConfig.services.weatherLocation;
 
         if (configLocation) {
             if (configLocation.indexOf(",") !== -1 && !isNaN(parseFloat(configLocation.split(",")[0]))) {
@@ -215,7 +215,7 @@ Singleton {
             root.reload();
         }
 
-        target: Config.services
+        target: GlobalConfig.services
     }
 
     Timer {

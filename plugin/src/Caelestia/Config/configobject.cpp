@@ -29,7 +29,7 @@ void ConfigObject::loadFromJson(const QJsonObject& obj) {
         if (!obj.contains(key))
             continue;
 
-        if (m_global && isGlobalOnly(key))
+        if (isGlobalOnly(key))
             qCWarning(
                 lcConfig, "Option '%s' is global-only and will be ignored in per-monitor config", qUtf8Printable(key));
 
@@ -79,6 +79,10 @@ QJsonObject ConfigObject::toJsonObject() const {
             continue;
 
         const auto key = QString::fromUtf8(prop.name());
+
+        if (isGlobalOnly(key))
+            continue;
+
         const auto value = prop.read(this);
 
         // Recurse into sub-objects — include only if they have loaded keys
@@ -125,6 +129,8 @@ void ConfigObject::clearLoadedKeys() {
     const auto* meta = metaObject();
     for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
         auto prop = meta->property(i);
+        if (isGlobalOnly(QString::fromUtf8(prop.name())))
+            continue;
         auto value = prop.read(this);
         auto* subObj = value.value<ConfigObject*>();
         if (subObj)
@@ -146,6 +152,9 @@ void ConfigObject::syncFromGlobal(ConfigObject* global) {
         auto prop = meta->property(i);
         const auto key = QString::fromUtf8(prop.name());
 
+        if (isGlobalOnly(key))
+            continue;
+
         auto current = prop.read(this);
         auto* subObj = current.value<ConfigObject*>();
 
@@ -157,7 +166,7 @@ void ConfigObject::syncFromGlobal(ConfigObject* global) {
             continue;
         }
 
-        if (!prop.isWritable() || isGlobalOnly(key))
+        if (!prop.isWritable())
             continue;
 
         if (!m_loadedKeys.contains(key)) {
@@ -180,6 +189,9 @@ void ConfigObject::resyncFromGlobal() {
         auto prop = meta->property(i);
         const auto key = QString::fromUtf8(prop.name());
 
+        if (isGlobalOnly(key))
+            continue;
+
         auto current = prop.read(this);
         auto* subObj = current.value<ConfigObject*>();
 
@@ -188,7 +200,7 @@ void ConfigObject::resyncFromGlobal() {
             continue;
         }
 
-        if (!prop.isWritable() || isGlobalOnly(key))
+        if (!prop.isWritable())
             continue;
 
         if (!m_loadedKeys.contains(key)) {
@@ -207,7 +219,7 @@ bool ConfigObject::isOverlay() const {
 }
 
 bool ConfigObject::isGlobalOnly(const QString& name) const {
-    return m_globalOnlyKeys.contains(name);
+    return isOverlay() && m_globalOnlyKeys.contains(name);
 }
 
 void ConfigObject::markPropertyLoaded(const QString& name) {

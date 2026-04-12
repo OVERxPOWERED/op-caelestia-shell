@@ -12,9 +12,9 @@ class UserPaths : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(QString, wallpaperDir,
+    CONFIG_GLOBAL_PROPERTY(QString, wallpaperDir,
         QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QStringLiteral("/Wallpapers"))
-    CONFIG_PROPERTY(QString, lyricsDir, QDir::homePath() + QStringLiteral("/Music/lyrics/"))
+    CONFIG_GLOBAL_PROPERTY(QString, lyricsDir, QDir::homePath() + QStringLiteral("/Music/lyrics/"))
     CONFIG_PROPERTY(QString, sessionGif, QStringLiteral("root:/assets/kurukuru.gif"))
     CONFIG_PROPERTY(QString, mediaGif, QStringLiteral("root:/assets/bongocat.gif"))
     CONFIG_PROPERTY(QString, noNotifsPic, QStringLiteral("root:/assets/dino.png"))

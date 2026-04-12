@@ -12,11 +12,11 @@ class LauncherUseFuzzy : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(bool, apps, false)
-    CONFIG_PROPERTY(bool, actions, false)
-    CONFIG_PROPERTY(bool, schemes, false)
-    CONFIG_PROPERTY(bool, variants, false)
-    CONFIG_PROPERTY(bool, wallpapers, false)
+    CONFIG_GLOBAL_PROPERTY(bool, apps, false)
+    CONFIG_GLOBAL_PROPERTY(bool, actions, false)
+    CONFIG_GLOBAL_PROPERTY(bool, schemes, false)
+    CONFIG_GLOBAL_PROPERTY(bool, variants, false)
+    CONFIG_GLOBAL_PROPERTY(bool, wallpapers, false)
 
 public:
     explicit LauncherUseFuzzy(QObject* parent = nullptr)
@@ -31,15 +31,15 @@ class LauncherConfig : public ConfigObject {
     CONFIG_PROPERTY(bool, showOnHover, false)
     CONFIG_PROPERTY(int, maxShown, 7)
     CONFIG_PROPERTY(int, maxWallpapers, 9)
-    CONFIG_PROPERTY(QString, specialPrefix, QStringLiteral("@"))
-    CONFIG_PROPERTY(QString, actionPrefix, QStringLiteral(">"))
-    CONFIG_PROPERTY(bool, enableDangerousActions, false)
+    CONFIG_GLOBAL_PROPERTY(QString, specialPrefix, QStringLiteral("@"))
+    CONFIG_GLOBAL_PROPERTY(QString, actionPrefix, QStringLiteral(">"))
+    CONFIG_GLOBAL_PROPERTY(bool, enableDangerousActions, false)
     CONFIG_PROPERTY(int, dragThreshold, 50)
-    CONFIG_PROPERTY(bool, vimKeybinds, false)
-    CONFIG_PROPERTY(QStringList, favouriteApps)
-    CONFIG_PROPERTY(QStringList, hiddenApps)
+    CONFIG_GLOBAL_PROPERTY(bool, vimKeybinds, false)
+    CONFIG_GLOBAL_PROPERTY(QStringList, favouriteApps)
+    CONFIG_GLOBAL_PROPERTY(QStringList, hiddenApps)
     CONFIG_SUBOBJECT(LauncherUseFuzzy, useFuzzy)
-    CONFIG_PROPERTY(QVariantList, actions)
+    CONFIG_GLOBAL_PROPERTY(QVariantList, actions)
 
 public:
     explicit LauncherConfig(QObject* parent = nullptr)

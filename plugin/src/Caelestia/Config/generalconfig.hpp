@@ -12,10 +12,10 @@ class GeneralApps : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(QStringList, terminal, { QStringLiteral("foot") })
-    CONFIG_PROPERTY(QStringList, audio, { QStringLiteral("pavucontrol") })
-    CONFIG_PROPERTY(QStringList, playback, { QStringLiteral("mpv") })
-    CONFIG_PROPERTY(QStringList, explorer, { QStringLiteral("thunar") })
+    CONFIG_GLOBAL_PROPERTY(QStringList, terminal, { QStringLiteral("foot") })
+    CONFIG_GLOBAL_PROPERTY(QStringList, audio, { QStringLiteral("pavucontrol") })
+    CONFIG_GLOBAL_PROPERTY(QStringList, playback, { QStringLiteral("mpv") })
+    CONFIG_GLOBAL_PROPERTY(QStringList, explorer, { QStringLiteral("thunar") })
 
 public:
     explicit GeneralApps(QObject* parent = nullptr)
@@ -26,9 +26,9 @@ class GeneralIdle : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(bool, lockBeforeSleep, true)
-    CONFIG_PROPERTY(bool, inhibitWhenAudio, true)
-    CONFIG_PROPERTY(QVariantList, timeouts)
+    CONFIG_GLOBAL_PROPERTY(bool, lockBeforeSleep, true)
+    CONFIG_GLOBAL_PROPERTY(bool, inhibitWhenAudio, true)
+    CONFIG_GLOBAL_PROPERTY(QVariantList, timeouts)
 
 public:
     explicit GeneralIdle(QObject* parent = nullptr)
@@ -39,8 +39,8 @@ class GeneralBattery : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(QVariantList, warnLevels)
-    CONFIG_PROPERTY(int, criticalLevel, 3)
+    CONFIG_GLOBAL_PROPERTY(QVariantList, warnLevels)
+    CONFIG_GLOBAL_PROPERTY(int, criticalLevel, 3)
 
 public:
     explicit GeneralBattery(QObject* parent = nullptr)
@@ -51,7 +51,7 @@ class GeneralConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(QString, logo)
+    CONFIG_GLOBAL_PROPERTY(QString, logo)
     CONFIG_PROPERTY(qreal, mediaGifSpeedAdjustment, 300)
     CONFIG_PROPERTY(qreal, sessionGifSpeed, 0.7)
     CONFIG_SUBOBJECT(GeneralApps, apps)

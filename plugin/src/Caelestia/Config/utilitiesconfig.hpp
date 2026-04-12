@@ -11,19 +11,19 @@ class UtilitiesToasts : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(bool, configLoaded, true)
     CONFIG_PROPERTY(QString, fullscreen, QStringLiteral("off"))
-    CONFIG_PROPERTY(bool, chargingChanged, true)
-    CONFIG_PROPERTY(bool, gameModeChanged, true)
-    CONFIG_PROPERTY(bool, dndChanged, true)
-    CONFIG_PROPERTY(bool, audioOutputChanged, true)
-    CONFIG_PROPERTY(bool, audioInputChanged, true)
-    CONFIG_PROPERTY(bool, capsLockChanged, true)
-    CONFIG_PROPERTY(bool, numLockChanged, true)
-    CONFIG_PROPERTY(bool, kbLayoutChanged, true)
-    CONFIG_PROPERTY(bool, kbLimit, true)
-    CONFIG_PROPERTY(bool, vpnChanged, true)
-    CONFIG_PROPERTY(bool, nowPlaying, false)
+    CONFIG_GLOBAL_PROPERTY(bool, configLoaded, true)
+    CONFIG_GLOBAL_PROPERTY(bool, chargingChanged, true)
+    CONFIG_GLOBAL_PROPERTY(bool, gameModeChanged, true)
+    CONFIG_GLOBAL_PROPERTY(bool, dndChanged, true)
+    CONFIG_GLOBAL_PROPERTY(bool, audioOutputChanged, true)
+    CONFIG_GLOBAL_PROPERTY(bool, audioInputChanged, true)
+    CONFIG_GLOBAL_PROPERTY(bool, capsLockChanged, true)
+    CONFIG_GLOBAL_PROPERTY(bool, numLockChanged, true)
+    CONFIG_GLOBAL_PROPERTY(bool, kbLayoutChanged, true)
+    CONFIG_GLOBAL_PROPERTY(bool, kbLimit, true)
+    CONFIG_GLOBAL_PROPERTY(bool, vpnChanged, true)
+    CONFIG_GLOBAL_PROPERTY(bool, nowPlaying, false)
 
 public:
     explicit UtilitiesToasts(QObject* parent = nullptr)
@@ -34,8 +34,8 @@ class UtilitiesVpn : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(bool, enabled, false)
-    CONFIG_PROPERTY(QVariantList, provider)
+    CONFIG_GLOBAL_PROPERTY(bool, enabled, false)
+    CONFIG_GLOBAL_PROPERTY(QVariantList, provider)
 
 public:
     explicit UtilitiesVpn(QObject* parent = nullptr)

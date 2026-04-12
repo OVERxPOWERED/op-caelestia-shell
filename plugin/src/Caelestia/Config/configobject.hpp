@@ -41,6 +41,34 @@ public:                                                                         
 private:                                                                                                               \
     Type* m_##name = nullptr;
 
+// Like CONFIG_PROPERTY but warns on read/write when accessed on a per-monitor overlay.
+#define CONFIG_GLOBAL_PROPERTY(Type, name, ...)                                                                        \
+    Q_PROPERTY(Type name READ name WRITE set_##name NOTIFY name##Changed)                                              \
+                                                                                                                       \
+public:                                                                                                                \
+    [[nodiscard]] Type name() const {                                                                                  \
+        if (isOverlay())                                                                                               \
+            qCWarning(caelestia::config::lcConfig, "Reading global-only option '%s' on per-monitor overlay", #name);   \
+        return m_##name;                                                                                               \
+    }                                                                                                                  \
+    void set_##name(const Type& val) {                                                                                 \
+        if (isOverlay())                                                                                               \
+            qCWarning(caelestia::config::lcConfig, "Writing global-only option '%s' on per-monitor overlay", #name);   \
+        if (caelestia::config::ConfigObject::updateMember(m_##name, val)) {                                            \
+            markPropertyLoaded(QStringLiteral(#name));                                                                 \
+            Q_EMIT name##Changed();                                                                                    \
+            notifyPropertyChanged(QStringLiteral(#name), QVariant::fromValue(m_##name));                               \
+        }                                                                                                              \
+    }                                                                                                                  \
+    Q_SIGNAL void name##Changed();                                                                                     \
+                                                                                                                       \
+private:                                                                                                               \
+    Type m_##name __VA_OPT__(= __VA_ARGS__);                                                                           \
+    const bool m_##name##_go = [this] {                                                                                \
+        markGlobalOnly(QStringLiteral(#name));                                                                         \
+        return true;                                                                                                   \
+    }();
+
 namespace caelestia::config {
 
 Q_DECLARE_LOGGING_CATEGORY(lcConfig)
@@ -61,6 +89,8 @@ public:
 
     [[nodiscard]] bool isPropertyLoaded(const QString& name) const { return m_loadedKeys.contains(name); }
 
+    [[nodiscard]] bool isOverlay() const { return m_global != nullptr; }
+
     Q_INVOKABLE void resetOption(const QString& name);
 
     template <typename T> static bool updateMember(T& member, const T& value) {
@@ -80,6 +110,7 @@ signals:
 
 protected:
     void markPropertyLoaded(const QString& name);
+    void markGlobalOnly(const QString& name);
     void notifyPropertyChanged(const QString& name, const QVariant& value);
 
 private:
@@ -89,6 +120,7 @@ private:
     // Per-monitor overlay state
     ConfigObject* m_global = nullptr;
     QSet<QString> m_loadedKeys;
+    QSet<QString> m_globalOnlyKeys;
     QMap<QString, QVariant> m_pendingChanges;
     QTimer* m_batchTimer = nullptr;
 };

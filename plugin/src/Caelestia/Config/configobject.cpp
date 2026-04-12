@@ -29,6 +29,10 @@ void ConfigObject::loadFromJson(const QJsonObject& obj) {
         if (!obj.contains(key))
             continue;
 
+        if (m_global && m_globalOnlyKeys.contains(key))
+            qCWarning(
+                lcConfig, "Option '%s' is global-only and will be ignored in per-monitor config", qUtf8Printable(key));
+
         const auto jsonVal = obj.value(key);
 
         // Recurse into sub-objects
@@ -225,6 +229,10 @@ void ConfigObject::onGlobalPropertiesChanged(const QMap<QString, QVariant>& chan
                               << "from global change";
         }
     }
+}
+
+void ConfigObject::markGlobalOnly(const QString& name) {
+    m_globalOnlyKeys.insert(name);
 }
 
 void ConfigObject::notifyPropertyChanged(const QString& name, const QVariant& value) {

@@ -8,10 +8,10 @@ namespace caelestia::config {
 
 namespace {
 
-const AppearanceConfig* resolveAppearance(GlobalConfig* config, const char* prop, QObject* parent) {
+const AppearanceConfig* resolveAppearance(GlobalConfig* config, bool complete, const char* prop, QObject* parent) {
     if (config)
         return config->appearance();
-    if (parent)
+    if (complete && parent)
         qCWarning(lcConfig, "Tokens.%s accessed without a screen set on %s", prop, parent->metaObject()->className());
     return GlobalConfig::instance()->appearance();
 }
@@ -23,6 +23,12 @@ Tokens::Tokens(QObject* parent)
     , m_anim(new AnimTokens(this)) {
     bindAnim();
     initialize();
+}
+
+void Tokens::classBegin() {}
+
+void Tokens::componentComplete() {
+    m_complete = true;
 }
 
 QString Tokens::screen() const {
@@ -71,7 +77,7 @@ void Tokens::bindAnim() {
 
 #define TOKENS_ATTACHED_GETTER(Type, name)                                                                             \
     const Type* Tokens::name() const {                                                                                 \
-        auto* a = resolveAppearance(m_config, #name, parent());                                                        \
+        auto* a = resolveAppearance(m_config, m_complete, #name, parent());                                            \
         return a ? a->name() : nullptr;                                                                                \
     }
 
@@ -89,7 +95,7 @@ const AppearanceTransparency* Tokens::transparency() const {
 const SizeTokens* Tokens::sizes() const {
     if (m_tokens)
         return m_tokens->sizes();
-    if (parent())
+    if (m_complete && parent())
         qCWarning(lcConfig, "Tokens.sizes accessed without a screen set on %s", parent()->metaObject()->className());
     return TokenConfig::instance()->sizes();
 }

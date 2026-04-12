@@ -2,11 +2,19 @@
 #include "config.hpp"
 #include "monitorconfigmanager.hpp"
 
+#include <qquickitem.h>
+
 namespace caelestia::config {
 
 Config::Config(QObject* parent)
     : QQuickAttachedPropertyPropagator(parent) {
     initialize();
+}
+
+void Config::classBegin() {}
+
+void Config::componentComplete() {
+    m_complete = true;
 }
 
 QString Config::screen() const {
@@ -49,7 +57,7 @@ void Config::attachedParentChange(
     const Type* Config::name() const {                                                                                 \
         if (m_config)                                                                                                  \
             return m_config->name();                                                                                   \
-        if (parent())                                                                                                  \
+        if (m_complete && parent()) /* Suppress warnings before component is complete */                               \
             qCWarning(lcConfig, "Config.%s accessed without a screen set on %s", #name,                                \
                 parent()->metaObject()->className());                                                                  \
         return GlobalConfig::instance()->name();                                                                       \

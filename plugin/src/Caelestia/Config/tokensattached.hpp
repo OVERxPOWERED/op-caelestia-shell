@@ -9,8 +9,9 @@
 
 namespace caelestia::config {
 
-class Tokens : public QQuickAttachedPropertyPropagator {
+class Tokens : public QQuickAttachedPropertyPropagator, public QQmlParserStatus {
     Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
     QML_ELEMENT
     QML_UNCREATABLE("")
     QML_ATTACHED(Tokens)
@@ -51,9 +52,13 @@ protected:
         QQuickAttachedPropertyPropagator* newParent, QQuickAttachedPropertyPropagator* oldParent) override;
 
 private:
+    void classBegin() override;
+    void componentComplete() override;
+
     void propagateScreen();
     void bindAnim();
 
+    bool m_complete = false;
     QString m_screen;
     GlobalConfig* m_config = nullptr;
     TokenConfig* m_tokens = nullptr;

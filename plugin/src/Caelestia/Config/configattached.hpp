@@ -6,8 +6,9 @@
 
 namespace caelestia::config {
 
-class Config : public QQuickAttachedPropertyPropagator {
+class Config : public QQuickAttachedPropertyPropagator, public QQmlParserStatus {
     Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
     QML_ELEMENT
     QML_UNCREATABLE("")
     QML_ATTACHED(Config)
@@ -67,8 +68,12 @@ protected:
         QQuickAttachedPropertyPropagator* newParent, QQuickAttachedPropertyPropagator* oldParent) override;
 
 private:
+    void classBegin() override;
+    void componentComplete() override;
+
     void propagateScreen();
 
+    bool m_complete = false;
     QString m_screen;
     GlobalConfig* m_config = nullptr;
 };

@@ -106,7 +106,7 @@ Item {
                     Layout.alignment: Qt.AlignTop
                     Layout.topMargin: Tokens.padding.large * 1.4 * root.clockScale
 
-                    active: Config.services.useTwelveHourClock
+                    active: GlobalConfig.services.useTwelveHourClock
                     visible: active
 
                     sourceComponent: StyledText {

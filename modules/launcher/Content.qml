@@ -78,7 +78,7 @@ Item {
             topPadding: Tokens.padding.larger
             bottomPadding: Tokens.padding.larger
 
-            placeholderText: qsTr("Type \"%1\" for commands").arg(Config.launcher.actionPrefix)
+            placeholderText: qsTr("Type \"%1\" for commands").arg(GlobalConfig.launcher.actionPrefix)
 
             onAccepted: {
                 const currentItem = list.currentList?.currentItem;
@@ -88,8 +88,8 @@ Item {
                             Wallpapers.previewColourLock = true;
                         Wallpapers.setWallpaper(currentItem.modelData.path);
                         root.visibilities.launcher = false;
-                    } else if (text.startsWith(Config.launcher.actionPrefix)) {
-                        if (text.startsWith(`${Config.launcher.actionPrefix}calc `))
+                    } else if (text.startsWith(GlobalConfig.launcher.actionPrefix)) {
+                        if (text.startsWith(`${GlobalConfig.launcher.actionPrefix}calc `))
                             currentItem.onClicked();
                         else
                             currentItem.modelData.onClicked(list.currentList);

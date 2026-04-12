@@ -14,7 +14,7 @@ Searcher {
     property string currentVariant
 
     function transformSearch(search: string): string {
-        return search.slice(`${Config.launcher.actionPrefix}scheme `.length);
+        return search.slice(`${GlobalConfig.launcher.actionPrefix}scheme `.length);
     }
 
     function selector(item: var): string {

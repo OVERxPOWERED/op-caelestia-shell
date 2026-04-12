@@ -62,7 +62,7 @@ StyledRect {
             anchors.horizontalCenter: parent.horizontalCenter
 
             horizontalAlignment: StyledText.AlignHCenter
-            text: Time.format(Config.services.useTwelveHourClock ? "hh\nmm\nA" : "hh\nmm")
+            text: Time.format(GlobalConfig.services.useTwelveHourClock ? "hh\nmm\nA" : "hh\nmm")
             font.pointSize: Tokens.font.size.smaller
             font.family: Tokens.font.family.mono
             color: root.colour

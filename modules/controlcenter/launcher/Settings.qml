@@ -100,13 +100,13 @@ ColumnLayout {
 
         PropertyRow {
             label: qsTr("Special prefix")
-            value: Config.launcher.specialPrefix || qsTr("None")
+            value: GlobalConfig.launcher.specialPrefix || qsTr("None")
         }
 
         PropertyRow {
             showTopMargin: true
             label: qsTr("Action prefix")
-            value: Config.launcher.actionPrefix || qsTr("None")
+            value: GlobalConfig.launcher.actionPrefix || qsTr("None")
         }
     }
 

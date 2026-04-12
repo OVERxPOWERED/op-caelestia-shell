@@ -58,7 +58,7 @@ ColumnLayout {
             Layout.leftMargin: Tokens.spacing.small
             Layout.alignment: Qt.AlignVCenter
 
-            active: Config.services.useTwelveHourClock
+            active: GlobalConfig.services.useTwelveHourClock
             visible: active
 
             sourceComponent: StyledText {

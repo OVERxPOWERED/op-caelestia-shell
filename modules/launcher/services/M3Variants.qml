@@ -10,7 +10,7 @@ Searcher {
     id: root
 
     function transformSearch(search: string): string {
-        return search.slice(`${Config.launcher.actionPrefix}variant `.length);
+        return search.slice(`${GlobalConfig.launcher.actionPrefix}variant `.length);
     }
 
     list: [

@@ -10,7 +10,7 @@ Item {
     id: root
 
     required property var list
-    readonly property string math: list.search.text.slice(`${Config.launcher.actionPrefix}calc `.length)
+    readonly property string math: list.search.text.slice(`${GlobalConfig.launcher.actionPrefix}calc `.length)
 
     function onClicked(): void {
         Quickshell.execDetached(["wl-copy", Qalculator.rawResult]);

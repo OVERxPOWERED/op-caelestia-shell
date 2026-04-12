@@ -93,7 +93,7 @@ StyledRect {
                 id: activeText
 
                 anchors.centerIn: parent
-                text: qsTr("Active since %1").arg(Qt.formatTime(IdleInhibitor.enabledSince, Config.services.useTwelveHourClock ? "hh:mm a" : "hh:mm"))
+                text: qsTr("Active since %1").arg(Qt.formatTime(IdleInhibitor.enabledSince, GlobalConfig.services.useTwelveHourClock ? "hh:mm a" : "hh:mm"))
                 color: Colours.palette.m3onPrimary
                 font.pointSize: Math.round(Tokens.font.size.small * 0.9)
             }

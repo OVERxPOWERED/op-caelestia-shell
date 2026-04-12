@@ -24,7 +24,7 @@ Searcher {
     }
 
     function search(search: string): list<var> {
-        const prefix = Config.launcher.specialPrefix;
+        const prefix = GlobalConfig.launcher.specialPrefix;
 
         if (search.startsWith(`${prefix}i `)) {
             keys = ["id", "name"];

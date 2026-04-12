@@ -50,7 +50,7 @@ StyledListView {
 
     state: {
         const text = search.text;
-        const prefix = Config.launcher.actionPrefix;
+        const prefix = GlobalConfig.launcher.actionPrefix;
         if (text.startsWith(prefix)) {
             for (const action of ["calc", "scheme", "variant"])
                 if (text.startsWith(`${prefix}${action} `))

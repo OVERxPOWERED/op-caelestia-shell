@@ -87,7 +87,7 @@ Item {
     Timer {
         id: timer
 
-        interval: Config.osd.hideDelay
+        interval: root.Config.osd.hideDelay
         onTriggered: {
             if (!root.hovered)
                 root.visibilities.osd = false;

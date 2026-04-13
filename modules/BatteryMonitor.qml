@@ -7,7 +7,7 @@ import Caelestia.Config
 Scope {
     id: root
 
-    readonly property list<var> warnLevels: [...Config.general.battery.warnLevels].sort((a, b) => b.level - a.level)
+    readonly property list<var> warnLevels: [...GlobalConfig.general.battery.warnLevels].sort((a, b) => b.level - a.level)
 
     Connections {
         function onOnBatteryChanged(): void {
@@ -38,7 +38,7 @@ Scope {
                 }
             }
 
-            if (!hibernateTimer.running && p <= Config.general.battery.criticalLevel) {
+            if (!hibernateTimer.running && p <= GlobalConfig.general.battery.criticalLevel) {
                 Toaster.toast(qsTr("Hibernating in 5 seconds"), qsTr("Hibernating to prevent data loss"), "battery_android_alert", Toast.Error);
                 hibernateTimer.start();
             }

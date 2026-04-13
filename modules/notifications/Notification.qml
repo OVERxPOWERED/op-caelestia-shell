@@ -207,9 +207,9 @@ StyledRect {
                     PathAngleArc {
                         id: progressArc
 
-                        radiusX: progressIndicator.width / 2 - Tokens.padding.small / 2
+                        radiusX: progressIndicator.width / 2 - root.Tokens.padding.small / 2
                         centerX: progressIndicator.width / 2
-                        radiusY: progressIndicator.height / 2 - Tokens.padding.small / 2
+                        radiusY: progressIndicator.height / 2 - root.Tokens.padding.small / 2
                         centerY: progressIndicator.height / 2
 
                         startAngle: -90

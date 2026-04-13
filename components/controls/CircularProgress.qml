@@ -27,7 +27,7 @@ Shape {
         fillColor: "transparent"
         strokeColor: root.bgColour
         strokeWidth: root.strokeWidth
-        capStyle: Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+        capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
         PathAngleArc {
             startAngle: root.startAngle + 360 * root.vValue + root.gapAngle
@@ -49,7 +49,7 @@ Shape {
         fillColor: "transparent"
         strokeColor: root.fgColour
         strokeWidth: root.strokeWidth
-        capStyle: Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+        capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
         PathAngleArc {
             startAngle: root.startAngle

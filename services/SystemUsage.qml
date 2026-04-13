@@ -80,7 +80,7 @@ Singleton {
 
     Timer {
         running: root.refCount > 0
-        interval: Config.dashboard.resourceUpdateInterval
+        interval: GlobalConfig.dashboard.resourceUpdateInterval
         repeat: true
         triggeredOnStart: true
         onTriggered: {

@@ -67,7 +67,7 @@ Item {
 
     Timer {
         running: Players.active?.isPlaying ?? false
-        interval: Config.dashboard.mediaUpdateInterval
+        interval: GlobalConfig.dashboard.mediaUpdateInterval
         triggeredOnStart: true
         repeat: true
         onTriggered: {
@@ -132,12 +132,12 @@ Item {
             readonly property real value: Math.max(1e-3, Math.min(1, Audio.cava.values[modelData]))
 
             readonly property real angle: modelData * 2 * Math.PI / GlobalConfig.services.visualiserBars
-            readonly property real magnitude: value * Tokens.sizes.dashboard.mediaVisualiserSize
+            readonly property real magnitude: value * root.Tokens.sizes.dashboard.mediaVisualiserSize
             readonly property real cos: Math.cos(angle)
             readonly property real sin: Math.sin(angle)
 
-            capStyle: Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
-            strokeWidth: 360 / GlobalConfig.services.visualiserBars - Tokens.spacing.small / 4
+            capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+            strokeWidth: 360 / GlobalConfig.services.visualiserBars - root.Tokens.spacing.small / 4
             strokeColor: Colours.palette.m3primary
 
             startX: visualiser.centerX + (visualiser.innerX + strokeWidth / 2) * cos

@@ -219,7 +219,7 @@ StyledRect {
 
             Repeater {
                 model: ScriptModel {
-                    values: root.notifs.slice(0, Config.notifs.groupPreviewNum)
+                    values: root.notifs.slice(0, root.Config.notifs.groupPreviewNum)
                 }
 
                 NotifLine {
@@ -282,7 +282,7 @@ StyledRect {
                 sourceComponent: ColumnLayout {
                     Repeater {
                         model: ScriptModel {
-                            values: root.notifs.slice(Config.notifs.groupPreviewNum)
+                            values: root.notifs.slice(root.Config.notifs.groupPreviewNum)
                         }
 
                         NotifLine {}

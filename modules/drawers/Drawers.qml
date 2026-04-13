@@ -16,7 +16,6 @@ Variants {
         Exclusions {
             screen: scope.modelData
             bar: content.bar
-            borderThickness: Config.border.thickness
         }
 
         ContentWindow {

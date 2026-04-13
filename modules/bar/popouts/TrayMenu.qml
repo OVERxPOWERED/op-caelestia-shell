@@ -152,7 +152,7 @@ StackView {
                             font.family: label.font.family
 
                             elide: Text.ElideRight
-                            elideWidth: Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Tokens.spacing.normal : 0)
+                            elideWidth: root.Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + root.Tokens.spacing.normal : 0)
                         }
 
                         Loader {

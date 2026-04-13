@@ -26,7 +26,7 @@ Item {
 
     Timer {
         running: Players.active?.isPlaying ?? false
-        interval: Config.dashboard.mediaUpdateInterval
+        interval: GlobalConfig.dashboard.mediaUpdateInterval
         triggeredOnStart: true
         repeat: true
         onTriggered: Players.active?.positionChanged()
@@ -42,16 +42,16 @@ Item {
         ShapePath {
             fillColor: "transparent"
             strokeColor: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-            strokeWidth: Tokens.sizes.dashboard.mediaProgressThickness
-            capStyle: Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+            strokeWidth: root.Tokens.sizes.dashboard.mediaProgressThickness
+            capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
             PathAngleArc {
                 centerX: cover.x + cover.width / 2
                 centerY: cover.y + cover.height / 2
-                radiusX: (cover.width + Tokens.sizes.dashboard.mediaProgressThickness) / 2 + Tokens.spacing.small
-                radiusY: (cover.height + Tokens.sizes.dashboard.mediaProgressThickness) / 2 + Tokens.spacing.small
-                startAngle: -90 - Tokens.sizes.dashboard.mediaProgressSweep / 2
-                sweepAngle: Tokens.sizes.dashboard.mediaProgressSweep
+                radiusX: (cover.width + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
+                radiusY: (cover.height + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
+                startAngle: -90 - root.Tokens.sizes.dashboard.mediaProgressSweep / 2
+                sweepAngle: root.Tokens.sizes.dashboard.mediaProgressSweep
             }
 
             Behavior on strokeColor {
@@ -62,16 +62,16 @@ Item {
         ShapePath {
             fillColor: "transparent"
             strokeColor: Colours.palette.m3primary
-            strokeWidth: Tokens.sizes.dashboard.mediaProgressThickness
-            capStyle: Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+            strokeWidth: root.Tokens.sizes.dashboard.mediaProgressThickness
+            capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
             PathAngleArc {
                 centerX: cover.x + cover.width / 2
                 centerY: cover.y + cover.height / 2
-                radiusX: (cover.width + Tokens.sizes.dashboard.mediaProgressThickness) / 2 + Tokens.spacing.small
-                radiusY: (cover.height + Tokens.sizes.dashboard.mediaProgressThickness) / 2 + Tokens.spacing.small
-                startAngle: -90 - Tokens.sizes.dashboard.mediaProgressSweep / 2
-                sweepAngle: Tokens.sizes.dashboard.mediaProgressSweep * root.playerProgress
+                radiusX: (cover.width + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
+                radiusY: (cover.height + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
+                startAngle: -90 - root.Tokens.sizes.dashboard.mediaProgressSweep / 2
+                sweepAngle: root.Tokens.sizes.dashboard.mediaProgressSweep * root.playerProgress
             }
 
             Behavior on strokeColor {

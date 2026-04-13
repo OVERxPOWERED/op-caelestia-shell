@@ -142,19 +142,19 @@ WlSessionLockSurface {
                 Anim {
                     target: lockBg
                     property: "radius"
-                    to: Tokens.rounding.large * 1.5
+                    to: lockContent.Tokens.rounding.large * 1.5
                 }
                 Anim {
                     target: lockContent
                     property: "implicitWidth"
-                    to: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult * Tokens.sizes.lock.ratio
+                    to: (root.screen?.height ?? 0) * lockContent.Tokens.sizes.lock.heightMult * lockContent.Tokens.sizes.lock.ratio
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
                     easing: Tokens.anim.expressiveDefaultSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "implicitHeight"
-                    to: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult
+                    to: (root.screen?.height ?? 0) * lockContent.Tokens.sizes.lock.heightMult
                     duration: Tokens.anim.durations.expressiveDefaultSpatial
                     easing: Tokens.anim.expressiveDefaultSpatial
                 }

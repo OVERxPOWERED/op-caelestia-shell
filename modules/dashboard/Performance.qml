@@ -705,7 +705,7 @@ Item {
                         property: "slideProgress"
                         from: 0
                         to: 1
-                        duration: Config.dashboard.resourceUpdateInterval
+                        duration: GlobalConfig.dashboard.resourceUpdateInterval
                     }
 
                     Behavior on smoothMax {

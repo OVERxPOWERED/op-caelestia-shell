@@ -88,10 +88,10 @@ Switch {
                 asynchronous: true
 
                 ShapePath {
-                    strokeWidth: Tokens.font.size.larger * 0.15
+                    strokeWidth: root.Tokens.font.size.larger * 0.15
                     strokeColor: root.checked ? Colours.palette.m3primary : Colours.palette.m3surfaceContainerHighest
                     fillColor: "transparent"
-                    capStyle: Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+                    capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
                     startX: icon.start1.x
                     startY: icon.start1.y

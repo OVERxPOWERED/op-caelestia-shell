@@ -9,6 +9,17 @@
 #include <qtimer.h>
 #include <qvariant.h>
 
+namespace caelestia::config {
+
+inline QVariantMap vmap(std::initializer_list<std::pair<QString, QVariant>> entries) {
+    QVariantMap map;
+    for (const auto& [key, value] : entries)
+        map.insert(std::move(key), std::move(value));
+    return map;
+}
+
+} // namespace caelestia::config
+
 // Declares a serialized config property with getter, setter (change-detected), signal, and member.
 #define CONFIG_PROPERTY(Type, name, ...)                                                                               \
     Q_PROPERTY(Type name READ name WRITE set_##name NOTIFY name##Changed)                                              \

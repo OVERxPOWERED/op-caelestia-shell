@@ -19,7 +19,7 @@ StyledRect {
         const seenIds = new Set();
 
         return Config.utilities.quickToggles.filter(item => {
-            if (!item.enabled)
+            if (!(item.enabled ?? true))
                 return false;
 
             if (seenIds.has(item.id)) {

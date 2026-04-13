@@ -8,6 +8,8 @@
 
 namespace caelestia::config {
 
+using Qt::StringLiterals::operator""_s;
+
 class BarScrollActions : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
@@ -46,12 +48,16 @@ class BarWorkspaces : public ConfigObject {
     CONFIG_PROPERTY(int, maxWindowIcons, 5)
     CONFIG_PROPERTY(bool, activeTrail, false)
     CONFIG_GLOBAL_PROPERTY(bool, perMonitorWorkspaces, true)
-    CONFIG_PROPERTY(QString, label, QStringLiteral("  "))
-    CONFIG_PROPERTY(QString, occupiedLabel, QStringLiteral("\U000f06af"))
-    CONFIG_PROPERTY(QString, activeLabel, QStringLiteral("\U000f06af"))
-    CONFIG_PROPERTY(QString, capitalisation, QStringLiteral("preserve"))
+    CONFIG_PROPERTY(QString, label, u"  "_s)
+    CONFIG_PROPERTY(QString, occupiedLabel, u"󰮯"_s)
+    CONFIG_PROPERTY(QString, activeLabel, u"󰮯"_s)
+    CONFIG_PROPERTY(QString, capitalisation, u"preserve"_s)
     CONFIG_GLOBAL_PROPERTY(QVariantList, specialWorkspaceIcons)
-    CONFIG_GLOBAL_PROPERTY(QVariantList, windowIcons)
+    CONFIG_GLOBAL_PROPERTY(QVariantList, windowIcons,
+        { vmap({
+            { u"regex"_s, u"steam(_app_(default|[0-9]+))?"_s },
+            { u"icon"_s, u"sports_esports"_s },
+        }) })
 
 public:
     explicit BarWorkspaces(QObject* parent = nullptr)
@@ -131,7 +137,18 @@ class BarConfig : public ConfigObject {
     CONFIG_SUBOBJECT(BarTray, tray)
     CONFIG_SUBOBJECT(BarStatus, status)
     CONFIG_SUBOBJECT(BarClock, clock)
-    CONFIG_PROPERTY(QVariantList, entries)
+    CONFIG_PROPERTY(QVariantList, entries,
+        {
+            vmap({ { u"id"_s, u"logo"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"workspaces"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"spacer"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"activeWindow"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"spacer"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"tray"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"clock"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"statusIcons"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"power"_s }, { u"enabled"_s, true } }),
+        })
     CONFIG_PROPERTY(QStringList, excludedScreens)
 
 public:

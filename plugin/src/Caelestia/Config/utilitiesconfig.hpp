@@ -7,11 +7,13 @@
 
 namespace caelestia::config {
 
+using Qt::StringLiterals::operator""_s;
+
 class UtilitiesToasts : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(QString, fullscreen, QStringLiteral("off"))
+    CONFIG_PROPERTY(QString, fullscreen, u"off"_s)
     CONFIG_GLOBAL_PROPERTY(bool, configLoaded, true)
     CONFIG_GLOBAL_PROPERTY(bool, chargingChanged, true)
     CONFIG_GLOBAL_PROPERTY(bool, gameModeChanged, true)
@@ -50,7 +52,16 @@ class UtilitiesConfig : public ConfigObject {
     CONFIG_PROPERTY(int, maxToasts, 4)
     CONFIG_SUBOBJECT(UtilitiesToasts, toasts)
     CONFIG_SUBOBJECT(UtilitiesVpn, vpn)
-    CONFIG_PROPERTY(QVariantList, quickToggles)
+    CONFIG_PROPERTY(QVariantList, quickToggles,
+        {
+            vmap({ { u"id"_s, u"wifi"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"bluetooth"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"mic"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"settings"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"gameMode"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"dnd"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"vpn"_s }, { u"enabled"_s, false } }),
+        })
 
 public:
     explicit UtilitiesConfig(QObject* parent = nullptr)

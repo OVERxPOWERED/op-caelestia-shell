@@ -14,6 +14,7 @@ Item {
     required property Sidebar.Wrapper sidebar
     required property BarPopouts.Wrapper popouts
     property real horizontalStretch
+    property matrix4x4 deformMatrix
 
     readonly property PersistentProperties props: PersistentProperties {
         property bool recordingListExpanded: false
@@ -84,6 +85,7 @@ Item {
             props: root.props
             visibilities: root.visibilities
             popouts: root.popouts
+            deformMatrix: root.deformMatrix
         }
     }
 }

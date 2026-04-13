@@ -11,6 +11,7 @@ Item {
     required property var props
     required property DrawerVisibilities visibilities
     required property BarPopouts.Wrapper popouts
+    required property matrix4x4 deformMatrix
 
     implicitWidth: layout.implicitWidth
     implicitHeight: layout.implicitHeight
@@ -37,5 +38,6 @@ Item {
 
     RecordingDeleteModal {
         props: root.props
+        deformMatrix: root.deformMatrix
     }
 }

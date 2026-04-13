@@ -5,8 +5,6 @@ import Caelestia.Config
 // qmllint disable uncreatable-type
 PanelWindow {
     // qmllint enable uncreatable-type
-    id: root
-
     required property string name
 
     WlrLayershell.namespace: `caelestia-${name}`

@@ -53,7 +53,7 @@ StyledRect {
     readonly property int nonAnimHeight: {
         const headerHeight = header.implicitHeight + (root.expanded ? Math.round(Tokens.spacing.small / 2) : 0);
         const columnHeight = headerHeight + notifList.layoutHeight + column.Layout.topMargin + column.Layout.bottomMargin;
-        return Math.round(Math.max(Tokens.sizes.notifs.image, columnHeight) + Tokens.padding.normal * 2);
+        return Math.round(Math.max(TokenConfig.sizes.notifs.image, columnHeight) + Tokens.padding.normal * 2);
     }
     readonly property bool expanded: props.expandedNotifs.includes(modelData)
 
@@ -91,8 +91,8 @@ StyledRect {
 
         Item {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            implicitWidth: Tokens.sizes.notifs.image
-            implicitHeight: Tokens.sizes.notifs.image
+            implicitWidth: TokenConfig.sizes.notifs.image
+            implicitHeight: TokenConfig.sizes.notifs.image
 
             Component {
                 id: imageComp
@@ -100,12 +100,12 @@ StyledRect {
                 Image {
                     source: Qt.resolvedUrl(root.image)
                     fillMode: Image.PreserveAspectCrop
-                    sourceSize.width: Tokens.sizes.notifs.image
-                    sourceSize.height: Tokens.sizes.notifs.image
+                    sourceSize.width: TokenConfig.sizes.notifs.image
+                    sourceSize.height: TokenConfig.sizes.notifs.image
                     cache: false
                     asynchronous: true
-                    width: Tokens.sizes.notifs.image
-                    height: Tokens.sizes.notifs.image
+                    width: TokenConfig.sizes.notifs.image
+                    height: TokenConfig.sizes.notifs.image
                 }
             }
 
@@ -113,7 +113,7 @@ StyledRect {
                 id: appIconComp
 
                 ColouredIcon {
-                    implicitSize: Math.round(Tokens.sizes.notifs.image * 0.6)
+                    implicitSize: Math.round(TokenConfig.sizes.notifs.image * 0.6)
                     source: Quickshell.iconPath(root.appIcon)
                     colour: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
                     layer.enabled: root.appIcon.endsWith("symbolic")

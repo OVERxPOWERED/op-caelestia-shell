@@ -64,8 +64,8 @@ StyledRect {
 
         Item {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            implicitWidth: Tokens.sizes.notifs.image
-            implicitHeight: Tokens.sizes.notifs.image
+            implicitWidth: TokenConfig.sizes.notifs.image
+            implicitHeight: TokenConfig.sizes.notifs.image
 
             Component {
                 id: imageComp
@@ -73,12 +73,12 @@ StyledRect {
                 Image {
                     source: Qt.resolvedUrl(root.image)
                     fillMode: Image.PreserveAspectCrop
-                    sourceSize.width: Tokens.sizes.notifs.image
-                    sourceSize.height: Tokens.sizes.notifs.image
+                    sourceSize.width: TokenConfig.sizes.notifs.image
+                    sourceSize.height: TokenConfig.sizes.notifs.image
                     cache: false
                     asynchronous: true
-                    width: Tokens.sizes.notifs.image
-                    height: Tokens.sizes.notifs.image
+                    width: TokenConfig.sizes.notifs.image
+                    height: TokenConfig.sizes.notifs.image
                 }
             }
 
@@ -86,7 +86,7 @@ StyledRect {
                 id: appIconComp
 
                 ColouredIcon {
-                    implicitSize: Math.round(Tokens.sizes.notifs.image * 0.6)
+                    implicitSize: Math.round(TokenConfig.sizes.notifs.image * 0.6)
                     source: Quickshell.iconPath(root.appIcon)
                     colour: root.urgency === "critical" ? Colours.palette.m3onError : root.urgency === "low" ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
                     layer.enabled: root.appIcon.endsWith("symbolic")

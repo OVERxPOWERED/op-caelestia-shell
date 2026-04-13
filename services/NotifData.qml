@@ -54,14 +54,14 @@ QtObject {
         // qmllint disable uncreatable-type
         PanelWindow {
             // qmllint enable uncreatable-type
-            implicitWidth: Tokens.sizes.notifs.image
-            implicitHeight: Tokens.sizes.notifs.image
+            implicitWidth: TokenConfig.sizes.notifs.image
+            implicitHeight: TokenConfig.sizes.notifs.image
             color: "transparent"
             mask: Region {}
 
             Image {
                 function tryCache(): void {
-                    if (status !== Image.Ready || width != Tokens.sizes.notifs.image || height != Tokens.sizes.notifs.image)
+                    if (status !== Image.Ready || width != TokenConfig.sizes.notifs.image || height != TokenConfig.sizes.notifs.image)
                         return;
 
                     const cacheKey = notif.appName + notif.summary + notif.id;

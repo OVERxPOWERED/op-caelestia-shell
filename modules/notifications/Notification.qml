@@ -114,21 +114,21 @@ StyledRect {
 
                 anchors.left: parent.left
                 anchors.top: parent.top
-                width: Tokens.sizes.notifs.image
-                height: Tokens.sizes.notifs.image
+                width: TokenConfig.sizes.notifs.image
+                height: TokenConfig.sizes.notifs.image
                 visible: root.hasImage || root.hasAppIcon
 
                 sourceComponent: ClippingRectangle {
                     radius: Tokens.rounding.full
-                    implicitWidth: Tokens.sizes.notifs.image
-                    implicitHeight: Tokens.sizes.notifs.image
+                    implicitWidth: TokenConfig.sizes.notifs.image
+                    implicitHeight: TokenConfig.sizes.notifs.image
 
                     Image {
                         anchors.fill: parent
                         source: Qt.resolvedUrl(root.modelData.image)
                         fillMode: Image.PreserveAspectCrop
-                        sourceSize.width: Tokens.sizes.notifs.image
-                        sourceSize.height: Tokens.sizes.notifs.image
+                        sourceSize.width: TokenConfig.sizes.notifs.image
+                        sourceSize.height: TokenConfig.sizes.notifs.image
                         cache: false
                         asynchronous: true
                     }
@@ -149,8 +149,8 @@ StyledRect {
                 sourceComponent: StyledRect {
                     radius: Tokens.rounding.full
                     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.modelData.urgency === NotificationUrgency.Low ? Colours.layer(Colours.palette.m3surfaceContainerHighest, 2) : Colours.palette.m3secondaryContainer
-                    implicitWidth: root.hasImage ? Tokens.sizes.notifs.badge : Tokens.sizes.notifs.image
-                    implicitHeight: root.hasImage ? Tokens.sizes.notifs.badge : Tokens.sizes.notifs.image
+                    implicitWidth: root.hasImage ? Tokens.sizes.notifs.badge : TokenConfig.sizes.notifs.image
+                    implicitHeight: root.hasImage ? Tokens.sizes.notifs.badge : TokenConfig.sizes.notifs.image
 
                     Loader {
                         id: icon
@@ -251,7 +251,7 @@ StyledRect {
                 font.family: appName.font.family
                 font.pointSize: appName.font.pointSize
                 elide: Text.ElideRight
-                elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - Tokens.spacing.small * 3
+                elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - root.Tokens.spacing.small * 3
             }
 
             StyledText {
@@ -303,7 +303,7 @@ StyledRect {
                 font.family: summary.font.family
                 font.pointSize: summary.font.pointSize
                 elide: Text.ElideRight
-                elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - Tokens.spacing.small * 3
+                elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - root.Tokens.spacing.small * 3
             }
 
             StyledText {
@@ -516,7 +516,7 @@ StyledRect {
             elide: Text.ElideRight
             elideWidth: {
                 const numActions = root.modelData.actions.length + 1;
-                return (inner.width - actions.spacing * (numActions - 1)) / numActions - Tokens.padding.normal * 2;
+                return (inner.width - actions.spacing * (numActions - 1)) / numActions - root.Tokens.padding.normal * 2;
             }
         }
     }

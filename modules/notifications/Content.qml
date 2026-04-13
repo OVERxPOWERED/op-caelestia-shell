@@ -170,7 +170,7 @@ Item {
             Anim {
                 target: notif
                 property: "x"
-                to: (notif.x >= 0 ? Tokens.sizes.notifs.width : -Tokens.sizes.notifs.width) * 2
+                to: (notif.x >= 0 ? wrapper.Tokens.sizes.notifs.width : -wrapper.Tokens.sizes.notifs.width) * 2
                 duration: Tokens.anim.durations.normal
                 easing: Tokens.anim.emphasized
             }

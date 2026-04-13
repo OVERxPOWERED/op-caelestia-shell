@@ -483,6 +483,7 @@ For example, to disable the bar on DP-1:
     },
     "border": {
         "rounding": 25,
+        "smoothing": 32,
         "thickness": 10
     },
     "dashboard": {

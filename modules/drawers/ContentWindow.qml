@@ -131,6 +131,7 @@ StyledWindow {
             id: blobGroup
 
             color: Colours.palette.m3surface
+            smoothing: root.contentItem.Config.border.smoothing
 
             Behavior on color {
                 CAnim {}

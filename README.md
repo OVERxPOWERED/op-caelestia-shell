@@ -230,13 +230,25 @@ For example, to disable the bar on DP-1:
 > Not all options are respect per-monitor overrides. Most notably, the following options will only read
 > from the global config, and ignore the respective option in per-monitor config files.
 >
-> - All animation configs are not per-monitor
-> - `general` (logo, terminal app, idle settings)
-> - `services` (weather, audio, GPU, player settings, etc.)
-> - `paths` (wallpaper dir, lyrics dir, etc.)
-> - `notifs` (notification behavior)
-> - `utilities` (individual toast enabled status, vpn configs)
-> - `launcher` (actions, favourite apps, hidden apps)
+> <details><summary>Ignored options</summary>
+>
+> - `appearance` (`anim`, `transparency`)
+> - `general` (`logo`, `apps`, `idle`, `battery`)
+> - `bar.workspaces` (`perMonitorWorkspaces`, `specialWorkspaceIcons`, `windowIcons`)
+> - `bar.tray` (`iconSubs`, `hiddenIcons`)
+> - `dashboard` (`mediaUpdateInterval`, `resourceUpdateInterval`)
+> - `launcher` (`specialPrefix`, `actionPrefix`, `enableDangerousActions`, `vimKeybinds`,
+>   `favouriteApps`, `hiddenApps`, `actions`)
+> - `launcher.useFuzzy` (`apps`, `actions`, `schemes`, `variants`, `wallpapers`)
+> - `notifs` (`expire`, `fullscreen`, `defaultExpireTimeout`, `actionOnClick`)
+> - `lock` (`enableFprint`, `maxFprintTries`)
+> - `utilities` (`toasts`, `vpn`)
+> - `services` (`weatherLocation`, `useFahrenheit`, `useFahrenheitPerformance`, `useTwelveHourClock`,
+>   `gpuType`, `visualiserBars`, `audioIncrement`, `brightnessIncrement`, `maxVolume`, `smartScheme`,
+>   `defaultPlayer`, `playerAliases`, `showLyrics`, `lyricsBackend`)
+> - `paths` (`wallpaperDir`, `lyricsDir`)
+>
+> </details>
 
 ### Example configuration
 

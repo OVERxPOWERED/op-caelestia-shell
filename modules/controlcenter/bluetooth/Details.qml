@@ -264,8 +264,7 @@ StyledFlickable {
 
                                         Behavior on scale {
                                             Anim {
-                                                duration: Tokens.anim.durations.expressiveFastSpatial
-                                                easing: Tokens.anim.expressiveFastSpatial
+                                                type: Anim.FastSpatial
                                             }
                                         }
                                     }
@@ -498,12 +497,11 @@ StyledFlickable {
                             ParallelAnimation {
                                 Anim {
                                     property: "implicitWidth"
-                                    duration: Tokens.anim.durations.expressiveFastSpatial
-                                    easing: Tokens.anim.expressiveFastSpatial
+                                    type: Anim.FastSpatial
                                 }
                                 Anim {
                                     property: "opacity"
-                                    duration: Tokens.anim.durations.small
+                                    type: Anim.StandardSmall
                                 }
                             }
                         }
@@ -518,12 +516,11 @@ StyledFlickable {
                             ParallelAnimation {
                                 Anim {
                                     property: "implicitWidth"
-                                    duration: Tokens.anim.durations.expressiveFastSpatial
-                                    easing: Tokens.anim.expressiveFastSpatial
+                                    type: Anim.FastSpatial
                                 }
                                 Anim {
                                     property: "opacity"
-                                    duration: Tokens.anim.durations.small
+                                    type: Anim.StandardSmall
                                 }
                             }
                         }
@@ -566,7 +563,7 @@ StyledFlickable {
 
                         Behavior on Layout.preferredWidth {
                             Anim {
-                                duration: Tokens.anim.durations.small
+                                type: Anim.StandardSmall
                             }
                         }
                     }
@@ -611,8 +608,7 @@ StyledFlickable {
             transitions: Transition {
                 Anim {
                     properties: "implicitWidth,implicitHeight"
-                    duration: Tokens.anim.durations.expressiveFastSpatial
-                    easing: Tokens.anim.expressiveFastSpatial
+                    type: Anim.FastSpatial
                 }
                 Anim {
                     properties: "radius,font.pointSize"

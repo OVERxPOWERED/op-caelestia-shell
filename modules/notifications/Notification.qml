@@ -101,8 +101,7 @@ StyledRect {
 
             Behavior on implicitHeight {
                 Anim {
-                    duration: Tokens.anim.durations.expressiveDefaultSpatial
-                    easing: Tokens.anim.expressiveDefaultSpatial
+                    type: Anim.DefaultSpatial
                 }
             }
 

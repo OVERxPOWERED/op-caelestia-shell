@@ -172,9 +172,8 @@ StyledFlickable {
                                         }
 
                                         transitions: Transition {
-                                            AnchorAnimation {
-                                                duration: Tokens.anim.durations.normal
-                                                easing: Tokens.anim.standard
+                                            AnchorAnim {
+                                                type: AnchorAnim.Standard
                                             }
                                             Anim {
                                                 properties: "implicitHeight,opacity,padding"

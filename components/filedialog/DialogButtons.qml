@@ -49,7 +49,6 @@ StyledRect {
             implicitHeight: cancelText.implicitHeight + Tokens.padding.normal * 2
 
             StateLayer {
-
                 disabled: !root.dialog.selectionValid
                 onClicked: root.dialog.accepted(root.folder.currentItem.modelData.path)
             }

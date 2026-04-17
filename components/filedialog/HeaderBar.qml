@@ -28,7 +28,6 @@ StyledRect {
             implicitHeight: upIcon.implicitHeight + Tokens.padding.small * 2
 
             StateLayer {
-
                 radius: Tokens.rounding.small
                 disabled: root.dialog.cwd.length === 1
                 onClicked: root.dialog.cwd.pop()

@@ -356,12 +356,9 @@ StyledRect {
                 implicitHeight: expandIcon.height
 
                 StateLayer {
-                    function onClicked() {
-                        root.expanded = !root.expanded;
-                    }
-
                     radius: Tokens.rounding.full
                     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+                    onClicked: root.expanded = !root.expanded
                 }
 
                 MaterialIcon {
@@ -487,12 +484,9 @@ StyledRect {
         implicitHeight: actionText.height + Tokens.padding.small * 2
 
         StateLayer {
-            function onClicked(): void {
-                action.modelData.invoke();
-            }
-
             radius: Tokens.rounding.full
             color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurface
+            onClicked: action.modelData.invoke()
         }
 
         StyledText {

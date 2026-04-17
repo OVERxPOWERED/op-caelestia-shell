@@ -1,10 +1,10 @@
 pragma ComponentBehavior: Bound
 
-import ".."
 import "../effects"
 import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
+import qs.components
 import qs.services
 
 Elevation {

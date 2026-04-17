@@ -1,7 +1,5 @@
 #pragma once
 
-#include "anim.hpp"
-#include "appearanceconfig.hpp"
 #include "rootconfig.hpp"
 
 #include <qlist.h>

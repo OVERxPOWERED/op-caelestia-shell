@@ -106,14 +106,11 @@ Row {
         StateLayer {
             id: expandStateLayer
 
-            onClicked: {
-                root.expanded = !root.expanded;
-            }
-
             rect.topLeftRadius: parent.topLeftRadius
             rect.bottomLeftRadius: parent.bottomLeftRadius
             color: root.textColour
             disabled: root.disabled
+            onClicked: root.expanded = !root.expanded
         }
 
         MaterialIcon {

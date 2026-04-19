@@ -237,6 +237,7 @@ class AppearanceConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
+    CONFIG_PROPERTY(qreal, deformScale, 1)
     CONFIG_SUBOBJECT(AppearanceRounding, rounding)
     CONFIG_SUBOBJECT(AppearanceSpacing, spacing)
     CONFIG_SUBOBJECT(AppearancePadding, padding)

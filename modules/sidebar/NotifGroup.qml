@@ -52,7 +52,7 @@ StyledRect {
 
     readonly property int nonAnimHeight: {
         const headerHeight = header.implicitHeight + (root.expanded ? Math.round(Tokens.spacing.small / 2) : 0);
-        const columnHeight = headerHeight + notifList.layoutHeight + column.Layout.topMargin + column.Layout.bottomMargin;
+        const columnHeight = headerHeight + notifList.layoutHeight;
         return Math.round(Math.max(TokenConfig.sizes.notifs.image, columnHeight) + Tokens.padding.normal * 2);
     }
     readonly property bool expanded: props.expandedNotifs.includes(modelData)
@@ -172,19 +172,21 @@ StyledRect {
             }
         }
 
-        ColumnLayout {
+        Column {
             id: column
 
-            Layout.topMargin: -Tokens.padding.small
-            Layout.bottomMargin: -Tokens.padding.small / 2
             Layout.fillWidth: true
-            spacing: 0
+            spacing: root.expanded ? Math.round(Tokens.spacing.small / 2) : 0
+
+            Behavior on spacing {
+                Anim {}
+            }
 
             RowLayout {
                 id: header
 
-                Layout.bottomMargin: root.expanded ? Math.round(Tokens.spacing.small / 2) : 0
-                Layout.fillWidth: true
+                anchors.left: parent.left
+                anchors.right: parent.right
                 spacing: Tokens.spacing.smaller
 
                 StyledText {
@@ -250,10 +252,6 @@ StyledRect {
                             }
                         }
                     }
-                }
-
-                Behavior on Layout.bottomMargin {
-                    Anim {}
                 }
             }
 

@@ -72,7 +72,7 @@ Column {
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Performance Degraded")
                         color: Colours.palette.m3onError
-                        font: Tokens.font.mono.builders.medium.weight(500).build()
+                        font: Tokens.font.mono.builders.medium.weight(Font.Medium).build()
                     }
 
                     MaterialIcon {

@@ -27,7 +27,7 @@ DeviceList {
 
             StyledText {
                 text: qsTr("Settings")
-                font: Tokens.font.title.builders.medium.weight(500).build()
+                font: Tokens.font.title.builders.medium.weight(Font.Medium).build()
             }
 
             Item {
@@ -129,7 +129,7 @@ DeviceList {
                             Layout.fillWidth: true
                             text: modelData.connected ? qsTr("Connected") : qsTr("Disconnected")
                             color: modelData.connected ? Colours.palette.m3primary : Colours.palette.m3outline
-                            font: Tokens.font.body.builders.small.weight(modelData.connected ? 500 : 400).build()
+                            font: Tokens.font.body.builders.small.weight(modelData.connected ? Font.Medium : Font.Normal).build()
                             elide: Text.ElideRight
                         }
                     }

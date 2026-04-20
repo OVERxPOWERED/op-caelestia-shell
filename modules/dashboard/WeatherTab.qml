@@ -29,7 +29,7 @@ Item {
 
                 StyledText {
                     text: Weather.city || qsTr("Loading...")
-                    font: Tokens.font.body.builders.large.size(28).weight(600).build()
+                    font: Tokens.font.body.builders.large.size(28).weight(Font.DemiBold).build()
                     color: Colours.palette.m3onSurface
                 }
 
@@ -90,7 +90,7 @@ Item {
 
                     StyledText {
                         text: Weather.temp
-                        font: Tokens.font.body.builders.large.size(28 * 2).weight(500).build()
+                        font: Tokens.font.body.builders.large.size(28 * 2).weight(Font.Medium).build()
                         color: Colours.palette.m3primary
                     }
 
@@ -133,7 +133,7 @@ Item {
             Layout.leftMargin: Tokens.padding.medium
             visible: forecastRepeater.count > 0
             text: qsTr("7-Day Forecast")
-            font: Tokens.font.body.builders.medium.weight(600).build()
+            font: Tokens.font.body.builders.medium.weight(Font.DemiBold).build()
             color: Colours.palette.m3onSurface
         }
 
@@ -167,7 +167,7 @@ Item {
                         StyledText {
                             Layout.alignment: Qt.AlignHCenter
                             text: forecastItem.index === 0 ? qsTr("Today") : new Date(forecastItem.modelData.date).toLocaleDateString(Qt.locale(), "ddd")
-                            font: Tokens.font.body.builders.medium.weight(600).build()
+                            font: Tokens.font.body.builders.medium.weight(Font.DemiBold).build()
                             color: Colours.palette.m3primary
                         }
 
@@ -190,7 +190,7 @@ Item {
                         StyledText {
                             Layout.alignment: Qt.AlignHCenter
                             text: GlobalConfig.services.useFahrenheit ? forecastItem.modelData.maxTempF + "°" + " / " + forecastItem.modelData.minTempF + "°" : forecastItem.modelData.maxTempC + "°" + " / " + forecastItem.modelData.minTempC + "°"
-                            font: Tokens.font.body.builders.small.weight(600).build()
+                            font: Tokens.font.body.builders.small.weight(Font.DemiBold).build()
                             color: Colours.palette.m3tertiary
                         }
                     }
@@ -235,7 +235,7 @@ Item {
                 }
                 StyledText {
                     text: detailRoot.value
-                    font: Tokens.font.body.builders.small.weight(600).build()
+                    font: Tokens.font.body.builders.small.weight(Font.DemiBold).build()
                     horizontalAlignment: Text.AlignLeft
                 }
             }
@@ -266,7 +266,7 @@ Item {
             }
             StyledText {
                 text: weatherStat.value
-                font: Tokens.font.body.builders.small.weight(600).build()
+                font: Tokens.font.body.builders.small.weight(Font.DemiBold).build()
                 color: Colours.palette.m3onSurface
             }
         }

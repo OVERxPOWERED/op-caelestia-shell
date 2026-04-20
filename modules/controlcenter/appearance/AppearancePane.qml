@@ -111,7 +111,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.bottomMargin: Tokens.spacing.medium
                     text: qsTr("Wallpaper")
-                    font: Tokens.font.body.builders.large.size(28).weight(600).build()
+                    font: Tokens.font.body.builders.large.size(28).weight(Font.DemiBold).build()
                 }
 
                 Loader {
@@ -176,7 +176,7 @@ Item {
 
                         StyledText {
                             text: qsTr("Appearance")
-                            font: Tokens.font.body.builders.large.weight(500).build()
+                            font: Tokens.font.body.builders.large.weight(Font.Medium).build()
                         }
 
                         Item {

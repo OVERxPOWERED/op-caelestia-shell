@@ -29,7 +29,7 @@ ColumnLayout {
         Layout.topMargin: visible ? Tokens.padding.medium : 0
         Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Wireless")
-        font: Tokens.font.body.builders.medium.weight(500).build()
+        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
     }
 
     Toggle {
@@ -106,7 +106,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 text: networkItem.modelData.ssid
                 elide: Text.ElideRight
-                font: Tokens.font.body.builders.medium.weight(networkItem.modelData.active ? 500 : 400).build()
+                font: Tokens.font.body.builders.medium.weight(networkItem.modelData.active ? Font.Medium : Font.Normal).build()
                 color: networkItem.modelData.active ? Colours.palette.m3primary : Colours.palette.m3onSurface
             }
 
@@ -221,7 +221,7 @@ ColumnLayout {
         Layout.topMargin: visible ? Tokens.padding.medium : 0
         Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Ethernet")
-        font: Tokens.font.body.builders.medium.weight(500).build()
+        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
     }
 
     StyledText {
@@ -283,7 +283,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 text: ethernetItem.modelData.interface || qsTr("Unknown")
                 elide: Text.ElideRight
-                font: Tokens.font.body.builders.medium.weight(ethernetItem.modelData.connected ? 500 : 400).build()
+                font: Tokens.font.body.builders.medium.weight(ethernetItem.modelData.connected ? Font.Medium : Font.Normal).build()
                 color: ethernetItem.modelData.connected ? Colours.palette.m3primary : Colours.palette.m3onSurface
             }
 

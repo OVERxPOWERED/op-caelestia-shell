@@ -52,7 +52,7 @@ DeviceList {
 
             StyledText {
                 text: qsTr("Settings")
-                font: Tokens.font.title.builders.medium.weight(500).build()
+                font: Tokens.font.title.builders.medium.weight(Font.Medium).build()
             }
 
             Item {
@@ -181,7 +181,7 @@ DeviceList {
                                 return qsTr("Open");
                             }
                             color: modelData.active ? Colours.palette.m3primary : Colours.palette.m3outline
-                            font: Tokens.font.body.builders.small.weight(modelData.active ? 500 : 400).build()
+                            font: Tokens.font.body.builders.small.weight(modelData.active ? Font.Medium : Font.Normal).build()
                             elide: Text.ElideRight
                         }
                     }

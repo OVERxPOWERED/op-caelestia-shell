@@ -29,7 +29,7 @@ ColumnLayout {
         sourceComponent: StyledText {
             text: qsTr("Weather")
             color: Colours.palette.m3primary
-            font: Tokens.font.body.builders.large.size(28).weight(500).build()
+            font: Tokens.font.body.builders.large.size(28).weight(Font.Medium).build()
         }
     }
 
@@ -53,7 +53,7 @@ ColumnLayout {
                 animate: true
                 text: Weather.description
                 color: Colours.palette.m3secondary
-                font: Tokens.font.body.builders.large.weight(500).build()
+                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
                 elide: Text.ElideRight
             }
 
@@ -84,7 +84,7 @@ ColumnLayout {
                     text: Weather.temp
                     color: Colours.palette.m3primary
                     horizontalAlignment: Text.AlignRight
-                    font: Tokens.font.body.builders.large.size(28).weight(500).build()
+                    font: Tokens.font.body.builders.large.size(28).weight(Font.Medium).build()
                     elide: Text.ElideLeft
                 }
 
@@ -150,7 +150,7 @@ ColumnLayout {
                     MaterialIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: forecastHour.modelData?.icon ?? "cloud_alert"
-                        fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 1.5).weight(500).build()
+                        fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 1.5).weight(Font.Medium).build()
                     }
 
                     StyledText {

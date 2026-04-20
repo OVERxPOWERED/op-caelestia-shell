@@ -46,7 +46,7 @@ Item {
 
                         StyledText {
                             text: qsTr("Audio")
-                            font: Tokens.font.body.builders.large.weight(500).build()
+                            font: Tokens.font.body.builders.large.weight(Font.Medium).build()
                         }
 
                         Item {
@@ -71,7 +71,7 @@ Item {
 
                                 StyledText {
                                     text: qsTr("Devices (%1)").arg(Audio.sinks.length)
-                                    font: Tokens.font.body.builders.medium.weight(500).build()
+                                    font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
                                 }
                             }
 
@@ -122,7 +122,7 @@ Item {
                                             maximumLineCount: 1
 
                                             text: modelData.description || qsTr("Unknown")
-                                            font: Audio.sink?.id === modelData.id ? Tokens.font.body.builders.small.weight(500).build() : Tokens.font.body.builders.small.weight(400).build()
+                                            font: Audio.sink?.id === modelData.id ? Tokens.font.body.builders.small.weight(Font.Medium).build() : Tokens.font.body.builders.small.weight(Font.Normal).build()
                                         }
                                     }
                                 }
@@ -147,7 +147,7 @@ Item {
 
                                 StyledText {
                                     text: qsTr("Devices (%1)").arg(Audio.sources.length)
-                                    font: Tokens.font.body.builders.medium.weight(500).build()
+                                    font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
                                 }
                             }
 
@@ -198,7 +198,7 @@ Item {
                                             maximumLineCount: 1
 
                                             text: modelData.description || qsTr("Unknown")
-                                            font: Audio.source?.id === modelData.id ? Tokens.font.body.builders.small.weight(500).build() : Tokens.font.body.builders.small.weight(400).build()
+                                            font: Audio.source?.id === modelData.id ? Tokens.font.body.builders.small.weight(Font.Medium).build() : Tokens.font.body.builders.small.weight(Font.Normal).build()
                                         }
                                     }
                                 }
@@ -251,7 +251,7 @@ Item {
 
                                 StyledText {
                                     text: qsTr("Volume")
-                                    font: Tokens.font.body.builders.medium.weight(500).build()
+                                    font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
                                 }
 
                                 Item {
@@ -368,7 +368,7 @@ Item {
 
                                 StyledText {
                                     text: qsTr("Volume")
-                                    font: Tokens.font.body.builders.medium.weight(500).build()
+                                    font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
                                 }
 
                                 Item {
@@ -505,7 +505,7 @@ Item {
                                             elide: Text.ElideRight
                                             maximumLineCount: 1
                                             text: Audio.getStreamName(modelData)
-                                            font: Tokens.font.body.builders.medium.weight(500).build()
+                                            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
                                         }
 
                                         StyledInputField {

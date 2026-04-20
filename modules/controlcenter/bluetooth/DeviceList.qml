@@ -36,7 +36,7 @@ DeviceList {
 
             StyledText {
                 text: qsTr("Bluetooth")
-                font: Tokens.font.body.builders.large.weight(500).build()
+                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
             }
 
             Item {

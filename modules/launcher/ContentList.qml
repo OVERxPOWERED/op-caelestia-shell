@@ -130,7 +130,7 @@ Item {
             StyledText {
                 text: root.state === "wallpapers" ? qsTr("No wallpapers found") : qsTr("No results")
                 color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.builders.large.weight(500).build()
+                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
             }
 
             StyledText {

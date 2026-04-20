@@ -39,7 +39,7 @@ Item {
             animate: true
             text: Weather.temp
             color: Colours.palette.m3primary
-            font: Tokens.font.body.builders.large.size(28).weight(500).build()
+            font: Tokens.font.body.builders.large.size(28).weight(Font.Medium).build()
         }
 
         StyledText {

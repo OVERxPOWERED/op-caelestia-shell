@@ -26,7 +26,7 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Adapter status")
-        font: Tokens.font.body.builders.large.weight(500).build()
+        font: Tokens.font.body.builders.large.weight(Font.Medium).build()
     }
 
     StyledText {
@@ -86,7 +86,7 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Adapter properties")
-        font: Tokens.font.body.builders.large.weight(500).build()
+        font: Tokens.font.body.builders.large.weight(Font.Medium).build()
     }
 
     StyledText {
@@ -442,7 +442,7 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Adapter information")
-        font: Tokens.font.body.builders.large.weight(500).build()
+        font: Tokens.font.body.builders.large.weight(Font.Medium).build()
     }
 
     StyledText {

@@ -15,7 +15,7 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Tokens.spacing.largeIncreased
         text: root.title
-        font: Tokens.font.title.builders.medium.weight(500).build()
+        font: Tokens.font.title.builders.medium.weight(Font.Medium).build()
     }
 
     StyledText {

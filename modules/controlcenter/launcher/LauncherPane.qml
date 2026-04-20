@@ -156,7 +156,7 @@ Item {
 
                     StyledText {
                         text: qsTr("Launcher")
-                        font: Tokens.font.title.builders.medium.weight(500).build()
+                        font: Tokens.font.title.builders.medium.weight(Font.Medium).build()
                     }
 
                     Item {
@@ -187,7 +187,7 @@ Item {
                 StyledText {
                     Layout.topMargin: Tokens.spacing.largeIncreased
                     text: qsTr("Applications (%1)").arg(root.searchText ? root.filteredApps.length : allAppsDb.apps.length)
-                    font: Tokens.font.title.builders.small.weight(500).build()
+                    font: Tokens.font.title.builders.small.weight(Font.Medium).build()
                 }
 
                 StyledText {

@@ -104,7 +104,7 @@ ColumnLayout {
 
                             StyledText {
                                 text: modelData.displayName
-                                font: Tokens.font.body.builders.medium.weight(modelData.isActive ? 500 : 400).build()
+                                font: Tokens.font.body.builders.medium.weight(modelData.isActive ? Font.Medium : Font.Normal).build()
                             }
 
                             StyledText {

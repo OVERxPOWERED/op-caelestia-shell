@@ -25,7 +25,7 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Ethernet devices")
-        font: Tokens.font.body.builders.large.weight(500).build()
+        font: Tokens.font.body.builders.large.weight(Font.Medium).build()
     }
 
     StyledText {

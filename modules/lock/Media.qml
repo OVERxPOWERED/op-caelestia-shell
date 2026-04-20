@@ -76,7 +76,7 @@ Item {
             Layout.bottomMargin: Tokens.spacing.large
             text: qsTr("Now playing")
             color: Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.mono.builders.small.weight(500).build()
+            font: Tokens.font.mono.builders.small.weight(Font.Medium).build()
         }
 
         StyledText {
@@ -85,7 +85,7 @@ Item {
             text: Players.active?.trackArtist ?? qsTr("No media")
             color: Colours.palette.m3primary
             horizontalAlignment: Text.AlignHCenter
-            font: Tokens.font.mono.builders.large.weight(600).build()
+            font: Tokens.font.mono.builders.large.weight(Font.DemiBold).build()
             elide: Text.ElideRight
         }
 

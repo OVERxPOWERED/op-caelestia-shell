@@ -61,7 +61,7 @@ CustomMouseArea {
                     anchors.centerIn: parent
                     text: "chevron_left"
                     color: Colours.palette.m3tertiary
-                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.medium.pointSize).weight(700).build()
+                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.medium.pointSize).weight(Font.Bold).build()
                 }
             }
 
@@ -94,7 +94,7 @@ CustomMouseArea {
                     anchors.centerIn: parent
                     text: grid.title
                     color: Colours.palette.m3primary
-                    font: Tokens.font.body.builders.medium.weight(500).capitalisation(Font.Capitalize).build()
+                    font: Tokens.font.body.builders.medium.weight(Font.Medium).capitalisation(Font.Capitalize).build()
                 }
             }
 
@@ -118,7 +118,7 @@ CustomMouseArea {
                     anchors.centerIn: parent
                     text: "chevron_right"
                     color: Colours.palette.m3tertiary
-                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.medium.pointSize).weight(700).build()
+                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.medium.pointSize).weight(Font.Bold).build()
                 }
             }
         }
@@ -134,7 +134,7 @@ CustomMouseArea {
 
                 horizontalAlignment: Text.AlignHCenter
                 text: model.shortName
-                font: Tokens.font.body.builders.medium.weight(500).build()
+                font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
                 color: (model.day === 0 || model.day === 6) ? Colours.palette.m3secondary : Colours.palette.m3onSurfaceVariant
             }
         }
@@ -177,7 +177,7 @@ CustomMouseArea {
                             return Colours.palette.m3onSurfaceVariant;
                         }
                         opacity: dayItem.model.today || dayItem.model.month === grid.month ? 1 : 0.4
-                        font: Tokens.font.body.builders.medium.weight(500).build()
+                        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
                     }
                 }
             }

@@ -196,7 +196,7 @@ ColumnLayout {
                                         return Colours.palette.m3tertiary;
                                     return Colours.palette.m3onSurface;
                                 }
-                                font: Tokens.font.body.builders.small.weight(modelData.enabled && VPN.connected ? 500 : 400).build()
+                                font: Tokens.font.body.builders.small.weight(modelData.enabled && VPN.connected ? Font.Medium : Font.Normal).build()
                                 elide: Text.ElideRight
                             }
                         }
@@ -456,7 +456,7 @@ ColumnLayout {
 
                 StyledText {
                     text: qsTr("Add VPN Provider")
-                    font: Tokens.font.body.builders.large.weight(500).build()
+                    font: Tokens.font.body.builders.large.weight(Font.Medium).build()
                 }
 
                 StyledText {
@@ -574,7 +574,7 @@ ColumnLayout {
 
                 StyledText {
                     text: vpnDialog.editIndex >= 0 ? qsTr("Edit VPN Provider") : qsTr("Add %1 VPN").arg(vpnDialog.displayName)
-                    font: Tokens.font.body.builders.large.weight(500).build()
+                    font: Tokens.font.body.builders.large.weight(Font.Medium).build()
                 }
 
                 ColumnLayout {

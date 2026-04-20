@@ -19,7 +19,7 @@ ColumnLayout {
         text: root.client?.title ?? qsTr("No active client")
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
-        font: Tokens.font.body.builders.large.weight(500).build()
+        font: Tokens.font.body.builders.large.weight(Font.Medium).build()
     }
 
     Label {

@@ -22,7 +22,7 @@ ColumnLayout {
         Layout.topMargin: Tokens.padding.medium
         Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Bluetooth")
-        font: Tokens.font.body.builders.medium.weight(500).build()
+        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
     }
 
     Toggle {

@@ -183,7 +183,7 @@ ColumnLayout {
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Enter password")
-                font: Tokens.font.body.builders.large.weight(500).build()
+                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
             }
 
             StyledText {
@@ -248,7 +248,7 @@ ColumnLayout {
                     return "";
                 }
                 color: connectButton.hasError ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.builders.small.weight(400).build()
+                font: Tokens.font.body.builders.small.weight(Font.Normal).build()
                 wrapMode: Text.WordWrap
                 Layout.maximumWidth: parent.width - Tokens.padding.extraLargeIncreased
             }

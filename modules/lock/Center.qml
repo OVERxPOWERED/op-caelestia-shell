@@ -194,7 +194,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     text: "arrow_forward"
                     color: root.lock.pam.buffer ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
-                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.large.pointSize).weight(500).build()
+                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.large.pointSize).weight(Font.Medium).build()
                 }
             }
         }

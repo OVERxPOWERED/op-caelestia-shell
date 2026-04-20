@@ -210,7 +210,7 @@ GridView {
             anchors.bottomMargin: Tokens.padding.medium
 
             text: modelData.name
-            font: Tokens.font.body.builders.small.weight(500).build()
+            font: Tokens.font.body.builders.small.weight(Font.Medium).build()
             color: isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurface
             elide: Text.ElideMiddle
             maximumLineCount: 1

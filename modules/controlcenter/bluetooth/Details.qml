@@ -59,7 +59,7 @@ StyledFlickable {
                         StyledText {
                             Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Connection status")
-                            font: Tokens.font.body.builders.large.weight(500).build()
+                            font: Tokens.font.body.builders.large.weight(Font.Medium).build()
                         }
 
                         StyledText {
@@ -117,7 +117,7 @@ StyledFlickable {
                         StyledText {
                             Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Device properties")
-                            font: Tokens.font.body.builders.large.weight(500).build()
+                            font: Tokens.font.body.builders.large.weight(Font.Medium).build()
                         }
 
                         StyledText {
@@ -322,7 +322,7 @@ StyledFlickable {
                         StyledText {
                             Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Device information")
-                            font: Tokens.font.body.builders.large.weight(500).build()
+                            font: Tokens.font.body.builders.large.weight(Font.Medium).build()
                         }
 
                         StyledText {

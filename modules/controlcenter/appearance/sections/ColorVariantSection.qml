@@ -75,7 +75,7 @@ CollapsibleSection {
                     StyledText {
                         Layout.fillWidth: true
                         text: modelData.name
-                        font: modelData.variant === Schemes.currentVariant ? Tokens.font.body.builders.small.weight(500).build() : Tokens.font.body.builders.small.weight(400).build()
+                        font: modelData.variant === Schemes.currentVariant ? Tokens.font.body.builders.small.weight(Font.Medium).build() : Tokens.font.body.builders.small.weight(Font.Normal).build()
                     }
 
                     MaterialIcon {

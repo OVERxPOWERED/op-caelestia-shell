@@ -59,13 +59,13 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 text: "scan_delete"
                 color: Colours.palette.m3outline
-                fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 2).weight(500).build()
+                fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 2).weight(Font.Medium).build()
             }
 
             StyledText {
                 text: qsTr("This folder is empty")
                 color: Colours.palette.m3outline
-                font: Tokens.font.body.builders.large.weight(500).build()
+                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
             }
         }
 

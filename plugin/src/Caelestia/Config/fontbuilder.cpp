@@ -27,8 +27,18 @@ FontBuilder FontBuilder::italic(bool on) {
     return *this;
 }
 
+FontBuilder FontBuilder::stretch(int stretch) {
+    m_font.setStretch(stretch);
+    return *this;
+}
+
 FontBuilder FontBuilder::letterSpacing(qreal spacing, bool absolute) {
     m_font.setLetterSpacing(absolute ? QFont::AbsoluteSpacing : QFont::PercentageSpacing, spacing);
+    return *this;
+}
+
+FontBuilder FontBuilder::capitalisation(QFont::Capitalization cap) {
+    m_font.setCapitalization(cap);
     return *this;
 }
 

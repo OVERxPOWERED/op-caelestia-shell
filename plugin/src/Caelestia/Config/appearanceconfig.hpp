@@ -131,7 +131,7 @@ class FontConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(QString, family, QStringLiteral("Rubik"))
+    CONFIG_PROPERTY(QString, family, QStringLiteral("GoogleSansFlex"))
     CONFIG_PROPERTY(int, size, 14)
     CONFIG_PROPERTY(int, weight, QFont::Normal)
     CONFIG_PROPERTY(bool, italic, false)
@@ -140,6 +140,13 @@ class FontConfig : public ConfigObject {
 public:
     explicit FontConfig(QObject* parent = nullptr)
         : ConfigObject(parent) {}
+
+    void setDefaults(const QString& family, int size, int weight = QFont::Normal, const QVariantMap& vaxes = {}) {
+        m_family = family;
+        m_size = size;
+        m_weight = weight;
+        m_vaxes = vaxes;
+    }
 };
 
 class FontStyleConfig : public ConfigObject {
@@ -190,7 +197,36 @@ public:
         , m_body(new FontStyleConfig(this))
         , m_label(new FontStyleConfig(this))
         , m_mono(new FontStyleConfig(this))
-        , m_icon(new IconFontStyleConfig(this)) {}
+        , m_icon(new IconFontStyleConfig(this)) {
+        const auto sans = QStringLiteral("GoogleSansFlex");
+        const auto mono = QStringLiteral("CaskaydiaCove NF");
+        const auto icons = QStringLiteral("Material Symbols Rounded");
+
+        m_headline->large()->setDefaults(sans, 32, QFont::Normal);
+        m_headline->medium()->setDefaults(sans, 28, QFont::Normal);
+        m_headline->small()->setDefaults(sans, 24, QFont::Normal);
+
+        m_title->large()->setDefaults(sans, 22, QFont::Medium);
+        m_title->medium()->setDefaults(sans, 16, QFont::Medium);
+        m_title->small()->setDefaults(sans, 14, QFont::Medium);
+
+        m_body->large()->setDefaults(sans, 16, QFont::Medium);
+        m_body->medium()->setDefaults(sans, 14, QFont::Medium);
+        m_body->small()->setDefaults(sans, 12, QFont::Medium);
+
+        m_label->large()->setDefaults(sans, 14, QFont::Medium);
+        m_label->medium()->setDefaults(sans, 12, QFont::Medium);
+        m_label->small()->setDefaults(sans, 11, QFont::Medium);
+
+        m_mono->large()->setDefaults(mono, 16, QFont::Normal);
+        m_mono->medium()->setDefaults(mono, 14, QFont::Normal);
+        m_mono->small()->setDefaults(mono, 12, QFont::Normal);
+
+        m_icon->extraLarge()->setDefaults(icons, 48, QFont::Normal);
+        m_icon->large()->setDefaults(icons, 32, QFont::Normal);
+        m_icon->medium()->setDefaults(icons, 24, QFont::Normal);
+        m_icon->small()->setDefaults(icons, 20, QFont::Normal);
+    }
 };
 
 class AnimDurations : public ConfigObject {

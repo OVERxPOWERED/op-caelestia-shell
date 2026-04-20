@@ -31,7 +31,7 @@ ColumnLayout {
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.small / 2
+        contentSpacing: Tokens.spacing.extraSmall
 
         PropertyRow {
             label: qsTr("Total devices")
@@ -106,7 +106,7 @@ ColumnLayout {
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.small / 2
+        contentSpacing: Tokens.spacing.extraSmall
 
         PropertyRow {
             label: qsTr("Network")

@@ -76,7 +76,7 @@ ColumnLayout {
         id: contentWrapper
 
         Layout.fillWidth: true
-        Layout.preferredHeight: root.expanded ? (contentColumn.implicitHeight + Tokens.spacing.small * 2) : 0
+        Layout.preferredHeight: root.expanded ? (contentColumn.implicitHeight + Tokens.spacing.large) : 0
         clip: true
 
         Behavior on Layout.preferredHeight {

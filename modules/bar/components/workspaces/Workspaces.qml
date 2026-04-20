@@ -64,7 +64,7 @@ StyledClippingRect {
             id: layout
 
             anchors.centerIn: parent
-            spacing: Math.floor(Tokens.spacing.small / 2)
+            spacing: Math.floor(Tokens.spacing.extraSmall)
 
             Repeater {
                 id: workspaces

@@ -9,7 +9,7 @@ ColumnLayout {
 
     required property var deviceDetails
 
-    spacing: Tokens.spacing.small / 2
+    spacing: Tokens.spacing.extraSmall
 
     StyledText {
         text: qsTr("IP Address")

@@ -219,7 +219,7 @@ Item {
 
                 anchors.horizontalCenter: icon.horizontalCenter
                 anchors.top: icon.bottom
-                anchors.topMargin: Tokens.spacing.small / 2
+                anchors.topMargin: Tokens.spacing.extraSmall
 
                 text: item.label
                 font.pointSize: Tokens.font.size.small

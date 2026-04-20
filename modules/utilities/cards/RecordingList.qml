@@ -78,13 +78,13 @@ ColumnLayout {
             anchors.left: list.contentItem.left
             anchors.right: list.contentItem.right
             anchors.rightMargin: Tokens.spacing.small
-            spacing: Tokens.spacing.small / 2
+            spacing: Tokens.spacing.extraSmall
 
             Component.onCompleted: baseName = modelData.baseName
 
             StyledText {
                 Layout.fillWidth: true
-                Layout.rightMargin: Tokens.spacing.small / 2
+                Layout.rightMargin: Tokens.spacing.extraSmall
                 text: {
                     const time = recording.baseName;
                     const matches = time.match(/^recording_(\d{4})(\d{2})(\d{2})_(\d{2})-(\d{2})-(\d{2})/);

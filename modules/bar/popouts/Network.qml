@@ -101,8 +101,8 @@ ColumnLayout {
             }
 
             StyledText {
-                Layout.leftMargin: Tokens.spacing.small / 2
-                Layout.rightMargin: Tokens.spacing.small / 2
+                Layout.leftMargin: Tokens.spacing.extraSmall
+                Layout.rightMargin: Tokens.spacing.extraSmall
                 Layout.fillWidth: true
                 text: networkItem.modelData.ssid
                 elide: Text.ElideRight
@@ -278,8 +278,8 @@ ColumnLayout {
             }
 
             StyledText {
-                Layout.leftMargin: Tokens.spacing.small / 2
-                Layout.rightMargin: Tokens.spacing.small / 2
+                Layout.leftMargin: Tokens.spacing.extraSmall
+                Layout.rightMargin: Tokens.spacing.extraSmall
                 Layout.fillWidth: true
                 text: ethernetItem.modelData.interface || qsTr("Unknown")
                 elide: Text.ElideRight

@@ -18,7 +18,7 @@ CollapsibleSection {
 
     ColumnLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.small / 2
+        spacing: Tokens.spacing.extraSmall
 
         Repeater {
             model: M3Variants.list

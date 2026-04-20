@@ -117,7 +117,7 @@ StyledRect {
         anchors.top: summary.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: Tokens.spacing.small / 2
+        anchors.topMargin: Tokens.spacing.extraSmall
 
         sourceComponent: ExpandedBody {}
     }

@@ -83,7 +83,7 @@ Item {
         anchors.margins: Tokens.padding.extraSmall + Tokens.padding.medium
 
         cellWidth: Sizes.itemWidth + Tokens.spacing.small
-        cellHeight: Sizes.itemWidth + Tokens.spacing.small * 2 + Tokens.padding.medium * 2 + 1
+        cellHeight: Sizes.itemWidth + Tokens.spacing.large + Tokens.padding.medium * 2 + 1
 
         clip: true
         focus: true

@@ -24,7 +24,7 @@ StyledRect {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.margins: Tokens.padding.medium
-        spacing: Tokens.spacing.small / 2
+        spacing: Tokens.spacing.extraSmall
 
         StyledText {
             Layout.alignment: Qt.AlignHCenter

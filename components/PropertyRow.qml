@@ -11,7 +11,7 @@ ColumnLayout {
     required property string value
     property bool showTopMargin: false
 
-    spacing: Tokens.spacing.small / 2
+    spacing: Tokens.spacing.extraSmall
 
     StyledText {
         Layout.topMargin: root.showTopMargin ? Tokens.spacing.medium : 0

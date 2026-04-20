@@ -22,7 +22,7 @@ LazyListView {
     anchors.right: parent.right
     implicitHeight: contentHeight
 
-    spacing: Math.round(Tokens.spacing.small / 2)
+    spacing: Math.round(Tokens.spacing.extraSmall)
     asynchronous: true
 
     readyDelay: 1

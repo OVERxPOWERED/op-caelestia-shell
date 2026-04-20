@@ -77,7 +77,7 @@ DeviceDetails {
                 }
 
                 SectionContainer {
-                    contentSpacing: Tokens.spacing.small / 2
+                    contentSpacing: Tokens.spacing.extraSmall
 
                     PropertyRow {
                         label: qsTr("Interface")

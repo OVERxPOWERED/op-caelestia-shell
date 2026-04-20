@@ -49,7 +49,7 @@ ColumnLayout {
             anchors.verticalCenter: parent.verticalCenter
             anchors.margins: Tokens.padding.large
 
-            spacing: Tokens.spacing.small / 2
+            spacing: Tokens.spacing.extraSmall
 
             StyledText {
                 text: qsTr("Total devices")

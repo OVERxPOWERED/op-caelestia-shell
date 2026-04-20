@@ -348,7 +348,7 @@ StyledFlickable {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.margins: Tokens.padding.large
 
-                                spacing: Tokens.spacing.small / 2
+                                spacing: Tokens.spacing.extraSmall
 
                                 StyledText {
                                     text: root.device?.batteryAvailable ? qsTr("Device battery (%1%)").arg(root.device.battery * 100) : qsTr("Battery unavailable")
@@ -357,10 +357,10 @@ StyledFlickable {
                                 RowLayout {
                                     id: batteryPercent
 
-                                    Layout.topMargin: Tokens.spacing.small / 2
+                                    Layout.topMargin: Tokens.spacing.extraSmall
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: Tokens.padding.small
-                                    spacing: Tokens.spacing.small / 2
+                                    spacing: Tokens.spacing.extraSmall
 
                                     StyledRect {
                                         Layout.fillWidth: true

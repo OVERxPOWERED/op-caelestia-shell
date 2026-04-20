@@ -38,7 +38,7 @@ CollapsibleSection {
                 property alias contentHeight: sansFontList.contentHeight
 
                 clip: true
-                spacing: Tokens.spacing.small / 2
+                spacing: Tokens.spacing.extraSmall
                 model: Qt.fontFamilies()
 
                 StyledScrollBar.vertical: StyledScrollBar {
@@ -119,7 +119,7 @@ CollapsibleSection {
                 property alias contentHeight: monoFontList.contentHeight
 
                 clip: true
-                spacing: Tokens.spacing.small / 2
+                spacing: Tokens.spacing.extraSmall
                 model: Qt.fontFamilies()
 
                 StyledScrollBar.vertical: StyledScrollBar {
@@ -202,7 +202,7 @@ CollapsibleSection {
                 property alias contentHeight: materialFontList.contentHeight
 
                 clip: true
-                spacing: Tokens.spacing.small / 2
+                spacing: Tokens.spacing.extraSmall
                 model: Qt.fontFamilies().filter(f => f.startsWith("Material Symbols"))
 
                 StyledScrollBar.vertical: StyledScrollBar {

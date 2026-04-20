@@ -296,7 +296,7 @@ Item {
                         Layout.fillHeight: true
 
                         model: root.filteredApps
-                        spacing: Tokens.spacing.small / 2
+                        spacing: Tokens.spacing.extraSmall
                         clip: true
 
                         StyledScrollBar.vertical: StyledScrollBar {

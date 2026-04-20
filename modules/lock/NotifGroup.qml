@@ -143,7 +143,7 @@ StyledRect {
             Layout.topMargin: -Tokens.padding.extraSmall
             Layout.bottomMargin: -Tokens.padding.extraSmall / 2 - (root.expanded ? 0 : spacing)
             Layout.fillWidth: true
-            spacing: Math.round(Tokens.spacing.small / 2)
+            spacing: Math.round(Tokens.spacing.extraSmall)
 
             RowLayout {
                 Layout.bottomMargin: -parent.spacing
@@ -184,7 +184,7 @@ StyledRect {
                         id: expandBtn
 
                         anchors.centerIn: parent
-                        spacing: Tokens.spacing.small / 2
+                        spacing: Tokens.spacing.extraSmall
 
                         StyledText {
                             id: groupCount

@@ -77,7 +77,7 @@ Item {
         implicitHeight: Tokens.font.size.normal
 
         orientation: Qt.Horizontal
-        spacing: Tokens.spacing.small / 2
+        spacing: Tokens.spacing.extraSmall
         interactive: false
 
         model: ScriptModel {

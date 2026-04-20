@@ -22,7 +22,7 @@ Item {
     }
 
     implicitWidth: image.width + Tokens.padding.medium * 2
-    implicitHeight: image.height + label.height + Tokens.spacing.small / 2 + Tokens.padding.large + Tokens.padding.medium
+    implicitHeight: image.height + label.height + Tokens.spacing.extraSmall + Tokens.padding.large + Tokens.padding.medium
 
     StateLayer {
         radius: Tokens.rounding.large
@@ -75,7 +75,7 @@ Item {
         id: label
 
         anchors.top: image.bottom
-        anchors.topMargin: Tokens.spacing.small / 2
+        anchors.topMargin: Tokens.spacing.extraSmall
         anchors.horizontalCenter: parent.horizontalCenter
 
         width: image.width - Tokens.padding.medium * 2

@@ -73,7 +73,7 @@ Item {
 
         StyledText {
             Layout.topMargin: Tokens.spacing.medium
-            Layout.bottomMargin: -Tokens.spacing.small / 2
+            Layout.bottomMargin: -Tokens.spacing.extraSmall
             text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
             font.weight: 500
         }

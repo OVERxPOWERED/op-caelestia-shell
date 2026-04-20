@@ -180,7 +180,7 @@ StackView {
 
             sourceComponent: Item {
                 implicitWidth: back.implicitWidth
-                implicitHeight: back.implicitHeight + Tokens.spacing.small / 2
+                implicitHeight: back.implicitHeight + Tokens.spacing.extraSmall
 
                 Item {
                     anchors.bottom: parent.bottom

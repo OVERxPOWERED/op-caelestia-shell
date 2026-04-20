@@ -78,7 +78,7 @@ ColumnLayout {
         model: root.model
         delegate: root.delegate
 
-        spacing: Tokens.spacing.small / 2
+        spacing: Tokens.spacing.extraSmall
         interactive: false
         clip: false
     }

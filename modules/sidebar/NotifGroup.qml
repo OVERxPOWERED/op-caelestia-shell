@@ -32,7 +32,7 @@ StyledRect {
     }
 
     readonly property int nonAnimHeight: {
-        const headerHeight = header.implicitHeight + (root.expanded ? Math.round(Tokens.spacing.small / 2) : 0);
+        const headerHeight = header.implicitHeight + (root.expanded ? Math.round(Tokens.spacing.extraSmall) : 0);
         const columnHeight = headerHeight + notifList.layoutHeight;
         return Math.round(Math.max(TokenConfig.sizes.notifs.image, columnHeight) + Tokens.padding.medium * 2);
     }
@@ -157,7 +157,7 @@ StyledRect {
             id: column
 
             Layout.fillWidth: true
-            spacing: root.expanded ? Math.round(Tokens.spacing.small / 2) : 0
+            spacing: root.expanded ? Math.round(Tokens.spacing.extraSmall) : 0
 
             Behavior on spacing {
                 Anim {}
@@ -201,7 +201,7 @@ StyledRect {
                         id: expandBtn
 
                         anchors.centerIn: parent
-                        spacing: Tokens.spacing.small / 2
+                        spacing: Tokens.spacing.extraSmall
 
                         StyledText {
                             id: groupCount

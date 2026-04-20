@@ -96,8 +96,8 @@ ColumnLayout {
             }
 
             StyledText {
-                Layout.leftMargin: Tokens.spacing.small / 2
-                Layout.rightMargin: Tokens.spacing.small / 2
+                Layout.leftMargin: Tokens.spacing.extraSmall
+                Layout.rightMargin: Tokens.spacing.extraSmall
                 Layout.fillWidth: true
                 text: device.modelData.name
                 elide: Text.ElideRight

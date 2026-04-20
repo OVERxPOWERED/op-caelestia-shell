@@ -25,7 +25,7 @@ Item {
             Layout.fillWidth: true
 
             Column {
-                spacing: Tokens.spacing.small / 2
+                spacing: Tokens.spacing.extraSmall
 
                 StyledText {
                     text: Weather.city || qsTr("Loading...")
@@ -176,7 +176,7 @@ Item {
                         }
 
                         StyledText {
-                            Layout.topMargin: -Tokens.spacing.small / 2
+                            Layout.topMargin: -Tokens.spacing.extraSmall
                             Layout.alignment: Qt.AlignHCenter
                             text: new Date(forecastItem.modelData.date).toLocaleDateString(Qt.locale(), "MMM d")
                             font.pointSize: Tokens.font.size.small

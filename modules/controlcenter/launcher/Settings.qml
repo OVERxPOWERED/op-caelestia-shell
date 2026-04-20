@@ -69,7 +69,7 @@ ColumnLayout {
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.small / 2
+        contentSpacing: Tokens.spacing.extraSmall
 
         PropertyRow {
             label: qsTr("Max shown items")
@@ -96,7 +96,7 @@ ColumnLayout {
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.small / 2
+        contentSpacing: Tokens.spacing.extraSmall
 
         PropertyRow {
             label: qsTr("Special prefix")
@@ -165,7 +165,7 @@ ColumnLayout {
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.small / 2
+        contentSpacing: Tokens.spacing.extraSmall
 
         PropertyRow {
             label: qsTr("Item width")
@@ -198,7 +198,7 @@ ColumnLayout {
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.small / 2
+        contentSpacing: Tokens.spacing.extraSmall
 
         PropertyRow {
             label: qsTr("Total hidden")

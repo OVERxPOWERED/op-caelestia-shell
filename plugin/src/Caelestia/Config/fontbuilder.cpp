@@ -51,4 +51,16 @@ QFont FontBuilder::build() const {
     return m_font;
 }
 
+FontBuilder FontBuilder::fill(float value) {
+    return vaxis("FILL", value);
+}
+
+FontBuilder FontBuilder::grade(float value) {
+    return vaxis("GRAD", value);
+}
+
+FontBuilder FontBuilder::width(float value) {
+    return vaxis("wdth", value);
+}
+
 } // namespace caelestia::config

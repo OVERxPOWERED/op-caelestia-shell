@@ -23,6 +23,11 @@ public:
     [[nodiscard]] Q_INVOKABLE FontBuilder vaxis(QFont::Tag tag, float value);
     [[nodiscard]] Q_INVOKABLE QFont build() const;
 
+    // Common vaxes
+    [[nodiscard]] Q_INVOKABLE FontBuilder fill(float value);
+    [[nodiscard]] Q_INVOKABLE FontBuilder grade(float value);
+    [[nodiscard]] Q_INVOKABLE FontBuilder width(float value);
+
 private:
     QFont m_font;
 };

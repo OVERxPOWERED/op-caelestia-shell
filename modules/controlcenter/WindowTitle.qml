@@ -20,9 +20,7 @@ StyledRect {
         anchors.bottom: parent.bottom
 
         text: qsTr("Caelestia Settings - %1").arg(root.session.active)
-        font.capitalization: Font.Capitalize
-        font.pointSize: Tokens.font.size.larger
-        font.weight: 500
+        font: Tokens.font.title.builders.medium.capitalisation(Font.Capitalize).weight(500).build()
     }
 
     Item {

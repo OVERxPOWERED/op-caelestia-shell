@@ -79,7 +79,7 @@ Item {
 
                     text: "select_window"
                     color: Colours.palette.m3onPrimaryContainer
-                    font.pointSize: Tokens.font.size.large
+                    font: Tokens.font.icon.large
                     fill: 1
                 }
 
@@ -193,7 +193,7 @@ Item {
 
                 text: item.icon
                 color: item.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                font.pointSize: Tokens.font.size.large
+                font: Tokens.font.icon.large
                 fill: item.active ? 1 : 0
 
                 Behavior on fill {
@@ -211,7 +211,7 @@ Item {
                 opacity: 0
                 text: item.label
                 color: item.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                font.capitalization: Font.Capitalize
+                font: Tokens.font.label.builders.medium.capitalisation(Font.Capitalize).build()
             }
 
             StyledText {
@@ -222,8 +222,7 @@ Item {
                 anchors.topMargin: Tokens.spacing.extraSmall
 
                 text: item.label
-                font.pointSize: Tokens.font.size.small
-                font.capitalization: Font.Capitalize
+                font: Tokens.font.label.builders.small.capitalisation(Font.Capitalize).build()
             }
         }
     }

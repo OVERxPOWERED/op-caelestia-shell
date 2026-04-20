@@ -156,8 +156,7 @@ Item {
 
                     StyledText {
                         text: qsTr("Launcher")
-                        font.pointSize: Tokens.font.size.large
-                        font.weight: 500
+                        font: Tokens.font.title.builders.medium.weight(500).build()
                     }
 
                     Item {
@@ -168,9 +167,9 @@ Item {
                         toggled: !root.session.launcher.active
                         icon: "settings"
                         accent: "Primary"
-                        iconSize: Tokens.font.size.normal
-                        horizontalPadding: Tokens.padding.medium
-                        verticalPadding: Tokens.padding.small
+                        iconSize: Tokens.font.body.medium.pointSize
+                        horizontalPadding: Tokens.padding.normal
+                        verticalPadding: Tokens.padding.smaller
                         tooltip: qsTr("Launcher settings")
 
                         onClicked: {
@@ -188,8 +187,7 @@ Item {
                 StyledText {
                     Layout.topMargin: Tokens.spacing.largeIncreased
                     text: qsTr("Applications (%1)").arg(root.searchText ? root.filteredApps.length : allAppsDb.apps.length)
-                    font.pointSize: Tokens.font.size.normal
-                    font.weight: 500
+                    font: Tokens.font.title.builders.small.weight(500).build()
                 }
 
                 StyledText {
@@ -354,7 +352,7 @@ Item {
                                 StyledText {
                                     Layout.fillWidth: true
                                     text: modelData.name || modelData.entry?.name || qsTr("Unknown")
-                                    font.pointSize: Tokens.font.size.normal
+                                    font: Tokens.font.body.medium
                                 }
 
                                 Loader {
@@ -546,7 +544,7 @@ Item {
 
                         asynchronous: true
                         Layout.alignment: Qt.AlignHCenter
-                        implicitSize: Tokens.font.size.extraLarge * 3 * 2
+                        implicitSize: Tokens.font.body.large.pointSize * 3 * 2
                         source: {
                             const app = appDetailsLayout.displayedApp;
                             if (!app)
@@ -564,8 +562,7 @@ Item {
 
                         Layout.alignment: Qt.AlignHCenter
                         text: displayedApp ? (displayedApp.name || displayedApp.entry?.name || qsTr("Application Details")) : ""
-                        font.pointSize: Tokens.font.size.large
-                        font.bold: true
+                        font: Tokens.font.title.builders.medium.weight(Font.Bold).build()
                     }
                 }
             }

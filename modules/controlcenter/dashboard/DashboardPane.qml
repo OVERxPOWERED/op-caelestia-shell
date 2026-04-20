@@ -119,8 +119,7 @@ Item {
 
                     StyledText {
                         text: qsTr("Dashboard")
-                        font.pointSize: Tokens.font.size.large
-                        font.weight: 500
+                        font: Tokens.font.title.builders.medium.weight(500).build()
                     }
                 }
 

@@ -17,7 +17,7 @@ SectionContainer {
 
     StyledText {
         text: qsTr("General Settings")
-        font.pointSize: Tokens.font.size.normal
+        font: Tokens.font.title.small
     }
 
     SwitchRow {

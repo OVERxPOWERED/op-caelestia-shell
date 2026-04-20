@@ -2,7 +2,9 @@
 
 #include "configobject.hpp"
 
+#include <qfont.h>
 #include <qstring.h>
+#include <qvariant.h>
 
 namespace caelestia::config {
 
@@ -10,7 +12,6 @@ namespace caelestia::config {
 class RoundingTokens;
 class SpacingTokens;
 class PaddingTokens;
-class FontSizeTokens;
 class AnimDurationTokens;
 
 class AppearanceRounding : public ConfigObject {
@@ -126,65 +127,70 @@ private:
     PaddingTokens* m_tokens = nullptr;
 };
 
-class FontFamily : public ConfigObject {
+class FontConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(QString, sans, QStringLiteral("Rubik"))
-    CONFIG_PROPERTY(QString, mono, QStringLiteral("CaskaydiaCove NF"))
-    CONFIG_PROPERTY(QString, material, QStringLiteral("Material Symbols Rounded"))
-    CONFIG_PROPERTY(QString, clock, QStringLiteral("Rubik"))
+    CONFIG_PROPERTY(QString, family, QStringLiteral("Rubik"))
+    CONFIG_PROPERTY(int, size, 14)
+    CONFIG_PROPERTY(int, weight, QFont::Normal)
+    CONFIG_PROPERTY(bool, italic, false)
+    CONFIG_PROPERTY(QVariantMap, vaxes, {})
 
 public:
-    explicit FontFamily(QObject* parent = nullptr)
+    explicit FontConfig(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 };
 
-class FontSize : public ConfigObject {
+class FontStyleConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(qreal, scale, 1)
-
-    Q_PROPERTY(int small READ small NOTIFY valuesChanged)
-    Q_PROPERTY(int smaller READ smaller NOTIFY valuesChanged)
-    Q_PROPERTY(int normal READ normal NOTIFY valuesChanged)
-    Q_PROPERTY(int larger READ larger NOTIFY valuesChanged)
-    Q_PROPERTY(int large READ large NOTIFY valuesChanged)
-    Q_PROPERTY(int extraLarge READ extraLarge NOTIFY valuesChanged)
+    CONFIG_SUBOBJECT(FontConfig, large)
+    CONFIG_SUBOBJECT(FontConfig, medium)
+    CONFIG_SUBOBJECT(FontConfig, small)
 
 public:
-    explicit FontSize(QObject* parent = nullptr)
-        : ConfigObject(parent) {}
+    explicit FontStyleConfig(QObject* parent = nullptr)
+        : ConfigObject(parent)
+        , m_large(new FontConfig(this))
+        , m_medium(new FontConfig(this))
+        , m_small(new FontConfig(this)) {}
+};
 
-    void bindTokens(FontSizeTokens* tokens);
+class IconFontStyleConfig : public FontStyleConfig {
+    Q_OBJECT
+    QML_ANONYMOUS
 
-    [[nodiscard]] int small() const;
-    [[nodiscard]] int smaller() const;
-    [[nodiscard]] int normal() const;
-    [[nodiscard]] int larger() const;
-    [[nodiscard]] int large() const;
-    [[nodiscard]] int extraLarge() const;
+    CONFIG_SUBOBJECT(FontConfig, extraLarge)
 
-signals:
-    void valuesChanged();
-
-private:
-    FontSizeTokens* m_tokens = nullptr;
+public:
+    explicit IconFontStyleConfig(QObject* parent = nullptr)
+        : FontStyleConfig(parent)
+        , m_extraLarge(new FontConfig(this)) {}
 };
 
 class AppearanceFont : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_SUBOBJECT(FontFamily, family)
-    CONFIG_SUBOBJECT(FontSize, size)
+    CONFIG_SUBOBJECT(FontStyleConfig, headline)
+    CONFIG_SUBOBJECT(FontStyleConfig, title)
+    CONFIG_SUBOBJECT(FontStyleConfig, body)
+    CONFIG_SUBOBJECT(FontStyleConfig, label)
+    CONFIG_SUBOBJECT(FontStyleConfig, mono)
+    CONFIG_SUBOBJECT(IconFontStyleConfig, icon)
+    CONFIG_PROPERTY(QString, clock, QStringLiteral("Rubik"))
 
 public:
     explicit AppearanceFont(QObject* parent = nullptr)
         : ConfigObject(parent)
-        , m_family(new FontFamily(this))
-        , m_size(new FontSize(this)) {}
+        , m_headline(new FontStyleConfig(this))
+        , m_title(new FontStyleConfig(this))
+        , m_body(new FontStyleConfig(this))
+        , m_label(new FontStyleConfig(this))
+        , m_mono(new FontStyleConfig(this))
+        , m_icon(new IconFontStyleConfig(this)) {}
 };
 
 class AnimDurations : public ConfigObject {

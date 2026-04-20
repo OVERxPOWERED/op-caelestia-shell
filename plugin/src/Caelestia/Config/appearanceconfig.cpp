@@ -142,37 +142,6 @@ int AppearancePadding::extraExtraLarge() const {
     return m_tokens ? static_cast<int>(m_tokens->extraExtraLarge() * m_scale) : 0;
 }
 
-// FontSize
-
-void FontSize::bindTokens(FontSizeTokens* tokens) {
-    m_tokens = tokens;
-    connectTokenSignals(tokens, this);
-}
-
-int FontSize::small() const {
-    return m_tokens ? static_cast<int>(m_tokens->small() * m_scale) : 0;
-}
-
-int FontSize::smaller() const {
-    return m_tokens ? static_cast<int>(m_tokens->smaller() * m_scale) : 0;
-}
-
-int FontSize::normal() const {
-    return m_tokens ? static_cast<int>(m_tokens->normal() * m_scale) : 0;
-}
-
-int FontSize::larger() const {
-    return m_tokens ? static_cast<int>(m_tokens->larger() * m_scale) : 0;
-}
-
-int FontSize::large() const {
-    return m_tokens ? static_cast<int>(m_tokens->large() * m_scale) : 0;
-}
-
-int FontSize::extraLarge() const {
-    return m_tokens ? static_cast<int>(m_tokens->extraLarge() * m_scale) : 0;
-}
-
 // AnimDurations
 
 void AnimDurations::bindTokens(AnimDurationTokens* tokens) {

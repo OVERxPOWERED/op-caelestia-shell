@@ -1,0 +1,147 @@
+#pragma once
+
+#include "fontbuilder.hpp"
+
+#include <qqmlintegration.h>
+
+namespace caelestia::config {
+
+class AppearanceFont;
+class FontConfig;
+class FontStyleConfig;
+class IconFontStyleConfig;
+class FontStyleBase;
+
+class FontBuilders : public QObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    Q_PROPERTY(caelestia::config::FontBuilder large READ large NOTIFY buildersChanged FINAL)
+    Q_PROPERTY(caelestia::config::FontBuilder medium READ medium NOTIFY buildersChanged FINAL)
+    Q_PROPERTY(caelestia::config::FontBuilder small READ small NOTIFY buildersChanged FINAL)
+
+public:
+    explicit FontBuilders(const FontStyleBase* style, QObject* parent = nullptr);
+
+    [[nodiscard]] FontBuilder large() const;
+    [[nodiscard]] FontBuilder medium() const;
+    [[nodiscard]] FontBuilder small() const;
+
+signals:
+    void buildersChanged();
+
+private:
+    const FontStyleBase* m_style;
+};
+
+class FontStyleBase : public QObject {
+    Q_OBJECT
+
+    Q_PROPERTY(QFont large READ large NOTIFY fontsChanged FINAL)
+    Q_PROPERTY(QFont medium READ medium NOTIFY fontsChanged FINAL)
+    Q_PROPERTY(QFont small READ small NOTIFY fontsChanged FINAL)
+
+public:
+    explicit FontStyleBase(QObject* parent = nullptr)
+        : QObject(parent) {}
+
+    void bind(FontStyleConfig* cfg);
+
+    [[nodiscard]] QFont large() const;
+    [[nodiscard]] QFont medium() const;
+    [[nodiscard]] QFont small() const;
+
+signals:
+    void fontsChanged();
+
+protected:
+    virtual void rebuild();
+
+    static QFont buildFont(const FontConfig* cfg);
+
+    FontStyleConfig* m_cfg = nullptr;
+    QFont m_large;
+    QFont m_medium;
+    QFont m_small;
+};
+
+class FontStyle : public FontStyleBase {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    Q_PROPERTY(caelestia::config::FontBuilders* builders READ builders CONSTANT FINAL)
+
+public:
+    explicit FontStyle(QObject* parent = nullptr);
+
+    [[nodiscard]] FontBuilders* builders() const;
+
+private:
+    FontBuilders* m_builders;
+};
+
+class IconFontStyle : public FontStyleBase {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    Q_PROPERTY(QFont extraLarge READ extraLarge NOTIFY fontsChanged FINAL)
+    Q_PROPERTY(caelestia::config::FontBuilder builder READ builder NOTIFY fontsChanged FINAL)
+
+public:
+    explicit IconFontStyle(QObject* parent = nullptr)
+        : FontStyleBase(parent) {}
+
+    void bind(IconFontStyleConfig* cfg);
+
+    [[nodiscard]] QFont extraLarge() const;
+    [[nodiscard]] FontBuilder builder() const;
+
+protected:
+    void rebuild() override;
+
+private:
+    QFont m_extraLarge;
+};
+
+class FontTokens : public QObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    Q_PROPERTY(caelestia::config::FontStyle* headline READ headline CONSTANT FINAL)
+    Q_PROPERTY(caelestia::config::FontStyle* title READ title CONSTANT FINAL)
+    Q_PROPERTY(caelestia::config::FontStyle* body READ body CONSTANT FINAL)
+    Q_PROPERTY(caelestia::config::FontStyle* label READ label CONSTANT FINAL)
+    Q_PROPERTY(caelestia::config::FontStyle* mono READ mono CONSTANT FINAL)
+    Q_PROPERTY(caelestia::config::IconFontStyle* icon READ icon CONSTANT FINAL)
+    Q_PROPERTY(caelestia::config::FontBuilder clock READ clock NOTIFY clockChanged FINAL)
+
+public:
+    explicit FontTokens(QObject* parent = nullptr);
+
+    void bindFont(AppearanceFont* font);
+
+    [[nodiscard]] FontStyle* headline() const;
+    [[nodiscard]] FontStyle* title() const;
+    [[nodiscard]] FontStyle* body() const;
+    [[nodiscard]] FontStyle* label() const;
+    [[nodiscard]] FontStyle* mono() const;
+    [[nodiscard]] IconFontStyle* icon() const;
+    [[nodiscard]] FontBuilder clock() const;
+
+signals:
+    void clockChanged();
+
+private:
+    void rebuildClock();
+
+    AppearanceFont* m_font = nullptr;
+    FontStyle* m_headline;
+    FontStyle* m_title;
+    FontStyle* m_body;
+    FontStyle* m_label;
+    FontStyle* m_mono;
+    IconFontStyle* m_icon;
+    QFont m_clock;
+};
+
+} // namespace caelestia::config

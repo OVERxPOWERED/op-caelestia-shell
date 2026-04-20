@@ -1,8 +1,5 @@
 #include "fontbuilder.hpp"
 
-#include <qcoreapplication.h>
-#include <qmetatype.h>
-
 namespace caelestia::config {
 
 FontBuilder::FontBuilder(QFont font)

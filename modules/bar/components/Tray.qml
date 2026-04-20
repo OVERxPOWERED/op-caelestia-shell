@@ -100,7 +100,7 @@ StyledRect {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: Config.bar.tray.background ? Tokens.padding.extraSmall : -Tokens.padding.extraSmall
                 text: "expand_less"
-                font.pointSize: Tokens.font.size.large
+                font: Tokens.font.icon.large
                 rotation: root.expanded ? 180 : 0
 
                 Behavior on rotation {

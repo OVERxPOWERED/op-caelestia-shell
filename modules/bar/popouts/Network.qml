@@ -29,7 +29,7 @@ ColumnLayout {
         Layout.topMargin: visible ? Tokens.padding.medium : 0
         Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Wireless")
-        font.weight: 500
+        font: Tokens.font.body.builders.medium.weight(500).build()
     }
 
     Toggle {
@@ -47,7 +47,7 @@ ColumnLayout {
         Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("%1 networks available").arg(Nmcli.networks.length) // qmllint disable missing-property
         color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Tokens.font.size.small
+        font: Tokens.font.body.small
     }
 
     Repeater {
@@ -97,7 +97,7 @@ ColumnLayout {
             MaterialIcon {
                 visible: networkItem.modelData.isSecure
                 text: "lock"
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.icon.small
             }
 
             StyledText {
@@ -106,7 +106,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 text: networkItem.modelData.ssid
                 elide: Text.ElideRight
-                font.weight: networkItem.modelData.active ? 500 : 400
+                font: Tokens.font.body.builders.medium.weight(networkItem.modelData.active ? 500 : 400).build()
                 color: networkItem.modelData.active ? Colours.palette.m3primary : Colours.palette.m3onSurface
             }
 
@@ -221,7 +221,7 @@ ColumnLayout {
         Layout.topMargin: visible ? Tokens.padding.medium : 0
         Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Ethernet")
-        font.weight: 500
+        font: Tokens.font.body.builders.medium.weight(500).build()
     }
 
     StyledText {
@@ -231,7 +231,7 @@ ColumnLayout {
         Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("%1 devices available").arg(Nmcli.ethernetDevices.length)
         color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Tokens.font.size.small
+        font: Tokens.font.body.small
     }
 
     Repeater {
@@ -283,7 +283,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 text: ethernetItem.modelData.interface || qsTr("Unknown")
                 elide: Text.ElideRight
-                font.weight: ethernetItem.modelData.connected ? 500 : 400
+                font: Tokens.font.body.builders.medium.weight(ethernetItem.modelData.connected ? 500 : 400).build()
                 color: ethernetItem.modelData.connected ? Colours.palette.m3primary : Colours.palette.m3onSurface
             }
 

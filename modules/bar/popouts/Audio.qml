@@ -34,7 +34,7 @@ Item {
 
         StyledText {
             text: qsTr("Output device")
-            font.weight: 500
+            font: Tokens.font.body.builders.medium.weight(500).build()
         }
 
         Repeater {
@@ -55,7 +55,7 @@ Item {
         StyledText {
             Layout.topMargin: Tokens.spacing.medium
             text: qsTr("Input device")
-            font.weight: 500
+            font: Tokens.font.body.builders.medium.weight(500).build()
         }
 
         Repeater {
@@ -75,7 +75,7 @@ Item {
             Layout.topMargin: Tokens.spacing.medium
             Layout.bottomMargin: -Tokens.spacing.extraSmall
             text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
-            font.weight: 500
+            font: Tokens.font.body.builders.medium.weight(500).build()
         }
 
         CustomMouseArea {

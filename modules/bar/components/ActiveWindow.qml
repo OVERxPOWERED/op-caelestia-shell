@@ -86,8 +86,7 @@ Item {
         id: metrics
 
         text: root.windowTitle
-        font.pointSize: root.Tokens.font.size.smaller
-        font.family: root.Tokens.font.family.mono
+        font: root.Tokens.font.mono.small
         elide: Qt.ElideRight
         elideWidth: root.maxHeight - icon.height
 
@@ -112,8 +111,7 @@ Item {
         anchors.top: icon.bottom
         anchors.topMargin: Tokens.spacing.small
 
-        font.pointSize: metrics.font.pointSize
-        font.family: metrics.font.family
+        font: metrics.font
         color: root.colour
         opacity: root.current === this ? 1 : 0
 

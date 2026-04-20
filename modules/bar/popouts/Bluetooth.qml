@@ -22,7 +22,7 @@ ColumnLayout {
         Layout.topMargin: Tokens.padding.medium
         Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Bluetooth")
-        font.weight: 500
+        font: Tokens.font.body.builders.medium.weight(500).build()
     }
 
     Toggle {
@@ -57,7 +57,7 @@ ColumnLayout {
             return available;
         }
         color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Tokens.font.size.small
+        font: Tokens.font.body.small
     }
 
     Repeater {

@@ -27,7 +27,7 @@ ColumnLayout {
         Layout.topMargin: Tokens.padding.medium
         Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Keyboard Layouts")
-        font.weight: 500
+        font: Tokens.font.body.builders.medium.weight(500).build()
     }
 
     ListView {
@@ -155,7 +155,7 @@ ColumnLayout {
             Layout.fillWidth: true
             text: kb.activeLabel
             elide: Text.ElideRight
-            font.weight: 500
+            font: Tokens.font.body.builders.medium.weight(500).build()
             color: Colours.palette.m3primary
         }
 

@@ -148,8 +148,7 @@ StackView {
                             id: labelMetrics
 
                             text: item.modelData.text
-                            font.pointSize: label.font.pointSize
-                            font.family: label.font.family
+                            font: label.font
 
                             elide: Text.ElideRight
                             elideWidth: root.Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + root.Tokens.spacing.medium : 0)

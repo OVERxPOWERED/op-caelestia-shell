@@ -46,7 +46,7 @@ Item {
                 StyledText {
                     Layout.fillWidth: true
                     text: Hypr.activeToplevel?.title ?? ""
-                    font.pointSize: Tokens.font.size.normal
+                    font: Tokens.font.body.medium
                     elide: Text.ElideRight
                 }
 
@@ -77,7 +77,7 @@ Item {
 
                     text: "chevron_right"
 
-                    font.pointSize: Tokens.font.size.large
+                    font: Tokens.font.icon.large
                 }
             }
         }

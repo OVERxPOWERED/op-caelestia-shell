@@ -136,7 +136,7 @@ StyledRect {
                 animate: true
                 text: Hypr.kbLayout
                 color: root.colour
-                font.family: Tokens.font.family.mono
+                font: Tokens.font.mono.medium
             }
         }
 

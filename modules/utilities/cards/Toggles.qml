@@ -52,7 +52,7 @@ StyledRect {
 
         StyledText {
             text: qsTr("Quick Toggles")
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.body.medium
         }
 
         QuickToggleRow {

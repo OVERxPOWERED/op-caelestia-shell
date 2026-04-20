@@ -32,14 +32,14 @@ ColumnLayout {
             MaterialIcon {
                 Layout.alignment: Qt.AlignVCenter
                 text: "list"
-                font.pointSize: Tokens.font.size.large
+                font: Tokens.font.icon.large
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.fillWidth: true
                 text: qsTr("Recordings")
-                font.pointSize: Tokens.font.size.normal
+                font: Tokens.font.body.medium
             }
 
             IconButton {
@@ -62,7 +62,7 @@ ColumnLayout {
 
         Layout.fillWidth: true
         Layout.rightMargin: -Tokens.spacing.small
-        implicitHeight: (Tokens.font.size.larger + Tokens.padding.extraSmall) * (root.props.recordingListExpanded ? 10 : 3)
+        implicitHeight: (Tokens.font.body.large.pointSize + Tokens.padding.small) * (root.props.recordingListExpanded ? 10 : 3)
         clip: true
 
         StyledScrollBar.vertical: StyledScrollBar {
@@ -175,7 +175,7 @@ ColumnLayout {
                     Layout.alignment: Qt.AlignHCenter
                     text: "scan_delete"
                     color: Colours.palette.m3outline
-                    font.pointSize: Tokens.font.size.extraLarge
+                    font: Tokens.font.icon.extraLarge
 
                     opacity: root.props.recordingListExpanded ? 1 : 0
                     scale: root.props.recordingListExpanded ? 1 : 0

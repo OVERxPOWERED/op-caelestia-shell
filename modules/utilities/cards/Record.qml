@@ -48,7 +48,7 @@ StyledRect {
                     anchors.verticalCenterOffset: 1.5
                     text: "screen_record"
                     color: Recorder.running ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
-                    font.pointSize: Tokens.font.size.large
+                    font: Tokens.font.icon.large
                 }
             }
 
@@ -59,7 +59,7 @@ StyledRect {
                 StyledText {
                     Layout.fillWidth: true
                     text: qsTr("Screen Recorder")
-                    font.pointSize: Tokens.font.size.normal
+                    font: Tokens.font.body.medium
                     elide: Text.ElideRight
                 }
 
@@ -67,7 +67,7 @@ StyledRect {
                     Layout.fillWidth: true
                     text: Recorder.paused ? qsTr("Recording paused") : Recorder.running ? qsTr("Recording running") : qsTr("Recording off")
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }
             }
@@ -203,7 +203,7 @@ StyledRect {
                     animate: true
                     text: Recorder.paused ? "PAUSED" : "REC"
                     color: Recorder.paused ? Colours.palette.m3onTertiary : Colours.palette.m3onError
-                    font.family: Tokens.font.family.mono
+                    font: Tokens.font.mono.medium
                 }
 
                 Behavior on implicitWidth {
@@ -246,7 +246,7 @@ StyledRect {
 
                     return qsTr("Recording for %1").arg(time);
                 }
-                font.pointSize: Tokens.font.size.normal
+                font: Tokens.font.body.medium
             }
 
             Item {
@@ -259,7 +259,7 @@ StyledRect {
                 toggle: true
                 checked: Recorder.paused
                 type: IconButton.Tonal
-                font.pointSize: Tokens.font.size.large
+                font: Tokens.font.icon.large
                 onClicked: {
                     Recorder.togglePause();
                     internalChecked = Recorder.paused;
@@ -270,7 +270,7 @@ StyledRect {
                 icon: "stop"
                 inactiveColour: Colours.palette.m3error
                 inactiveOnColour: Colours.palette.m3onError
-                font.pointSize: Tokens.font.size.large
+                font: Tokens.font.icon.large
                 onClicked: Recorder.stop()
             }
         }

@@ -168,14 +168,14 @@ Loader {
 
                 StyledText {
                     text: qsTr("Delete recording?")
-                    font.pointSize: Tokens.font.size.large
+                    font: Tokens.font.body.large
                 }
 
                 StyledText {
                     Layout.fillWidth: true
                     text: qsTr("Recording '%1' will be permanently deleted.").arg(deleteConfirmation.path)
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 }
 

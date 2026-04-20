@@ -58,7 +58,7 @@ Item {
             anchors.centerIn: parent
             text: "image"
             color: Colours.tPalette.m3outline
-            font: Tokens.font.icon.builders.extraLarge.size(Tokens.font.icon.extraLarge.pointSize * 2).weight(600).build()
+            fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 2).weight(600).build()
         }
 
         CachingImage {

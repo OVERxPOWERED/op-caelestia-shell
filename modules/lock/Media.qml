@@ -172,7 +172,7 @@ Item {
 
             anchors.centerIn: parent
             color: control.active ? Colours.palette[`m3on${control.colour}`] : Colours.palette[`m3on${control.colour}Container`]
-            font: Tokens.font.icon.large
+            fontStyle: Tokens.font.icon.large
             fill: control.active ? 1 : 0
 
             Behavior on fill {

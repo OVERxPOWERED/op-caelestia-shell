@@ -138,7 +138,7 @@ ColumnLayout {
 
                             anchors.centerIn: parent
                             text: modelData.enabled && VPN.connected ? "vpn_key" : "vpn_key_off"
-                            font: Tokens.font.icon.large
+                            fontStyle: Tokens.font.icon.large
                             fill: modelData.enabled && VPN.connected ? 1 : 0
                             color: modelData.enabled && VPN.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                         }

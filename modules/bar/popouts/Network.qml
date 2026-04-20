@@ -97,7 +97,7 @@ ColumnLayout {
             MaterialIcon {
                 visible: networkItem.modelData.isSecure
                 text: "lock"
-                font: Tokens.font.icon.small
+                fontStyle: Tokens.font.icon.small
             }
 
             StyledText {

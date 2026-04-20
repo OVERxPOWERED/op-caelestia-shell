@@ -79,7 +79,7 @@ Item {
 
                     text: "select_window"
                     color: Colours.palette.m3onPrimaryContainer
-                    font: Tokens.font.icon.large
+                    fontStyle: Tokens.font.icon.large
                     fill: 1
                 }
 
@@ -193,7 +193,7 @@ Item {
 
                 text: item.icon
                 color: item.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                font: Tokens.font.icon.large
+                fontStyle: Tokens.font.icon.large
                 fill: item.active ? 1 : 0
 
                 Behavior on fill {

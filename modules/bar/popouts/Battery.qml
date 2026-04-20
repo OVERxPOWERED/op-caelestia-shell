@@ -213,7 +213,7 @@ Column {
             anchors.centerIn: parent
 
             text: parent.icon
-            font: Tokens.font.icon.large
+            fontStyle: Tokens.font.icon.large
             color: profiles.current === text ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
             fill: profiles.current === text ? 1 : 0
 

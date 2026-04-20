@@ -21,7 +21,7 @@ Item {
         animate: true
         text: Weather.icon
         color: Colours.palette.m3secondary
-        font: Tokens.font.icon.builders.xl.size(Tokens.font.icon.xl.pointSize * 2).build()
+        fontStyle: Tokens.font.icon.extraLarge.size(Tokens.font.icon.extraLarge.pointSize * 2).build()
     }
 
     Column {

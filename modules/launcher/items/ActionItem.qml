@@ -29,7 +29,7 @@ Item {
             id: icon
 
             text: root.modelData?.icon ?? ""
-            font: Tokens.font.icon.extraLarge
+            fontStyle: Tokens.font.icon.extraLarge
 
             anchors.verticalCenter: parent.verticalCenter
         }

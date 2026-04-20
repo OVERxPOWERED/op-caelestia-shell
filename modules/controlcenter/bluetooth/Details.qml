@@ -597,7 +597,7 @@ StyledFlickable {
                     fabBg.implicitWidth: 48
                     fabBg.implicitHeight: 48
                     fabBg.radius: 48 / 2
-                    fab.font: Tokens.font.icon.large
+                    fab.fontStyle: Tokens.font.icon.large
                 }
             }
 
@@ -635,7 +635,7 @@ StyledFlickable {
                 animate: true
                 text: root.session.bt.fabMenuOpen ? "close" : "settings"
                 color: root.session.bt.fabMenuOpen ? Colours.palette.m3onPrimary : Colours.palette.m3onPrimaryContainer
-                font: Tokens.font.icon.large
+                fontStyle: Tokens.font.icon.large
                 fill: 1
             }
         }

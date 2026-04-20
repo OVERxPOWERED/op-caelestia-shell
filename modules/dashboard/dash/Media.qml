@@ -98,7 +98,7 @@ Item {
             grade: 200
             text: "art_track"
             color: Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.icon.builders.medium.size((parent.width * 0.4) || 1).build()
+            fontStyle: Tokens.font.icon.builder.size((parent.width * 0.4) || 1).build()
         }
 
         Image {
@@ -236,7 +236,7 @@ Item {
             animate: true
             text: control.icon
             color: control.canUse ? Colours.palette.m3onSurface : Colours.palette.m3outline
-            font: Tokens.font.icon.large
+            fontStyle: Tokens.font.icon.large
         }
     }
 }

@@ -173,7 +173,7 @@ Item {
             grade: 200
             text: "art_track"
             color: Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.icon.builders.medium.size((parent.width * 0.4) || 1).build()
+            fontStyle: Tokens.font.icon.builder.size((parent.width * 0.4) || 1).build()
         }
 
         Image {
@@ -267,7 +267,7 @@ Item {
             PlayerControl {
                 type: IconButton.Text
                 icon: Players.active?.shuffle ? "shuffle_on" : "shuffle"
-                font: Tokens.font.icon.builders.large.size(Math.round(Tokens.font.icon.large.pointSize)).build()
+                fontStyle: Tokens.font.icon.builder.size(Math.round(Tokens.font.icon.large.pointSize)).build()
                 disabled: !Players.active?.shuffleSupported
                 onClicked: Players.active.shuffle = !Players.active?.shuffle
             }
@@ -275,7 +275,7 @@ Item {
             PlayerControl {
                 type: IconButton.Text
                 icon: "skip_previous"
-                font: Tokens.font.icon.builders.large.size(Math.round(Tokens.font.icon.large.pointSize * 1.5)).build()
+                fontStyle: Tokens.font.icon.builder.size(Math.round(Tokens.font.icon.large.pointSize * 1.5)).build()
                 disabled: !Players.active?.canGoPrevious
                 onClicked: Players.active?.previous()
             }
@@ -286,7 +286,7 @@ Item {
                 toggle: true
                 padding: Tokens.padding.extraSmall / 2
                 checked: Players.active?.isPlaying ?? false
-                font: Tokens.font.icon.builders.large.size(Math.round(Tokens.font.icon.large.pointSize * 1.5)).build()
+                fontStyle: Tokens.font.icon.builder.size(Math.round(Tokens.font.icon.large.pointSize * 1.5)).build()
                 disabled: !Players.active?.canTogglePlaying
                 onClicked: Players.active?.togglePlaying()
             }
@@ -294,7 +294,7 @@ Item {
             PlayerControl {
                 type: IconButton.Text
                 icon: "skip_next"
-                font: Tokens.font.icon.builders.large.size(Math.round(Tokens.font.icon.large.pointSize * 1.5)).build()
+                fontStyle: Tokens.font.icon.builder.size(Math.round(Tokens.font.icon.large.pointSize * 1.5)).build()
                 disabled: !Players.active?.canGoNext
                 onClicked: Players.active?.next()
             }
@@ -302,7 +302,7 @@ Item {
             PlayerControl {
                 type: IconButton.Text
                 icon: "lyrics"
-                font: Tokens.font.icon.builders.large.size(Math.round(Tokens.font.icon.large.pointSize)).build()
+                fontStyle: Tokens.font.icon.builder.size(Math.round(Tokens.font.icon.large.pointSize)).build()
                 onClicked: root.lyricMenuOpen = !root.lyricMenuOpen
             }
         }
@@ -444,7 +444,7 @@ Item {
             icon: "move_up"
             inactiveOnColour: Colours.palette.m3secondary
             padding: Tokens.padding.small
-            font: Tokens.font.icon.large
+            fontStyle: Tokens.font.icon.large
             disabled: !Players.active?.canRaise
             onClicked: {
                 Players.active?.raise();
@@ -483,7 +483,7 @@ Item {
             icon: "delete"
             inactiveOnColour: Colours.palette.m3error
             padding: Tokens.padding.small
-            font: Tokens.font.icon.large
+            fontStyle: Tokens.font.icon.large
             disabled: !Players.active?.canQuit
             onClicked: Players.active?.quit()
         }

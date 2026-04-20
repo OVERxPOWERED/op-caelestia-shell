@@ -42,7 +42,7 @@ Item {
 
         MaterialIcon {
             text: "function"
-            font: Tokens.font.icon.extraLarge
+            fontStyle: Tokens.font.icon.extraLarge
             Layout.alignment: Qt.AlignVCenter
         }
 
@@ -112,7 +112,7 @@ Item {
 
                 text: "open_in_new"
                 color: Colours.palette.m3onTertiary
-                font: Tokens.font.icon.large
+                fontStyle: Tokens.font.icon.large
             }
 
             Behavior on implicitWidth {

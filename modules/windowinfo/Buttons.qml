@@ -49,7 +49,7 @@ ColumnLayout {
                 animate: true
                 text: root.moveToWsExpanded ? "expand_more" : "keyboard_arrow_right"
                 color: Colours.palette.m3onPrimary
-                font: Tokens.font.icon.large
+                fontStyle: Tokens.font.icon.large
             }
         }
     }

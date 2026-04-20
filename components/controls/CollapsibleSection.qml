@@ -49,7 +49,7 @@ ColumnLayout {
                 text: "expand_more"
                 rotation: root.expanded ? 180 : 0
                 color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.icon.medium
+                fontStyle: Tokens.font.icon.medium
 
                 Behavior on rotation {
                     Anim {

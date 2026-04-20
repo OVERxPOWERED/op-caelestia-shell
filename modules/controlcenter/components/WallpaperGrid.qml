@@ -195,7 +195,7 @@ GridView {
                 visible: isCurrent
                 text: "check_circle"
                 color: Colours.palette.m3primary
-                font: Tokens.font.icon.large
+                fontStyle: Tokens.font.icon.large
             }
         }
 

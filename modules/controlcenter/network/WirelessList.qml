@@ -145,7 +145,7 @@ DeviceList {
 
                         anchors.centerIn: parent
                         text: Icons.getNetworkIcon(modelData.strength, modelData.isSecure)
-                        font: Tokens.font.icon.large
+                        fontStyle: Tokens.font.icon.large
                         fill: modelData.active ? 1 : 0
                         color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                     }

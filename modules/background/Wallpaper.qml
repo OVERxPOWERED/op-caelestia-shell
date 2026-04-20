@@ -48,7 +48,7 @@ Item {
                 MaterialIcon {
                     text: "sentiment_stressed"
                     color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.icon.builders.extraLarge.size(Tokens.font.icon.extraLarge.pointSize * 5).build()
+                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 5).build()
                 }
 
                 Column {

@@ -90,7 +90,7 @@ StyledRect {
                             return "folder";
                         }
                         color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                        font: Tokens.font.icon.large
+                        fontStyle: Tokens.font.icon.large
                         fill: place.selected ? 1 : 0
 
                         Behavior on fill {

@@ -90,7 +90,7 @@ CollapsibleSection {
                             sourceComponent: MaterialIcon {
                                 text: "check"
                                 color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.icon.large
+                                fontStyle: Tokens.font.icon.large
                             }
                         }
                     }
@@ -171,7 +171,7 @@ CollapsibleSection {
                             sourceComponent: MaterialIcon {
                                 text: "check"
                                 color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.icon.large
+                                fontStyle: Tokens.font.icon.large
                             }
                         }
                     }
@@ -254,7 +254,7 @@ CollapsibleSection {
                             sourceComponent: MaterialIcon {
                                 text: "check"
                                 color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.icon.large
+                                fontStyle: Tokens.font.icon.large
                             }
                         }
                     }

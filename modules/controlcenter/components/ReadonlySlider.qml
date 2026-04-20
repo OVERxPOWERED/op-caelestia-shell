@@ -38,7 +38,7 @@ ColumnLayout {
             visible: root.readonly
             text: "lock"
             color: Colours.palette.m3outline
-            font: Tokens.font.icon.small
+            fontStyle: Tokens.font.icon.small
         }
 
         StyledText {

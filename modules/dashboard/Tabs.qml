@@ -221,7 +221,7 @@ Item {
                 text: tab.iconName
                 color: tab.current ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
                 fill: tab.current ? 1 : 0
-                font: Tokens.font.icon.large
+                fontStyle: Tokens.font.icon.large
 
                 Behavior on fill {
                     Anim {}

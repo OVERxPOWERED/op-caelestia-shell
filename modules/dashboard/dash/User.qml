@@ -29,7 +29,7 @@ Row {
             text: "person"
             fill: 1
             grade: 200
-            font: Tokens.font.icon.builders.medium.size(Math.floor(info.implicitHeight / 2) || 1).build()
+            fontStyle: Tokens.font.icon.builder.size(Math.floor(info.implicitHeight / 2) || 1).build()
             visible: pfp.status !== Image.Ready
         }
 
@@ -84,7 +84,7 @@ Row {
 
                     text: "frame_person"
                     color: Colours.palette.m3onPrimary
-                    font: Tokens.font.icon.xl
+                    fontStyle: Tokens.font.icon.extraLarge
                 }
 
                 Behavior on scale {
@@ -173,7 +173,7 @@ Row {
             fill: 1
             text: line.icon
             color: line.colour
-            font: Tokens.font.icon.medium
+            fontStyle: Tokens.font.icon.medium
         }
 
         StyledText {

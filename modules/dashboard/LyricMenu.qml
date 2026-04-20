@@ -41,7 +41,7 @@ StyledRect {
                     text: "lyrics"
                     fill: 1
                     color: Colours.palette.m3primary
-                    font: Tokens.font.icon.builders.medium.size(Tokens.spacing.large).build()
+                    fontStyle: Tokens.font.icon.builder.size(Tokens.spacing.large).build()
                 }
 
                 Rectangle {
@@ -339,7 +339,7 @@ StyledRect {
 
                 MaterialIcon {
                     text: "contrast_square"
-                    font: Tokens.font.icon.large
+                    fontStyle: Tokens.font.icon.large
                     color: Colours.palette.m3secondary
                 }
 

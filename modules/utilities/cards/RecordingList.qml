@@ -32,7 +32,7 @@ ColumnLayout {
             MaterialIcon {
                 Layout.alignment: Qt.AlignVCenter
                 text: "list"
-                font: Tokens.font.icon.large
+                fontStyle: Tokens.font.icon.large
             }
 
             StyledText {
@@ -175,7 +175,7 @@ ColumnLayout {
                     Layout.alignment: Qt.AlignHCenter
                     text: "scan_delete"
                     color: Colours.palette.m3outline
-                    font: Tokens.font.icon.extraLarge
+                    fontStyle: Tokens.font.icon.extraLarge
 
                     opacity: root.props.recordingListExpanded ? 1 : 0
                     scale: root.props.recordingListExpanded ? 1 : 0

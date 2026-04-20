@@ -94,7 +94,7 @@ ColumnLayout {
 
                         MaterialIcon {
                             text: modelData.isActive ? "vpn_key" : "vpn_key_off"
-                            font: Tokens.font.icon.large
+                            fontStyle: Tokens.font.icon.large
                             color: modelData.isActive ? Colours.palette.m3primary : Colours.palette.m3outline
                         }
 

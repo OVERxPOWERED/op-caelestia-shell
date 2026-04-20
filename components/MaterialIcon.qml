@@ -5,7 +5,7 @@ import qs.services
 StyledText {
     property real fill
     property int grade: Colours.light ? 0 : -25
-    property font fontStyle
+    property font fontStyle: Tokens.font.icon.large
 
     font: Tokens.font.icon.builder.size(fontStyle.pointSize).weight(fontStyle.weight).fill(fill.toFixed(1)).grade(grade).build()
 }

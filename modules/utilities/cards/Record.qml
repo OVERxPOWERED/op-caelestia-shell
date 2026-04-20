@@ -48,7 +48,7 @@ StyledRect {
                     anchors.verticalCenterOffset: 1.5
                     text: "screen_record"
                     color: Recorder.running ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
-                    font: Tokens.font.icon.large
+                    fontStyle: Tokens.font.icon.large
                 }
             }
 
@@ -259,7 +259,7 @@ StyledRect {
                 toggle: true
                 checked: Recorder.paused
                 type: IconButton.Tonal
-                font: Tokens.font.icon.large
+                fontStyle: Tokens.font.icon.large
                 onClicked: {
                     Recorder.togglePause();
                     internalChecked = Recorder.paused;
@@ -270,7 +270,7 @@ StyledRect {
                 icon: "stop"
                 inactiveColour: Colours.palette.m3error
                 inactiveOnColour: Colours.palette.m3onError
-                font: Tokens.font.icon.large
+                fontStyle: Tokens.font.icon.large
                 onClicked: Recorder.stop()
             }
         }

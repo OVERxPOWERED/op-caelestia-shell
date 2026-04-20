@@ -37,7 +37,7 @@ StyledRect {
                 anchors.centerIn: parent
                 text: "coffee"
                 color: IdleInhibitor.enabled ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
-                font: Tokens.font.icon.large
+                fontStyle: Tokens.font.icon.large
             }
         }
 

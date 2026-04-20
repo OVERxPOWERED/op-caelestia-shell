@@ -77,7 +77,7 @@ Item {
 
                     text: "chevron_right"
 
-                    font: Tokens.font.icon.large
+                    fontStyle: Tokens.font.icon.large
                 }
             }
         }

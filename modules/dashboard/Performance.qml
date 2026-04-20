@@ -37,7 +37,7 @@ Item {
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "tune"
-                font: Tokens.font.icon.builders.extraLarge.size(Tokens.font.icon.extraLarge.pointSize * 2).build()
+                fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 2).build()
                 color: Colours.palette.m3onSurfaceVariant
             }
 
@@ -214,7 +214,7 @@ Item {
 
                         return charging ? `battery_charging_${(level + 3) * 10}` : `battery_${level}_bar`;
                     }
-                    font: Tokens.font.icon.large
+                    fontStyle: Tokens.font.icon.large
                     color: batteryTank.accentColor
                 }
 
@@ -287,7 +287,7 @@ Item {
             text: parent.icon
             fill: 1
             color: parent.accentColor
-            font: Tokens.font.icon.builders.medium.size(Tokens.spacing.large).build()
+            fontStyle: Tokens.font.icon.builder.size(Tokens.spacing.large).build()
         }
 
         StyledText {
@@ -581,7 +581,7 @@ Item {
                 MaterialIcon {
                     text: "unfold_more"
                     color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.icon.medium
+                    fontStyle: Tokens.font.icon.medium
                     visible: storageGaugeCard.diskCount > 1
                     opacity: 0.7
                     ToolTip.visible: hintHover.hovered
@@ -729,7 +729,7 @@ Item {
                 MaterialIcon {
                     text: "download"
                     color: Colours.palette.m3tertiary
-                    font: Tokens.font.icon.medium
+                    fontStyle: Tokens.font.icon.medium
                 }
 
                 StyledText {
@@ -760,7 +760,7 @@ Item {
                 MaterialIcon {
                     text: "upload"
                     color: Colours.palette.m3secondary
-                    font: Tokens.font.icon.medium
+                    fontStyle: Tokens.font.icon.medium
                 }
 
                 StyledText {
@@ -791,7 +791,7 @@ Item {
                 MaterialIcon {
                     text: "history"
                     color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.icon.medium
+                    fontStyle: Tokens.font.icon.medium
                 }
 
                 StyledText {

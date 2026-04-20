@@ -30,7 +30,7 @@ Item {
             id: icon
 
             text: root.modelData?.icon ?? ""
-            font: Tokens.font.icon.extraLarge
+            fontStyle: Tokens.font.icon.extraLarge
 
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -71,7 +71,7 @@ Item {
             sourceComponent: MaterialIcon {
                 text: "check"
                 color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.icon.large
+                fontStyle: Tokens.font.icon.large
             }
         }
     }

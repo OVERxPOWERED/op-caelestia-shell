@@ -138,7 +138,7 @@ ColumnLayout {
 
                             anchors.centerIn: parent
                             text: modelData.enabled && VPN.connected ? "vpn_key" : "vpn_key_off"
-                            font.pointSize: Tokens.font.size.large
+                            font: Tokens.font.icon.large
                             fill: modelData.enabled && VPN.connected ? 1 : 0
                             color: modelData.enabled && VPN.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                         }
@@ -196,8 +196,7 @@ ColumnLayout {
                                         return Colours.palette.m3tertiary;
                                     return Colours.palette.m3onSurface;
                                 }
-                                font.pointSize: Tokens.font.size.small
-                                font.weight: modelData.enabled && VPN.connected ? 500 : 400
+                                font: Tokens.font.body.builders.small.weight(modelData.enabled && VPN.connected ? 500 : 400).build()
                                 elide: Text.ElideRight
                             }
                         }
@@ -457,8 +456,7 @@ ColumnLayout {
 
                 StyledText {
                     text: qsTr("Add VPN Provider")
-                    font.pointSize: Tokens.font.size.large
-                    font.weight: 500
+                    font: Tokens.font.body.builders.large.weight(500).build()
                 }
 
                 StyledText {
@@ -466,7 +464,7 @@ ColumnLayout {
                     text: qsTr("Choose a provider to add")
                     wrapMode: Text.WordWrap
                     color: Colours.palette.m3outline
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                 }
 
                 TextButton {
@@ -576,8 +574,7 @@ ColumnLayout {
 
                 StyledText {
                     text: vpnDialog.editIndex >= 0 ? qsTr("Edit VPN Provider") : qsTr("Add %1 VPN").arg(vpnDialog.displayName)
-                    font.pointSize: Tokens.font.size.large
-                    font.weight: 500
+                    font: Tokens.font.body.builders.large.weight(500).build()
                 }
 
                 ColumnLayout {
@@ -586,7 +583,7 @@ ColumnLayout {
 
                     StyledText {
                         text: qsTr("Display Name")
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.body.small
                         color: Colours.palette.m3onSurfaceVariant
                     }
 
@@ -623,7 +620,7 @@ ColumnLayout {
 
                     StyledText {
                         text: qsTr("Interface (e.g., wg0, torguard)")
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.body.small
                         color: Colours.palette.m3onSurfaceVariant
                     }
 
@@ -661,7 +658,7 @@ ColumnLayout {
 
                     StyledText {
                         text: qsTr("Connect Command (e.g., wg-quick up wg0)")
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.body.small
                         color: Colours.palette.m3onSurfaceVariant
                     }
 
@@ -699,7 +696,7 @@ ColumnLayout {
 
                     StyledText {
                         text: qsTr("Disconnect Command (e.g., wg-quick down wg0)")
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.body.small
                         color: Colours.palette.m3onSurfaceVariant
                     }
 

@@ -27,8 +27,7 @@ DeviceList {
 
             StyledText {
                 text: qsTr("Settings")
-                font.pointSize: Tokens.font.size.large
-                font.weight: 500
+                font: Tokens.font.title.builders.medium.weight(500).build()
             }
 
             Item {
@@ -39,9 +38,9 @@ DeviceList {
                 toggled: !root.session.ethernet.active
                 icon: "settings"
                 accent: "Primary"
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.medium
-                verticalPadding: Tokens.padding.small
+                iconSize: Tokens.font.body.medium.pointSize
+                horizontalPadding: Tokens.padding.normal
+                verticalPadding: Tokens.padding.smaller
 
                 onClicked: {
                     if (root.session.ethernet.active)
@@ -101,7 +100,7 @@ DeviceList {
 
                         anchors.centerIn: parent
                         text: "cable"
-                        font.pointSize: Tokens.font.size.large
+                        font: Tokens.font.icon.large
                         fill: modelData.connected ? 1 : 0
                         color: modelData.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
 
@@ -130,8 +129,7 @@ DeviceList {
                             Layout.fillWidth: true
                             text: modelData.connected ? qsTr("Connected") : qsTr("Disconnected")
                             color: modelData.connected ? Colours.palette.m3primary : Colours.palette.m3outline
-                            font.pointSize: Tokens.font.size.small
-                            font.weight: modelData.connected ? 500 : 400
+                            font: Tokens.font.body.builders.small.weight(modelData.connected ? 500 : 400).build()
                             elide: Text.ElideRight
                         }
                     }

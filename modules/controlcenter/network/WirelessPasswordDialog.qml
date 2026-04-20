@@ -149,21 +149,20 @@ Item {
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "lock"
-                font.pointSize: Tokens.font.size.extraLarge * 2
+                font: Tokens.font.icon.builders.extraLarge.size(Tokens.font.icon.extraLarge.pointSize * 2).build()
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Enter password")
-                font.pointSize: Tokens.font.size.large
-                font.weight: 500
+                font: Tokens.font.body.builders.large.weight(500).build()
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: root.network ? qsTr("Network: %1").arg(root.network.ssid) : ""
                 color: Colours.palette.m3outline
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
             }
 
             StyledText {
@@ -182,8 +181,7 @@ Item {
                     return "";
                 }
                 color: connectButton.hasError ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.small
-                font.weight: 400
+                font: Tokens.font.body.builders.small.weight(400).build()
                 wrapMode: Text.WordWrap
                 Layout.maximumWidth: parent.width - Tokens.padding.extraLargeIncreased
             }
@@ -302,8 +300,7 @@ Item {
                     anchors.centerIn: parent
                     text: qsTr("Password")
                     color: Colours.palette.m3outline
-                    font.pointSize: Tokens.font.size.normal
-                    font.family: Tokens.font.family.mono
+                    font: Tokens.font.mono.medium
                     opacity: passwordContainer.passwordBuffer ? 0 : 1
 
                     Behavior on opacity {
@@ -318,7 +315,7 @@ Item {
 
                     anchors.centerIn: parent
                     implicitWidth: fullWidth
-                    implicitHeight: Tokens.font.size.normal
+                    implicitHeight: Tokens.font.body.medium.pointSize
 
                     orientation: Qt.Horizontal
                     spacing: Tokens.spacing.extraSmall
@@ -398,7 +395,7 @@ Item {
                     id: cancelButton
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.medium * 2
+                    Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.normal * 2
                     inactiveColour: Colours.palette.m3secondaryContainer
                     inactiveOnColour: Colours.palette.m3onSecondaryContainer
                     text: qsTr("Cancel")
@@ -413,7 +410,7 @@ Item {
                     property bool hasError: false
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.medium * 2
+                    Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.normal * 2
                     inactiveColour: Colours.palette.m3primary
                     inactiveOnColour: Colours.palette.m3onPrimary
                     text: qsTr("Connect")

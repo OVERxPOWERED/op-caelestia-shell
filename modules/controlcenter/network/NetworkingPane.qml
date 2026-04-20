@@ -51,8 +51,7 @@ Item {
 
                         StyledText {
                             text: qsTr("Network")
-                            font.pointSize: Tokens.font.size.large
-                            font.weight: 500
+                            font: Tokens.font.body.builders.large.weight(500).build()
                         }
 
                         Item {
@@ -63,9 +62,9 @@ Item {
                             toggled: Nmcli.wifiEnabled
                             icon: "wifi"
                             accent: "Tertiary"
-                            iconSize: Tokens.font.size.normal
-                            horizontalPadding: Tokens.padding.medium
-                            verticalPadding: Tokens.padding.small
+                            iconSize: Tokens.font.body.medium.pointSize
+                            horizontalPadding: Tokens.padding.normal
+                            verticalPadding: Tokens.padding.smaller
                             tooltip: qsTr("Toggle WiFi")
 
                             onClicked: {
@@ -77,9 +76,9 @@ Item {
                             toggled: Nmcli.scanning
                             icon: "wifi_find"
                             accent: "Secondary"
-                            iconSize: Tokens.font.size.normal
-                            horizontalPadding: Tokens.padding.medium
-                            verticalPadding: Tokens.padding.small
+                            iconSize: Tokens.font.body.medium.pointSize
+                            horizontalPadding: Tokens.padding.normal
+                            verticalPadding: Tokens.padding.smaller
                             tooltip: qsTr("Scan for networks")
 
                             onClicked: {
@@ -91,9 +90,9 @@ Item {
                             toggled: !root.session.ethernet.active && !root.session.network.active
                             icon: "settings"
                             accent: "Primary"
-                            iconSize: Tokens.font.size.normal
-                            horizontalPadding: Tokens.padding.medium
-                            verticalPadding: Tokens.padding.small
+                            iconSize: Tokens.font.body.medium.pointSize
+                            horizontalPadding: Tokens.padding.normal
+                            verticalPadding: Tokens.padding.smaller
                             tooltip: qsTr("Network settings")
 
                             onClicked: {

@@ -94,7 +94,7 @@ ColumnLayout {
 
                         MaterialIcon {
                             text: modelData.isActive ? "vpn_key" : "vpn_key_off"
-                            font.pointSize: Tokens.font.size.large
+                            font: Tokens.font.icon.large
                             color: modelData.isActive ? Colours.palette.m3primary : Colours.palette.m3outline
                         }
 
@@ -104,12 +104,12 @@ ColumnLayout {
 
                             StyledText {
                                 text: modelData.displayName
-                                font.weight: modelData.isActive ? 500 : 400
+                                font: Tokens.font.body.builders.medium.weight(modelData.isActive ? 500 : 400).build()
                             }
 
                             StyledText {
                                 text: qsTr("%1 • %2").arg(modelData.name).arg(modelData.interface || qsTr("No interface"))
-                                font.pointSize: Tokens.font.size.small
+                                font: Tokens.font.body.small
                                 color: Colours.palette.m3outline
                             }
                         }

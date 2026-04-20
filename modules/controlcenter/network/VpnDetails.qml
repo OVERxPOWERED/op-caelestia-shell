@@ -96,7 +96,7 @@ DeviceDetails {
 
                         TextButton {
                             Layout.fillWidth: true
-                            Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.medium * 2
+                            Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.normal * 2
                             visible: root.providerEnabled
                             enabled: !VPN.connecting
                             inactiveColour: Colours.palette.m3primaryContainer
@@ -163,7 +163,7 @@ DeviceDetails {
                         Layout.topMargin: Tokens.spacing.medium
                         visible: root.providerEnabled && VPN.status.state === "needs-auth" && VPN.status.authUrl === ""
                         text: qsTr("Click 'Connect' to generate authentication URL")
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.body.small
                         color: Colours.palette.m3onSurfaceVariant
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
@@ -320,8 +320,7 @@ DeviceDetails {
 
             StyledText {
                 text: qsTr("Edit VPN Provider")
-                font.pointSize: Tokens.font.size.large
-                font.weight: 500
+                font: Tokens.font.body.builders.large.weight(500).build()
             }
 
             ColumnLayout {
@@ -330,7 +329,7 @@ DeviceDetails {
 
                 StyledText {
                     text: qsTr("Display Name")
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -367,7 +366,7 @@ DeviceDetails {
 
                 StyledText {
                     text: qsTr("Interface (e.g., wg0, torguard)")
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -405,7 +404,7 @@ DeviceDetails {
 
                 StyledText {
                     text: qsTr("Connect Command")
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -443,7 +442,7 @@ DeviceDetails {
 
                 StyledText {
                     text: qsTr("Disconnect Command")
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
 

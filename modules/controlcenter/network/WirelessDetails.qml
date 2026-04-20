@@ -86,8 +86,8 @@ DeviceDetails {
 
                     TextButton {
                         Layout.fillWidth: true
-                        Layout.topMargin: Tokens.spacing.medium
-                        Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.medium * 2
+                        Layout.topMargin: Tokens.spacing.normal
+                        Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.normal * 2
                         visible: {
                             if (!root.network || !root.network.ssid) {
                                 return false;

@@ -34,7 +34,7 @@ DeviceList {
             visible: Nmcli.scanning
             text: qsTr("Scanning...")
             color: Colours.palette.m3primary
-            font.pointSize: Tokens.font.size.small
+            font: Tokens.font.title.small
         }
     }
 
@@ -52,8 +52,7 @@ DeviceList {
 
             StyledText {
                 text: qsTr("Settings")
-                font.pointSize: Tokens.font.size.large
-                font.weight: 500
+                font: Tokens.font.title.builders.medium.weight(500).build()
             }
 
             Item {
@@ -64,9 +63,9 @@ DeviceList {
                 toggled: Nmcli.wifiEnabled
                 icon: "wifi"
                 accent: "Tertiary"
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.medium
-                verticalPadding: Tokens.padding.small
+                iconSize: Tokens.font.body.medium.pointSize
+                horizontalPadding: Tokens.padding.normal
+                verticalPadding: Tokens.padding.smaller
 
                 onClicked: {
                     Nmcli.toggleWifi(null);
@@ -77,9 +76,9 @@ DeviceList {
                 toggled: Nmcli.scanning
                 icon: "wifi_find"
                 accent: "Secondary"
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.medium
-                verticalPadding: Tokens.padding.small
+                iconSize: Tokens.font.body.medium.pointSize
+                horizontalPadding: Tokens.padding.normal
+                verticalPadding: Tokens.padding.smaller
 
                 onClicked: {
                     Nmcli.rescanWifi();
@@ -90,9 +89,9 @@ DeviceList {
                 toggled: !root.session.network.active
                 icon: "settings"
                 accent: "Primary"
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.medium
-                verticalPadding: Tokens.padding.small
+                iconSize: Tokens.font.body.medium.pointSize
+                horizontalPadding: Tokens.padding.normal
+                verticalPadding: Tokens.padding.smaller
 
                 onClicked: {
                     if (root.session.network.active)
@@ -146,7 +145,7 @@ DeviceList {
 
                         anchors.centerIn: parent
                         text: Icons.getNetworkIcon(modelData.strength, modelData.isSecure)
-                        font.pointSize: Tokens.font.size.large
+                        font: Tokens.font.icon.large
                         fill: modelData.active ? 1 : 0
                         color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                     }
@@ -182,8 +181,7 @@ DeviceList {
                                 return qsTr("Open");
                             }
                             color: modelData.active ? Colours.palette.m3primary : Colours.palette.m3outline
-                            font.pointSize: Tokens.font.size.small
-                            font.weight: modelData.active ? 500 : 400
+                            font: Tokens.font.body.builders.small.weight(modelData.active ? 500 : 400).build()
                             elide: Text.ElideRight
                         }
                     }

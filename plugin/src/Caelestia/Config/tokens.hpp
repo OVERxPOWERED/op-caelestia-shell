@@ -2,6 +2,7 @@
 
 #include "rootconfig.hpp"
 
+#include <limits>
 #include <qlist.h>
 #include <qqmlengine.h>
 
@@ -46,10 +47,14 @@ class RoundingTokens : public ConfigObject {
     QML_ANONYMOUS
 
     CONFIG_PROPERTY(int, extraSmall, 4)
-    CONFIG_PROPERTY(int, small, 12)
-    CONFIG_PROPERTY(int, normal, 17)
-    CONFIG_PROPERTY(int, large, 25)
-    CONFIG_PROPERTY(int, full, 1000)
+    CONFIG_PROPERTY(int, small, 8)
+    CONFIG_PROPERTY(int, medium, 12)
+    CONFIG_PROPERTY(int, large, 16)
+    CONFIG_PROPERTY(int, largeIncreased, 20)
+    CONFIG_PROPERTY(int, extraLarge, 28)
+    CONFIG_PROPERTY(int, extraLargeIncreased, 32)
+    CONFIG_PROPERTY(int, extraExtraLarge, 48)
+    CONFIG_PROPERTY(int, full, std::numeric_limits<int>::max())
 
 public:
     explicit RoundingTokens(QObject* parent = nullptr)

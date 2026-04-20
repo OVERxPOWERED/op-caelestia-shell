@@ -36,12 +36,28 @@ int AppearanceRounding::small() const {
     return m_tokens ? static_cast<int>(m_tokens->small() * m_scale) : 0;
 }
 
-int AppearanceRounding::normal() const {
-    return m_tokens ? static_cast<int>(m_tokens->normal() * m_scale) : 0;
+int AppearanceRounding::medium() const {
+    return m_tokens ? static_cast<int>(m_tokens->medium() * m_scale) : 0;
 }
 
 int AppearanceRounding::large() const {
     return m_tokens ? static_cast<int>(m_tokens->large() * m_scale) : 0;
+}
+
+int AppearanceRounding::largeIncreased() const {
+    return m_tokens ? static_cast<int>(m_tokens->largeIncreased() * m_scale) : 0;
+}
+
+int AppearanceRounding::extraLarge() const {
+    return m_tokens ? static_cast<int>(m_tokens->extraLarge() * m_scale) : 0;
+}
+
+int AppearanceRounding::extraLargeIncreased() const {
+    return m_tokens ? static_cast<int>(m_tokens->extraLargeIncreased() * m_scale) : 0;
+}
+
+int AppearanceRounding::extraExtraLarge() const {
+    return m_tokens ? static_cast<int>(m_tokens->extraExtraLarge() * m_scale) : 0;
 }
 
 int AppearanceRounding::full() const {

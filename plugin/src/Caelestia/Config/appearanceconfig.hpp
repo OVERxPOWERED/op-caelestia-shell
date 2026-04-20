@@ -21,8 +21,12 @@ class AppearanceRounding : public ConfigObject {
 
     Q_PROPERTY(int extraSmall READ extraSmall NOTIFY valuesChanged)
     Q_PROPERTY(int small READ small NOTIFY valuesChanged)
-    Q_PROPERTY(int normal READ normal NOTIFY valuesChanged)
+    Q_PROPERTY(int medium READ medium NOTIFY valuesChanged)
     Q_PROPERTY(int large READ large NOTIFY valuesChanged)
+    Q_PROPERTY(int largeIncreased READ largeIncreased NOTIFY valuesChanged)
+    Q_PROPERTY(int extraLarge READ extraLarge NOTIFY valuesChanged)
+    Q_PROPERTY(int extraLargeIncreased READ extraLargeIncreased NOTIFY valuesChanged)
+    Q_PROPERTY(int extraExtraLarge READ extraExtraLarge NOTIFY valuesChanged)
     Q_PROPERTY(int full READ full NOTIFY valuesChanged)
 
 public:
@@ -33,8 +37,12 @@ public:
 
     [[nodiscard]] int extraSmall() const;
     [[nodiscard]] int small() const;
-    [[nodiscard]] int normal() const;
+    [[nodiscard]] int medium() const;
     [[nodiscard]] int large() const;
+    [[nodiscard]] int largeIncreased() const;
+    [[nodiscard]] int extraLarge() const;
+    [[nodiscard]] int extraLargeIncreased() const;
+    [[nodiscard]] int extraExtraLarge() const;
     [[nodiscard]] int full() const;
 
 signals:

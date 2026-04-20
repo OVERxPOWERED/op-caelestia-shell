@@ -19,15 +19,14 @@ ColumnLayout {
         text: root.client?.title ?? qsTr("No active client")
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
-        font.pointSize: Tokens.font.size.large
-        font.weight: 500
+        font: Tokens.font.body.builders.large.weight(500).build()
     }
 
     Label {
         text: root.client?.lastIpcObject.class ?? qsTr("No active client")
         color: Colours.palette.m3tertiary
 
-        font.pointSize: Tokens.font.size.larger
+        font: Tokens.font.body.large
     }
 
     StyledRect {
@@ -149,7 +148,7 @@ ColumnLayout {
 
             text: detail.text
             elide: Text.ElideRight
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.body.medium
         }
     }
 

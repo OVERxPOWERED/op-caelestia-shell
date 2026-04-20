@@ -49,7 +49,7 @@ ColumnLayout {
                 animate: true
                 text: root.moveToWsExpanded ? "expand_more" : "keyboard_arrow_right"
                 color: Colours.palette.m3onPrimary
-                font.pointSize: Tokens.font.size.large
+                font: Tokens.font.icon.large
             }
         }
     }
@@ -161,7 +161,7 @@ ColumnLayout {
 
             animate: true
             color: parent.onColor
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.body.medium
         }
     }
 }

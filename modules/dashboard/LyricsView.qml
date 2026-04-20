@@ -84,9 +84,8 @@ StyledListView {
             anchors.centerIn: parent
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            font.pointSize: Tokens.font.size.normal
+            font: delegateRoot.isCurrent ? Tokens.font.body.builders.medium.weight(Font.Bold).build() : Tokens.font.body.medium
             color: delegateRoot.isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
-            font.bold: delegateRoot.isCurrent
             scale: delegateRoot.isCurrent ? 1.15 : 1.0
 
             Behavior on color {

@@ -29,14 +29,13 @@ Item {
 
                 StyledText {
                     text: Weather.city || qsTr("Loading...")
-                    font.pointSize: Tokens.font.size.extraLarge
-                    font.weight: 600
+                    font: Tokens.font.body.builders.large.size(28).weight(600).build()
                     color: Colours.palette.m3onSurface
                 }
 
                 StyledText {
                     text: new Date().toLocaleDateString(Qt.locale(), "dddd, MMMM d")
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
             }
@@ -80,7 +79,7 @@ Item {
                 MaterialIcon {
                     Layout.alignment: Qt.AlignVCenter
                     text: Weather.icon
-                    font.pointSize: Tokens.font.size.extraLarge * 3
+                    font: Tokens.font.icon.builders.extraLarge.size(Tokens.font.icon.extraLarge.pointSize * 3).build()
                     color: Colours.palette.m3secondary
                     animate: true
                 }
@@ -91,15 +90,14 @@ Item {
 
                     StyledText {
                         text: Weather.temp
-                        font.pointSize: Tokens.font.size.extraLarge * 2
-                        font.weight: 500
+                        font: Tokens.font.body.builders.large.size(28 * 2).weight(500).build()
                         color: Colours.palette.m3primary
                     }
 
                     StyledText {
                         Layout.leftMargin: Tokens.padding.extraSmall
                         text: Weather.description
-                        font.pointSize: Tokens.font.size.normal
+                        font: Tokens.font.body.medium
                         color: Colours.palette.m3onSurfaceVariant
                     }
                 }
@@ -135,8 +133,7 @@ Item {
             Layout.leftMargin: Tokens.padding.medium
             visible: forecastRepeater.count > 0
             text: qsTr("7-Day Forecast")
-            font.pointSize: Tokens.font.size.normal
-            font.weight: 600
+            font: Tokens.font.body.builders.medium.weight(600).build()
             color: Colours.palette.m3onSurface
         }
 
@@ -170,8 +167,7 @@ Item {
                         StyledText {
                             Layout.alignment: Qt.AlignHCenter
                             text: forecastItem.index === 0 ? qsTr("Today") : new Date(forecastItem.modelData.date).toLocaleDateString(Qt.locale(), "ddd")
-                            font.pointSize: Tokens.font.size.normal
-                            font.weight: 600
+                            font: Tokens.font.body.builders.medium.weight(600).build()
                             color: Colours.palette.m3primary
                         }
 
@@ -179,7 +175,7 @@ Item {
                             Layout.topMargin: -Tokens.spacing.extraSmall
                             Layout.alignment: Qt.AlignHCenter
                             text: new Date(forecastItem.modelData.date).toLocaleDateString(Qt.locale(), "MMM d")
-                            font.pointSize: Tokens.font.size.small
+                            font: Tokens.font.body.small
                             opacity: 0.7
                             color: Colours.palette.m3onSurfaceVariant
                         }
@@ -187,14 +183,14 @@ Item {
                         MaterialIcon {
                             Layout.alignment: Qt.AlignHCenter
                             text: forecastItem.modelData.icon
-                            font.pointSize: Tokens.font.size.extraLarge
+                            font: Tokens.font.icon.extraLarge
                             color: Colours.palette.m3secondary
                         }
 
                         StyledText {
                             Layout.alignment: Qt.AlignHCenter
                             text: GlobalConfig.services.useFahrenheit ? forecastItem.modelData.maxTempF + "°" + " / " + forecastItem.modelData.minTempF + "°" : forecastItem.modelData.maxTempC + "°" + " / " + forecastItem.modelData.minTempC + "°"
-                            font.weight: 600
+                            font: Tokens.font.body.builders.small.weight(600).build()
                             color: Colours.palette.m3tertiary
                         }
                     }
@@ -223,7 +219,7 @@ Item {
             MaterialIcon {
                 text: detailRoot.icon
                 color: detailRoot.colour
-                font.pointSize: Tokens.font.size.large
+                font: Tokens.font.icon.large
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -233,13 +229,13 @@ Item {
 
                 StyledText {
                     text: detailRoot.label
-                    font.pointSize: Tokens.font.size.smaller
+                    font: Tokens.font.body.small
                     opacity: 0.7
                     horizontalAlignment: Text.AlignLeft
                 }
                 StyledText {
                     text: detailRoot.value
-                    font.weight: 600
+                    font: Tokens.font.body.builders.small.weight(600).build()
                     horizontalAlignment: Text.AlignLeft
                 }
             }
@@ -258,20 +254,19 @@ Item {
 
         MaterialIcon {
             text: weatherStat.icon
-            font.pointSize: Tokens.font.size.extraLarge
+            font: Tokens.font.icon.extraLarge
             color: weatherStat.colour
         }
 
         Column {
             StyledText {
                 text: weatherStat.label
-                font.pointSize: Tokens.font.size.smaller
+                font: Tokens.font.body.small
                 color: Colours.palette.m3onSurfaceVariant
             }
             StyledText {
                 text: weatherStat.value
-                font.pointSize: Tokens.font.size.small
-                font.weight: 600
+                font: Tokens.font.body.builders.small.weight(600).build()
                 color: Colours.palette.m3onSurface
             }
         }

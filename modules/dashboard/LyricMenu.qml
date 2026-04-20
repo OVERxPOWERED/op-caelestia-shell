@@ -41,7 +41,7 @@ StyledRect {
                     text: "lyrics"
                     fill: 1
                     color: Colours.palette.m3primary
-                    font.pointSize: Tokens.spacing.largeIncreased
+                    font: Tokens.font.icon.builders.medium.size(Tokens.spacing.large).build()
                 }
 
                 Rectangle {
@@ -53,7 +53,7 @@ StyledRect {
                     StyledText {
                         anchors.centerIn: parent
                         text: LyricsService.preferredBackend
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.body.small
                         color: Colours.palette.m3primary
                     }
 
@@ -80,7 +80,7 @@ StyledRect {
                     StyledText {
                         anchors.centerIn: parent
                         text: LyricsService.backend
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.body.small
                         color: LyricsService.backend === "Local" ? Colours.palette.m3tertiary : Colours.palette.m3secondary
                     }
                 }
@@ -105,7 +105,7 @@ StyledRect {
                 Layout.fillWidth: true
                 text: LyricsService.preferredBackend === "Local" ? "Loaded File:" : "Fetched Candidates:"
                 color: Colours.palette.m3outline
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
                 elide: Text.ElideRight
                 visible: LyricsService.preferredBackend === "Local" ? LyricsService.loadedLocalFile.length > 0 : LyricsService.candidatesModel.count > 0
             }
@@ -130,7 +130,7 @@ StyledRect {
                             const parts = path.split('/');
                             return parts[parts.length - 1];
                         }
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.body.small
                         color: Colours.palette.m3tertiary
                         elide: Text.ElideMiddle
                     }
@@ -145,7 +145,7 @@ StyledRect {
                             }
                             return "";
                         }
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.body.small
                         color: Colours.palette.m3outline
                         elide: Text.ElideMiddle
                     }
@@ -253,8 +253,7 @@ StyledRect {
 
                                 Text {
                                     text: delegateRoot.title
-                                    font.pointSize: Tokens.font.size.normal
-                                    font.bold: true
+                                    font: Tokens.font.body.builders.medium.weight(Font.Bold).build()
                                     color: delegateRoot.hovered ? Colours.palette.m3primary : Colours.palette.m3onSurface
                                     width: parent.width
                                     elide: Text.ElideRight
@@ -268,7 +267,7 @@ StyledRect {
 
                                 Text {
                                     text: delegateRoot.artist
-                                    font.pointSize: Tokens.font.size.small
+                                    font: Tokens.font.body.small
                                     color: Colours.palette.m3onSurfaceVariant
                                     elide: Text.ElideRight
                                 }
@@ -291,7 +290,7 @@ StyledRect {
                 StyledText {
                     Layout.fillWidth: true
                     text: "Manual Search"
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     color: Colours.palette.m3onSurfaceVariant
                     elide: Text.ElideRight
                 }
@@ -340,14 +339,14 @@ StyledRect {
 
                 MaterialIcon {
                     text: "contrast_square"
-                    font.pointSize: Tokens.font.size.large
+                    font: Tokens.font.icon.large
                     color: Colours.palette.m3secondary
                 }
 
                 StyledText {
                     text: "Offset"
                     color: Colours.palette.m3outline
-                    font.pointSize: Tokens.font.size.normal
+                    font: Tokens.font.body.medium
                 }
 
                 Item {
@@ -368,7 +367,7 @@ StyledRect {
 
                     horizontalAlignment: TextInput.AlignHCenter
                     color: Colours.palette.m3secondary
-                    font.pointSize: Tokens.font.size.normal
+                    font: Tokens.font.body.medium
                     selectByMouse: true
                     text: (LyricsService.offset >= 0 ? "+" : "") + LyricsService.offset.toFixed(1) + "s"
                     onEditingFinished: {

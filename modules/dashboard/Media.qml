@@ -173,7 +173,7 @@ Item {
             grade: 200
             text: "art_track"
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: (parent.width * 0.4) || 1
+            font: Tokens.font.icon.builders.medium.size((parent.width * 0.4) || 1).build()
         }
 
         Image {
@@ -215,7 +215,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             text: (Players.active?.trackTitle ?? qsTr("No media")) || qsTr("Unknown title")
             color: Players.active ? Colours.palette.m3primary : Colours.palette.m3onSurface
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.title.small
             elide: Text.ElideRight
         }
 
@@ -230,7 +230,7 @@ Item {
             visible: !!Players.active
             text: Players.active?.trackAlbum || qsTr("Unknown album")
             color: Colours.palette.m3outline
-            font.pointSize: Tokens.font.size.small
+            font: Tokens.font.body.small
             elide: Text.ElideRight
         }
 
@@ -267,7 +267,7 @@ Item {
             PlayerControl {
                 type: IconButton.Text
                 icon: Players.active?.shuffle ? "shuffle_on" : "shuffle"
-                font.pointSize: Math.round(Tokens.font.size.large)
+                font: Tokens.font.icon.builders.large.size(Math.round(Tokens.font.icon.large.pointSize)).build()
                 disabled: !Players.active?.shuffleSupported
                 onClicked: Players.active.shuffle = !Players.active?.shuffle
             }
@@ -275,7 +275,7 @@ Item {
             PlayerControl {
                 type: IconButton.Text
                 icon: "skip_previous"
-                font.pointSize: Math.round(Tokens.font.size.large * 1.5)
+                font: Tokens.font.icon.builders.large.size(Math.round(Tokens.font.icon.large.pointSize * 1.5)).build()
                 disabled: !Players.active?.canGoPrevious
                 onClicked: Players.active?.previous()
             }
@@ -286,7 +286,7 @@ Item {
                 toggle: true
                 padding: Tokens.padding.extraSmall / 2
                 checked: Players.active?.isPlaying ?? false
-                font.pointSize: Math.round(Tokens.font.size.large * 1.5)
+                font: Tokens.font.icon.builders.large.size(Math.round(Tokens.font.icon.large.pointSize * 1.5)).build()
                 disabled: !Players.active?.canTogglePlaying
                 onClicked: Players.active?.togglePlaying()
             }
@@ -294,7 +294,7 @@ Item {
             PlayerControl {
                 type: IconButton.Text
                 icon: "skip_next"
-                font.pointSize: Math.round(Tokens.font.size.large * 1.5)
+                font: Tokens.font.icon.builders.large.size(Math.round(Tokens.font.icon.large.pointSize * 1.5)).build()
                 disabled: !Players.active?.canGoNext
                 onClicked: Players.active?.next()
             }
@@ -302,7 +302,7 @@ Item {
             PlayerControl {
                 type: IconButton.Text
                 icon: "lyrics"
-                font.pointSize: Math.round(Tokens.font.size.large)
+                font: Tokens.font.icon.builders.large.size(Math.round(Tokens.font.icon.large.pointSize)).build()
                 onClicked: root.lyricMenuOpen = !root.lyricMenuOpen
             }
         }
@@ -356,7 +356,7 @@ Item {
 
                 text: root.lengthStr(Players.active ? Players.active.position % Players.active.length : -1)
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
             }
 
             StyledText {
@@ -366,7 +366,7 @@ Item {
 
                 text: root.lengthStr(Players.active?.length ?? -1)
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
             }
         }
     }
@@ -443,8 +443,8 @@ Item {
             type: IconButton.Text
             icon: "move_up"
             inactiveOnColour: Colours.palette.m3secondary
-            padding: Tokens.padding.extraSmall
-            font.pointSize: Tokens.font.size.large
+            padding: Tokens.padding.small
+            font: Tokens.font.icon.large
             disabled: !Players.active?.canRaise
             onClicked: {
                 Players.active?.raise();
@@ -482,8 +482,8 @@ Item {
             type: IconButton.Text
             icon: "delete"
             inactiveOnColour: Colours.palette.m3error
-            padding: Tokens.padding.extraSmall
-            font.pointSize: Tokens.font.size.large
+            padding: Tokens.padding.small
+            font: Tokens.font.icon.large
             disabled: !Players.active?.canQuit
             onClicked: Players.active?.quit()
         }

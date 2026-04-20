@@ -174,14 +174,14 @@ StyledRect {
                         asynchronous: true
                         active: !root.hasAppIcon
                         anchors.centerIn: parent
-                        anchors.horizontalCenterOffset: -Tokens.font.size.large * 0.02
-                        anchors.verticalCenterOffset: Tokens.font.size.large * 0.02
+                        anchors.horizontalCenterOffset: -Tokens.font.body.large.pointSize * 0.02
+                        anchors.verticalCenterOffset: Tokens.font.body.large.pointSize * 0.02
 
                         sourceComponent: MaterialIcon {
                             text: Icons.getNotifIcon(root.modelData.summary, root.modelData.urgency)
 
                             color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.modelData.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                            font.pointSize: Tokens.font.size.large
+                            font: Tokens.font.icon.large
                         }
                     }
                 }
@@ -234,7 +234,7 @@ StyledRect {
                 text: appNameMetrics.elidedText
                 maximumLineCount: 1
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.label.small
 
                 opacity: root.expanded ? 1 : 0
 
@@ -247,8 +247,7 @@ StyledRect {
                 id: appNameMetrics
 
                 text: root.modelData.appName
-                font.family: appName.font.family
-                font.pointSize: appName.font.pointSize
+                font: appName.font
                 elide: Text.ElideRight
                 elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - root.Tokens.spacing.small * 3
             }
@@ -298,8 +297,7 @@ StyledRect {
                 id: summaryMetrics
 
                 text: root.modelData.summary
-                font.family: summary.font.family
-                font.pointSize: summary.font.pointSize
+                font: summary.font
                 elide: Text.ElideRight
                 elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - root.Tokens.spacing.small * 3
             }
@@ -313,7 +311,7 @@ StyledRect {
 
                 text: "•"
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
 
                 states: State {
                     name: "expanded"
@@ -343,7 +341,7 @@ StyledRect {
                 horizontalAlignment: Text.AlignLeft
                 text: root.modelData.timeStr
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
             }
 
             Item {
@@ -368,7 +366,7 @@ StyledRect {
 
                     animate: true
                     text: root.expanded ? "expand_less" : "expand_more"
-                    font.pointSize: Tokens.font.size.normal
+                    font: Tokens.font.icon.medium
                 }
             }
 
@@ -384,7 +382,7 @@ StyledRect {
                 textFormat: root.bodyTextFormat
                 text: bodyPreviewMetrics.elidedText
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
 
                 opacity: root.expanded ? 0 : 1
 
@@ -397,8 +395,7 @@ StyledRect {
                 id: bodyPreviewMetrics
 
                 text: root.modelData.body
-                font.family: bodyPreview.font.family
-                font.pointSize: bodyPreview.font.pointSize
+                font: bodyPreview.font
                 elide: Text.ElideRight
                 elideWidth: bodyPreview.width
             }
@@ -415,7 +412,7 @@ StyledRect {
                 textFormat: root.bodyTextFormat
                 text: root.modelData.body
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 height: text ? implicitHeight : 0
 
@@ -495,15 +492,14 @@ StyledRect {
             anchors.centerIn: parent
             text: actionTextMetrics.elidedText
             color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurfaceVariant
-            font.pointSize: Tokens.font.size.small
+            font: Tokens.font.label.small
         }
 
         TextMetrics {
             id: actionTextMetrics
 
             text: action.modelData.text
-            font.family: actionText.font.family
-            font.pointSize: actionText.font.pointSize
+            font: actionText.font
             elide: Text.ElideRight
             elideWidth: {
                 const numActions = root.modelData.actions.length + 1;

@@ -43,9 +43,7 @@ Item {
 
             text: root.notifCount
             color: Colours.palette.m3outline
-            font.pointSize: Tokens.font.size.normal
-            font.family: Tokens.font.family.mono
-            font.weight: 500
+            font: Tokens.font.mono.builders.medium.weight(500).build()
 
             Behavior on anchors.leftMargin {
                 Anim {}
@@ -66,9 +64,7 @@ Item {
 
             text: root.notifCount > 0 ? qsTr("notification%1").arg(root.notifCount === 1 ? "" : "s") : qsTr("Notifications")
             color: Colours.palette.m3outline
-            font.pointSize: Tokens.font.size.normal
-            font.family: Tokens.font.family.mono
-            font.weight: 500
+            font: Tokens.font.mono.builders.medium.weight(500).build()
             elide: Text.ElideRight
         }
     }
@@ -111,9 +107,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("No Notifications")
                     color: Colours.palette.m3outlineVariant
-                    font.pointSize: Tokens.font.size.large
-                    font.family: Tokens.font.family.mono
-                    font.weight: 500
+                    font: Tokens.font.mono.builders.large.weight(500).build()
                 }
             }
 
@@ -187,9 +181,9 @@ Item {
             id: clearBtn
 
             icon: "clear_all"
-            radius: Tokens.rounding.large
-            padding: Tokens.padding.medium
-            font.pointSize: Math.round(Tokens.font.size.large * 1.2)
+            radius: Tokens.rounding.normal
+            padding: Tokens.padding.normal
+            font: Tokens.font.icon.builders.large.size(Math.round(Tokens.font.icon.large.pointSize * 1.2)).build()
             onClicked: clearTimer.start()
 
             Elevation {

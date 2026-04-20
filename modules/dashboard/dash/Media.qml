@@ -98,7 +98,7 @@ Item {
             grade: 200
             text: "art_track"
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: (parent.width * 0.4) || 1
+            font: Tokens.font.icon.builders.medium.size((parent.width * 0.4) || 1).build()
         }
 
         Image {
@@ -125,7 +125,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         text: (Players.active?.trackTitle ?? qsTr("No media")) || qsTr("Unknown title")
         color: Colours.palette.m3primary
-        font.pointSize: Tokens.font.size.normal
+        font: Tokens.font.title.small
 
         width: parent.implicitWidth - Tokens.padding.extraLargeIncreased
         elide: Text.ElideRight
@@ -142,7 +142,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         text: (Players.active?.trackAlbum ?? qsTr("No media")) || qsTr("Unknown album")
         color: Colours.palette.m3outline
-        font.pointSize: Tokens.font.size.small
+        font: Tokens.font.body.small
 
         width: parent.implicitWidth - Tokens.padding.extraLargeIncreased
         elide: Text.ElideRight
@@ -236,7 +236,7 @@ Item {
             animate: true
             text: control.icon
             color: control.canUse ? Colours.palette.m3onSurface : Colours.palette.m3outline
-            font.pointSize: Tokens.font.size.large
+            font: Tokens.font.icon.large
         }
     }
 }

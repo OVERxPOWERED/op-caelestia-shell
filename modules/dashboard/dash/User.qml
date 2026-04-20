@@ -29,7 +29,7 @@ Row {
             text: "person"
             fill: 1
             grade: 200
-            font.pointSize: Math.floor(info.implicitHeight / 2) || 1
+            font: Tokens.font.icon.builders.medium.size(Math.floor(info.implicitHeight / 2) || 1).build()
             visible: pfp.status !== Image.Ready
         }
 
@@ -84,7 +84,7 @@ Row {
 
                     text: "frame_person"
                     color: Colours.palette.m3onPrimary
-                    font.pointSize: Tokens.font.size.extraLarge
+                    font: Tokens.font.icon.xl
                 }
 
                 Behavior on scale {
@@ -121,7 +121,7 @@ Row {
                 anchors.leftMargin: (Tokens.sizes.dashboard.infoIconSize - implicitWidth) / 2
 
                 source: SysInfo.osLogo
-                implicitSize: Math.floor(Tokens.font.size.normal * 1.34)
+                implicitSize: Math.floor(Tokens.font.body.medium.pointSize * 1.34)
                 colour: Colours.palette.m3primary
             }
 
@@ -132,7 +132,7 @@ Row {
                 anchors.left: icon.right
                 anchors.leftMargin: icon.anchors.leftMargin
                 text: `:  ${SysInfo.osPrettyName || SysInfo.osName}`
-                font.pointSize: Tokens.font.size.normal
+                font: Tokens.font.body.medium
 
                 width: Tokens.sizes.dashboard.infoWidth
                 elide: Text.ElideRight
@@ -173,7 +173,7 @@ Row {
             fill: 1
             text: line.icon
             color: line.colour
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.icon.medium
         }
 
         StyledText {
@@ -183,7 +183,7 @@ Row {
             anchors.left: icon.right
             anchors.leftMargin: icon.anchors.leftMargin
             text: `:  ${line.text}`
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.body.medium
 
             width: Tokens.sizes.dashboard.infoWidth
             elide: Text.ElideRight

@@ -1,0 +1,42 @@
+#include "fontbuilder.hpp"
+
+#include <qcoreapplication.h>
+#include <qmetatype.h>
+
+namespace caelestia::config {
+
+FontBuilder::FontBuilder(QFont font)
+    : m_font(std::move(font)) {}
+
+FontBuilder FontBuilder::family(const QString& family) {
+    m_font.setFamily(family);
+    return *this;
+}
+
+FontBuilder FontBuilder::size(int pointSize) {
+    m_font.setPointSize(pointSize);
+    m_font.setVariableAxis("opsz", static_cast<float>(pointSize));
+    return *this;
+}
+
+FontBuilder FontBuilder::weight(QFont::Weight weight) {
+    m_font.setWeight(weight);
+    m_font.setVariableAxis("wght", weight);
+    return *this;
+}
+
+FontBuilder FontBuilder::italic(bool on) {
+    m_font.setItalic(on);
+    return *this;
+}
+
+FontBuilder FontBuilder::vaxis(QFont::Tag tag, float value) {
+    m_font.setVariableAxis(tag, value);
+    return *this;
+}
+
+QFont FontBuilder::build() const {
+    return m_font;
+}
+
+} // namespace caelestia::config

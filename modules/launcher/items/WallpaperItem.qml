@@ -58,8 +58,7 @@ Item {
             anchors.centerIn: parent
             text: "image"
             color: Colours.tPalette.m3outline
-            font.pointSize: Tokens.font.size.extraLarge * 2
-            font.weight: 600
+            font: Tokens.font.icon.builders.extraLarge.size(Tokens.font.icon.extraLarge.pointSize * 2).weight(600).build()
         }
 
         CachingImage {
@@ -83,7 +82,7 @@ Item {
         elide: Text.ElideRight
         renderType: Text.QtRendering
         text: root.modelData.relativePath
-        font.pointSize: Tokens.font.size.normal
+        font: Tokens.font.label.medium
     }
 
     Behavior on scale {

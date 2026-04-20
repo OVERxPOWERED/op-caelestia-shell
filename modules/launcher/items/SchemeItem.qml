@@ -69,12 +69,12 @@ Item {
 
             StyledText {
                 text: root.modelData?.flavour ?? ""
-                font.pointSize: Tokens.font.size.normal
+                font: Tokens.font.body.medium
             }
 
             StyledText {
                 text: root.modelData?.name ?? ""
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
                 color: Colours.palette.m3outline
 
                 elide: Text.ElideRight
@@ -95,7 +95,7 @@ Item {
             sourceComponent: MaterialIcon {
                 text: "check"
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.large
+                font: Tokens.font.icon.large
             }
         }
     }

@@ -29,7 +29,7 @@ Item {
             id: icon
 
             text: root.modelData?.icon ?? ""
-            font.pointSize: Tokens.font.size.extraLarge
+            font: Tokens.font.icon.extraLarge
 
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -46,14 +46,14 @@ Item {
                 id: name
 
                 text: root.modelData?.name ?? ""
-                font.pointSize: Tokens.font.size.normal
+                font: Tokens.font.body.medium
             }
 
             StyledText {
                 id: desc
 
                 text: root.modelData?.desc ?? ""
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
                 color: Colours.palette.m3outline
 
                 elide: Text.ElideRight

@@ -183,7 +183,7 @@ Item {
             icon: "clear_all"
             radius: Tokens.rounding.normal
             padding: Tokens.padding.medium
-            fontStyle: Tokens.font.icon.builder.size(Math.round(Tokens.font.icon.large.pointSize * 1.2)).build()
+            font: Tokens.font.icon.builder.size(Math.round(Tokens.font.icon.large.pointSize * 1.2)).build()
             onClicked: clearTimer.start()
 
             Elevation {

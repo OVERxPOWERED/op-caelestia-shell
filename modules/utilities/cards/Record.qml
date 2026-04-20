@@ -259,7 +259,7 @@ StyledRect {
                 toggle: true
                 checked: Recorder.paused
                 type: IconButton.Tonal
-                fontStyle: Tokens.font.icon.large
+                font: Tokens.font.icon.large
                 onClicked: {
                     Recorder.togglePause();
                     internalChecked = Recorder.paused;
@@ -270,7 +270,7 @@ StyledRect {
                 icon: "stop"
                 inactiveColour: Colours.palette.m3error
                 inactiveOnColour: Colours.palette.m3onError
-                fontStyle: Tokens.font.icon.large
+                font: Tokens.font.icon.large
                 onClicked: Recorder.stop()
             }
         }

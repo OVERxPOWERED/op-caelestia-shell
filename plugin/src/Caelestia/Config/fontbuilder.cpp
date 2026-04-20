@@ -47,6 +47,14 @@ FontBuilder FontBuilder::vaxis(QFont::Tag tag, float value) {
     return *this;
 }
 
+FontBuilder FontBuilder::vaxes(QVariantMap axes) {
+    for (auto it = axes.constBegin(); it != axes.constEnd(); ++it) {
+        if (auto tag = QFont::Tag::fromString(it.key()))
+            m_font.setVariableAxis(*tag, it.value().toFloat());
+    }
+    return *this;
+}
+
 QFont FontBuilder::build() const {
     return m_font;
 }

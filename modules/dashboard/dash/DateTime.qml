@@ -24,14 +24,14 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             text: Time.hourStr
             color: Colours.palette.m3secondary
-            font: Tokens.font.clock.builders.size(28).weight(600).build()
+            font: Tokens.font.clock.size(28).weight(600).build()
         }
 
         StyledText {
             Layout.alignment: Qt.AlignHCenter
             text: "•••"
             color: Colours.palette.m3primary
-            font: Tokens.font.clock.builders.size(28 * 0.9).build()
+            font: Tokens.font.clock.size(28 * 0.9).build()
         }
 
         StyledText {
@@ -39,7 +39,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             text: Time.minuteStr
             color: Colours.palette.m3secondary
-            font: Tokens.font.clock.builders.size(28).weight(600).build()
+            font: Tokens.font.clock.size(28).weight(600).build()
         }
 
         Loader {
@@ -52,7 +52,7 @@ Item {
             sourceComponent: StyledText {
                 text: Time.amPmStr
                 color: Colours.palette.m3primary
-                font: Tokens.font.clock.builders.size(18).weight(600).build()
+                font: Tokens.font.clock.size(18).weight(600).build()
             }
         }
     }

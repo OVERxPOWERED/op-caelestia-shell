@@ -76,7 +76,7 @@ Item {
 
             radius: Tokens.rounding.full
             implicitHeight: parent.height / 2
-            opacity: view.contentY < view.contentHeight - parent.height + Tokens.padding.small ? 0 : 1
+            opacity: view.contentY < view.contentHeight - parent.height + Tokens.padding.extraSmall ? 0 : 1
 
             Behavior on opacity {
                 Anim {}
@@ -213,7 +213,7 @@ Item {
         drag.target: view.contentItem
         drag.axis: Drag.YAxis
         drag.maximumY: 0
-        drag.minimumY: Math.min(0, view.height - view.contentHeight - Tokens.padding.small)
+        drag.minimumY: Math.min(0, view.height - view.contentHeight - Tokens.padding.extraSmall)
 
         onPressed: event => startY = event.y
 
@@ -233,7 +233,7 @@ Item {
         id: ws
 
         required property HyprlandWorkspace modelData
-        readonly property int size: label.Layout.preferredHeight + (hasWindows ? windows.implicitHeight + Tokens.padding.small : 0)
+        readonly property int size: label.Layout.preferredHeight + (hasWindows ? windows.implicitHeight + Tokens.padding.extraSmall : 0)
         property int wsId
         property string icon
         property bool hasWindows
@@ -284,7 +284,7 @@ Item {
             asynchronous: true
 
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.preferredHeight: Tokens.sizes.bar.innerWidth - Tokens.padding.small * 2
+            Layout.preferredHeight: Tokens.sizes.bar.innerWidth - Tokens.padding.extraSmall * 2
 
             sourceComponent: ws.icon.length === 1 ? letterComp : iconComp
 

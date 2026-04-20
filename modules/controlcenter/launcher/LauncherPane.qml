@@ -169,8 +169,8 @@ Item {
                         icon: "settings"
                         accent: "Primary"
                         iconSize: Tokens.font.size.normal
-                        horizontalPadding: Tokens.padding.normal
-                        verticalPadding: Tokens.padding.smaller
+                        horizontalPadding: Tokens.padding.medium
+                        verticalPadding: Tokens.padding.small
                         tooltip: qsTr("Launcher settings")
 
                         onClicked: {
@@ -212,7 +212,7 @@ Item {
 
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
-                        anchors.leftMargin: Tokens.padding.normal
+                        anchors.leftMargin: Tokens.padding.medium
 
                         text: "search"
                         color: Colours.palette.m3onSurfaceVariant
@@ -226,8 +226,8 @@ Item {
                         anchors.leftMargin: Tokens.spacing.small
                         anchors.rightMargin: Tokens.spacing.small
 
-                        topPadding: Tokens.padding.normal
-                        bottomPadding: Tokens.padding.normal
+                        topPadding: Tokens.padding.medium
+                        bottomPadding: Tokens.padding.medium
 
                         placeholderText: qsTr("Search applications...")
 
@@ -241,7 +241,7 @@ Item {
 
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: parent.right
-                        anchors.rightMargin: Tokens.padding.normal
+                        anchors.rightMargin: Tokens.padding.medium
 
                         width: searchField.text ? implicitWidth : implicitWidth / 2
                         opacity: {
@@ -337,7 +337,7 @@ Item {
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Tokens.padding.normal
+                                anchors.margins: Tokens.padding.medium
 
                                 spacing: Tokens.spacing.normal
 

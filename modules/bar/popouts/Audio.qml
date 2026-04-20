@@ -14,8 +14,8 @@ Item {
 
     required property PopoutState popouts
 
-    implicitWidth: layout.implicitWidth + Tokens.padding.normal * 2
-    implicitHeight: layout.implicitHeight + Tokens.padding.normal * 2
+    implicitWidth: layout.implicitWidth + Tokens.padding.medium * 2
+    implicitHeight: layout.implicitHeight + Tokens.padding.medium * 2
 
     ButtonGroup {
         id: sinks
@@ -80,7 +80,7 @@ Item {
 
         CustomMouseArea {
             Layout.fillWidth: true
-            implicitHeight: Tokens.padding.normal * 3
+            implicitHeight: Tokens.padding.medium * 3
 
             onWheel: event => {
                 if (event.angleDelta.y > 0)
@@ -108,7 +108,7 @@ Item {
             Layout.topMargin: Tokens.spacing.normal
             inactiveColour: Colours.palette.m3primaryContainer
             inactiveOnColour: Colours.palette.m3onPrimaryContainer
-            verticalPadding: Tokens.padding.small
+            verticalPadding: Tokens.padding.extraSmall
             text: qsTr("Open settings")
             icon: "settings"
 

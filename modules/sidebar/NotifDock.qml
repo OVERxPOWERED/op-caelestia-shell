@@ -19,7 +19,7 @@ Item {
     readonly property int notifCount: Notifs.list.reduce((acc, n) => n.closed ? acc : acc + 1, 0)
 
     anchors.fill: parent
-    anchors.margins: Tokens.padding.normal
+    anchors.margins: Tokens.padding.medium
 
     Component.onCompleted: Notifs.list.forEach(n => n.popup = false)
 
@@ -29,7 +29,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Tokens.padding.small
+        anchors.margins: Tokens.padding.extraSmall
 
         implicitHeight: Math.max(count.implicitHeight, titleText.implicitHeight)
 
@@ -177,7 +177,7 @@ Item {
         asynchronous: true
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Tokens.padding.medium
 
         scale: root.notifCount > 0 ? 1 : 0.5
         opacity: root.notifCount > 0 ? 1 : 0
@@ -188,7 +188,7 @@ Item {
 
             icon: "clear_all"
             radius: Tokens.rounding.large
-            padding: Tokens.padding.normal
+            padding: Tokens.padding.medium
             font.pointSize: Math.round(Tokens.font.size.large * 1.2)
             onClicked: clearTimer.start()
 

@@ -72,7 +72,7 @@ ColumnLayout {
 
         Loader {
             asynchronous: true
-            Layout.rightMargin: Tokens.padding.smaller
+            Layout.rightMargin: Tokens.padding.small
             active: root.width > 400
             visible: active
 

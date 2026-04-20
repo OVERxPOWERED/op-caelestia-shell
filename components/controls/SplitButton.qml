@@ -12,8 +12,8 @@ Row {
         Tonal
     }
 
-    property real horizontalPadding: Tokens.padding.normal
-    property real verticalPadding: Tokens.padding.smaller
+    property real horizontalPadding: Tokens.padding.medium
+    property real verticalPadding: Tokens.padding.small
     property int type: SplitButton.Filled
     property bool disabled
     property bool menuOnTop

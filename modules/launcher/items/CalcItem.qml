@@ -36,7 +36,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Tokens.padding.larger
+        anchors.margins: Tokens.padding.medium
 
         spacing: Tokens.spacing.normal
 
@@ -69,8 +69,8 @@ Item {
             radius: Tokens.rounding.large
             clip: true
 
-            implicitWidth: (stateLayer.containsMouse ? label.implicitWidth + label.anchors.rightMargin : 0) + icon.implicitWidth + Tokens.padding.normal * 2
-            implicitHeight: Math.max(label.implicitHeight, icon.implicitHeight) + Tokens.padding.small * 2
+            implicitWidth: (stateLayer.containsMouse ? label.implicitWidth + label.anchors.rightMargin : 0) + icon.implicitWidth + Tokens.padding.medium * 2
+            implicitHeight: Math.max(label.implicitHeight, icon.implicitHeight) + Tokens.padding.extraSmall * 2
 
             Layout.alignment: Qt.AlignVCenter
 
@@ -108,7 +108,7 @@ Item {
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: Tokens.padding.normal
+                anchors.rightMargin: Tokens.padding.medium
 
                 text: "open_in_new"
                 color: Colours.palette.m3onTertiary

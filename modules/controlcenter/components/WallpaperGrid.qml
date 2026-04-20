@@ -130,7 +130,7 @@ GridView {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
 
-                implicitHeight: filenameText.implicitHeight + Tokens.padding.normal * 1.5
+                implicitHeight: filenameText.implicitHeight + Tokens.padding.medium * 1.5
                 radius: 0
 
                 gradient: Gradient {
@@ -190,7 +190,7 @@ GridView {
             MaterialIcon {
                 anchors.right: parent.right
                 anchors.top: parent.top
-                anchors.margins: Tokens.padding.small
+                anchors.margins: Tokens.padding.extraSmall
 
                 visible: isCurrent
                 text: "check_circle"
@@ -205,9 +205,9 @@ GridView {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.leftMargin: Tokens.padding.normal + Tokens.spacing.normal / 2
-            anchors.rightMargin: Tokens.padding.normal + Tokens.spacing.normal / 2
-            anchors.bottomMargin: Tokens.padding.normal
+            anchors.leftMargin: Tokens.padding.medium + Tokens.spacing.normal / 2
+            anchors.rightMargin: Tokens.padding.medium + Tokens.spacing.normal / 2
+            anchors.bottomMargin: Tokens.padding.medium
 
             text: modelData.name
             font.pointSize: Tokens.font.size.smaller

@@ -26,7 +26,7 @@ StyledRect {
 
         StyledRect {
             implicitWidth: implicitHeight
-            implicitHeight: icon.implicitHeight + Tokens.padding.smaller * 2
+            implicitHeight: icon.implicitHeight + Tokens.padding.small * 2
 
             radius: Tokens.rounding.full
             color: IdleInhibitor.enabled ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
@@ -83,8 +83,8 @@ StyledRect {
         Component.onCompleted: active = Qt.binding(() => opacity > 0)
 
         sourceComponent: StyledRect {
-            implicitWidth: activeText.implicitWidth + Tokens.padding.normal * 2
-            implicitHeight: activeText.implicitHeight + Tokens.padding.small * 2
+            implicitWidth: activeText.implicitWidth + Tokens.padding.medium * 2
+            implicitHeight: activeText.implicitHeight + Tokens.padding.extraSmall * 2
 
             radius: Tokens.rounding.full
             color: Colours.palette.m3primary

@@ -19,8 +19,8 @@ ColumnLayout {
     spacing: Tokens.spacing.small
 
     StyledText {
-        Layout.topMargin: Tokens.padding.normal
-        Layout.rightMargin: Tokens.padding.small
+        Layout.topMargin: Tokens.padding.medium
+        Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Bluetooth")
         font.weight: 500
     }
@@ -47,7 +47,7 @@ ColumnLayout {
 
     StyledText {
         Layout.topMargin: Tokens.spacing.small
-        Layout.rightMargin: Tokens.padding.small
+        Layout.rightMargin: Tokens.padding.extraSmall
         text: {
             const devices = Bluetooth.devices.values; // qmllint disable unresolved-type
             let available = qsTr("%1 device%2 available").arg(devices.length).arg(devices.length === 1 ? "" : "s");
@@ -72,7 +72,7 @@ ColumnLayout {
             readonly property bool loading: modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting // qmllint disable unresolved-type
 
             Layout.fillWidth: true
-            Layout.rightMargin: Tokens.padding.small
+            Layout.rightMargin: Tokens.padding.extraSmall
             spacing: Tokens.spacing.small
 
             opacity: 0
@@ -113,7 +113,7 @@ ColumnLayout {
                 id: connectBtn
 
                 implicitWidth: implicitHeight
-                implicitHeight: connectIcon.implicitHeight + Tokens.padding.small
+                implicitHeight: connectIcon.implicitHeight + Tokens.padding.extraSmall
 
                 radius: Tokens.rounding.full
                 color: Qt.alpha(Colours.palette.m3primary, device.modelData.state === BluetoothDeviceState.Connected ? 1 : 0) // qmllint disable unresolved-type
@@ -172,7 +172,7 @@ ColumnLayout {
         Layout.topMargin: Tokens.spacing.normal
         inactiveColour: Colours.palette.m3primaryContainer
         inactiveOnColour: Colours.palette.m3onPrimaryContainer
-        verticalPadding: Tokens.padding.small
+        verticalPadding: Tokens.padding.extraSmall
         text: qsTr("Open settings")
         icon: "settings"
 
@@ -185,7 +185,7 @@ ColumnLayout {
         property alias toggle: toggle
 
         Layout.fillWidth: true
-        Layout.rightMargin: Tokens.padding.small
+        Layout.rightMargin: Tokens.padding.extraSmall
         spacing: Tokens.spacing.normal
 
         StyledText {

@@ -21,7 +21,7 @@ Item {
     signal editingFinished
 
     implicitWidth: 70
-    implicitHeight: inputField.implicitHeight + Tokens.padding.small * 2
+    implicitHeight: inputField.implicitHeight + Tokens.padding.extraSmall * 2
 
     StyledRect {
         id: container
@@ -54,7 +54,7 @@ Item {
             id: inputField
 
             anchors.centerIn: parent
-            width: parent.width - Tokens.padding.normal
+            width: parent.width - Tokens.padding.medium
             horizontalAlignment: root.horizontalAlignment
             validator: root.validator
             readOnly: root.readOnly

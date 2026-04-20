@@ -34,7 +34,7 @@ StyledRect {
     readonly property int nonAnimHeight: {
         const headerHeight = header.implicitHeight + (root.expanded ? Math.round(Tokens.spacing.small / 2) : 0);
         const columnHeight = headerHeight + notifList.layoutHeight;
-        return Math.round(Math.max(TokenConfig.sizes.notifs.image, columnHeight) + Tokens.padding.normal * 2);
+        return Math.round(Math.max(TokenConfig.sizes.notifs.image, columnHeight) + Tokens.padding.medium * 2);
     }
     readonly property bool expanded: props.expandedNotifs.includes(modelData)
 
@@ -72,7 +72,7 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Tokens.padding.medium
 
         spacing: Tokens.spacing.normal
 
@@ -186,8 +186,8 @@ StyledRect {
                 }
 
                 StyledRect {
-                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.smaller * 2
-                    implicitHeight: groupCount.implicitHeight + Tokens.padding.small
+                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.small * 2
+                    implicitHeight: groupCount.implicitHeight + Tokens.padding.extraSmall
 
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : Colours.layer(Colours.palette.m3surfaceContainerHigh, 3)
                     radius: Tokens.rounding.full
@@ -206,7 +206,7 @@ StyledRect {
                         StyledText {
                             id: groupCount
 
-                            Layout.leftMargin: Tokens.padding.small / 2
+                            Layout.leftMargin: Tokens.padding.extraSmall / 2
                             animate: true
                             text: root.notifCount
                             color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurface
@@ -214,11 +214,11 @@ StyledRect {
                         }
 
                         MaterialIcon {
-                            Layout.rightMargin: -Tokens.padding.small / 2
+                            Layout.rightMargin: -Tokens.padding.extraSmall / 2
                             text: "expand_more"
                             color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurface
                             rotation: root.expanded ? 180 : 0
-                            Layout.topMargin: root.expanded ? -Math.floor(Tokens.padding.smaller / 2) : 0
+                            Layout.topMargin: root.expanded ? -Math.floor(Tokens.padding.small / 2) : 0
 
                             Behavior on rotation {
                                 Anim {

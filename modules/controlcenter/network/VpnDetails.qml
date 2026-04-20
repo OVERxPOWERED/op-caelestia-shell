@@ -96,7 +96,7 @@ DeviceDetails {
 
                         TextButton {
                             Layout.fillWidth: true
-                            Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.normal * 2
+                            Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.medium * 2
                             visible: root.providerEnabled
                             enabled: !VPN.connecting
                             inactiveColour: Colours.palette.m3primaryContainer
@@ -353,7 +353,7 @@ DeviceDetails {
                         id: displayNameField
 
                         anchors.centerIn: parent
-                        width: parent.width - Tokens.padding.normal
+                        width: parent.width - Tokens.padding.medium
                         horizontalAlignment: TextInput.AlignLeft
                         text: editVpnDialog.displayName
                         onTextChanged: editVpnDialog.displayName = text
@@ -390,7 +390,7 @@ DeviceDetails {
                         id: interfaceNameField
 
                         anchors.centerIn: parent
-                        width: parent.width - Tokens.padding.normal
+                        width: parent.width - Tokens.padding.medium
                         horizontalAlignment: TextInput.AlignLeft
                         text: editVpnDialog.interfaceName
                         onTextChanged: editVpnDialog.interfaceName = text
@@ -428,7 +428,7 @@ DeviceDetails {
                         id: connectCmdFieldEdit
 
                         anchors.centerIn: parent
-                        width: parent.width - Tokens.padding.normal
+                        width: parent.width - Tokens.padding.medium
                         horizontalAlignment: TextInput.AlignLeft
                         text: editVpnDialog.connectCmd
                         onTextChanged: editVpnDialog.connectCmd = text
@@ -466,7 +466,7 @@ DeviceDetails {
                         id: disconnectCmdFieldEdit
 
                         anchors.centerIn: parent
-                        width: parent.width - Tokens.padding.normal
+                        width: parent.width - Tokens.padding.medium
                         horizontalAlignment: TextInput.AlignLeft
                         text: editVpnDialog.disconnectCmd
                         onTextChanged: editVpnDialog.disconnectCmd = text

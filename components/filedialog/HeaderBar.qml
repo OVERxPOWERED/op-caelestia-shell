@@ -11,8 +11,8 @@ StyledRect {
 
     required property var dialog
 
-    implicitWidth: inner.implicitWidth + Tokens.padding.normal * 2
-    implicitHeight: inner.implicitHeight + Tokens.padding.normal * 2
+    implicitWidth: inner.implicitWidth + Tokens.padding.medium * 2
+    implicitHeight: inner.implicitHeight + Tokens.padding.medium * 2
 
     color: Colours.tPalette.m3surfaceContainer
 
@@ -20,12 +20,12 @@ StyledRect {
         id: inner
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Tokens.padding.medium
         spacing: Tokens.spacing.small
 
         Item {
             implicitWidth: implicitHeight
-            implicitHeight: upIcon.implicitHeight + Tokens.padding.small * 2
+            implicitHeight: upIcon.implicitHeight + Tokens.padding.extraSmall * 2
 
             StateLayer {
                 radius: Tokens.rounding.medium
@@ -55,7 +55,7 @@ StyledRect {
                 id: pathComponents
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.small / 2
+                anchors.margins: Tokens.padding.extraSmall / 2
                 anchors.leftMargin: 0
 
                 spacing: Tokens.spacing.small
@@ -83,8 +83,8 @@ StyledRect {
                         }
 
                         Item {
-                            implicitWidth: homeIcon.implicitWidth + (homeIcon.active ? Tokens.padding.small : 0) + folderName.implicitWidth + Tokens.padding.normal * 2
-                            implicitHeight: folderName.implicitHeight + Tokens.padding.small * 2
+                            implicitWidth: homeIcon.implicitWidth + (homeIcon.active ? Tokens.padding.extraSmall : 0) + folderName.implicitWidth + Tokens.padding.medium * 2
+                            implicitHeight: folderName.implicitHeight + Tokens.padding.extraSmall * 2
 
                             Loader {
                                 asynchronous: true
@@ -106,7 +106,7 @@ StyledRect {
 
                                 anchors.left: parent.left
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.leftMargin: Tokens.padding.normal
+                                anchors.leftMargin: Tokens.padding.medium
 
                                 active: folder.index === 0 && folder.modelData === "Home"
                                 sourceComponent: MaterialIcon {
@@ -121,7 +121,7 @@ StyledRect {
 
                                 anchors.left: homeIcon.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.leftMargin: homeIcon.active ? Tokens.padding.small : 0
+                                anchors.leftMargin: homeIcon.active ? Tokens.padding.extraSmall : 0
 
                                 text: folder.modelData
                                 color: folder.index < root.dialog.cwd.length - 1 ? Colours.palette.m3onSurfaceVariant : Colours.palette.m3onSurface

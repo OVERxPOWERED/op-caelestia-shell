@@ -24,7 +24,7 @@ RadioButton {
         anchors.verticalCenter: parent.verticalCenter
 
         StateLayer {
-            anchors.margins: -Tokens.padding.smaller
+            anchors.margins: -Tokens.padding.small
             color: root.checked ? Colours.palette.m3onSurface : Colours.palette.m3primary
             z: -1
             onClicked: root.click()

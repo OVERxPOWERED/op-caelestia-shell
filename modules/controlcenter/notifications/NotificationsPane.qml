@@ -64,9 +64,9 @@ Item {
         id: notificationsClippingRect
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Tokens.padding.medium
         anchors.leftMargin: 0
-        anchors.rightMargin: Tokens.padding.normal
+        anchors.rightMargin: Tokens.padding.medium
 
         color: "transparent"
         radius: notificationsBorder.innerRadius
@@ -75,7 +75,7 @@ Item {
             id: notificationsLoader
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.large + Tokens.padding.normal
+            anchors.margins: Tokens.padding.large + Tokens.padding.medium
             anchors.leftMargin: Tokens.padding.large
             anchors.rightMargin: Tokens.padding.large
 
@@ -87,7 +87,7 @@ Item {
         id: notificationsBorder
 
         leftThickness: 0
-        rightThickness: Tokens.padding.normal
+        rightThickness: Tokens.padding.medium
     }
 
     Component {

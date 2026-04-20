@@ -71,7 +71,7 @@ GridLayout {
             padding: Tokens.padding.large * 3
             fgColour: res.colour
             bgColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 3)
-            strokeWidth: width < 200 ? Tokens.padding.smaller : Tokens.padding.normal
+            strokeWidth: width < 200 ? Tokens.padding.small : Tokens.padding.medium
         }
 
         MaterialIcon {

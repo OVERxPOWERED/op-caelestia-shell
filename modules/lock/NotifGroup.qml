@@ -46,7 +46,7 @@ StyledRect {
 
     anchors.left: parent?.left
     anchors.right: parent?.right
-    implicitHeight: content.implicitHeight + Tokens.padding.normal * 2
+    implicitHeight: content.implicitHeight + Tokens.padding.medium * 2
 
     clip: true
     radius: Tokens.rounding.large
@@ -58,7 +58,7 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Tokens.padding.medium
 
         spacing: Tokens.spacing.normal
 
@@ -140,8 +140,8 @@ StyledRect {
         }
 
         ColumnLayout {
-            Layout.topMargin: -Tokens.padding.small
-            Layout.bottomMargin: -Tokens.padding.small / 2 - (root.expanded ? 0 : spacing)
+            Layout.topMargin: -Tokens.padding.extraSmall
+            Layout.bottomMargin: -Tokens.padding.extraSmall / 2 - (root.expanded ? 0 : spacing)
             Layout.fillWidth: true
             spacing: Math.round(Tokens.spacing.small / 2)
 
@@ -166,8 +166,8 @@ StyledRect {
                 }
 
                 StyledRect {
-                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.smaller * 2
-                    implicitHeight: groupCount.implicitHeight + Tokens.padding.small
+                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.small * 2
+                    implicitHeight: groupCount.implicitHeight + Tokens.padding.extraSmall
 
                     color: root.urgency === "critical" ? Colours.palette.m3error : Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
                     radius: Tokens.rounding.full
@@ -189,7 +189,7 @@ StyledRect {
                         StyledText {
                             id: groupCount
 
-                            Layout.leftMargin: Tokens.padding.small / 2
+                            Layout.leftMargin: Tokens.padding.extraSmall / 2
                             animate: true
                             text: root.notifs.length
                             color: root.urgency === "critical" ? Colours.palette.m3onError : Colours.palette.m3onSurface
@@ -197,7 +197,7 @@ StyledRect {
                         }
 
                         MaterialIcon {
-                            Layout.rightMargin: -Tokens.padding.small / 2
+                            Layout.rightMargin: -Tokens.padding.extraSmall / 2
                             animate: true
                             text: root.expanded ? "expand_less" : "expand_more"
                             color: root.urgency === "critical" ? Colours.palette.m3onError : Colours.palette.m3onSurface

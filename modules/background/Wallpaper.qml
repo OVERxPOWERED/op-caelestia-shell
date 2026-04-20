@@ -64,7 +64,7 @@ Item {
 
                     StyledRect {
                         implicitWidth: selectWallText.implicitWidth + Tokens.padding.large * 2
-                        implicitHeight: selectWallText.implicitHeight + Tokens.padding.small * 2
+                        implicitHeight: selectWallText.implicitHeight + Tokens.padding.extraSmall * 2
 
                         radius: Tokens.rounding.full
                         color: Colours.palette.m3primary

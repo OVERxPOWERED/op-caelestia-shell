@@ -21,7 +21,7 @@ StyledRect {
 
     clip: true
     implicitWidth: Tokens.sizes.bar.innerWidth
-    implicitHeight: iconColumn.implicitHeight + Tokens.padding.normal * 2 - (Config.bar.status.showLockStatus && !Hypr.capsLock && !Hypr.numLock ? iconColumn.spacing : 0)
+    implicitHeight: iconColumn.implicitHeight + Tokens.padding.medium * 2 - (Config.bar.status.showLockStatus && !Hypr.capsLock && !Hypr.numLock ? iconColumn.spacing : 0)
 
     ColumnLayout {
         id: iconColumn
@@ -29,7 +29,7 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Tokens.padding.normal
+        anchors.bottomMargin: Tokens.padding.medium
 
         spacing: Tokens.spacing.smaller / 2
 

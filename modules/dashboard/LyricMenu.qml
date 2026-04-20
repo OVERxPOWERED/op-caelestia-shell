@@ -35,7 +35,7 @@ StyledRect {
             // Header: icon, backend selector, refresh, toggle
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.padding.small
+                spacing: Tokens.padding.extraSmall
 
                 MaterialIcon {
                     text: "lyrics"
@@ -120,7 +120,7 @@ StyledRect {
 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.small
+                    anchors.margins: Tokens.padding.extraSmall
                     spacing: 0
 
                     StyledText {
@@ -228,7 +228,7 @@ StyledRect {
 
                         Row {
                             anchors.fill: parent
-                            anchors.margins: Tokens.padding.normal
+                            anchors.margins: Tokens.padding.medium
                             spacing: Tokens.spacing.small
 
                             // Active indicator bar
@@ -286,7 +286,7 @@ StyledRect {
             // Manual search
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.padding.small
+                spacing: Tokens.padding.extraSmall
 
                 StyledText {
                     Layout.fillWidth: true
@@ -298,7 +298,7 @@ StyledRect {
 
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: Tokens.padding.small
+                    spacing: Tokens.padding.extraSmall
 
                     StyledInputField {
                         id: searchTitle
@@ -336,7 +336,7 @@ StyledRect {
             // Offset controls
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.padding.small
+                spacing: Tokens.padding.extraSmall
 
                 MaterialIcon {
                     text: "contrast_square"

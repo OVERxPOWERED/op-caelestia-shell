@@ -24,8 +24,8 @@ ColumnLayout {
         spacing: Tokens.spacing.normal
 
         StyledRect {
-            implicitWidth: prompt.implicitWidth + Tokens.padding.normal * 2
-            implicitHeight: prompt.implicitHeight + Tokens.padding.normal * 2
+            implicitWidth: prompt.implicitWidth + Tokens.padding.medium * 2
+            implicitHeight: prompt.implicitHeight + Tokens.padding.medium * 2
 
             color: Colours.palette.m3primary
             radius: Tokens.rounding.medium
@@ -71,8 +71,8 @@ ColumnLayout {
 
         ColumnLayout {
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.padding.normal
-            Layout.bottomMargin: Tokens.padding.normal
+            Layout.topMargin: Tokens.padding.medium
+            Layout.bottomMargin: Tokens.padding.medium
             Layout.leftMargin: iconLoader.active ? 0 : width * 0.1
             spacing: Tokens.spacing.normal
 

@@ -33,7 +33,7 @@ StyledRect {
             StyledRect {
                 implicitWidth: implicitHeight
                 implicitHeight: {
-                    const h = icon.implicitHeight + Tokens.padding.smaller * 2;
+                    const h = icon.implicitHeight + Tokens.padding.small * 2;
                     return h - (h % 2);
                 }
 
@@ -193,8 +193,8 @@ StyledRect {
                 radius: Tokens.rounding.full
                 color: Recorder.paused ? Colours.palette.m3tertiary : Colours.palette.m3error
 
-                implicitWidth: recText.implicitWidth + Tokens.padding.normal * 2
-                implicitHeight: recText.implicitHeight + Tokens.padding.smaller * 2
+                implicitWidth: recText.implicitWidth + Tokens.padding.medium * 2
+                implicitHeight: recText.implicitHeight + Tokens.padding.small * 2
 
                 StyledText {
                     id: recText

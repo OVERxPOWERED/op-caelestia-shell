@@ -16,7 +16,7 @@ StyledRect {
     property string accent: "Secondary"
     property real iconSize: Tokens.font.size.large
     property real horizontalPadding: Tokens.padding.large
-    property real verticalPadding: Tokens.padding.normal
+    property real verticalPadding: Tokens.padding.medium
     property string tooltip: ""
     property bool hovered: false
 
@@ -24,7 +24,7 @@ StyledRect {
 
     Component.onCompleted: hovered = toggleStateLayer.containsMouse
 
-    Layout.preferredWidth: implicitWidth + (toggleStateLayer.pressed ? Tokens.padding.normal * 2 : toggled ? Tokens.padding.small * 2 : 0)
+    Layout.preferredWidth: implicitWidth + (toggleStateLayer.pressed ? Tokens.padding.medium * 2 : toggled ? Tokens.padding.extraSmall * 2 : 0)
     implicitWidth: toggleBtnInner.implicitWidth + horizontalPadding * 2
     implicitHeight: toggleBtnIcon.implicitHeight + verticalPadding * 2
     radius: toggled || toggleStateLayer.pressed ? Tokens.rounding.medium : Math.min(width, height) / 2 * Math.min(1, Tokens.rounding.scale)

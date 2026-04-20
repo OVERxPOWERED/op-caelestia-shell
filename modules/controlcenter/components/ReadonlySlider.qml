@@ -50,7 +50,7 @@ ColumnLayout {
 
     StyledRect {
         Layout.fillWidth: true
-        implicitHeight: Tokens.padding.normal
+        implicitHeight: Tokens.padding.medium
         radius: Tokens.rounding.full
         color: Colours.layer(Colours.palette.m3surfaceContainerHighest, 1)
         opacity: root.readonly ? 0.5 : 1.0

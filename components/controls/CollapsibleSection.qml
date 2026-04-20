@@ -24,7 +24,7 @@ ColumnLayout {
         id: sectionHeaderItem
 
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(titleRow.implicitHeight + Tokens.padding.normal * 2, 48)
+        Layout.preferredHeight: Math.max(titleRow.implicitHeight + Tokens.padding.medium * 2, 48)
 
         RowLayout {
             id: titleRow
@@ -32,8 +32,8 @@ ColumnLayout {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: Tokens.padding.normal
-            anchors.rightMargin: Tokens.padding.normal
+            anchors.leftMargin: Tokens.padding.medium
+            anchors.rightMargin: Tokens.padding.medium
             spacing: Tokens.spacing.normal
 
             StyledText {
@@ -103,8 +103,8 @@ ColumnLayout {
             anchors.left: parent.left
             anchors.right: parent.right
             y: Tokens.spacing.small
-            anchors.leftMargin: Tokens.padding.normal
-            anchors.rightMargin: Tokens.padding.normal
+            anchors.leftMargin: Tokens.padding.medium
+            anchors.rightMargin: Tokens.padding.medium
             anchors.bottomMargin: Tokens.spacing.small
             spacing: Tokens.spacing.small
             opacity: root.expanded ? 1.0 : 0.0

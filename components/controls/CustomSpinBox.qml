@@ -73,9 +73,9 @@ RowLayout {
             root.isEditing = false;
         }
 
-        padding: Tokens.padding.small
-        leftPadding: Tokens.padding.normal
-        rightPadding: Tokens.padding.normal
+        padding: Tokens.padding.extraSmall
+        leftPadding: Tokens.padding.medium
+        rightPadding: Tokens.padding.medium
 
         background: StyledRect {
             implicitWidth: 100
@@ -89,7 +89,7 @@ RowLayout {
         color: Colours.palette.m3primary
 
         implicitWidth: implicitHeight
-        implicitHeight: upIcon.implicitHeight + Tokens.padding.small * 2
+        implicitHeight: upIcon.implicitHeight + Tokens.padding.extraSmall * 2
 
         StateLayer {
             id: upState
@@ -124,7 +124,7 @@ RowLayout {
         color: Colours.palette.m3primary
 
         implicitWidth: implicitHeight
-        implicitHeight: downIcon.implicitHeight + Tokens.padding.small * 2
+        implicitHeight: downIcon.implicitHeight + Tokens.padding.extraSmall * 2
 
         StateLayer {
             id: downState

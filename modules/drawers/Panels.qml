@@ -138,7 +138,7 @@ Item {
 
         anchors.bottom: sidebar.visible ? parent.bottom : utilities.top
         anchors.right: sidebar.left
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Tokens.padding.medium
     }
 
     Sidebar.Wrapper {

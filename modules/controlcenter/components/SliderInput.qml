@@ -146,7 +146,7 @@ ColumnLayout {
         id: slider
 
         Layout.fillWidth: true
-        implicitHeight: Tokens.padding.normal * 3
+        implicitHeight: Tokens.padding.medium * 3
 
         from: root.from
         to: root.to

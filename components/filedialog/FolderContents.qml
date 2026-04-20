@@ -42,7 +42,7 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            anchors.margins: Tokens.padding.small
+            anchors.margins: Tokens.padding.extraSmall
             radius: Tokens.rounding.medium
         }
     }
@@ -80,10 +80,10 @@ Item {
         id: view
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.small + Tokens.padding.normal
+        anchors.margins: Tokens.padding.extraSmall + Tokens.padding.medium
 
         cellWidth: Sizes.itemWidth + Tokens.spacing.small
-        cellHeight: Sizes.itemWidth + Tokens.spacing.small * 2 + Tokens.padding.normal * 2 + 1
+        cellHeight: Sizes.itemWidth + Tokens.spacing.small * 2 + Tokens.padding.medium * 2 + 1
 
         clip: true
         focus: true
@@ -151,7 +151,7 @@ Item {
     CurrentItem {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: Tokens.padding.small
+        anchors.margins: Tokens.padding.extraSmall
 
         currentItem: view.currentItem
     }
@@ -162,7 +162,7 @@ Item {
         required property int index
         required property FileSystemEntry modelData
 
-        readonly property real nonAnimHeight: icon.implicitHeight + name.anchors.topMargin + name.implicitHeight + Tokens.padding.normal * 2
+        readonly property real nonAnimHeight: icon.implicitHeight + name.anchors.topMargin + name.implicitHeight + Tokens.padding.medium * 2
 
         implicitWidth: Sizes.itemWidth
         implicitHeight: nonAnimHeight
@@ -187,9 +187,9 @@ Item {
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: Tokens.padding.normal
+            anchors.topMargin: Tokens.padding.medium
 
-            implicitSize: Sizes.itemWidth - Tokens.padding.normal * 2
+            implicitSize: Sizes.itemWidth - Tokens.padding.medium * 2
 
             Component.onCompleted: {
                 const file = item.modelData;
@@ -211,7 +211,7 @@ Item {
             anchors.right: parent.right
             anchors.top: icon.bottom
             anchors.topMargin: Tokens.spacing.small
-            anchors.margins: Tokens.padding.normal
+            anchors.margins: Tokens.padding.medium
 
             horizontalAlignment: Text.AlignHCenter
             elide: item.GridView.isCurrentItem ? Text.ElideNone : Text.ElideRight

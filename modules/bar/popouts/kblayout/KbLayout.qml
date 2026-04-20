@@ -24,8 +24,8 @@ ColumnLayout {
     }
 
     StyledText {
-        Layout.topMargin: Tokens.padding.normal
-        Layout.rightMargin: Tokens.padding.small
+        Layout.topMargin: Tokens.padding.medium
+        Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Keyboard Layouts")
         font.weight: 500
     }
@@ -36,7 +36,7 @@ ColumnLayout {
         model: kb.visibleModel
 
         Layout.fillWidth: true
-        Layout.rightMargin: Tokens.padding.small
+        Layout.rightMargin: Tokens.padding.extraSmall
         Layout.topMargin: Tokens.spacing.small
 
         clip: true
@@ -88,7 +88,7 @@ ColumnLayout {
             readonly property bool isDisabled: layoutIndex > 3
 
             width: list.width
-            height: Math.max(36, rowText.implicitHeight + Tokens.padding.small * 2)
+            height: Math.max(36, rowText.implicitHeight + Tokens.padding.extraSmall * 2)
             ToolTip.visible: isDisabled && layer.containsMouse
             ToolTip.text: "XKB limitation: maximum 4 layouts allowed"
 
@@ -114,8 +114,8 @@ ColumnLayout {
                 anchors.verticalCenter: layer.verticalCenter
                 anchors.left: layer.left
                 anchors.right: layer.right
-                anchors.leftMargin: Tokens.padding.small
-                anchors.rightMargin: Tokens.padding.small
+                anchors.leftMargin: Tokens.padding.extraSmall
+                anchors.rightMargin: Tokens.padding.extraSmall
                 text: kbDelegate.label
                 elide: Text.ElideRight
                 opacity: kbDelegate.isDisabled ? 0.4 : 1.0
@@ -126,7 +126,7 @@ ColumnLayout {
     Rectangle {
         visible: kb.activeLabel.length > 0
         Layout.fillWidth: true
-        Layout.rightMargin: Tokens.padding.small
+        Layout.rightMargin: Tokens.padding.extraSmall
         Layout.topMargin: Tokens.spacing.small
 
         implicitHeight: 1
@@ -139,7 +139,7 @@ ColumnLayout {
 
         visible: kb.activeLabel.length > 0
         Layout.fillWidth: true
-        Layout.rightMargin: Tokens.padding.small
+        Layout.rightMargin: Tokens.padding.extraSmall
         Layout.topMargin: Tokens.spacing.small
         spacing: Tokens.spacing.small
 

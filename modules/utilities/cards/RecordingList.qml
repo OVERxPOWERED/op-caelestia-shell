@@ -62,7 +62,7 @@ ColumnLayout {
 
         Layout.fillWidth: true
         Layout.rightMargin: -Tokens.spacing.small
-        implicitHeight: (Tokens.font.size.larger + Tokens.padding.small) * (root.props.recordingListExpanded ? 10 : 3)
+        implicitHeight: (Tokens.font.size.larger + Tokens.padding.extraSmall) * (root.props.recordingListExpanded ? 10 : 3)
         clip: true
 
         StyledScrollBar.vertical: StyledScrollBar {

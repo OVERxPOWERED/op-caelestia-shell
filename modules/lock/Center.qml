@@ -113,7 +113,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
 
         implicitWidth: root.centerWidth * 0.8
-        implicitHeight: input.implicitHeight + Tokens.padding.small * 2
+        implicitHeight: input.implicitHeight + Tokens.padding.extraSmall * 2
 
         color: Colours.tPalette.m3surfaceContainer
         radius: Tokens.rounding.full
@@ -147,12 +147,12 @@ ColumnLayout {
             id: input
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.small
+            anchors.margins: Tokens.padding.extraSmall
             spacing: Tokens.spacing.normal
 
             Item {
                 implicitWidth: implicitHeight
-                implicitHeight: fprintIcon.implicitHeight + Tokens.padding.small * 2
+                implicitHeight: fprintIcon.implicitHeight + Tokens.padding.extraSmall * 2
 
                 MaterialIcon {
                     id: fprintIcon
@@ -188,7 +188,7 @@ ColumnLayout {
 
             StyledRect {
                 implicitWidth: implicitHeight
-                implicitHeight: enterIcon.implicitHeight + Tokens.padding.small * 2
+                implicitHeight: enterIcon.implicitHeight + Tokens.padding.extraSmall * 2
 
                 color: root.lock.pam.buffer ? Colours.palette.m3primary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
                 radius: Tokens.rounding.full

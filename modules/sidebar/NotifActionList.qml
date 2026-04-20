@@ -114,8 +114,8 @@ Item {
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    implicitWidth: actionInner.implicitWidth + Tokens.padding.normal * 2
-                    implicitHeight: actionInner.implicitHeight + Tokens.padding.small * 2
+                    implicitWidth: actionInner.implicitWidth + Tokens.padding.medium * 2
+                    implicitHeight: actionInner.implicitHeight + Tokens.padding.extraSmall * 2
 
                     Layout.preferredWidth: implicitWidth + (actionStateLayer.pressed ? Tokens.padding.large : 0)
                     radius: actionStateLayer.pressed ? Tokens.rounding.medium / 2 : Tokens.rounding.medium

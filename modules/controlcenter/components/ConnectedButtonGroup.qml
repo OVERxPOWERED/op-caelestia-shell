@@ -87,7 +87,7 @@ StyledRect {
                     inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
 
                     // Adjust width similar to utilities toggles
-                    Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.smaller : 0)
+                    Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.small : 0)
 
                     onClicked: {
                         if (modelData.onToggled && root.rootItem && modelData.propertyName) {

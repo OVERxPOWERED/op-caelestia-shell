@@ -33,8 +33,8 @@ ColumnLayout {
             color: Colours.palette.m3primary
             radius: Tokens.rounding.medium
 
-            implicitWidth: moveToWsIcon.implicitWidth + Tokens.padding.small * 2
-            implicitHeight: moveToWsIcon.implicitHeight + Tokens.padding.small
+            implicitWidth: moveToWsIcon.implicitWidth + Tokens.padding.extraSmall * 2
+            implicitHeight: moveToWsIcon.implicitHeight + Tokens.padding.extraSmall
 
             StateLayer {
                 color: Colours.palette.m3onPrimary
@@ -145,7 +145,7 @@ ColumnLayout {
         radius: Tokens.rounding.medium
 
         Layout.fillWidth: true
-        implicitHeight: label.implicitHeight + Tokens.padding.small * 2
+        implicitHeight: label.implicitHeight + Tokens.padding.extraSmall * 2
 
         StateLayer {
             id: stateLayer

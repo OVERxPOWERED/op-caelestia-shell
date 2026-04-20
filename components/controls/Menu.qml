@@ -105,7 +105,7 @@ MouseArea {
                 id: column
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.small
+                anchors.margins: Tokens.padding.extraSmall
                 spacing: 0
 
                 Repeater {
@@ -121,8 +121,8 @@ MouseArea {
                         readonly property bool active: modelData === root.active
 
                         Layout.fillWidth: true
-                        implicitWidth: menuOptionRow.implicitWidth + Tokens.padding.normal * 2
-                        implicitHeight: menuOptionRow.implicitHeight + Tokens.padding.normal * 2
+                        implicitWidth: menuOptionRow.implicitWidth + Tokens.padding.medium * 2
+                        implicitHeight: menuOptionRow.implicitHeight + Tokens.padding.medium * 2
 
                         radius: active ? Tokens.rounding.medium : Tokens.rounding.extraSmall
                         topLeftRadius: index === 0 ? Tokens.rounding.medium : radius
@@ -156,7 +156,7 @@ MouseArea {
                             id: menuOptionRow
 
                             anchors.fill: parent
-                            anchors.margins: Tokens.padding.normal
+                            anchors.margins: Tokens.padding.medium
                             spacing: Tokens.spacing.small
 
                             MaterialIcon {

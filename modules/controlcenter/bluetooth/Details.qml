@@ -167,7 +167,7 @@ StyledFlickable {
                                             PropertyChanges {
                                                 renameDevice.implicitHeight: deviceNameEdit.implicitHeight
                                                 renameLabel.opacity: 0
-                                                deviceNameEdit.padding: root.Tokens.padding.normal
+                                                deviceNameEdit.padding: root.Tokens.padding.medium
                                             }
                                         }
 
@@ -196,7 +196,7 @@ StyledFlickable {
                                             anchors.left: parent.left
                                             anchors.right: parent.right
                                             anchors.top: renameLabel.bottom
-                                            anchors.leftMargin: root.session.bt.editingDeviceName ? 0 : -Tokens.padding.normal
+                                            anchors.leftMargin: root.session.bt.editingDeviceName ? 0 : -Tokens.padding.medium
 
                                             text: root.device?.name ?? ""
                                             readOnly: !root.session.bt.editingDeviceName
@@ -205,8 +205,8 @@ StyledFlickable {
                                                 root.device.name = text;
                                             }
 
-                                            leftPadding: Tokens.padding.normal
-                                            rightPadding: Tokens.padding.normal
+                                            leftPadding: Tokens.padding.medium
+                                            rightPadding: Tokens.padding.medium
 
                                             background: StyledRect {
                                                 radius: Tokens.rounding.medium
@@ -231,7 +231,7 @@ StyledFlickable {
 
                                     StyledRect {
                                         implicitWidth: implicitHeight
-                                        implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.smaller * 2
+                                        implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.small * 2
 
                                         radius: Tokens.rounding.medium
                                         color: Colours.palette.m3secondaryContainer
@@ -270,7 +270,7 @@ StyledFlickable {
 
                                     StyledRect {
                                         implicitWidth: implicitHeight
-                                        implicitHeight: editIcon.implicitHeight + Tokens.padding.smaller * 2
+                                        implicitHeight: editIcon.implicitHeight + Tokens.padding.small * 2
 
                                         radius: root.session.bt.editingDeviceName ? Tokens.rounding.medium : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
                                         color: Qt.alpha(Colours.palette.m3primary, root.session.bt.editingDeviceName ? 1 : 0)
@@ -359,7 +359,7 @@ StyledFlickable {
 
                                     Layout.topMargin: Tokens.spacing.small / 2
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: Tokens.padding.smaller
+                                    Layout.preferredHeight: Tokens.padding.small
                                     spacing: Tokens.spacing.small / 2
 
                                     StyledRect {
@@ -435,7 +435,7 @@ StyledFlickable {
     ColumnLayout {
         anchors.right: fabRoot.right
         anchors.bottom: fabRoot.top
-        anchors.bottomMargin: Tokens.padding.normal
+        anchors.bottomMargin: Tokens.padding.medium
 
         Repeater {
             id: fabMenu
@@ -467,7 +467,7 @@ StyledFlickable {
 
                 Layout.alignment: Qt.AlignRight
 
-                implicitHeight: fabMenuItemInner.implicitHeight + Tokens.padding.larger * 2
+                implicitHeight: fabMenuItemInner.implicitHeight + Tokens.padding.medium * 2
 
                 radius: Tokens.rounding.full
                 color: Colours.palette.m3primaryContainer

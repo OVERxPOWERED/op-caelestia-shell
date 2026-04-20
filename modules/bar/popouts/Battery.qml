@@ -45,8 +45,8 @@ Column {
         height: active ? ((item as Item)?.implicitHeight ?? 0) : 0
 
         sourceComponent: StyledRect {
-            implicitWidth: child.implicitWidth + Tokens.padding.normal * 2
-            implicitHeight: child.implicitHeight + Tokens.padding.smaller * 2
+            implicitWidth: child.implicitWidth + Tokens.padding.medium * 2
+            implicitHeight: child.implicitHeight + Tokens.padding.small * 2
 
             color: Colours.palette.m3error
             radius: Tokens.rounding.large
@@ -109,8 +109,8 @@ Column {
 
         anchors.horizontalCenter: parent.horizontalCenter
 
-        implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + Tokens.padding.normal * 2 + Tokens.spacing.large * 2
-        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + Tokens.padding.small * 2
+        implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + Tokens.padding.medium * 2 + Tokens.spacing.large * 2
+        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + Tokens.padding.extraSmall * 2
 
         color: Colours.tPalette.m3surfaceContainer
         radius: Tokens.rounding.full
@@ -158,7 +158,7 @@ Column {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: Tokens.padding.small
+            anchors.leftMargin: Tokens.padding.extraSmall
 
             profile: PowerProfile.PowerSaver
             icon: "energy_savings_leaf"
@@ -178,7 +178,7 @@ Column {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: Tokens.padding.small
+            anchors.rightMargin: Tokens.padding.extraSmall
 
             profile: PowerProfile.Performance
             icon: "rocket_launch"
@@ -199,8 +199,8 @@ Column {
         required property string icon
         required property int profile
 
-        implicitWidth: icon.implicitHeight + Tokens.padding.small * 2
-        implicitHeight: icon.implicitHeight + Tokens.padding.small * 2
+        implicitWidth: icon.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitHeight: icon.implicitHeight + Tokens.padding.extraSmall * 2
 
         StateLayer {
             radius: Tokens.rounding.full

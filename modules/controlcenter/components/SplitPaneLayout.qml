@@ -32,9 +32,9 @@ RowLayout {
             id: leftClippingRect
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.normal
+            anchors.margins: Tokens.padding.medium
             anchors.leftMargin: 0
-            anchors.rightMargin: Tokens.padding.normal / 2
+            anchors.rightMargin: Tokens.padding.medium / 2
 
             radius: leftBorder.innerRadius
             color: "transparent"
@@ -43,9 +43,9 @@ RowLayout {
                 id: leftLoader
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.large + Tokens.padding.normal
+                anchors.margins: Tokens.padding.large + Tokens.padding.medium
                 anchors.leftMargin: Tokens.padding.large
-                anchors.rightMargin: Tokens.padding.large + Tokens.padding.normal / 2
+                anchors.rightMargin: Tokens.padding.large + Tokens.padding.medium / 2
 
                 asynchronous: true
                 sourceComponent: root.leftContent
@@ -62,7 +62,7 @@ RowLayout {
             id: leftBorder
 
             leftThickness: 0
-            rightThickness: Tokens.padding.normal / 2
+            rightThickness: Tokens.padding.medium / 2
         }
     }
 
@@ -76,9 +76,9 @@ RowLayout {
             id: rightClippingRect
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.normal
+            anchors.margins: Tokens.padding.medium
             anchors.leftMargin: 0
-            anchors.rightMargin: Tokens.padding.normal / 2
+            anchors.rightMargin: Tokens.padding.medium / 2
 
             radius: rightBorder.innerRadius
             color: "transparent"
@@ -103,7 +103,7 @@ RowLayout {
         InnerBorder {
             id: rightBorder
 
-            leftThickness: Tokens.padding.normal / 2
+            leftThickness: Tokens.padding.medium / 2
         }
     }
 }

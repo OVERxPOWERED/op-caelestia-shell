@@ -195,7 +195,7 @@ Item {
 
                 Layout.topMargin: Tokens.spacing.large
                 Layout.fillWidth: true
-                implicitHeight: Math.max(48, charList.implicitHeight + Tokens.padding.normal * 2)
+                implicitHeight: Math.max(48, charList.implicitHeight + Tokens.padding.medium * 2)
                 focus: true
                 Keys.onPressed: event => {
                     if (!activeFocus) {
@@ -398,7 +398,7 @@ Item {
                     id: cancelButton
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.normal * 2
+                    Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.medium * 2
                     inactiveColour: Colours.palette.m3secondaryContainer
                     inactiveOnColour: Colours.palette.m3onSecondaryContainer
                     text: qsTr("Cancel")
@@ -413,7 +413,7 @@ Item {
                     property bool hasError: false
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.normal * 2
+                    Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.medium * 2
                     inactiveColour: Colours.palette.m3primary
                     inactiveOnColour: Colours.palette.m3onPrimary
                     text: qsTr("Connect")

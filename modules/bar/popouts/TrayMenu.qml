@@ -45,7 +45,7 @@ StackView {
         property bool isSubMenu
         property bool shown
 
-        padding: Tokens.padding.smaller
+        padding: Tokens.padding.small
         spacing: Tokens.spacing.small
 
         opacity: shown ? 1 : 0
@@ -97,9 +97,9 @@ StackView {
                         implicitHeight: label.implicitHeight
 
                         StateLayer {
-                            anchors.margins: -Tokens.padding.small / 2
-                            anchors.leftMargin: -Tokens.padding.smaller
-                            anchors.rightMargin: -Tokens.padding.smaller
+                            anchors.margins: -Tokens.padding.extraSmall / 2
+                            anchors.leftMargin: -Tokens.padding.small
+                            anchors.rightMargin: -Tokens.padding.small
 
                             radius: item.radius
                             disabled: !item.modelData.enabled
@@ -189,9 +189,9 @@ StackView {
 
                     StyledRect {
                         anchors.fill: parent
-                        anchors.margins: -Tokens.padding.small / 2
-                        anchors.leftMargin: -Tokens.padding.smaller
-                        anchors.rightMargin: -Tokens.padding.smaller * 2
+                        anchors.margins: -Tokens.padding.extraSmall / 2
+                        anchors.leftMargin: -Tokens.padding.small
+                        anchors.rightMargin: -Tokens.padding.small * 2
 
                         radius: Tokens.rounding.full
                         color: Colours.palette.m3secondaryContainer

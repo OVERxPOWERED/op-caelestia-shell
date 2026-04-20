@@ -21,8 +21,8 @@ Item {
         opacity = Qt.binding(() => PathView.onPath ? 1 : 0);
     }
 
-    implicitWidth: image.width + Tokens.padding.larger * 2
-    implicitHeight: image.height + label.height + Tokens.spacing.small / 2 + Tokens.padding.large + Tokens.padding.normal
+    implicitWidth: image.width + Tokens.padding.medium * 2
+    implicitHeight: image.height + label.height + Tokens.spacing.small / 2 + Tokens.padding.large + Tokens.padding.medium
 
     StateLayer {
         radius: Tokens.rounding.large
@@ -78,7 +78,7 @@ Item {
         anchors.topMargin: Tokens.spacing.small / 2
         anchors.horizontalCenter: parent.horizontalCenter
 
-        width: image.width - Tokens.padding.normal * 2
+        width: image.width - Tokens.padding.medium * 2
         horizontalAlignment: Text.AlignHCenter
         elide: Text.ElideRight
         renderType: Text.QtRendering

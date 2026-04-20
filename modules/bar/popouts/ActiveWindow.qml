@@ -59,8 +59,8 @@ Item {
             }
 
             Item {
-                implicitWidth: expandIcon.implicitHeight + Tokens.padding.small * 2
-                implicitHeight: expandIcon.implicitHeight + Tokens.padding.small * 2
+                implicitWidth: expandIcon.implicitHeight + Tokens.padding.extraSmall * 2
+                implicitHeight: expandIcon.implicitHeight + Tokens.padding.extraSmall * 2
 
                 Layout.alignment: Qt.AlignVCenter
 

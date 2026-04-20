@@ -26,8 +26,8 @@ ColumnLayout {
     StyledText {
         visible: root.view === "wireless"
         Layout.preferredHeight: visible ? implicitHeight : 0
-        Layout.topMargin: visible ? Tokens.padding.normal : 0
-        Layout.rightMargin: Tokens.padding.small
+        Layout.topMargin: visible ? Tokens.padding.medium : 0
+        Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Wireless")
         font.weight: 500
     }
@@ -44,7 +44,7 @@ ColumnLayout {
         visible: root.view === "wireless"
         Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: visible ? Tokens.spacing.small : 0
-        Layout.rightMargin: Tokens.padding.small
+        Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("%1 networks available").arg(Nmcli.networks.length) // qmllint disable missing-property
         color: Colours.palette.m3onSurfaceVariant
         font.pointSize: Tokens.font.size.small
@@ -70,7 +70,7 @@ ColumnLayout {
             visible: root.view === "wireless"
             Layout.preferredHeight: visible ? implicitHeight : 0
             Layout.fillWidth: true
-            Layout.rightMargin: Tokens.padding.small
+            Layout.rightMargin: Tokens.padding.extraSmall
             spacing: Tokens.spacing.small
 
             opacity: 0
@@ -112,7 +112,7 @@ ColumnLayout {
 
             StyledRect {
                 implicitWidth: implicitHeight
-                implicitHeight: wirelessConnectIcon.implicitHeight + Tokens.padding.small
+                implicitHeight: wirelessConnectIcon.implicitHeight + Tokens.padding.extraSmall
 
                 radius: Tokens.rounding.full
                 color: Qt.alpha(Colours.palette.m3primary, networkItem.modelData.active ? 1 : 0)
@@ -167,7 +167,7 @@ ColumnLayout {
         Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: visible ? Tokens.spacing.small : 0
         Layout.fillWidth: true
-        implicitHeight: rescanBtn.implicitHeight + Tokens.padding.small * 2
+        implicitHeight: rescanBtn.implicitHeight + Tokens.padding.extraSmall * 2
 
         radius: Tokens.rounding.full
         color: Colours.palette.m3primaryContainer
@@ -207,9 +207,9 @@ ColumnLayout {
 
         CircularIndicator {
             anchors.centerIn: parent
-            strokeWidth: Tokens.padding.small / 2
+            strokeWidth: Tokens.padding.extraSmall / 2
             bgColour: "transparent"
-            implicitSize: parent.implicitHeight - Tokens.padding.smaller * 2
+            implicitSize: parent.implicitHeight - Tokens.padding.small * 2
             running: Nmcli.scanning
         }
     }
@@ -218,8 +218,8 @@ ColumnLayout {
     StyledText {
         visible: root.view === "ethernet"
         Layout.preferredHeight: visible ? implicitHeight : 0
-        Layout.topMargin: visible ? Tokens.padding.normal : 0
-        Layout.rightMargin: Tokens.padding.small
+        Layout.topMargin: visible ? Tokens.padding.medium : 0
+        Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Ethernet")
         font.weight: 500
     }
@@ -228,7 +228,7 @@ ColumnLayout {
         visible: root.view === "ethernet"
         Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: visible ? Tokens.spacing.small : 0
-        Layout.rightMargin: Tokens.padding.small
+        Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("%1 devices available").arg(Nmcli.ethernetDevices.length)
         color: Colours.palette.m3onSurfaceVariant
         font.pointSize: Tokens.font.size.small
@@ -253,7 +253,7 @@ ColumnLayout {
             visible: root.view === "ethernet"
             Layout.preferredHeight: visible ? implicitHeight : 0
             Layout.fillWidth: true
-            Layout.rightMargin: Tokens.padding.small
+            Layout.rightMargin: Tokens.padding.extraSmall
             spacing: Tokens.spacing.small
 
             opacity: 0
@@ -289,7 +289,7 @@ ColumnLayout {
 
             StyledRect {
                 implicitWidth: implicitHeight
-                implicitHeight: connectIcon.implicitHeight + Tokens.padding.small
+                implicitHeight: connectIcon.implicitHeight + Tokens.padding.extraSmall
 
                 radius: Tokens.rounding.full
                 color: Qt.alpha(Colours.palette.m3primary, ethernetItem.modelData.connected ? 1 : 0)
@@ -371,7 +371,7 @@ ColumnLayout {
         property alias toggle: toggle
 
         Layout.fillWidth: true
-        Layout.rightMargin: Tokens.padding.small
+        Layout.rightMargin: Tokens.padding.extraSmall
         spacing: Tokens.spacing.normal
 
         StyledText {

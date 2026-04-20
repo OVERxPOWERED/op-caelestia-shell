@@ -64,8 +64,8 @@ Item {
                             icon: "wifi"
                             accent: "Tertiary"
                             iconSize: Tokens.font.size.normal
-                            horizontalPadding: Tokens.padding.normal
-                            verticalPadding: Tokens.padding.smaller
+                            horizontalPadding: Tokens.padding.medium
+                            verticalPadding: Tokens.padding.small
                             tooltip: qsTr("Toggle WiFi")
 
                             onClicked: {
@@ -78,8 +78,8 @@ Item {
                             icon: "wifi_find"
                             accent: "Secondary"
                             iconSize: Tokens.font.size.normal
-                            horizontalPadding: Tokens.padding.normal
-                            verticalPadding: Tokens.padding.smaller
+                            horizontalPadding: Tokens.padding.medium
+                            verticalPadding: Tokens.padding.small
                             tooltip: qsTr("Scan for networks")
 
                             onClicked: {
@@ -92,8 +92,8 @@ Item {
                             icon: "settings"
                             accent: "Primary"
                             iconSize: Tokens.font.size.normal
-                            horizontalPadding: Tokens.padding.normal
-                            verticalPadding: Tokens.padding.smaller
+                            horizontalPadding: Tokens.padding.medium
+                            verticalPadding: Tokens.padding.small
                             tooltip: qsTr("Network settings")
 
                             onClicked: {

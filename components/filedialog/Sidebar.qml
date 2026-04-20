@@ -13,7 +13,7 @@ StyledRect {
     required property var dialog
 
     implicitWidth: Sizes.sidebarWidth
-    implicitHeight: inner.implicitHeight + Tokens.padding.normal * 2
+    implicitHeight: inner.implicitHeight + Tokens.padding.medium * 2
 
     color: Colours.tPalette.m3surfaceContainer
 
@@ -23,12 +23,12 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Tokens.padding.medium
         spacing: Tokens.spacing.small / 2
 
         StyledText {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Tokens.padding.small / 2
+            Layout.topMargin: Tokens.padding.extraSmall / 2
             Layout.bottomMargin: Tokens.spacing.normal
             text: qsTr("Files")
             color: Colours.palette.m3onSurface
@@ -46,7 +46,7 @@ StyledRect {
                 readonly property bool selected: modelData === root.dialog.cwd[root.dialog.cwd.length - 1]
 
                 Layout.fillWidth: true
-                implicitHeight: placeInner.implicitHeight + Tokens.padding.normal * 2
+                implicitHeight: placeInner.implicitHeight + Tokens.padding.medium * 2
 
                 radius: Tokens.rounding.full
                 color: Qt.alpha(Colours.palette.m3secondaryContainer, selected ? 1 : 0)
@@ -65,7 +65,7 @@ StyledRect {
                     id: placeInner
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.normal
+                    anchors.margins: Tokens.padding.medium
                     anchors.leftMargin: Tokens.padding.large
                     anchors.rightMargin: Tokens.padding.large
 

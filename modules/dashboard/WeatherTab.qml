@@ -66,7 +66,7 @@ Item {
 
         StyledRect {
             Layout.fillWidth: true
-            implicitHeight: bigInfoRow.implicitHeight + Tokens.padding.small * 2
+            implicitHeight: bigInfoRow.implicitHeight + Tokens.padding.extraSmall * 2
 
             radius: Tokens.rounding.extraLarge * 2
             color: Colours.tPalette.m3surfaceContainer
@@ -97,7 +97,7 @@ Item {
                     }
 
                     StyledText {
-                        Layout.leftMargin: Tokens.padding.small
+                        Layout.leftMargin: Tokens.padding.extraSmall
                         text: Weather.description
                         font.pointSize: Tokens.font.size.normal
                         color: Colours.palette.m3onSurfaceVariant
@@ -132,7 +132,7 @@ Item {
 
         StyledText {
             Layout.topMargin: Tokens.spacing.normal
-            Layout.leftMargin: Tokens.padding.normal
+            Layout.leftMargin: Tokens.padding.medium
             visible: forecastRepeater.count > 0
             text: qsTr("7-Day Forecast")
             font.pointSize: Tokens.font.size.normal
@@ -156,7 +156,7 @@ Item {
                     required property var modelData
 
                     Layout.fillWidth: true
-                    implicitHeight: forecastItemColumn.implicitHeight + Tokens.padding.normal * 2
+                    implicitHeight: forecastItemColumn.implicitHeight + Tokens.padding.medium * 2
 
                     radius: Tokens.rounding.large
                     color: Colours.tPalette.m3surfaceContainer

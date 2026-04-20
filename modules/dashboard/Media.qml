@@ -284,7 +284,7 @@ Item {
                 icon: Players.active?.isPlaying ? "pause" : "play_arrow"
                 label.animate: true
                 toggle: true
-                padding: Tokens.padding.small / 2
+                padding: Tokens.padding.extraSmall / 2
                 checked: Players.active?.isPlaying ?? false
                 font.pointSize: Math.round(Tokens.font.size.large * 1.5)
                 disabled: !Players.active?.canTogglePlaying
@@ -312,7 +312,7 @@ Item {
 
             enabled: !!Players.active
             implicitWidth: 280
-            implicitHeight: Tokens.padding.normal * 3
+            implicitHeight: Tokens.padding.medium * 3
 
             onMoved: {
                 const active = Players.active;
@@ -443,7 +443,7 @@ Item {
             type: IconButton.Text
             icon: "move_up"
             inactiveOnColour: Colours.palette.m3secondary
-            padding: Tokens.padding.small
+            padding: Tokens.padding.extraSmall
             font.pointSize: Tokens.font.size.large
             disabled: !Players.active?.canRaise
             onClicked: {
@@ -482,7 +482,7 @@ Item {
             type: IconButton.Text
             icon: "delete"
             inactiveOnColour: Colours.palette.m3error
-            padding: Tokens.padding.small
+            padding: Tokens.padding.extraSmall
             font.pointSize: Tokens.font.size.large
             disabled: !Players.active?.canQuit
             onClicked: Players.active?.quit()
@@ -498,7 +498,7 @@ Item {
     }
 
     component PlayerControl: IconButton {
-        Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.smaller : 0)
+        Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.small : 0)
         radius: stateLayer.pressed ? Tokens.rounding.medium / 2 : internalChecked ? Tokens.rounding.medium : implicitHeight / 2
         radiusAnim.duration: Tokens.anim.durations.expressiveFastSpatial
         radiusAnim.easing: Tokens.anim.expressiveFastSpatial

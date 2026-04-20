@@ -89,11 +89,14 @@ class AppearancePadding : public ConfigObject {
 
     CONFIG_PROPERTY(qreal, scale, 1)
 
+    Q_PROPERTY(int extraSmall READ extraSmall NOTIFY valuesChanged)
     Q_PROPERTY(int small READ small NOTIFY valuesChanged)
-    Q_PROPERTY(int smaller READ smaller NOTIFY valuesChanged)
-    Q_PROPERTY(int normal READ normal NOTIFY valuesChanged)
-    Q_PROPERTY(int larger READ larger NOTIFY valuesChanged)
+    Q_PROPERTY(int medium READ medium NOTIFY valuesChanged)
     Q_PROPERTY(int large READ large NOTIFY valuesChanged)
+    Q_PROPERTY(int largeIncreased READ largeIncreased NOTIFY valuesChanged)
+    Q_PROPERTY(int extraLarge READ extraLarge NOTIFY valuesChanged)
+    Q_PROPERTY(int extraLargeIncreased READ extraLargeIncreased NOTIFY valuesChanged)
+    Q_PROPERTY(int extraExtraLarge READ extraExtraLarge NOTIFY valuesChanged)
 
 public:
     explicit AppearancePadding(QObject* parent = nullptr)
@@ -101,11 +104,14 @@ public:
 
     void bindTokens(PaddingTokens* tokens);
 
+    [[nodiscard]] int extraSmall() const;
     [[nodiscard]] int small() const;
-    [[nodiscard]] int smaller() const;
-    [[nodiscard]] int normal() const;
-    [[nodiscard]] int larger() const;
+    [[nodiscard]] int medium() const;
     [[nodiscard]] int large() const;
+    [[nodiscard]] int largeIncreased() const;
+    [[nodiscard]] int extraLarge() const;
+    [[nodiscard]] int extraLargeIncreased() const;
+    [[nodiscard]] int extraExtraLarge() const;
 
 signals:
     void valuesChanged();

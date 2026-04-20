@@ -94,7 +94,7 @@ Item {
 
                                     color: Audio.sink?.id === modelData.id ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
                                     radius: Tokens.rounding.large
-                                    implicitHeight: outputRowLayout.implicitHeight + Tokens.padding.normal * 2
+                                    implicitHeight: outputRowLayout.implicitHeight + Tokens.padding.medium * 2
 
                                     StateLayer {
                                         onClicked: {
@@ -108,7 +108,7 @@ Item {
                                         anchors.left: parent.left
                                         anchors.right: parent.right
                                         anchors.verticalCenter: parent.verticalCenter
-                                        anchors.margins: Tokens.padding.normal
+                                        anchors.margins: Tokens.padding.medium
 
                                         spacing: Tokens.spacing.normal
 
@@ -171,7 +171,7 @@ Item {
 
                                     color: Audio.source?.id === modelData.id ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
                                     radius: Tokens.rounding.large
-                                    implicitHeight: inputRowLayout.implicitHeight + Tokens.padding.normal * 2
+                                    implicitHeight: inputRowLayout.implicitHeight + Tokens.padding.medium * 2
 
                                     StateLayer {
                                         onClicked: {
@@ -185,7 +185,7 @@ Item {
                                         anchors.left: parent.left
                                         anchors.right: parent.right
                                         anchors.verticalCenter: parent.verticalCenter
-                                        anchors.margins: Tokens.padding.normal
+                                        anchors.margins: Tokens.padding.medium
 
                                         spacing: Tokens.spacing.normal
 
@@ -312,7 +312,7 @@ Item {
 
                                 StyledRect {
                                     implicitWidth: implicitHeight
-                                    implicitHeight: muteIcon.implicitHeight + Tokens.padding.normal * 2
+                                    implicitHeight: muteIcon.implicitHeight + Tokens.padding.medium * 2
 
                                     radius: Tokens.rounding.large
                                     color: Audio.muted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
@@ -339,7 +339,7 @@ Item {
                                 id: outputVolumeSlider
 
                                 Layout.fillWidth: true
-                                implicitHeight: Tokens.padding.normal * 3
+                                implicitHeight: Tokens.padding.medium * 3
 
                                 value: Audio.volume
                                 enabled: !Audio.muted
@@ -430,7 +430,7 @@ Item {
 
                                 StyledRect {
                                     implicitWidth: implicitHeight
-                                    implicitHeight: muteInputIcon.implicitHeight + Tokens.padding.normal * 2
+                                    implicitHeight: muteInputIcon.implicitHeight + Tokens.padding.medium * 2
 
                                     radius: Tokens.rounding.large
                                     color: Audio.sourceMuted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
@@ -457,7 +457,7 @@ Item {
                                 id: inputVolumeSlider
 
                                 Layout.fillWidth: true
-                                implicitHeight: Tokens.padding.normal * 3
+                                implicitHeight: Tokens.padding.medium * 3
 
                                 value: Audio.sourceVolume
                                 enabled: !Audio.sourceMuted
@@ -564,7 +564,7 @@ Item {
 
                                         StyledRect {
                                             implicitWidth: implicitHeight
-                                            implicitHeight: streamMuteIcon.implicitHeight + Tokens.padding.normal * 2
+                                            implicitHeight: streamMuteIcon.implicitHeight + Tokens.padding.medium * 2
 
                                             radius: Tokens.rounding.large
                                             color: Audio.getStreamMuted(modelData) ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
@@ -587,7 +587,7 @@ Item {
 
                                     StyledSlider {
                                         Layout.fillWidth: true
-                                        implicitHeight: Tokens.padding.normal * 3
+                                        implicitHeight: Tokens.padding.medium * 3
 
                                         value: Audio.getStreamVolume(modelData)
                                         enabled: !Audio.getStreamMuted(modelData)

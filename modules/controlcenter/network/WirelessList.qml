@@ -65,8 +65,8 @@ DeviceList {
                 icon: "wifi"
                 accent: "Tertiary"
                 iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
 
                 onClicked: {
                     Nmcli.toggleWifi(null);
@@ -78,8 +78,8 @@ DeviceList {
                 icon: "wifi_find"
                 accent: "Secondary"
                 iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
 
                 onClicked: {
                     Nmcli.rescanWifi();
@@ -91,8 +91,8 @@ DeviceList {
                 icon: "settings"
                 accent: "Primary"
                 iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
 
                 onClicked: {
                     if (root.session.network.active)
@@ -110,7 +110,7 @@ DeviceList {
             required property var modelData
 
             width: ListView.view ? ListView.view.width : undefined
-            implicitHeight: rowLayout.implicitHeight + Tokens.padding.normal * 2
+            implicitHeight: rowLayout.implicitHeight + Tokens.padding.medium * 2
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
             radius: Tokens.rounding.large
@@ -130,13 +130,13 @@ DeviceList {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: Tokens.padding.normal
+                anchors.margins: Tokens.padding.medium
 
                 spacing: Tokens.spacing.normal
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: icon.implicitHeight + Tokens.padding.normal * 2
+                    implicitHeight: icon.implicitHeight + Tokens.padding.medium * 2
 
                     radius: Tokens.rounding.large
                     color: modelData.active ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
@@ -191,7 +191,7 @@ DeviceList {
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: connectIcon.implicitHeight + Tokens.padding.smaller * 2
+                    implicitHeight: connectIcon.implicitHeight + Tokens.padding.small * 2
 
                     radius: Tokens.rounding.full
                     color: Qt.alpha(Colours.palette.m3primaryContainer, modelData.active ? 1 : 0)

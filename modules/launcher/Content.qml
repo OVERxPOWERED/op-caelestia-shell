@@ -75,8 +75,8 @@ Item {
             anchors.leftMargin: Tokens.spacing.small
             anchors.rightMargin: Tokens.spacing.small
 
-            topPadding: Tokens.padding.larger
-            bottomPadding: Tokens.padding.larger
+            topPadding: Tokens.padding.medium
+            bottomPadding: Tokens.padding.medium
 
             placeholderText: qsTr("Type \"%1\" for commands").arg(GlobalConfig.launcher.actionPrefix)
 

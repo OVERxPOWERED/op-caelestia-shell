@@ -46,7 +46,7 @@ CustomMouseArea {
 
             Item {
                 implicitWidth: implicitHeight
-                implicitHeight: prevMonthText.implicitHeight + Tokens.padding.small * 2
+                implicitHeight: prevMonthText.implicitHeight + Tokens.padding.extraSmall * 2
 
                 StateLayer {
                     id: prevMonthStateLayer
@@ -69,8 +69,8 @@ CustomMouseArea {
             Item {
                 Layout.fillWidth: true
 
-                implicitWidth: monthYearDisplay.implicitWidth + Tokens.padding.small * 2
-                implicitHeight: monthYearDisplay.implicitHeight + Tokens.padding.small * 2
+                implicitWidth: monthYearDisplay.implicitWidth + Tokens.padding.extraSmall * 2
+                implicitHeight: monthYearDisplay.implicitHeight + Tokens.padding.extraSmall * 2
 
                 StateLayer {
                     onClicked: {
@@ -78,9 +78,9 @@ CustomMouseArea {
                     }
 
                     anchors.fill: monthYearDisplay
-                    anchors.margins: -Tokens.padding.small
-                    anchors.leftMargin: -Tokens.padding.normal
-                    anchors.rightMargin: -Tokens.padding.normal
+                    anchors.margins: -Tokens.padding.extraSmall
+                    anchors.leftMargin: -Tokens.padding.medium
+                    anchors.rightMargin: -Tokens.padding.medium
 
                     radius: Tokens.rounding.full
                     disabled: {
@@ -103,7 +103,7 @@ CustomMouseArea {
 
             Item {
                 implicitWidth: implicitHeight
-                implicitHeight: nextMonthText.implicitHeight + Tokens.padding.small * 2
+                implicitHeight: nextMonthText.implicitHeight + Tokens.padding.extraSmall * 2
 
                 StateLayer {
                     id: nextMonthStateLayer
@@ -164,7 +164,7 @@ CustomMouseArea {
                     required property var model
 
                     implicitWidth: implicitHeight
-                    implicitHeight: text.implicitHeight + Tokens.padding.small * 2
+                    implicitHeight: text.implicitHeight + Tokens.padding.extraSmall * 2
 
                     StyledText {
                         id: text

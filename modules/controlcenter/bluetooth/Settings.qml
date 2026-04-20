@@ -127,8 +127,8 @@ ColumnLayout {
 
                     property bool expanded
 
-                    implicitWidth: adapterPicker.implicitWidth + Tokens.padding.normal * 2
-                    implicitHeight: adapterPicker.implicitHeight + Tokens.padding.smaller * 2
+                    implicitWidth: adapterPicker.implicitWidth + Tokens.padding.medium * 2
+                    implicitHeight: adapterPicker.implicitHeight + Tokens.padding.small * 2
 
                     StateLayer {
                         onClicked: {
@@ -142,13 +142,13 @@ ColumnLayout {
                         id: adapterPicker
 
                         anchors.fill: parent
-                        anchors.margins: Tokens.padding.normal
-                        anchors.topMargin: Tokens.padding.smaller
-                        anchors.bottomMargin: Tokens.padding.smaller
+                        anchors.margins: Tokens.padding.medium
+                        anchors.topMargin: Tokens.padding.small
+                        anchors.bottomMargin: Tokens.padding.small
                         spacing: Tokens.spacing.normal
 
                         StyledText {
-                            Layout.leftMargin: Tokens.padding.small
+                            Layout.leftMargin: Tokens.padding.extraSmall
                             text: Bluetooth.defaultAdapter?.name ?? qsTr("None")
                         }
 
@@ -206,7 +206,7 @@ ColumnLayout {
                                     required property BluetoothAdapter modelData
 
                                     Layout.fillWidth: true
-                                    implicitHeight: adapterInner.implicitHeight + Tokens.padding.normal * 2
+                                    implicitHeight: adapterInner.implicitHeight + Tokens.padding.medium * 2
 
                                     StateLayer {
                                         onClicked: {
@@ -223,12 +223,12 @@ ColumnLayout {
                                         anchors.left: parent.left
                                         anchors.right: parent.right
                                         anchors.verticalCenter: parent.verticalCenter
-                                        anchors.margins: Tokens.padding.normal
+                                        anchors.margins: Tokens.padding.medium
                                         spacing: Tokens.spacing.normal
 
                                         StyledText {
                                             Layout.fillWidth: true
-                                            Layout.leftMargin: Tokens.padding.small
+                                            Layout.leftMargin: Tokens.padding.extraSmall
                                             text: adapter.modelData.name
                                             color: Colours.palette.m3onSecondaryContainer
                                         }
@@ -305,7 +305,7 @@ ColumnLayout {
                         PropertyChanges {
                             renameAdapter.implicitHeight: adapterNameEdit.implicitHeight
                             renameLabel.opacity: 0
-                            adapterNameEdit.padding: Tokens.padding.normal
+                            adapterNameEdit.padding: Tokens.padding.medium
                         }
                     }
 
@@ -334,7 +334,7 @@ ColumnLayout {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: renameLabel.bottom
-                        anchors.leftMargin: root.session.bt.editingAdapterName ? 0 : -Tokens.padding.normal
+                        anchors.leftMargin: root.session.bt.editingAdapterName ? 0 : -Tokens.padding.medium
 
                         text: root.session.bt.currentAdapter?.name ?? ""
                         readOnly: !root.session.bt.editingAdapterName
@@ -342,8 +342,8 @@ ColumnLayout {
                             root.session.bt.editingAdapterName = false;
                         }
 
-                        leftPadding: Tokens.padding.normal
-                        rightPadding: Tokens.padding.normal
+                        leftPadding: Tokens.padding.medium
+                        rightPadding: Tokens.padding.medium
 
                         background: StyledRect {
                             radius: Tokens.rounding.medium
@@ -368,7 +368,7 @@ ColumnLayout {
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.smaller * 2
+                    implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.small * 2
 
                     radius: Tokens.rounding.medium
                     color: Colours.palette.m3secondaryContainer
@@ -407,7 +407,7 @@ ColumnLayout {
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: editIcon.implicitHeight + Tokens.padding.smaller * 2
+                    implicitHeight: editIcon.implicitHeight + Tokens.padding.small * 2
 
                     radius: root.session.bt.editingAdapterName ? Tokens.rounding.medium : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
                     color: Qt.alpha(Colours.palette.m3primary, root.session.bt.editingAdapterName ? 1 : 0)

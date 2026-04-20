@@ -89,7 +89,7 @@ ColumnLayout {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Tokens.padding.normal
+                        anchors.margins: Tokens.padding.medium
                         spacing: Tokens.spacing.normal
 
                         MaterialIcon {

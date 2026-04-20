@@ -18,7 +18,7 @@ Switch {
         color: root.checked ? Colours.palette.m3primary : Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
 
         implicitWidth: implicitHeight * 1.7
-        implicitHeight: Tokens.font.size.normal + Tokens.padding.smaller * 2
+        implicitHeight: Tokens.font.size.normal + Tokens.padding.small * 2
 
         StyledRect {
             readonly property real nonAnimWidth: root.pressed ? implicitHeight * 1.3 : implicitHeight
@@ -26,9 +26,9 @@ Switch {
             radius: Tokens.rounding.full
             color: root.checked ? Colours.palette.m3onPrimary : Colours.layer(Colours.palette.m3outline, root.cLayer + 1)
 
-            x: root.checked ? parent.implicitWidth - nonAnimWidth - Tokens.padding.small / 2 : Tokens.padding.small / 2
+            x: root.checked ? parent.implicitWidth - nonAnimWidth - Tokens.padding.extraSmall / 2 : Tokens.padding.extraSmall / 2
             implicitWidth: nonAnimWidth
-            implicitHeight: parent.implicitHeight - Tokens.padding.small
+            implicitHeight: parent.implicitHeight - Tokens.padding.extraSmall
             anchors.verticalCenter: parent.verticalCenter
 
             StyledRect {
@@ -83,7 +83,7 @@ Switch {
 
                 anchors.centerIn: parent
                 width: height
-                height: parent.implicitHeight - Tokens.padding.small * 2
+                height: parent.implicitHeight - Tokens.padding.extraSmall * 2
                 preferredRendererType: Shape.CurveRenderer
                 asynchronous: true
 

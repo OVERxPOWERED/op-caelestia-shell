@@ -15,7 +15,7 @@ Item {
     required property Session session
     required property bool initialOpeningComplete
 
-    implicitWidth: layout.implicitWidth + Tokens.padding.larger * 4
+    implicitWidth: layout.implicitWidth + Tokens.padding.medium * 4
     implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
 
     ColumnLayout {
@@ -23,7 +23,7 @@ Item {
 
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: Tokens.padding.larger * 2
+        anchors.leftMargin: Tokens.padding.medium * 2
         spacing: Tokens.spacing.normal
 
         states: State {
@@ -51,7 +51,7 @@ Item {
                 readonly property int nonAnimWidth: normalWinIcon.implicitWidth + (root.session.navExpanded ? normalWinLabel.anchors.leftMargin + normalWinLabel.implicitWidth : 0) + normalWinIcon.anchors.leftMargin * 2
 
                 implicitWidth: nonAnimWidth
-                implicitHeight: root.session.navExpanded ? normalWinIcon.implicitHeight + Tokens.padding.normal * 2 : nonAnimWidth
+                implicitHeight: root.session.navExpanded ? normalWinIcon.implicitHeight + Tokens.padding.medium * 2 : nonAnimWidth
 
                 color: Colours.palette.m3primaryContainer
                 radius: Tokens.rounding.medium
@@ -146,7 +146,7 @@ Item {
                 expandedLabel.opacity: 1
                 smallLabel.opacity: 0
                 background.implicitWidth: icon.implicitWidth + icon.anchors.leftMargin * 2 + expandedLabel.anchors.leftMargin + expandedLabel.implicitWidth
-                background.implicitHeight: icon.implicitHeight + root.Tokens.padding.normal * 2
+                background.implicitHeight: icon.implicitHeight + root.Tokens.padding.medium * 2
                 item.implicitHeight: background.implicitHeight
             }
         }
@@ -170,7 +170,7 @@ Item {
             color: Qt.alpha(Colours.palette.m3secondaryContainer, item.active ? 1 : 0)
 
             implicitWidth: icon.implicitWidth + icon.anchors.leftMargin * 2
-            implicitHeight: icon.implicitHeight + Tokens.padding.small
+            implicitHeight: icon.implicitHeight + Tokens.padding.extraSmall
 
             StateLayer {
                 onClicked: {

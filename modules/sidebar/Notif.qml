@@ -16,7 +16,7 @@ StyledRect {
     required property DrawerVisibilities visibilities
 
     readonly property StyledText body: (expandedContent.item as ExpandedBody)?.body ?? null
-    readonly property real nonAnimHeight: expanded ? summary.implicitHeight + expandedContent.implicitHeight + expandedContent.anchors.topMargin + Tokens.padding.normal * 2 : summaryHeightMetrics.height
+    readonly property real nonAnimHeight: expanded ? summary.implicitHeight + expandedContent.implicitHeight + expandedContent.anchors.topMargin + Tokens.padding.medium * 2 : summaryHeightMetrics.height
 
     implicitHeight: nonAnimHeight
 
@@ -32,12 +32,12 @@ StyledRect {
         name: "expanded"
 
         PropertyChanges {
-            summary.anchors.margins: root.Tokens.padding.normal
-            dummySummary.anchors.margins: root.Tokens.padding.normal
-            compactBody.anchors.margins: root.Tokens.padding.normal
-            timeStr.anchors.margins: root.Tokens.padding.normal
-            expandedContent.anchors.margins: root.Tokens.padding.normal
-            summary.width: root.width - root.Tokens.padding.normal * 2 - timeStr.implicitWidth - root.Tokens.spacing.small
+            summary.anchors.margins: root.Tokens.padding.medium
+            dummySummary.anchors.margins: root.Tokens.padding.medium
+            compactBody.anchors.margins: root.Tokens.padding.medium
+            timeStr.anchors.margins: root.Tokens.padding.medium
+            expandedContent.anchors.margins: root.Tokens.padding.medium
+            summary.width: root.width - root.Tokens.padding.medium * 2 - timeStr.implicitWidth - root.Tokens.spacing.small
             summary.maximumLineCount: Number.MAX_SAFE_INTEGER
         }
     }

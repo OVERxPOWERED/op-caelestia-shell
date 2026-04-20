@@ -10,7 +10,7 @@ StyledRect {
     required property ShellScreen screen
     required property Session session
 
-    implicitHeight: text.implicitHeight + Tokens.padding.normal
+    implicitHeight: text.implicitHeight + Tokens.padding.medium
     color: Colours.tPalette.m3surfaceContainer
 
     StyledText {
@@ -28,10 +28,10 @@ StyledRect {
     Item {
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Tokens.padding.medium
 
         implicitWidth: implicitHeight
-        implicitHeight: closeIcon.implicitHeight + Tokens.padding.small
+        implicitHeight: closeIcon.implicitHeight + Tokens.padding.extraSmall
 
         StateLayer {
             onClicked: {

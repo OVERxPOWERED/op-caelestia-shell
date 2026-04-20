@@ -88,7 +88,7 @@ ColumnLayout {
         TextButton {
             Layout.fillWidth: true
             Layout.topMargin: Tokens.spacing.normal
-            Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.normal * 2
+            Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.medium * 2
             text: qsTr("⚙ Manage VPN Providers")
             inactiveColour: Colours.palette.m3secondaryContainer
             inactiveOnColour: Colours.palette.m3onSecondaryContainer

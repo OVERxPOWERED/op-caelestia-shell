@@ -103,7 +103,7 @@ ColumnLayout {
                 required property int index
 
                 width: ListView.view ? ListView.view.width : undefined
-                implicitHeight: rowLayout.implicitHeight + Tokens.padding.normal * 2
+                implicitHeight: rowLayout.implicitHeight + Tokens.padding.medium * 2
 
                 color: Qt.alpha(Colours.tPalette.m3surfaceContainer, (root.session && root.session.vpn && root.session.vpn.active === modelData) ? Colours.tPalette.m3surfaceContainer.a : 0)
                 radius: Tokens.rounding.large
@@ -122,13 +122,13 @@ ColumnLayout {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Tokens.padding.normal
+                    anchors.margins: Tokens.padding.medium
 
                     spacing: Tokens.spacing.normal
 
                     StyledRect {
                         implicitWidth: implicitHeight
-                        implicitHeight: icon.implicitHeight + Tokens.padding.normal * 2
+                        implicitHeight: icon.implicitHeight + Tokens.padding.medium * 2
 
                         radius: Tokens.rounding.large
                         color: modelData.enabled && VPN.connected ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
@@ -205,7 +205,7 @@ ColumnLayout {
 
                     StyledRect {
                         implicitWidth: implicitHeight
-                        implicitHeight: connectIcon.implicitHeight + Tokens.padding.smaller * 2
+                        implicitHeight: connectIcon.implicitHeight + Tokens.padding.small * 2
 
                         radius: Tokens.rounding.full
                         color: Qt.alpha(Colours.palette.m3primaryContainer, VPN.connected && modelData.enabled ? 1 : 0)
@@ -265,7 +265,7 @@ ColumnLayout {
 
                     StyledRect {
                         implicitWidth: implicitHeight
-                        implicitHeight: deleteIcon.implicitHeight + Tokens.padding.smaller * 2
+                        implicitHeight: deleteIcon.implicitHeight + Tokens.padding.small * 2
 
                         radius: Tokens.rounding.full
                         color: "transparent"
@@ -609,7 +609,7 @@ ColumnLayout {
                             id: displayNameField
 
                             anchors.centerIn: parent
-                            width: parent.width - Tokens.padding.normal
+                            width: parent.width - Tokens.padding.medium
                             horizontalAlignment: TextInput.AlignLeft
                             text: vpnDialog.displayName
                             onTextChanged: vpnDialog.displayName = text
@@ -646,7 +646,7 @@ ColumnLayout {
                             id: interfaceNameField
 
                             anchors.centerIn: parent
-                            width: parent.width - Tokens.padding.normal
+                            width: parent.width - Tokens.padding.medium
                             horizontalAlignment: TextInput.AlignLeft
                             text: vpnDialog.interfaceName
                             onTextChanged: vpnDialog.interfaceName = text
@@ -684,7 +684,7 @@ ColumnLayout {
                             id: connectCmdField
 
                             anchors.centerIn: parent
-                            width: parent.width - Tokens.padding.normal
+                            width: parent.width - Tokens.padding.medium
                             horizontalAlignment: TextInput.AlignLeft
                             text: vpnDialog.connectCmd
                             onTextChanged: vpnDialog.connectCmd = text
@@ -722,7 +722,7 @@ ColumnLayout {
                             id: disconnectCmdField
 
                             anchors.centerIn: parent
-                            width: parent.width - Tokens.padding.normal
+                            width: parent.width - Tokens.padding.medium
                             horizontalAlignment: TextInput.AlignLeft
                             text: vpnDialog.disconnectCmd
                             onTextChanged: vpnDialog.disconnectCmd = text

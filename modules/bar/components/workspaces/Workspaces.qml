@@ -28,7 +28,7 @@ StyledClippingRect {
     property real blur: onSpecial ? 1 : 0
 
     implicitWidth: Tokens.sizes.bar.innerWidth
-    implicitHeight: layout.implicitHeight + Tokens.padding.small * 2
+    implicitHeight: layout.implicitHeight + Tokens.padding.extraSmall * 2
 
     color: Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.full
@@ -51,7 +51,7 @@ StyledClippingRect {
             active: Config.bar.workspaces.occupiedBg
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.small
+            anchors.margins: Tokens.padding.extraSmall
 
             sourceComponent: OccupiedBg {
                 workspaces: workspaces
@@ -118,7 +118,7 @@ StyledClippingRect {
         asynchronous: true
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.small
+        anchors.margins: Tokens.padding.extraSmall
 
         active: opacity > 0
 

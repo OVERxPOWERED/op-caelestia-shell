@@ -80,11 +80,14 @@ class PaddingTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(int, small, 5)
-    CONFIG_PROPERTY(int, smaller, 7)
-    CONFIG_PROPERTY(int, normal, 10)
-    CONFIG_PROPERTY(int, larger, 12)
-    CONFIG_PROPERTY(int, large, 15)
+    CONFIG_PROPERTY(int, extraSmall, 4)
+    CONFIG_PROPERTY(int, small, 8)
+    CONFIG_PROPERTY(int, medium, 12)
+    CONFIG_PROPERTY(int, large, 16)
+    CONFIG_PROPERTY(int, largeIncreased, 20)
+    CONFIG_PROPERTY(int, extraLarge, 28)
+    CONFIG_PROPERTY(int, extraLargeIncreased, 32)
+    CONFIG_PROPERTY(int, extraExtraLarge, 48)
 
 public:
     explicit PaddingTokens(QObject* parent = nullptr)

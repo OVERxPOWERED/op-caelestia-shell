@@ -94,7 +94,7 @@ StyledRect {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            anchors.margins: Tokens.padding.normal
+            anchors.margins: Tokens.padding.medium
 
             implicitHeight: root.nonAnimHeight
 
@@ -206,9 +206,9 @@ StyledRect {
                     PathAngleArc {
                         id: progressArc
 
-                        radiusX: progressIndicator.width / 2 - root.Tokens.padding.small / 2
+                        radiusX: progressIndicator.width / 2 - root.Tokens.padding.extraSmall / 2
                         centerX: progressIndicator.width / 2
-                        radiusY: progressIndicator.height / 2 - root.Tokens.padding.small / 2
+                        radiusY: progressIndicator.height / 2 - root.Tokens.padding.extraSmall / 2
                         centerY: progressIndicator.height / 2
 
                         startAngle: -90
@@ -478,10 +478,10 @@ StyledRect {
         radius: Tokens.rounding.full
         color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
 
-        Layout.preferredWidth: actionText.width + Tokens.padding.normal * 2
-        Layout.preferredHeight: actionText.height + Tokens.padding.small * 2
-        implicitWidth: actionText.width + Tokens.padding.normal * 2
-        implicitHeight: actionText.height + Tokens.padding.small * 2
+        Layout.preferredWidth: actionText.width + Tokens.padding.medium * 2
+        Layout.preferredHeight: actionText.height + Tokens.padding.extraSmall * 2
+        implicitWidth: actionText.width + Tokens.padding.medium * 2
+        implicitHeight: actionText.height + Tokens.padding.extraSmall * 2
 
         StateLayer {
             radius: Tokens.rounding.full
@@ -507,7 +507,7 @@ StyledRect {
             elide: Text.ElideRight
             elideWidth: {
                 const numActions = root.modelData.actions.length + 1;
-                return (inner.width - actions.spacing * (numActions - 1)) / numActions - root.Tokens.padding.normal * 2;
+                return (inner.width - actions.spacing * (numActions - 1)) / numActions - root.Tokens.padding.medium * 2;
             }
         }
     }

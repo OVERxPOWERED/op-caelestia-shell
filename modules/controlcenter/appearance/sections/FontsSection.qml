@@ -55,7 +55,7 @@ CollapsibleSection {
                     radius: Tokens.rounding.large
                     border.width: isCurrent ? 1 : 0
                     border.color: Colours.palette.m3primary
-                    implicitHeight: fontFamilySansRow.implicitHeight + Tokens.padding.normal * 2
+                    implicitHeight: fontFamilySansRow.implicitHeight + Tokens.padding.medium * 2
 
                     StateLayer {
                         onClicked: {
@@ -70,7 +70,7 @@ CollapsibleSection {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Tokens.padding.normal
+                        anchors.margins: Tokens.padding.medium
 
                         spacing: Tokens.spacing.normal
 
@@ -136,7 +136,7 @@ CollapsibleSection {
                     radius: Tokens.rounding.large
                     border.width: isCurrent ? 1 : 0
                     border.color: Colours.palette.m3primary
-                    implicitHeight: fontFamilyMonoRow.implicitHeight + Tokens.padding.normal * 2
+                    implicitHeight: fontFamilyMonoRow.implicitHeight + Tokens.padding.medium * 2
 
                     StateLayer {
                         onClicked: {
@@ -151,7 +151,7 @@ CollapsibleSection {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Tokens.padding.normal
+                        anchors.margins: Tokens.padding.medium
 
                         spacing: Tokens.spacing.normal
 
@@ -219,7 +219,7 @@ CollapsibleSection {
                     radius: Tokens.rounding.large
                     border.width: isCurrent ? 1 : 0
                     border.color: Colours.palette.m3primary
-                    implicitHeight: fontFamilyMaterialRow.implicitHeight + Tokens.padding.normal * 2
+                    implicitHeight: fontFamilyMaterialRow.implicitHeight + Tokens.padding.medium * 2
 
                     StateLayer {
                         onClicked: {
@@ -234,7 +234,7 @@ CollapsibleSection {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Tokens.padding.normal
+                        anchors.margins: Tokens.padding.medium
 
                         spacing: Tokens.spacing.normal
 

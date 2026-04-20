@@ -218,7 +218,7 @@ Item {
 
         signal clicked
 
-        implicitWidth: Math.max(icon.implicitHeight, icon.implicitHeight) + Tokens.padding.small
+        implicitWidth: Math.max(icon.implicitHeight, icon.implicitHeight) + Tokens.padding.extraSmall
         implicitHeight: implicitWidth
 
         StateLayer {

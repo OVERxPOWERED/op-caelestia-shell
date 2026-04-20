@@ -49,8 +49,8 @@ DeviceList {
                 icon: "power"
                 accent: "Tertiary"
                 iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
                 tooltip: qsTr("Toggle Bluetooth")
 
                 onClicked: {
@@ -65,8 +65,8 @@ DeviceList {
                 icon: root.smallDiscoverable ? "group_search" : ""
                 label: root.smallDiscoverable ? "" : qsTr("Discoverable")
                 iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
                 tooltip: qsTr("Make discoverable")
 
                 onClicked: {
@@ -81,8 +81,8 @@ DeviceList {
                 icon: "missing_controller"
                 label: root.smallPairable ? "" : qsTr("Pairable")
                 iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
                 tooltip: qsTr("Make pairable")
 
                 onClicked: {
@@ -97,8 +97,8 @@ DeviceList {
                 icon: "bluetooth_searching"
                 accent: "Secondary"
                 iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
                 tooltip: qsTr("Scan for devices")
 
                 onClicked: {
@@ -113,8 +113,8 @@ DeviceList {
                 icon: "settings"
                 accent: "Primary"
                 iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
                 tooltip: qsTr("Bluetooth settings")
 
                 onClicked: {
@@ -137,7 +137,7 @@ DeviceList {
             readonly property bool connected: modelData && modelData.state === BluetoothDeviceState.Connected
 
             width: ListView.view ? ListView.view.width : undefined
-            implicitHeight: deviceInner.implicitHeight + Tokens.padding.normal * 2
+            implicitHeight: deviceInner.implicitHeight + Tokens.padding.medium * 2
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
             radius: Tokens.rounding.large
@@ -155,13 +155,13 @@ DeviceList {
                 id: deviceInner
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.normal
+                anchors.margins: Tokens.padding.medium
 
                 spacing: Tokens.spacing.normal
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: icon.implicitHeight + Tokens.padding.normal * 2
+                    implicitHeight: icon.implicitHeight + Tokens.padding.medium * 2
 
                     radius: Tokens.rounding.large
                     color: device.connected ? Colours.palette.m3primaryContainer : (device.modelData && device.modelData.bonded) ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainerHigh
@@ -211,7 +211,7 @@ DeviceList {
                     id: connectBtn
 
                     implicitWidth: implicitHeight
-                    implicitHeight: connectIcon.implicitHeight + Tokens.padding.smaller * 2
+                    implicitHeight: connectIcon.implicitHeight + Tokens.padding.small * 2
 
                     radius: Tokens.rounding.full
                     color: Qt.alpha(Colours.palette.m3primaryContainer, device.connected ? 1 : 0)

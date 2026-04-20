@@ -98,24 +98,36 @@ void AppearancePadding::bindTokens(PaddingTokens* tokens) {
     connectTokenSignals(tokens, this);
 }
 
+int AppearancePadding::extraSmall() const {
+    return m_tokens ? static_cast<int>(m_tokens->extraSmall() * m_scale) : 0;
+}
+
 int AppearancePadding::small() const {
     return m_tokens ? static_cast<int>(m_tokens->small() * m_scale) : 0;
 }
 
-int AppearancePadding::smaller() const {
-    return m_tokens ? static_cast<int>(m_tokens->smaller() * m_scale) : 0;
-}
-
-int AppearancePadding::normal() const {
-    return m_tokens ? static_cast<int>(m_tokens->normal() * m_scale) : 0;
-}
-
-int AppearancePadding::larger() const {
-    return m_tokens ? static_cast<int>(m_tokens->larger() * m_scale) : 0;
+int AppearancePadding::medium() const {
+    return m_tokens ? static_cast<int>(m_tokens->medium() * m_scale) : 0;
 }
 
 int AppearancePadding::large() const {
     return m_tokens ? static_cast<int>(m_tokens->large() * m_scale) : 0;
+}
+
+int AppearancePadding::largeIncreased() const {
+    return m_tokens ? static_cast<int>(m_tokens->largeIncreased() * m_scale) : 0;
+}
+
+int AppearancePadding::extraLarge() const {
+    return m_tokens ? static_cast<int>(m_tokens->extraLarge() * m_scale) : 0;
+}
+
+int AppearancePadding::extraLargeIncreased() const {
+    return m_tokens ? static_cast<int>(m_tokens->extraLargeIncreased() * m_scale) : 0;
+}
+
+int AppearancePadding::extraExtraLarge() const {
+    return m_tokens ? static_cast<int>(m_tokens->extraExtraLarge() * m_scale) : 0;
 }
 
 // FontSize

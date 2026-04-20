@@ -35,7 +35,7 @@ CollapsibleSection {
                 radius: Tokens.rounding.large
                 border.width: isCurrent ? 1 : 0
                 border.color: Colours.palette.m3primary
-                implicitHeight: schemeRow.implicitHeight + Tokens.padding.normal * 2
+                implicitHeight: schemeRow.implicitHeight + Tokens.padding.medium * 2
 
                 StateLayer {
                     onClicked: {
@@ -65,7 +65,7 @@ CollapsibleSection {
                     id: schemeRow
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.normal
+                    anchors.margins: Tokens.padding.medium
 
                     spacing: Tokens.spacing.normal
 

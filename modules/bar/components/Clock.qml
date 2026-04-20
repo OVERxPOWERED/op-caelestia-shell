@@ -9,7 +9,7 @@ StyledRect {
     id: root
 
     readonly property color colour: Colours.palette.m3tertiary
-    readonly property int padding: Config.bar.clock.background ? Tokens.padding.normal : Tokens.padding.small
+    readonly property int padding: Config.bar.clock.background ? Tokens.padding.medium : Tokens.padding.extraSmall
 
     implicitWidth: Tokens.sizes.bar.innerWidth
     implicitHeight: layout.implicitHeight + root.padding * 2

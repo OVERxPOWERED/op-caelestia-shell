@@ -96,7 +96,7 @@ DeviceDetails {
 
                         TextButton {
                             Layout.fillWidth: true
-                            Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.normal * 2
+                            Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.medium * 2
                             visible: root.providerEnabled
                             enabled: !VPN.connecting
                             inactiveColour: Colours.palette.m3primaryContainer

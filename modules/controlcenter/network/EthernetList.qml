@@ -39,8 +39,8 @@ DeviceList {
                 icon: "settings"
                 accent: "Primary"
                 iconSize: Tokens.font.body.medium.pointSize
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
 
                 onClicked: {
                     if (root.session.ethernet.active)

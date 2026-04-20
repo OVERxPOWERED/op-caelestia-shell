@@ -468,7 +468,7 @@ ColumnLayout {
                     id: cancelButton
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.normal * 2
+                    Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.medium * 2
                     inactiveColour: Colours.palette.m3secondaryContainer
                     inactiveOnColour: Colours.palette.m3onSecondaryContainer
                     text: qsTr("Cancel")
@@ -483,7 +483,7 @@ ColumnLayout {
                     property bool hasError: false
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.normal * 2
+                    Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.medium * 2
                     inactiveColour: Colours.palette.m3primary
                     inactiveOnColour: Colours.palette.m3onPrimary
                     text: qsTr("Connect")

@@ -80,8 +80,7 @@ GridLayout {
             anchors.centerIn: parent
             text: res.icon
             color: res.colour
-            font.pointSize: (circ.arcRadius * 0.7) || 1
-            font.weight: 600
+            font: Tokens.font.icon.builders.medium.size((circ.arcRadius * 0.7) || 1).weight(600).build()
         }
 
         Behavior on value {

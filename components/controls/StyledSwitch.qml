@@ -18,7 +18,7 @@ Switch {
         color: root.checked ? Colours.palette.m3primary : Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
 
         implicitWidth: implicitHeight * 1.7
-        implicitHeight: Tokens.font.body.medium.pointSize + Tokens.padding.smaller * 2
+        implicitHeight: Tokens.font.body.medium.pointSize + Tokens.padding.small * 2
 
         StyledRect {
             readonly property real nonAnimWidth: root.pressed ? implicitHeight * 1.3 : implicitHeight

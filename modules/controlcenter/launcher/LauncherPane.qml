@@ -168,8 +168,8 @@ Item {
                         icon: "settings"
                         accent: "Primary"
                         iconSize: Tokens.font.body.medium.pointSize
-                        horizontalPadding: Tokens.padding.normal
-                        verticalPadding: Tokens.padding.smaller
+                        horizontalPadding: Tokens.padding.medium
+                        verticalPadding: Tokens.padding.small
                         tooltip: qsTr("Launcher settings")
 
                         onClicked: {

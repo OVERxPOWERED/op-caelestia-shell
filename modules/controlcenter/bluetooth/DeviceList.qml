@@ -48,8 +48,8 @@ DeviceList {
                 icon: "power"
                 accent: "Tertiary"
                 iconSize: Tokens.font.body.medium.pointSize
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
                 tooltip: qsTr("Toggle Bluetooth")
 
                 onClicked: {
@@ -64,8 +64,8 @@ DeviceList {
                 icon: root.smallDiscoverable ? "group_search" : ""
                 label: root.smallDiscoverable ? "" : qsTr("Discoverable")
                 iconSize: Tokens.font.body.medium.pointSize
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
                 tooltip: qsTr("Make discoverable")
 
                 onClicked: {
@@ -80,8 +80,8 @@ DeviceList {
                 icon: "missing_controller"
                 label: root.smallPairable ? "" : qsTr("Pairable")
                 iconSize: Tokens.font.body.medium.pointSize
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
                 tooltip: qsTr("Make pairable")
 
                 onClicked: {
@@ -96,8 +96,8 @@ DeviceList {
                 icon: "bluetooth_searching"
                 accent: "Secondary"
                 iconSize: Tokens.font.body.medium.pointSize
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
                 tooltip: qsTr("Scan for devices")
 
                 onClicked: {
@@ -112,8 +112,8 @@ DeviceList {
                 icon: "settings"
                 accent: "Primary"
                 iconSize: Tokens.font.body.medium.pointSize
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
                 tooltip: qsTr("Bluetooth settings")
 
                 onClicked: {

@@ -64,8 +64,8 @@ DeviceList {
                 icon: "wifi"
                 accent: "Tertiary"
                 iconSize: Tokens.font.body.medium.pointSize
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
 
                 onClicked: {
                     Nmcli.toggleWifi(null);
@@ -77,8 +77,8 @@ DeviceList {
                 icon: "wifi_find"
                 accent: "Secondary"
                 iconSize: Tokens.font.body.medium.pointSize
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
 
                 onClicked: {
                     Nmcli.rescanWifi();
@@ -90,8 +90,8 @@ DeviceList {
                 icon: "settings"
                 accent: "Primary"
                 iconSize: Tokens.font.body.medium.pointSize
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                horizontalPadding: Tokens.padding.medium
+                verticalPadding: Tokens.padding.small
 
                 onClicked: {
                     if (root.session.network.active)

@@ -9,7 +9,7 @@ StyledRect {
     id: root
 
     Layout.fillWidth: true
-    implicitHeight: layout.implicitHeight + (IdleInhibitor.enabled ? activeChip.implicitHeight + activeChip.anchors.topMargin : 0) + Tokens.padding.large * 2
+    implicitHeight: layout.implicitHeight + (IdleInhibitor.enabled ? activeChip.implicitHeight + activeChip.anchors.topMargin : 0) + Tokens.padding.extraLargeIncreased
 
     radius: Tokens.rounding.large
     color: Colours.tPalette.m3surfaceContainer
@@ -26,7 +26,7 @@ StyledRect {
 
         StyledRect {
             implicitWidth: implicitHeight
-            implicitHeight: icon.implicitHeight + Tokens.padding.small * 2
+            implicitHeight: icon.implicitHeight + Tokens.padding.large
 
             radius: Tokens.rounding.full
             color: IdleInhibitor.enabled ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
@@ -84,7 +84,7 @@ StyledRect {
 
         sourceComponent: StyledRect {
             implicitWidth: activeText.implicitWidth + Tokens.padding.medium * 2
-            implicitHeight: activeText.implicitHeight + Tokens.padding.extraSmall * 2
+            implicitHeight: activeText.implicitHeight + Tokens.padding.small
 
             radius: Tokens.rounding.full
             color: Colours.palette.m3primary

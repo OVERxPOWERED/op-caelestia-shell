@@ -70,7 +70,7 @@ StyledFlickable {
 
                         StyledRect {
                             Layout.fillWidth: true
-                            implicitHeight: deviceStatus.implicitHeight + Tokens.padding.large * 2
+                            implicitHeight: deviceStatus.implicitHeight + Tokens.padding.extraLargeIncreased
 
                             radius: Tokens.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
@@ -129,7 +129,7 @@ StyledFlickable {
 
                         StyledRect {
                             Layout.fillWidth: true
-                            implicitHeight: deviceProps.implicitHeight + Tokens.padding.large * 2
+                            implicitHeight: deviceProps.implicitHeight + Tokens.padding.extraLargeIncreased
 
                             radius: Tokens.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
@@ -231,7 +231,7 @@ StyledFlickable {
 
                                     StyledRect {
                                         implicitWidth: implicitHeight
-                                        implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.small * 2
+                                        implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.large
 
                                         radius: Tokens.rounding.medium
                                         color: Colours.palette.m3secondaryContainer
@@ -270,7 +270,7 @@ StyledFlickable {
 
                                     StyledRect {
                                         implicitWidth: implicitHeight
-                                        implicitHeight: editIcon.implicitHeight + Tokens.padding.small * 2
+                                        implicitHeight: editIcon.implicitHeight + Tokens.padding.large
 
                                         radius: root.session.bt.editingDeviceName ? Tokens.rounding.medium : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
                                         color: Qt.alpha(Colours.palette.m3primary, root.session.bt.editingDeviceName ? 1 : 0)
@@ -335,7 +335,7 @@ StyledFlickable {
 
                         StyledRect {
                             Layout.fillWidth: true
-                            implicitHeight: deviceInfo.implicitHeight + Tokens.padding.large * 2
+                            implicitHeight: deviceInfo.implicitHeight + Tokens.padding.extraLargeIncreased
 
                             radius: Tokens.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
@@ -479,7 +479,7 @@ StyledFlickable {
                     when: root.session.bt.fabMenuOpen
 
                     PropertyChanges {
-                        fabMenuItem.implicitWidth: fabMenuItemInner.implicitWidth + root.Tokens.padding.large * 2
+                        fabMenuItem.implicitWidth: fabMenuItemInner.implicitWidth + root.Tokens.padding.extraLargeIncreased
                         fabMenuItem.opacity: 1
                         fabMenuItemInner.opacity: 1
                     }

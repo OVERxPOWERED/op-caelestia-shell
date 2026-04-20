@@ -167,7 +167,7 @@ ColumnLayout {
         Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: visible ? Tokens.spacing.small : 0
         Layout.fillWidth: true
-        implicitHeight: rescanBtn.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitHeight: rescanBtn.implicitHeight + Tokens.padding.small
 
         radius: Tokens.rounding.full
         color: Colours.palette.m3primaryContainer
@@ -209,7 +209,7 @@ ColumnLayout {
             anchors.centerIn: parent
             strokeWidth: Tokens.padding.extraSmall / 2
             bgColour: "transparent"
-            implicitSize: parent.implicitHeight - Tokens.padding.small * 2
+            implicitSize: parent.implicitHeight - Tokens.padding.large
             running: Nmcli.scanning
         }
     }

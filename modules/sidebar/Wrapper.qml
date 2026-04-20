@@ -36,7 +36,7 @@ Item {
         active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
-            implicitWidth: Tokens.sizes.sidebar.width - Tokens.padding.large * 2
+            implicitWidth: Tokens.sizes.sidebar.width - Tokens.padding.extraLargeIncreased
             props: root.props
             visibilities: root.visibilities
         }

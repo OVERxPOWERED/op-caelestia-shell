@@ -11,7 +11,7 @@ import qs.services
 Item {
     id: root
 
-    readonly property int minWidth: 400 + 400 + Tokens.spacing.normal + 120 + Tokens.padding.large * 2
+    readonly property int minWidth: 400 + 400 + Tokens.spacing.normal + 120 + Tokens.padding.extraLargeIncreased
 
     function displayTemp(temp: real): string {
         return `${Math.ceil(GlobalConfig.services.useFahrenheitPerformance ? temp * 1.8 + 32 : temp)}°${GlobalConfig.services.useFahrenheitPerformance ? "F" : "C"}`;

@@ -91,7 +91,7 @@ StyledRect {
 
         sourceComponent: Item {
             implicitWidth: expandIconInner.implicitWidth
-            implicitHeight: expandIconInner.implicitHeight - Tokens.padding.extraSmall * 2
+            implicitHeight: expandIconInner.implicitHeight - Tokens.padding.small
 
             MaterialIcon {
                 id: expandIconInner

@@ -205,7 +205,7 @@ ColumnLayout {
 
                     StyledRect {
                         implicitWidth: implicitHeight
-                        implicitHeight: connectIcon.implicitHeight + Tokens.padding.small * 2
+                        implicitHeight: connectIcon.implicitHeight + Tokens.padding.large
 
                         radius: Tokens.rounding.full
                         color: Qt.alpha(Colours.palette.m3primaryContainer, VPN.connected && modelData.enabled ? 1 : 0)
@@ -265,7 +265,7 @@ ColumnLayout {
 
                     StyledRect {
                         implicitWidth: implicitHeight
-                        implicitHeight: deleteIcon.implicitHeight + Tokens.padding.small * 2
+                        implicitHeight: deleteIcon.implicitHeight + Tokens.padding.large
 
                         radius: Tokens.rounding.full
                         color: "transparent"
@@ -363,7 +363,7 @@ ColumnLayout {
         parent: Overlay.overlay
         x: Math.round((parent.width - width) / 2)
         y: Math.round((parent.height - height) / 2)
-        implicitWidth: Math.min(400, parent.width - Tokens.padding.large * 2)
+        implicitWidth: Math.min(400, parent.width - Tokens.padding.extraLargeIncreased)
         padding: Tokens.padding.large * 1.5
 
         modal: true

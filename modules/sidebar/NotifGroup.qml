@@ -186,7 +186,7 @@ StyledRect {
                 }
 
                 StyledRect {
-                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.small * 2
+                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.large
                     implicitHeight: groupCount.implicitHeight + Tokens.padding.extraSmall
 
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : Colours.layer(Colours.palette.m3surfaceContainerHigh, 3)
@@ -218,7 +218,7 @@ StyledRect {
                             text: "expand_more"
                             color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurface
                             rotation: root.expanded ? 180 : 0
-                            Layout.topMargin: root.expanded ? -Math.floor(Tokens.padding.small / 2) : 0
+                            Layout.topMargin: root.expanded ? -Math.floor(Tokens.padding.extraSmall) : 0
 
                             Behavior on rotation {
                                 Anim {

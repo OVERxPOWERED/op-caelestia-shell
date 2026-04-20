@@ -87,7 +87,7 @@ RowLayout {
                 id: rightLoader
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.large * 2
+                anchors.margins: Tokens.padding.extraLargeIncreased
 
                 asynchronous: true
                 sourceComponent: root.rightContent

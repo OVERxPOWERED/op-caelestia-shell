@@ -33,7 +33,7 @@ ColumnLayout {
         id: indicator
 
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-        Layout.preferredHeight: Tokens.sizes.bar.innerWidth - Tokens.padding.extraSmall * 2
+        Layout.preferredHeight: Tokens.sizes.bar.innerWidth - Tokens.padding.small
 
         animate: true
         text: {

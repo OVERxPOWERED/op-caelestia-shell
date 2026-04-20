@@ -89,7 +89,7 @@ RowLayout {
         color: Colours.palette.m3primary
 
         implicitWidth: implicitHeight
-        implicitHeight: upIcon.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitHeight: upIcon.implicitHeight + Tokens.padding.small
 
         StateLayer {
             id: upState
@@ -124,7 +124,7 @@ RowLayout {
         color: Colours.palette.m3primary
 
         implicitWidth: implicitHeight
-        implicitHeight: downIcon.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitHeight: downIcon.implicitHeight + Tokens.padding.small
 
         StateLayer {
             id: downState

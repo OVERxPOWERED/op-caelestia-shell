@@ -20,7 +20,7 @@ StyledRect {
     signal selected(item: MenuItem)
 
     Layout.fillWidth: true
-    implicitHeight: row.implicitHeight + Tokens.padding.large * 2
+    implicitHeight: row.implicitHeight + Tokens.padding.extraLargeIncreased
     radius: Tokens.rounding.large
     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 

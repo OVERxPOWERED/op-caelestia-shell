@@ -70,7 +70,7 @@ Item {
             clip: true
 
             implicitWidth: (stateLayer.containsMouse ? label.implicitWidth + label.anchors.rightMargin : 0) + icon.implicitWidth + Tokens.padding.medium * 2
-            implicitHeight: Math.max(label.implicitHeight, icon.implicitHeight) + Tokens.padding.extraSmall * 2
+            implicitHeight: Math.max(label.implicitHeight, icon.implicitHeight) + Tokens.padding.small
 
             Layout.alignment: Qt.AlignVCenter
 

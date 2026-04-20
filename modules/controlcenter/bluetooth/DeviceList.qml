@@ -211,7 +211,7 @@ DeviceList {
                     id: connectBtn
 
                     implicitWidth: implicitHeight
-                    implicitHeight: connectIcon.implicitHeight + Tokens.padding.small * 2
+                    implicitHeight: connectIcon.implicitHeight + Tokens.padding.large
 
                     radius: Tokens.rounding.full
                     color: Qt.alpha(Colours.palette.m3primaryContainer, device.connected ? 1 : 0)

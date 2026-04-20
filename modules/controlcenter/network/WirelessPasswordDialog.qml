@@ -99,7 +99,7 @@ Item {
         anchors.centerIn: parent
 
         implicitWidth: 400
-        implicitHeight: content.implicitHeight + Tokens.padding.large * 2
+        implicitHeight: content.implicitHeight + Tokens.padding.extraLargeIncreased
 
         radius: Tokens.rounding.large
         color: Colours.tPalette.m3surface
@@ -185,7 +185,7 @@ Item {
                 font.pointSize: Tokens.font.size.small
                 font.weight: 400
                 wrapMode: Text.WordWrap
-                Layout.maximumWidth: parent.width - Tokens.padding.large * 2
+                Layout.maximumWidth: parent.width - Tokens.padding.extraLargeIncreased
             }
 
             Item {

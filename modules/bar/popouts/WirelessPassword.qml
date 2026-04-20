@@ -71,7 +71,7 @@ ColumnLayout {
 
     spacing: Tokens.spacing.normal
     implicitWidth: 400
-    implicitHeight: content.implicitHeight + Tokens.padding.large * 2
+    implicitHeight: content.implicitHeight + Tokens.padding.extraLargeIncreased
     visible: shouldBeVisible || isClosing
     enabled: shouldBeVisible && !isClosing
     focus: enabled
@@ -128,7 +128,7 @@ ColumnLayout {
     StyledRect {
         Layout.fillWidth: true
         Layout.preferredWidth: 400
-        implicitHeight: content.implicitHeight + Tokens.padding.large * 2
+        implicitHeight: content.implicitHeight + Tokens.padding.extraLargeIncreased
         radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
         visible: root.shouldBeVisible || root.isClosing
@@ -252,7 +252,7 @@ ColumnLayout {
                 font.pointSize: Tokens.font.size.small
                 font.weight: 400
                 wrapMode: Text.WordWrap
-                Layout.maximumWidth: parent.width - Tokens.padding.large * 2
+                Layout.maximumWidth: parent.width - Tokens.padding.extraLargeIncreased
             }
 
             FocusScope {

@@ -15,7 +15,7 @@ Item {
     required property ShellScreen screen
     required property HyprlandToplevel client
 
-    Layout.preferredWidth: preview.implicitWidth + Tokens.padding.large * 2
+    Layout.preferredWidth: preview.implicitWidth + Tokens.padding.extraLargeIncreased
     Layout.fillHeight: true
 
     StyledClippingRect {

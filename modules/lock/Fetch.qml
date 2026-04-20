@@ -13,7 +13,7 @@ ColumnLayout {
     id: root
 
     anchors.fill: parent
-    anchors.margins: Tokens.padding.large * 2
+    anchors.margins: Tokens.padding.extraLargeIncreased
     anchors.topMargin: Tokens.padding.large
 
     spacing: Tokens.spacing.small

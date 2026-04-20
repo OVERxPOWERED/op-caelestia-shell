@@ -8,7 +8,7 @@ Item {
 
     required property DrawerVisibilities visibilities
 
-    implicitWidth: icon.implicitHeight + Tokens.padding.extraSmall * 2
+    implicitWidth: icon.implicitHeight + Tokens.padding.small
     implicitHeight: icon.implicitHeight
 
     StateLayer {
@@ -16,7 +16,7 @@ Item {
         anchors.fill: undefined
         anchors.centerIn: parent
         implicitWidth: implicitHeight
-        implicitHeight: icon.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitHeight: icon.implicitHeight + Tokens.padding.small
         radius: Tokens.rounding.full
         onClicked: root.visibilities.session = !root.visibilities.session
     }

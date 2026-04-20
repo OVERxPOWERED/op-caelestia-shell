@@ -166,7 +166,7 @@ StyledRect {
                 }
 
                 StyledRect {
-                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.small * 2
+                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.large
                     implicitHeight: groupCount.implicitHeight + Tokens.padding.extraSmall
 
                     color: root.urgency === "critical" ? Colours.palette.m3error : Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)

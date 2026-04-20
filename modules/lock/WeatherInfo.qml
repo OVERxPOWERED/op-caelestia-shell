@@ -13,13 +13,13 @@ ColumnLayout {
 
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.margins: Tokens.padding.large * 2
+    anchors.margins: Tokens.padding.extraLargeIncreased
 
     spacing: Tokens.spacing.small
 
     Loader {
         asynchronous: true
-        Layout.topMargin: Tokens.padding.large * 2
+        Layout.topMargin: Tokens.padding.extraLargeIncreased
         Layout.bottomMargin: -Tokens.padding.large
         Layout.alignment: Qt.AlignHCenter
 
@@ -110,7 +110,7 @@ ColumnLayout {
 
         asynchronous: true
         Layout.topMargin: Tokens.spacing.smaller
-        Layout.bottomMargin: Tokens.padding.large * 2
+        Layout.bottomMargin: Tokens.padding.extraLargeIncreased
         Layout.fillWidth: true
 
         active: root.rootHeight > 820

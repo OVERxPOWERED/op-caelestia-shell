@@ -38,7 +38,7 @@ StyledRect {
     readonly property bool needExtraRow: quickToggles.length > 6
 
     Layout.fillWidth: true
-    implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
+    implicitHeight: layout.implicitHeight + Tokens.padding.extraLargeIncreased
 
     radius: Tokens.rounding.large
     color: Colours.tPalette.m3surfaceContainer

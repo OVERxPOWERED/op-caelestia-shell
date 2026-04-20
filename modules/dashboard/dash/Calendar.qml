@@ -46,7 +46,7 @@ CustomMouseArea {
 
             Item {
                 implicitWidth: implicitHeight
-                implicitHeight: prevMonthText.implicitHeight + Tokens.padding.extraSmall * 2
+                implicitHeight: prevMonthText.implicitHeight + Tokens.padding.small
 
                 StateLayer {
                     id: prevMonthStateLayer
@@ -69,8 +69,8 @@ CustomMouseArea {
             Item {
                 Layout.fillWidth: true
 
-                implicitWidth: monthYearDisplay.implicitWidth + Tokens.padding.extraSmall * 2
-                implicitHeight: monthYearDisplay.implicitHeight + Tokens.padding.extraSmall * 2
+                implicitWidth: monthYearDisplay.implicitWidth + Tokens.padding.small
+                implicitHeight: monthYearDisplay.implicitHeight + Tokens.padding.small
 
                 StateLayer {
                     onClicked: {
@@ -103,7 +103,7 @@ CustomMouseArea {
 
             Item {
                 implicitWidth: implicitHeight
-                implicitHeight: nextMonthText.implicitHeight + Tokens.padding.extraSmall * 2
+                implicitHeight: nextMonthText.implicitHeight + Tokens.padding.small
 
                 StateLayer {
                     id: nextMonthStateLayer
@@ -164,7 +164,7 @@ CustomMouseArea {
                     required property var model
 
                     implicitWidth: implicitHeight
-                    implicitHeight: text.implicitHeight + Tokens.padding.extraSmall * 2
+                    implicitHeight: text.implicitHeight + Tokens.padding.small
 
                     StyledText {
                         id: text

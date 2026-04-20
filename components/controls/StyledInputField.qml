@@ -21,7 +21,7 @@ Item {
     signal editingFinished
 
     implicitWidth: 70
-    implicitHeight: inputField.implicitHeight + Tokens.padding.extraSmall * 2
+    implicitHeight: inputField.implicitHeight + Tokens.padding.small
 
     StyledRect {
         id: container

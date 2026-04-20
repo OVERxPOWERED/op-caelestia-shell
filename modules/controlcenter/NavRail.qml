@@ -15,8 +15,8 @@ Item {
     required property Session session
     required property bool initialOpeningComplete
 
-    implicitWidth: layout.implicitWidth + Tokens.padding.medium * 4
-    implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
+    implicitWidth: layout.implicitWidth + Tokens.padding.extraExtraLarge
+    implicitHeight: layout.implicitHeight + Tokens.padding.extraLargeIncreased
 
     ColumnLayout {
         id: layout

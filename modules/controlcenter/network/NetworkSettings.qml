@@ -140,8 +140,8 @@ ColumnLayout {
 
         parent: Overlay.overlay
         anchors.centerIn: parent
-        width: Math.min(600, parent.width - Tokens.padding.large * 2)
-        height: Math.min(700, parent.height - Tokens.padding.large * 2)
+        width: Math.min(600, parent.width - Tokens.padding.extraLargeIncreased)
+        height: Math.min(700, parent.height - Tokens.padding.extraLargeIncreased)
 
         modal: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside

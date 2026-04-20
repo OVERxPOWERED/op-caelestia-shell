@@ -127,7 +127,7 @@ Item {
         color: Colours.palette.m3primary
         font.pointSize: Tokens.font.size.normal
 
-        width: parent.implicitWidth - Tokens.padding.large * 2
+        width: parent.implicitWidth - Tokens.padding.extraLargeIncreased
         elide: Text.ElideRight
     }
 
@@ -144,7 +144,7 @@ Item {
         color: Colours.palette.m3outline
         font.pointSize: Tokens.font.size.small
 
-        width: parent.implicitWidth - Tokens.padding.large * 2
+        width: parent.implicitWidth - Tokens.padding.extraLargeIncreased
         elide: Text.ElideRight
     }
 
@@ -160,7 +160,7 @@ Item {
         text: (Players.active?.trackArtist ?? qsTr("No media")) || qsTr("Unknown artist")
         color: Colours.palette.m3secondary
 
-        width: parent.implicitWidth - Tokens.padding.large * 2
+        width: parent.implicitWidth - Tokens.padding.extraLargeIncreased
         elide: Text.ElideRight
     }
 
@@ -201,7 +201,7 @@ Item {
         anchors.right: parent.right
         anchors.topMargin: Tokens.spacing.small
         anchors.bottomMargin: Tokens.padding.large
-        anchors.margins: Tokens.padding.large * 2
+        anchors.margins: Tokens.padding.extraLargeIncreased
 
         playing: Players.active?.isPlaying ?? false
         speed: Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment // qmllint disable unresolved-type

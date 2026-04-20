@@ -14,8 +14,8 @@ Item {
     readonly property Popout currentPopout: content.children.find(c => c.shouldBeActive) ?? null
     readonly property Item current: currentPopout?.item ?? null
 
-    implicitWidth: (currentPopout?.implicitWidth ?? 0) + Tokens.padding.large * 2
-    implicitHeight: (currentPopout?.implicitHeight ?? 0) + Tokens.padding.large * 2
+    implicitWidth: (currentPopout?.implicitWidth ?? 0) + Tokens.padding.extraLargeIncreased
+    implicitHeight: (currentPopout?.implicitHeight ?? 0) + Tokens.padding.extraLargeIncreased
 
     Item {
         id: content

@@ -479,9 +479,9 @@ StyledRect {
         color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
 
         Layout.preferredWidth: actionText.width + Tokens.padding.medium * 2
-        Layout.preferredHeight: actionText.height + Tokens.padding.extraSmall * 2
+        Layout.preferredHeight: actionText.height + Tokens.padding.small
         implicitWidth: actionText.width + Tokens.padding.medium * 2
-        implicitHeight: actionText.height + Tokens.padding.extraSmall * 2
+        implicitHeight: actionText.height + Tokens.padding.small
 
         StateLayer {
             radius: Tokens.rounding.full

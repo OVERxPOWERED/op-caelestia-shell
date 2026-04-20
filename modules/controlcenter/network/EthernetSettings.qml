@@ -36,7 +36,7 @@ ColumnLayout {
 
     StyledRect {
         Layout.fillWidth: true
-        implicitHeight: ethernetInfo.implicitHeight + Tokens.padding.large * 2
+        implicitHeight: ethernetInfo.implicitHeight + Tokens.padding.extraLargeIncreased
 
         radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer

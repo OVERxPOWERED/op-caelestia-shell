@@ -33,7 +33,7 @@ ColumnLayout {
             color: Colours.palette.m3primary
             radius: Tokens.rounding.medium
 
-            implicitWidth: moveToWsIcon.implicitWidth + Tokens.padding.extraSmall * 2
+            implicitWidth: moveToWsIcon.implicitWidth + Tokens.padding.small
             implicitHeight: moveToWsIcon.implicitHeight + Tokens.padding.extraSmall
 
             StateLayer {
@@ -56,8 +56,8 @@ ColumnLayout {
 
     WrapperItem {
         Layout.fillWidth: true
-        Layout.leftMargin: Tokens.padding.large * 2
-        Layout.rightMargin: Tokens.padding.large * 2
+        Layout.leftMargin: Tokens.padding.extraLargeIncreased
+        Layout.rightMargin: Tokens.padding.extraLargeIncreased
 
         Layout.preferredHeight: root.moveToWsExpanded ? implicitHeight : 0
         clip: true
@@ -145,7 +145,7 @@ ColumnLayout {
         radius: Tokens.rounding.medium
 
         Layout.fillWidth: true
-        implicitHeight: label.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitHeight: label.implicitHeight + Tokens.padding.small
 
         StateLayer {
             id: stateLayer

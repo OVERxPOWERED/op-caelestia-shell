@@ -14,7 +14,7 @@ StyledRect {
     radius: Tokens.rounding.medium
 
     implicitWidth: count.implicitWidth + Tokens.padding.medium * 2
-    implicitHeight: count.implicitHeight + Tokens.padding.extraSmall * 2
+    implicitHeight: count.implicitHeight + Tokens.padding.small
 
     opacity: extra > 0 ? 1 : 0
     scale: extra > 0 ? 1 : 0.5

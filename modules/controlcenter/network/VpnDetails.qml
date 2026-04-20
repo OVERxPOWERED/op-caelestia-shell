@@ -260,7 +260,7 @@ DeviceDetails {
 
         parent: Overlay.overlay
         anchors.centerIn: parent
-        width: Math.min(400, parent.width - Tokens.padding.large * 2)
+        width: Math.min(400, parent.width - Tokens.padding.extraLargeIncreased)
         padding: Tokens.padding.large * 1.5
 
         modal: true

@@ -24,7 +24,7 @@ Item {
     readonly property color safeTertiary: useLightSet ? Colours.palette.m3tertiaryContainer : Colours.palette.m3tertiary
 
     implicitWidth: layout.implicitWidth + (Tokens.padding.large * 4 * root.clockScale)
-    implicitHeight: layout.implicitHeight + (Tokens.padding.large * 2 * root.clockScale)
+    implicitHeight: layout.implicitHeight + (Tokens.padding.extraLargeIncreased * root.clockScale)
 
     Item {
         id: clockContainer

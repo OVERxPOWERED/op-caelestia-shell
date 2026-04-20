@@ -46,7 +46,7 @@ Column {
 
         sourceComponent: StyledRect {
             implicitWidth: child.implicitWidth + Tokens.padding.medium * 2
-            implicitHeight: child.implicitHeight + Tokens.padding.small * 2
+            implicitHeight: child.implicitHeight + Tokens.padding.large
 
             color: Colours.palette.m3error
             radius: Tokens.rounding.large
@@ -110,7 +110,7 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
 
         implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + Tokens.padding.medium * 2 + Tokens.spacing.large * 2
-        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + Tokens.padding.extraSmall * 2
+        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + Tokens.padding.small
 
         color: Colours.tPalette.m3surfaceContainer
         radius: Tokens.rounding.full
@@ -199,8 +199,8 @@ Column {
         required property string icon
         required property int profile
 
-        implicitWidth: icon.implicitHeight + Tokens.padding.extraSmall * 2
-        implicitHeight: icon.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitWidth: icon.implicitHeight + Tokens.padding.small
+        implicitHeight: icon.implicitHeight + Tokens.padding.small
 
         StateLayer {
             radius: Tokens.rounding.full

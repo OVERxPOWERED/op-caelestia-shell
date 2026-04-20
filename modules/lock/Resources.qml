@@ -68,7 +68,7 @@ GridLayout {
 
             anchors.fill: parent
             value: res.value
-            padding: Tokens.padding.large * 3
+            padding: Tokens.padding.extraExtraLarge
             fgColour: res.colour
             bgColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 3)
             strokeWidth: width < 200 ? Tokens.padding.small : Tokens.padding.medium

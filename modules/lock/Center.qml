@@ -73,7 +73,7 @@ ColumnLayout {
 
     StyledText {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: -Tokens.padding.large * 2
+        Layout.topMargin: -Tokens.padding.extraLargeIncreased
 
         text: Time.format("dddd, d MMMM yyyy")
         color: Colours.palette.m3tertiary
@@ -113,7 +113,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
 
         implicitWidth: root.centerWidth * 0.8
-        implicitHeight: input.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitHeight: input.implicitHeight + Tokens.padding.small
 
         color: Colours.tPalette.m3surfaceContainer
         radius: Tokens.rounding.full
@@ -152,7 +152,7 @@ ColumnLayout {
 
             Item {
                 implicitWidth: implicitHeight
-                implicitHeight: fprintIcon.implicitHeight + Tokens.padding.extraSmall * 2
+                implicitHeight: fprintIcon.implicitHeight + Tokens.padding.small
 
                 MaterialIcon {
                     id: fprintIcon
@@ -188,7 +188,7 @@ ColumnLayout {
 
             StyledRect {
                 implicitWidth: implicitHeight
-                implicitHeight: enterIcon.implicitHeight + Tokens.padding.extraSmall * 2
+                implicitHeight: enterIcon.implicitHeight + Tokens.padding.small
 
                 color: root.lock.pam.buffer ? Colours.palette.m3primary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
                 radius: Tokens.rounding.full

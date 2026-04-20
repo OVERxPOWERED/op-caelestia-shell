@@ -144,9 +144,9 @@ Loader {
             scale: 0
             Component.onCompleted: scale = Qt.binding(() => root.props.recordingConfirmDelete ? 1 : 0)
 
-            width: Math.min(parent.width - Tokens.padding.large * 2, implicitWidth)
-            implicitWidth: deleteConfirmationLayout.implicitWidth + Tokens.padding.large * 3
-            implicitHeight: deleteConfirmationLayout.implicitHeight + Tokens.padding.large * 3
+            width: Math.min(parent.width - Tokens.padding.extraLargeIncreased, implicitWidth)
+            implicitWidth: deleteConfirmationLayout.implicitWidth + Tokens.padding.extraExtraLarge
+            implicitHeight: deleteConfirmationLayout.implicitHeight + Tokens.padding.extraExtraLarge
 
             MouseArea {
                 anchors.fill: parent

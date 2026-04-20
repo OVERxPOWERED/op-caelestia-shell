@@ -18,7 +18,7 @@ Switch {
         color: root.checked ? Colours.palette.m3primary : Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
 
         implicitWidth: implicitHeight * 1.7
-        implicitHeight: Tokens.font.size.normal + Tokens.padding.small * 2
+        implicitHeight: Tokens.font.size.normal + Tokens.padding.large
 
         StyledRect {
             readonly property real nonAnimWidth: root.pressed ? implicitHeight * 1.3 : implicitHeight
@@ -83,7 +83,7 @@ Switch {
 
                 anchors.centerIn: parent
                 width: height
-                height: parent.implicitHeight - Tokens.padding.extraSmall * 2
+                height: parent.implicitHeight - Tokens.padding.small
                 preferredRendererType: Shape.CurveRenderer
                 asynchronous: true
 

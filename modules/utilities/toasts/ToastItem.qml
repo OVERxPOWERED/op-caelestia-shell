@@ -13,7 +13,7 @@ StyledRect {
 
     anchors.left: parent.left
     anchors.right: parent.right
-    implicitHeight: layout.implicitHeight + Tokens.padding.small * 2
+    implicitHeight: layout.implicitHeight + Tokens.padding.large
 
     radius: Tokens.rounding.large
     color: {
@@ -68,7 +68,7 @@ StyledRect {
             }
 
             implicitWidth: implicitHeight
-            implicitHeight: icon.implicitHeight + Tokens.padding.small * 2
+            implicitHeight: icon.implicitHeight + Tokens.padding.large
 
             MaterialIcon {
                 id: icon

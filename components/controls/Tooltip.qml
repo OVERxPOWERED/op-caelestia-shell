@@ -117,7 +117,7 @@ Popup {
         id: tooltipRect
 
         implicitWidth: tooltipText.implicitWidth + Tokens.padding.medium * 2
-        implicitHeight: tooltipText.implicitHeight + Tokens.padding.small * 2
+        implicitHeight: tooltipText.implicitHeight + Tokens.padding.large
 
         color: Colours.palette.m3surfaceContainerHighest
         radius: Tokens.rounding.medium

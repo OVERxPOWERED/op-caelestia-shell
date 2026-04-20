@@ -191,7 +191,7 @@ DeviceList {
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: connectIcon.implicitHeight + Tokens.padding.small * 2
+                    implicitHeight: connectIcon.implicitHeight + Tokens.padding.large
 
                     radius: Tokens.rounding.full
                     color: Qt.alpha(Colours.palette.m3primaryContainer, modelData.active ? 1 : 0)

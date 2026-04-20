@@ -25,7 +25,7 @@ StyledRect {
 
         Item {
             implicitWidth: implicitHeight
-            implicitHeight: upIcon.implicitHeight + Tokens.padding.extraSmall * 2
+            implicitHeight: upIcon.implicitHeight + Tokens.padding.small
 
             StateLayer {
                 radius: Tokens.rounding.medium
@@ -84,7 +84,7 @@ StyledRect {
 
                         Item {
                             implicitWidth: homeIcon.implicitWidth + (homeIcon.active ? Tokens.padding.extraSmall : 0) + folderName.implicitWidth + Tokens.padding.medium * 2
-                            implicitHeight: folderName.implicitHeight + Tokens.padding.extraSmall * 2
+                            implicitHeight: folderName.implicitHeight + Tokens.padding.small
 
                             Loader {
                                 asynchronous: true

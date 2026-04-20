@@ -191,7 +191,7 @@ StackView {
                         anchors.fill: parent
                         anchors.margins: -Tokens.padding.extraSmall / 2
                         anchors.leftMargin: -Tokens.padding.small
-                        anchors.rightMargin: -Tokens.padding.small * 2
+                        anchors.rightMargin: -Tokens.padding.large
 
                         radius: Tokens.rounding.full
                         color: Colours.palette.m3secondaryContainer

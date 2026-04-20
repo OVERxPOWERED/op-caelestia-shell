@@ -37,7 +37,7 @@ ColumnLayout {
 
     StyledRect {
         Layout.fillWidth: true
-        implicitHeight: adapterStatus.implicitHeight + Tokens.padding.large * 2
+        implicitHeight: adapterStatus.implicitHeight + Tokens.padding.extraLargeIncreased
 
         radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
@@ -98,7 +98,7 @@ ColumnLayout {
 
     StyledRect {
         Layout.fillWidth: true
-        implicitHeight: adapterSettings.implicitHeight + Tokens.padding.large * 2
+        implicitHeight: adapterSettings.implicitHeight + Tokens.padding.extraLargeIncreased
 
         radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
@@ -128,7 +128,7 @@ ColumnLayout {
                     property bool expanded
 
                     implicitWidth: adapterPicker.implicitWidth + Tokens.padding.medium * 2
-                    implicitHeight: adapterPicker.implicitHeight + Tokens.padding.small * 2
+                    implicitHeight: adapterPicker.implicitHeight + Tokens.padding.large
 
                     StateLayer {
                         onClicked: {
@@ -368,7 +368,7 @@ ColumnLayout {
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.small * 2
+                    implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.large
 
                     radius: Tokens.rounding.medium
                     color: Colours.palette.m3secondaryContainer
@@ -407,7 +407,7 @@ ColumnLayout {
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: editIcon.implicitHeight + Tokens.padding.small * 2
+                    implicitHeight: editIcon.implicitHeight + Tokens.padding.large
 
                     radius: root.session.bt.editingAdapterName ? Tokens.rounding.medium : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
                     color: Qt.alpha(Colours.palette.m3primary, root.session.bt.editingAdapterName ? 1 : 0)
@@ -455,7 +455,7 @@ ColumnLayout {
 
     StyledRect {
         Layout.fillWidth: true
-        implicitHeight: adapterInfo.implicitHeight + Tokens.padding.large * 2
+        implicitHeight: adapterInfo.implicitHeight + Tokens.padding.extraLargeIncreased
 
         radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer

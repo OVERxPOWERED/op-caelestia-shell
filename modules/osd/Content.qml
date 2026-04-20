@@ -20,8 +20,8 @@ Item {
     required property bool sourceMuted
     required property real brightness
 
-    implicitWidth: layout.implicitWidth + Tokens.padding.large * 2
-    implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
+    implicitWidth: layout.implicitWidth + Tokens.padding.extraLargeIncreased
+    implicitHeight: layout.implicitHeight + Tokens.padding.extraLargeIncreased
 
     ColumnLayout {
         id: layout

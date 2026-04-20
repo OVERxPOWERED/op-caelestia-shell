@@ -66,7 +66,7 @@ Item {
 
         StyledRect {
             Layout.fillWidth: true
-            implicitHeight: bigInfoRow.implicitHeight + Tokens.padding.extraSmall * 2
+            implicitHeight: bigInfoRow.implicitHeight + Tokens.padding.small
 
             radius: Tokens.rounding.extraLarge * 2
             color: Colours.tPalette.m3surfaceContainer

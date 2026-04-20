@@ -120,7 +120,7 @@ Item {
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.bottomMargin: -Tokens.padding.large * 2
+                    Layout.bottomMargin: -Tokens.padding.extraLargeIncreased
 
                     asynchronous: true
                     active: {

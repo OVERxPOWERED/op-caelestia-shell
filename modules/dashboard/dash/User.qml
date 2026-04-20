@@ -60,8 +60,8 @@ Row {
             StyledRect {
                 anchors.centerIn: parent
 
-                implicitWidth: selectIcon.implicitHeight + Tokens.padding.extraSmall * 2
-                implicitHeight: selectIcon.implicitHeight + Tokens.padding.extraSmall * 2
+                implicitWidth: selectIcon.implicitHeight + Tokens.padding.small
+                implicitHeight: selectIcon.implicitHeight + Tokens.padding.small
 
                 radius: Tokens.rounding.large
                 color: Colours.palette.m3primary

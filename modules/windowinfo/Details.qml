@@ -14,7 +14,7 @@ ColumnLayout {
     spacing: Tokens.spacing.small
 
     Label {
-        Layout.topMargin: Tokens.padding.large * 2
+        Layout.topMargin: Tokens.padding.extraLargeIncreased
 
         text: root.client?.title ?? qsTr("No active client")
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -33,8 +33,8 @@ ColumnLayout {
     StyledRect {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
-        Layout.leftMargin: Tokens.padding.large * 2
-        Layout.rightMargin: Tokens.padding.large * 2
+        Layout.leftMargin: Tokens.padding.extraLargeIncreased
+        Layout.rightMargin: Tokens.padding.extraLargeIncreased
         Layout.topMargin: Tokens.spacing.normal
         Layout.bottomMargin: Tokens.spacing.large
 

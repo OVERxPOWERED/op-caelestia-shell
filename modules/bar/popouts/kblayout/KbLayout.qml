@@ -88,7 +88,7 @@ ColumnLayout {
             readonly property bool isDisabled: layoutIndex > 3
 
             width: list.width
-            height: Math.max(36, rowText.implicitHeight + Tokens.padding.extraSmall * 2)
+            height: Math.max(36, rowText.implicitHeight + Tokens.padding.small)
             ToolTip.visible: isDisabled && layer.containsMouse
             ToolTip.text: "XKB limitation: maximum 4 layouts allowed"
 

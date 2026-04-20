@@ -150,8 +150,8 @@ Item {
 
         signal clicked
 
-        Layout.preferredWidth: implicitWidth + (controlState.pressed ? Tokens.padding.medium * 2 : active ? Tokens.padding.extraSmall * 2 : 0)
-        implicitWidth: controlIcon.implicitWidth + Tokens.padding.large * 2
+        Layout.preferredWidth: implicitWidth + (controlState.pressed ? Tokens.padding.medium * 2 : active ? Tokens.padding.small : 0)
+        implicitWidth: controlIcon.implicitWidth + Tokens.padding.extraLargeIncreased
         implicitHeight: controlIcon.implicitHeight + Tokens.padding.medium * 2
 
         color: active ? Colours.palette[`m3${colour.toLowerCase()}`] : Colours.palette[`m3${colour.toLowerCase()}Container`]

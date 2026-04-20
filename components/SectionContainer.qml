@@ -12,7 +12,7 @@ StyledRect {
     property bool alignTop: false
 
     Layout.fillWidth: true
-    implicitHeight: contentColumn.implicitHeight + Tokens.padding.large * 2
+    implicitHeight: contentColumn.implicitHeight + Tokens.padding.extraLargeIncreased
 
     radius: Tokens.rounding.large
     color: Colours.transparency.enabled ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : Colours.palette.m3surfaceContainerHigh

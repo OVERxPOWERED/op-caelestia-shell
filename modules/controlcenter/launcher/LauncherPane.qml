@@ -520,9 +520,9 @@ Item {
             spacing: Tokens.spacing.normal
 
             SettingsHeader {
-                Layout.leftMargin: Tokens.padding.large * 2
-                Layout.rightMargin: Tokens.padding.large * 2
-                Layout.topMargin: Tokens.padding.large * 2
+                Layout.leftMargin: Tokens.padding.extraLargeIncreased
+                Layout.rightMargin: Tokens.padding.extraLargeIncreased
+                Layout.topMargin: Tokens.padding.extraLargeIncreased
                 visible: displayedApp === null
                 icon: "apps"
                 title: qsTr("Launcher Applications")
@@ -530,9 +530,9 @@ Item {
 
             Item {
                 Layout.alignment: Qt.AlignHCenter
-                Layout.leftMargin: Tokens.padding.large * 2
-                Layout.rightMargin: Tokens.padding.large * 2
-                Layout.topMargin: Tokens.padding.large * 2
+                Layout.leftMargin: Tokens.padding.extraLargeIncreased
+                Layout.rightMargin: Tokens.padding.extraLargeIncreased
+                Layout.topMargin: Tokens.padding.extraLargeIncreased
                 visible: displayedApp !== null
                 implicitWidth: Math.max(appIconImage.implicitWidth, appTitleText.implicitWidth)
                 implicitHeight: appIconImage.implicitHeight + Tokens.spacing.normal + appTitleText.implicitHeight
@@ -574,8 +574,8 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.topMargin: Tokens.spacing.large
-                Layout.leftMargin: Tokens.padding.large * 2
-                Layout.rightMargin: Tokens.padding.large * 2
+                Layout.leftMargin: Tokens.padding.extraLargeIncreased
+                Layout.rightMargin: Tokens.padding.extraLargeIncreased
 
                 StyledFlickable {
                     id: detailsFlickable

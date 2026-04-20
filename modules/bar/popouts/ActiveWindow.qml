@@ -12,7 +12,7 @@ Item {
 
     required property PopoutState popouts
 
-    implicitWidth: Hypr.activeToplevel ? child.implicitWidth : -Tokens.padding.large * 2
+    implicitWidth: Hypr.activeToplevel ? child.implicitWidth : -Tokens.padding.extraLargeIncreased
     implicitHeight: child.implicitHeight
 
     Column {
@@ -59,8 +59,8 @@ Item {
             }
 
             Item {
-                implicitWidth: expandIcon.implicitHeight + Tokens.padding.extraSmall * 2
-                implicitHeight: expandIcon.implicitHeight + Tokens.padding.extraSmall * 2
+                implicitWidth: expandIcon.implicitHeight + Tokens.padding.small
+                implicitHeight: expandIcon.implicitHeight + Tokens.padding.small
 
                 Layout.alignment: Qt.AlignVCenter
 

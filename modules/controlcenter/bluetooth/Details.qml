@@ -59,8 +59,7 @@ StyledFlickable {
                         StyledText {
                             Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Connection status")
-                            font.pointSize: Tokens.font.size.larger
-                            font.weight: 500
+                            font: Tokens.font.body.builders.large.weight(500).build()
                         }
 
                         StyledText {
@@ -118,8 +117,7 @@ StyledFlickable {
                         StyledText {
                             Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Device properties")
-                            font.pointSize: Tokens.font.size.larger
-                            font.weight: 500
+                            font: Tokens.font.body.builders.large.weight(500).build()
                         }
 
                         StyledText {
@@ -187,7 +185,7 @@ StyledFlickable {
 
                                             text: qsTr("Device name")
                                             color: Colours.palette.m3outline
-                                            font.pointSize: Tokens.font.size.small
+                                            font: Tokens.font.label.small
                                         }
 
                                         StyledTextField {
@@ -324,8 +322,7 @@ StyledFlickable {
                         StyledText {
                             Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Device information")
-                            font.pointSize: Tokens.font.size.larger
-                            font.weight: 500
+                            font: Tokens.font.body.builders.large.weight(500).build()
                         }
 
                         StyledText {
@@ -389,7 +386,7 @@ StyledFlickable {
                                 StyledText {
                                     text: root.device?.dbusPath ?? ""
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Tokens.font.size.small
+                                    font: Tokens.font.body.small
                                 }
 
                                 StyledText {
@@ -400,7 +397,7 @@ StyledFlickable {
                                 StyledText {
                                     text: root.device?.address ?? ""
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Tokens.font.size.small
+                                    font: Tokens.font.body.small
                                 }
 
                                 StyledText {
@@ -411,7 +408,7 @@ StyledFlickable {
                                 StyledText {
                                     text: root.device?.bonded ? qsTr("Yes") : qsTr("No")
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Tokens.font.size.small
+                                    font: Tokens.font.body.small
                                 }
 
                                 StyledText {
@@ -422,7 +419,7 @@ StyledFlickable {
                                 StyledText {
                                     text: root.device?.deviceName ?? ""
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Tokens.font.size.small
+                                    font: Tokens.font.body.small
                                 }
                             }
                         }
@@ -557,7 +554,7 @@ StyledFlickable {
                         animate: true
                         text: (root.device && root.device[`${fabMenuItem.modelData.name}ed`] ? fabMenuItem.modelData.name === "connect" ? "dis" : "un" : "") + fabMenuItem.modelData.name
                         color: Colours.palette.m3onPrimaryContainer
-                        font.capitalization: Font.Capitalize
+                        font: Tokens.font.body.builders.small.capitalisation(Font.Capitalize).build()
                         Layout.preferredWidth: implicitWidth
 
                         Behavior on Layout.preferredWidth {
@@ -600,7 +597,7 @@ StyledFlickable {
                     fabBg.implicitWidth: 48
                     fabBg.implicitHeight: 48
                     fabBg.radius: 48 / 2
-                    fab.font.pointSize: Tokens.font.size.larger
+                    fab.font: Tokens.font.icon.large
                 }
             }
 
@@ -638,7 +635,7 @@ StyledFlickable {
                 animate: true
                 text: root.session.bt.fabMenuOpen ? "close" : "settings"
                 color: root.session.bt.fabMenuOpen ? Colours.palette.m3onPrimary : Colours.palette.m3onPrimaryContainer
-                font.pointSize: Tokens.font.size.large
+                font: Tokens.font.icon.large
                 fill: 1
             }
         }

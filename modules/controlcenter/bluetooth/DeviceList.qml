@@ -36,8 +36,7 @@ DeviceList {
 
             StyledText {
                 text: qsTr("Bluetooth")
-                font.pointSize: Tokens.font.size.large
-                font.weight: 500
+                font: Tokens.font.body.builders.large.weight(500).build()
             }
 
             Item {
@@ -48,9 +47,9 @@ DeviceList {
                 toggled: Bluetooth.defaultAdapter?.enabled ?? false
                 icon: "power"
                 accent: "Tertiary"
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.medium
-                verticalPadding: Tokens.padding.small
+                iconSize: Tokens.font.body.medium.pointSize
+                horizontalPadding: Tokens.padding.normal
+                verticalPadding: Tokens.padding.smaller
                 tooltip: qsTr("Toggle Bluetooth")
 
                 onClicked: {
@@ -64,9 +63,9 @@ DeviceList {
                 toggled: Bluetooth.defaultAdapter?.discoverable ?? false
                 icon: root.smallDiscoverable ? "group_search" : ""
                 label: root.smallDiscoverable ? "" : qsTr("Discoverable")
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.medium
-                verticalPadding: Tokens.padding.small
+                iconSize: Tokens.font.body.medium.pointSize
+                horizontalPadding: Tokens.padding.normal
+                verticalPadding: Tokens.padding.smaller
                 tooltip: qsTr("Make discoverable")
 
                 onClicked: {
@@ -80,9 +79,9 @@ DeviceList {
                 toggled: Bluetooth.defaultAdapter?.pairable ?? false
                 icon: "missing_controller"
                 label: root.smallPairable ? "" : qsTr("Pairable")
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.medium
-                verticalPadding: Tokens.padding.small
+                iconSize: Tokens.font.body.medium.pointSize
+                horizontalPadding: Tokens.padding.normal
+                verticalPadding: Tokens.padding.smaller
                 tooltip: qsTr("Make pairable")
 
                 onClicked: {
@@ -96,9 +95,9 @@ DeviceList {
                 toggled: Bluetooth.defaultAdapter?.discovering ?? false
                 icon: "bluetooth_searching"
                 accent: "Secondary"
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.medium
-                verticalPadding: Tokens.padding.small
+                iconSize: Tokens.font.body.medium.pointSize
+                horizontalPadding: Tokens.padding.normal
+                verticalPadding: Tokens.padding.smaller
                 tooltip: qsTr("Scan for devices")
 
                 onClicked: {
@@ -112,9 +111,9 @@ DeviceList {
                 toggled: !root.session.bt.active
                 icon: "settings"
                 accent: "Primary"
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.medium
-                verticalPadding: Tokens.padding.small
+                iconSize: Tokens.font.body.medium.pointSize
+                horizontalPadding: Tokens.padding.normal
+                verticalPadding: Tokens.padding.smaller
                 tooltip: qsTr("Bluetooth settings")
 
                 onClicked: {
@@ -178,7 +177,7 @@ DeviceList {
                         anchors.centerIn: parent
                         text: Icons.getBluetoothIcon(device.modelData ? device.modelData.icon : "")
                         color: device.connected ? Colours.palette.m3onPrimaryContainer : (device.modelData && device.modelData.bonded) ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                        font.pointSize: Tokens.font.size.large
+                        font: Tokens.font.icon.large
                         fill: device.connected ? 1 : 0
 
                         Behavior on fill {
@@ -202,7 +201,7 @@ DeviceList {
                         Layout.fillWidth: true
                         text: (device.modelData ? device.modelData.address : "") + (device.connected ? qsTr(" (Connected)") : (device.modelData && device.modelData.bonded) ? qsTr(" (Paired)") : "")
                         color: Colours.palette.m3outline
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.body.small
                         elide: Text.ElideRight
                     }
                 }

@@ -26,8 +26,7 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Adapter status")
-        font.pointSize: Tokens.font.size.larger
-        font.weight: 500
+        font: Tokens.font.body.builders.large.weight(500).build()
     }
 
     StyledText {
@@ -87,8 +86,7 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Adapter properties")
-        font.pointSize: Tokens.font.size.larger
-        font.weight: 500
+        font: Tokens.font.body.builders.large.weight(500).build()
     }
 
     StyledText {
@@ -325,7 +323,7 @@ ColumnLayout {
 
                         text: qsTr("Rename adapter (currently does not work)")
                         color: Colours.palette.m3outline
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.label.small
                     }
 
                     StyledTextField {
@@ -444,8 +442,7 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Adapter information")
-        font.pointSize: Tokens.font.size.larger
-        font.weight: 500
+        font: Tokens.font.body.builders.large.weight(500).build()
     }
 
     StyledText {
@@ -477,7 +474,7 @@ ColumnLayout {
             StyledText {
                 text: Bluetooth.defaultAdapter ? BluetoothAdapterState.toString(Bluetooth.defaultAdapter.state) : qsTr("Unknown")
                 color: Colours.palette.m3outline
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
             }
 
             StyledText {
@@ -488,7 +485,7 @@ ColumnLayout {
             StyledText {
                 text: Bluetooth.defaultAdapter?.dbusPath ?? ""
                 color: Colours.palette.m3outline
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
             }
 
             StyledText {
@@ -499,7 +496,7 @@ ColumnLayout {
             StyledText {
                 text: Bluetooth.defaultAdapter?.adapterId ?? ""
                 color: Colours.palette.m3outline
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
             }
         }
     }

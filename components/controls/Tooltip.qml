@@ -138,7 +138,7 @@ Popup {
 
             text: root.text
             color: Colours.palette.m3onSurface
-            font.pointSize: Tokens.font.size.small
+            font: Tokens.font.body.small
         }
     }
 

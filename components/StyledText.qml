@@ -16,8 +16,7 @@ Text {
     renderType: Text.NativeRendering
     textFormat: Text.PlainText
     color: Colours.palette.m3onSurface
-    font.family: Tokens.font.family.sans
-    font.pointSize: Tokens.font.size.smaller
+    font: Tokens.font.body.small
 
     Behavior on color {
         CAnim {}

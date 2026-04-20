@@ -38,8 +38,7 @@ ColumnLayout {
 
             StyledText {
                 text: root.title
-                font.pointSize: Tokens.font.size.larger
-                font.weight: 500
+                font: Tokens.font.title.builders.medium.weight(500).build()
             }
 
             Item {
@@ -50,7 +49,7 @@ ColumnLayout {
                 text: "expand_more"
                 rotation: root.expanded ? 180 : 0
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.normal
+                font: Tokens.font.icon.medium
 
                 Behavior on rotation {
                     Anim {
@@ -122,7 +121,7 @@ ColumnLayout {
                 visible: root.description !== ""
                 text: root.description
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
                 wrapMode: Text.Wrap
             }
         }

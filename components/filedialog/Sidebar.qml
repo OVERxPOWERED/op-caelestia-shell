@@ -32,8 +32,7 @@ StyledRect {
             Layout.bottomMargin: Tokens.spacing.medium
             text: qsTr("Files")
             color: Colours.palette.m3onSurface
-            font.pointSize: Tokens.font.size.larger
-            font.bold: true
+            font: Tokens.font.body.builders.large.weight(Font.Bold).build()
         }
 
         Repeater {
@@ -91,7 +90,7 @@ StyledRect {
                             return "folder";
                         }
                         color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                        font.pointSize: Tokens.font.size.large
+                        font: Tokens.font.icon.large
                         fill: place.selected ? 1 : 0
 
                         Behavior on fill {
@@ -103,7 +102,7 @@ StyledRect {
                         Layout.fillWidth: true
                         text: place.modelData
                         color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                        font.pointSize: Tokens.font.size.normal
+                        font: Tokens.font.body.medium
                         elide: Text.ElideRight
                     }
                 }

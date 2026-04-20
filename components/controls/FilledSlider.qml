@@ -70,8 +70,7 @@ Slider {
                 function update(): void {
                     animate = !moving;
                     binding.when = moving;
-                    font.pointSize = moving ? Tokens.font.size.small : Tokens.font.size.larger;
-                    font.family = moving ? Tokens.font.family.sans : Tokens.font.family.material;
+                    font = moving ? Tokens.font.body.small : Tokens.font.icon.large;
                 }
 
                 text: root.icon

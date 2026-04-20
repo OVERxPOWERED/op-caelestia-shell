@@ -18,7 +18,7 @@ Switch {
         color: root.checked ? Colours.palette.m3primary : Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
 
         implicitWidth: implicitHeight * 1.7
-        implicitHeight: Tokens.font.size.normal + Tokens.padding.large
+        implicitHeight: Tokens.font.body.medium.pointSize + Tokens.padding.smaller * 2
 
         StyledRect {
             readonly property real nonAnimWidth: root.pressed ? implicitHeight * 1.3 : implicitHeight
@@ -88,7 +88,7 @@ Switch {
                 asynchronous: true
 
                 ShapePath {
-                    strokeWidth: root.Tokens.font.size.larger * 0.15
+                    strokeWidth: root.Tokens.font.body.large.pointSize * 0.15
                     strokeColor: root.checked ? Colours.palette.m3primary : Colours.palette.m3surfaceContainerHighest
                     fillColor: "transparent"
                     capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap

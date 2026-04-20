@@ -14,7 +14,7 @@ StyledRect {
     property string icon
     property string label
     property string accent: "Secondary"
-    property real iconSize: Tokens.font.size.large
+    property real iconSize: Tokens.font.icon.large.pointSize
     property real horizontalPadding: Tokens.padding.large
     property real verticalPadding: Tokens.padding.medium
     property string tooltip: ""
@@ -61,7 +61,7 @@ StyledRect {
             fill: root.toggled ? 1 : 0
             text: root.icon
             color: root.toggled ? Colours.palette[`m3on${root.accent}`] : Colours.palette[`m3on${root.accent}Container`]
-            font.pointSize: root.iconSize
+            font: Tokens.font.icon.builders.large.size(root.iconSize).build()
 
             Behavior on fill {
                 Anim {}

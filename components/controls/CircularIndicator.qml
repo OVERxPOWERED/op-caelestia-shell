@@ -19,8 +19,8 @@ BusyIndicator {
         Completing
     }
 
-    property real implicitSize: Tokens.font.size.normal * 3
-    property real strokeWidth: Tokens.padding.extraSmall * 0.8
+    property real implicitSize: Tokens.font.body.medium.pointSize * 3
+    property real strokeWidth: Tokens.padding.small * 0.8
     property color fgColour: Colours.palette.m3primary
     property color bgColour: Colours.palette.m3secondaryContainer
 

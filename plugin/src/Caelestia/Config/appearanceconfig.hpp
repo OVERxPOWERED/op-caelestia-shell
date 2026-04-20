@@ -210,9 +210,9 @@ public:
         m_title->medium()->setDefaults(sans, 16, QFont::Medium);
         m_title->small()->setDefaults(sans, 14, QFont::Medium);
 
-        m_body->large()->setDefaults(sans, 16, QFont::Medium);
-        m_body->medium()->setDefaults(sans, 14, QFont::Medium);
-        m_body->small()->setDefaults(sans, 12, QFont::Medium);
+        m_body->large()->setDefaults(sans, 16, QFont::Normal);
+        m_body->medium()->setDefaults(sans, 14, QFont::Normal);
+        m_body->small()->setDefaults(sans, 12, QFont::Normal);
 
         m_label->large()->setDefaults(sans, 14, QFont::Medium);
         m_label->medium()->setDefaults(sans, 12, QFont::Medium);
@@ -222,10 +222,10 @@ public:
         m_mono->medium()->setDefaults(mono, 14, QFont::Normal);
         m_mono->small()->setDefaults(mono, 12, QFont::Normal);
 
-        m_icon->extraLarge()->setDefaults(icons, 48, QFont::Normal);
-        m_icon->large()->setDefaults(icons, 32, QFont::Normal);
-        m_icon->medium()->setDefaults(icons, 24, QFont::Normal);
-        m_icon->small()->setDefaults(icons, 20, QFont::Normal);
+        m_icon->extraLarge()->setDefaults(icons, static_cast<int>(48 / 1.33), QFont::Normal);
+        m_icon->large()->setDefaults(icons, static_cast<int>(32 / 1.33), QFont::Normal);
+        m_icon->medium()->setDefaults(icons, static_cast<int>(24 / 1.33), QFont::Normal);
+        m_icon->small()->setDefaults(icons, static_cast<int>(20 / 1.33), QFont::Normal);
     }
 };
 

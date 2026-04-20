@@ -27,6 +27,11 @@ FontBuilder FontBuilder::italic(bool on) {
     return *this;
 }
 
+FontBuilder FontBuilder::letterSpacing(qreal spacing, bool absolute) {
+    m_font.setLetterSpacing(absolute ? QFont::AbsoluteSpacing : QFont::PercentageSpacing, spacing);
+    return *this;
+}
+
 FontBuilder FontBuilder::vaxis(QFont::Tag tag, float value) {
     m_font.setVariableAxis(tag, value);
     return *this;

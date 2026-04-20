@@ -17,6 +17,7 @@ public:
     [[nodiscard]] Q_INVOKABLE FontBuilder size(int pointSize);
     [[nodiscard]] Q_INVOKABLE FontBuilder weight(QFont::Weight weight);
     [[nodiscard]] Q_INVOKABLE FontBuilder italic(bool on = true);
+    [[nodiscard]] Q_INVOKABLE FontBuilder letterSpacing(qreal spacing, bool absolute = true);
     [[nodiscard]] Q_INVOKABLE FontBuilder vaxis(QFont::Tag tag, float value);
     [[nodiscard]] Q_INVOKABLE QFont build() const;
 

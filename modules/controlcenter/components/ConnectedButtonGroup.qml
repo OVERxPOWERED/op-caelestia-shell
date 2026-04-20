@@ -17,7 +17,7 @@ StyledRect {
 
     Layout.fillWidth: true
     implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
-    radius: Tokens.rounding.normal
+    radius: Tokens.rounding.large
     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
     clip: true
 
@@ -81,7 +81,7 @@ StyledRect {
 
                     // Match utilities Toggles radius styling
                     // Each button has full rounding (not connected) since they have spacing
-                    radius: stateLayer.pressed ? Tokens.rounding.small / 2 : internalChecked ? Tokens.rounding.small : Tokens.rounding.normal
+                    radius: stateLayer.pressed ? Tokens.rounding.medium / 2 : internalChecked ? Tokens.rounding.medium : Tokens.rounding.large
 
                     // Match utilities Toggles inactive color
                     inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)

@@ -79,13 +79,13 @@ RowLayout {
 
         background: StyledRect {
             implicitWidth: 100
-            radius: Tokens.rounding.small
+            radius: Tokens.rounding.medium
             color: Colours.tPalette.m3surfaceContainerHigh
         }
     }
 
     StyledRect {
-        radius: Tokens.rounding.small
+        radius: Tokens.rounding.medium
         color: Colours.palette.m3primary
 
         implicitWidth: implicitHeight
@@ -120,7 +120,7 @@ RowLayout {
     }
 
     StyledRect {
-        radius: Tokens.rounding.small
+        radius: Tokens.rounding.medium
         color: Colours.palette.m3primary
 
         implicitWidth: implicitHeight

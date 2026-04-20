@@ -85,7 +85,7 @@ Column {
         implicitWidth: Tokens.sizes.session.button
         implicitHeight: Tokens.sizes.session.button
 
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.extraLarge
         color: button.activeFocus ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
 
         Keys.onEnterPressed: Quickshell.execDetached(button.command)

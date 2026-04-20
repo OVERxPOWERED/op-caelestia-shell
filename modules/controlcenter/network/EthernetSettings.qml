@@ -38,7 +38,7 @@ ColumnLayout {
         Layout.fillWidth: true
         implicitHeight: ethernetInfo.implicitHeight + Tokens.padding.large * 2
 
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
 
         ColumnLayout {

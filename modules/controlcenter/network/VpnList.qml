@@ -106,7 +106,7 @@ ColumnLayout {
                 implicitHeight: rowLayout.implicitHeight + Tokens.padding.normal * 2
 
                 color: Qt.alpha(Colours.tPalette.m3surfaceContainer, (root.session && root.session.vpn && root.session.vpn.active === modelData) ? Colours.tPalette.m3surfaceContainer.a : 0)
-                radius: Tokens.rounding.normal
+                radius: Tokens.rounding.large
 
                 StateLayer {
                     onClicked: {
@@ -130,7 +130,7 @@ ColumnLayout {
                         implicitWidth: implicitHeight
                         implicitHeight: icon.implicitHeight + Tokens.padding.normal * 2
 
-                        radius: Tokens.rounding.normal
+                        radius: Tokens.rounding.large
                         color: modelData.enabled && VPN.connected ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
 
                         MaterialIcon {
@@ -416,7 +416,7 @@ ColumnLayout {
 
         background: StyledRect {
             color: Colours.palette.m3surfaceContainerHigh
-            radius: Tokens.rounding.large
+            radius: Tokens.rounding.extraLarge
 
             Elevation {
                 anchors.fill: parent
@@ -594,7 +594,7 @@ ColumnLayout {
                         Layout.fillWidth: true
                         implicitHeight: 40
                         color: displayNameField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                        radius: Tokens.rounding.small
+                        radius: Tokens.rounding.medium
                         border.width: 1
                         border.color: displayNameField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -631,7 +631,7 @@ ColumnLayout {
                         Layout.fillWidth: true
                         implicitHeight: 40
                         color: interfaceNameField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                        radius: Tokens.rounding.small
+                        radius: Tokens.rounding.medium
                         border.width: 1
                         border.color: interfaceNameField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -669,7 +669,7 @@ ColumnLayout {
                         Layout.fillWidth: true
                         implicitHeight: 40
                         color: connectCmdField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                        radius: Tokens.rounding.small
+                        radius: Tokens.rounding.medium
                         border.width: 1
                         border.color: connectCmdField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -707,7 +707,7 @@ ColumnLayout {
                         Layout.fillWidth: true
                         implicitHeight: 40
                         color: disconnectCmdField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                        radius: Tokens.rounding.small
+                        radius: Tokens.rounding.medium
                         border.width: 1
                         border.color: disconnectCmdField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 

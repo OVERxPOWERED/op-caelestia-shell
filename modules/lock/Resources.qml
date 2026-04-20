@@ -61,7 +61,7 @@ GridLayout {
         implicitHeight: width
 
         color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.extraLarge
 
         CircularProgress {
             id: circ

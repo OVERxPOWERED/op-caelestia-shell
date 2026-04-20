@@ -79,7 +79,7 @@ MouseArea {
             return item.mapToItem(root.parent, 0, off).y + root.marginY;
         }
 
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         level: 2
 
         implicitWidth: Math.max(200, column.implicitWidth + column.anchors.margins * 2)
@@ -124,11 +124,11 @@ MouseArea {
                         implicitWidth: menuOptionRow.implicitWidth + Tokens.padding.normal * 2
                         implicitHeight: menuOptionRow.implicitHeight + Tokens.padding.normal * 2
 
-                        radius: active ? 12 : Tokens.rounding.extraSmall // This should use a token, but tokens are currently extremely scuffed
-                        topLeftRadius: index === 0 ? Tokens.rounding.small : radius
-                        topRightRadius: index === 0 ? Tokens.rounding.small : radius
-                        bottomLeftRadius: index === repeater.count - 1 ? Tokens.rounding.small : radius
-                        bottomRightRadius: index === repeater.count - 1 ? Tokens.rounding.small : radius
+                        radius: active ? Tokens.rounding.medium : Tokens.rounding.extraSmall
+                        topLeftRadius: index === 0 ? Tokens.rounding.medium : radius
+                        topRightRadius: index === 0 ? Tokens.rounding.medium : radius
+                        bottomLeftRadius: index === repeater.count - 1 ? Tokens.rounding.medium : radius
+                        bottomRightRadius: index === repeater.count - 1 ? Tokens.rounding.medium : radius
 
                         color: Qt.alpha(Colours.palette.m3tertiaryContainer, active ? 1 : 0)
 

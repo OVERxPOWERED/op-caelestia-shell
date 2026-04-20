@@ -49,7 +49,7 @@ Column {
             implicitHeight: child.implicitHeight + Tokens.padding.smaller * 2
 
             color: Colours.palette.m3error
-            radius: Tokens.rounding.normal
+            radius: Tokens.rounding.large
 
             Column {
                 id: child

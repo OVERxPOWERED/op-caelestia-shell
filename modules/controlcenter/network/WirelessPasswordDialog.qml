@@ -101,7 +101,7 @@ Item {
         implicitWidth: 400
         implicitHeight: content.implicitHeight + Tokens.padding.large * 2
 
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         color: Colours.tPalette.m3surface
         opacity: root.session.network.showPasswordDialog && !root.isClosing ? 1 : 0
         scale: root.session.network.showPasswordDialog && !root.isClosing ? 1 : 0.7
@@ -261,7 +261,7 @@ Item {
 
                 StyledRect {
                     anchors.fill: parent
-                    radius: Tokens.rounding.normal
+                    radius: Tokens.rounding.large
                     color: passwordContainer.activeFocus ? Qt.lighter(Colours.tPalette.m3surfaceContainer, 1.05) : Colours.tPalette.m3surfaceContainer
                     border.width: passwordContainer.activeFocus || connectButton.hasError ? 4 : (root.visible ? 1 : 0)
                     border.color: {
@@ -335,7 +335,7 @@ Item {
                         implicitHeight: charList.implicitHeight
 
                         color: Colours.palette.m3onSurface
-                        radius: Tokens.rounding.small / 2
+                        radius: Tokens.rounding.medium / 2
 
                         opacity: 0
                         scale: 0

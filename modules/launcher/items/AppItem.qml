@@ -19,7 +19,7 @@ Item {
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         onClicked: {
             Apps.launch(root.modelData);
             root.visibilities.launcher = false;
@@ -65,7 +65,7 @@ Item {
                 color: Colours.palette.m3outline
 
                 elide: Text.ElideRight
-                width: root.width - icon.width - favouriteIcon.width - Tokens.rounding.normal * 2
+                width: root.width - icon.width - favouriteIcon.width - Tokens.rounding.extraLargeIncreased
 
                 anchors.top: name.bottom
             }

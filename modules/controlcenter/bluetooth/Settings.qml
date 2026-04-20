@@ -39,7 +39,7 @@ ColumnLayout {
         Layout.fillWidth: true
         implicitHeight: adapterStatus.implicitHeight + Tokens.padding.large * 2
 
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
 
         ColumnLayout {
@@ -100,7 +100,7 @@ ColumnLayout {
         Layout.fillWidth: true
         implicitHeight: adapterSettings.implicitHeight + Tokens.padding.large * 2
 
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
 
         ColumnLayout {
@@ -135,7 +135,7 @@ ColumnLayout {
                             adapterPickerButton.expanded = !adapterPickerButton.expanded;
                         }
 
-                        radius: Tokens.rounding.small
+                        radius: Tokens.rounding.medium
                     }
 
                     RowLayout {
@@ -184,7 +184,7 @@ ColumnLayout {
                         implicitHeight: adapterPickerButton.expanded ? adapterList.implicitHeight : adapterPickerButton.implicitHeight
 
                         color: Colours.palette.m3secondaryContainer
-                        radius: Tokens.rounding.small
+                        radius: Tokens.rounding.medium
                         opacity: adapterPickerButton.expanded ? 1 : 0
                         scale: adapterPickerButton.expanded ? 1 : 0.7
 
@@ -346,7 +346,7 @@ ColumnLayout {
                         rightPadding: Tokens.padding.normal
 
                         background: StyledRect {
-                            radius: Tokens.rounding.small
+                            radius: Tokens.rounding.medium
                             border.width: 2
                             border.color: Colours.palette.m3primary
                             opacity: root.session.bt.editingAdapterName ? 1 : 0
@@ -370,7 +370,7 @@ ColumnLayout {
                     implicitWidth: implicitHeight
                     implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.smaller * 2
 
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                     color: Colours.palette.m3secondaryContainer
                     opacity: root.session.bt.editingAdapterName ? 1 : 0
                     scale: root.session.bt.editingAdapterName ? 1 : 0.5
@@ -409,7 +409,7 @@ ColumnLayout {
                     implicitWidth: implicitHeight
                     implicitHeight: editIcon.implicitHeight + Tokens.padding.smaller * 2
 
-                    radius: root.session.bt.editingAdapterName ? Tokens.rounding.small : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
+                    radius: root.session.bt.editingAdapterName ? Tokens.rounding.medium : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
                     color: Qt.alpha(Colours.palette.m3primary, root.session.bt.editingAdapterName ? 1 : 0)
 
                     StateLayer {
@@ -457,7 +457,7 @@ ColumnLayout {
         Layout.fillWidth: true
         implicitHeight: adapterInfo.implicitHeight + Tokens.padding.large * 2
 
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
 
         ColumnLayout {

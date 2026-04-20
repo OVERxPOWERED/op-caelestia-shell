@@ -19,7 +19,7 @@ StyledRect {
 
     implicitHeight: contentHeight
 
-    radius: Tokens.rounding.large
+    radius: Tokens.rounding.extraLarge
     color: Colours.tPalette.m3surfaceContainer
 
     Loader {
@@ -47,7 +47,7 @@ StyledRect {
                 Rectangle {
                     Layout.preferredHeight: 24
                     Layout.preferredWidth: 80
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                     color: Qt.rgba(Colours.palette.m3primary.r, Colours.palette.m3primary.g, Colours.palette.m3primary.b, 0.15)
 
                     StyledText {
@@ -73,7 +73,7 @@ StyledRect {
                 Rectangle {
                     Layout.preferredHeight: 24
                     Layout.preferredWidth: 60
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                     visible: LyricsService.preferredBackend === "Auto"
                     color: LyricsService.backend === "Local" ? Qt.rgba(Colours.palette.m3tertiary.r, Colours.palette.m3tertiary.g, Colours.palette.m3tertiary.b, 0.15) : Qt.rgba(Colours.palette.m3secondary.r, Colours.palette.m3secondary.g, Colours.palette.m3secondary.b, 0.15)
 
@@ -115,7 +115,7 @@ StyledRect {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 48
                 visible: LyricsService.preferredBackend === "Local" && LyricsService.loadedLocalFile.length > 0
-                radius: Tokens.rounding.small
+                radius: Tokens.rounding.medium
                 color: Qt.rgba(Colours.palette.m3tertiary.r, Colours.palette.m3tertiary.g, Colours.palette.m3tertiary.b, 0.1)
 
                 ColumnLayout {
@@ -195,7 +195,7 @@ StyledRect {
                             id: background
 
                             anchors.fill: parent
-                            radius: Tokens.rounding.small
+                            radius: Tokens.rounding.medium
 
                             color: delegateRoot.pressed ? Qt.rgba(Colours.palette.m3primary.r, Colours.palette.m3primary.g, Colours.palette.m3primary.b, 0.25) : delegateRoot.hovered ? Qt.rgba(Colours.palette.m3primary.r, Colours.palette.m3primary.g, Colours.palette.m3primary.b, 0.06) : Qt.rgba(Colours.palette.m3primary.r, Colours.palette.m3primary.g, Colours.palette.m3primary.b, 0.03)
 

@@ -91,7 +91,7 @@ Item {
             implicitHeight: charList.implicitHeight
 
             color: Colours.palette.m3onSurface
-            radius: Tokens.rounding.small / 2
+            radius: Tokens.rounding.medium / 2
 
             opacity: 0
             scale: 0

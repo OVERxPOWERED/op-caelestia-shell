@@ -47,7 +47,7 @@ StyledRect {
 
     onCheckedChanged: internalChecked = checked
 
-    radius: internalChecked ? Tokens.rounding.small : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
+    radius: internalChecked ? Tokens.rounding.medium : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
     color: type === TextButton.Text ? "transparent" : internalChecked ? activeColour : inactiveColour
 
     implicitWidth: label.implicitWidth + horizontalPadding * 2

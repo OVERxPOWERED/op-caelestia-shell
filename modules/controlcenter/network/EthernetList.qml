@@ -65,7 +65,7 @@ DeviceList {
             implicitHeight: rowLayout.implicitHeight + Tokens.padding.normal * 2
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, ethernetItem.isActive ? Colours.tPalette.m3surfaceContainer.a : 0)
-            radius: Tokens.rounding.normal
+            radius: Tokens.rounding.large
 
             StateLayer {
                 id: stateLayer
@@ -87,7 +87,7 @@ DeviceList {
                     implicitWidth: implicitHeight
                     implicitHeight: icon.implicitHeight + Tokens.padding.normal * 2
 
-                    radius: Tokens.rounding.normal
+                    radius: Tokens.rounding.large
                     color: modelData.connected ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
 
                     StyledRect {

@@ -39,7 +39,7 @@ Item {
                 Layout.fillHeight: true
 
                 color: Colours.tPalette.m3surfaceContainer
-                radius: Tokens.rounding.normal
+                radius: Tokens.rounding.large
 
                 Details {
                     client: root.client
@@ -51,7 +51,7 @@ Item {
                 Layout.preferredHeight: buttons.implicitHeight
 
                 color: Colours.tPalette.m3surfaceContainer
-                radius: Tokens.rounding.normal
+                radius: Tokens.rounding.large
 
                 Buttons {
                     id: buttons

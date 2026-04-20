@@ -28,7 +28,7 @@ ColumnLayout {
             implicitHeight: prompt.implicitHeight + Tokens.padding.normal * 2
 
             color: Colours.palette.m3primary
-            radius: Tokens.rounding.small
+            radius: Tokens.rounding.medium
 
             MonoText {
                 id: prompt
@@ -136,7 +136,7 @@ ColumnLayout {
                     implicitWidth: implicitHeight
                     implicitHeight: Tokens.font.size.larger * 2
                     color: Colours.palette[`term${index}`]
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                 }
             }
         }

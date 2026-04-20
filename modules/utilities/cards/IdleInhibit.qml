@@ -11,7 +11,7 @@ StyledRect {
     Layout.fillWidth: true
     implicitHeight: layout.implicitHeight + (IdleInhibitor.enabled ? activeChip.implicitHeight + activeChip.anchors.topMargin : 0) + Tokens.padding.large * 2
 
-    radius: Tokens.rounding.normal
+    radius: Tokens.rounding.large
     color: Colours.tPalette.m3surfaceContainer
     clip: true
 

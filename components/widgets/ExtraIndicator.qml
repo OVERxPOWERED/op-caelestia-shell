@@ -11,7 +11,7 @@ StyledRect {
     anchors.margins: Tokens.padding.normal
 
     color: Colours.palette.m3tertiary
-    radius: Tokens.rounding.small
+    radius: Tokens.rounding.medium
 
     implicitWidth: count.implicitWidth + Tokens.padding.normal * 2
     implicitHeight: count.implicitHeight + Tokens.padding.small * 2

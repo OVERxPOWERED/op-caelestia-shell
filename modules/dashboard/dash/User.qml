@@ -20,7 +20,7 @@ Row {
         implicitWidth: info.implicitHeight
         implicitHeight: info.implicitHeight
 
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.extraLarge
         color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
 
         MaterialIcon {
@@ -63,7 +63,7 @@ Row {
                 implicitWidth: selectIcon.implicitHeight + Tokens.padding.small * 2
                 implicitHeight: selectIcon.implicitHeight + Tokens.padding.small * 2
 
-                radius: Tokens.rounding.normal
+                radius: Tokens.rounding.large
                 color: Colours.palette.m3primary
                 scale: parent.containsMouse ? 1 : 0.5
                 opacity: parent.containsMouse ? 1 : 0

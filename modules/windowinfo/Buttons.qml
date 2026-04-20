@@ -31,7 +31,7 @@ ColumnLayout {
 
         StyledRect {
             color: Colours.palette.m3primary
-            radius: Tokens.rounding.small
+            radius: Tokens.rounding.medium
 
             implicitWidth: moveToWsIcon.implicitWidth + Tokens.padding.small * 2
             implicitHeight: moveToWsIcon.implicitHeight + Tokens.padding.small
@@ -142,7 +142,7 @@ ColumnLayout {
 
         signal clicked
 
-        radius: Tokens.rounding.small
+        radius: Tokens.rounding.medium
 
         Layout.fillWidth: true
         implicitHeight: label.implicitHeight + Tokens.padding.small * 2

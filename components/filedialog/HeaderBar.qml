@@ -28,7 +28,7 @@ StyledRect {
             implicitHeight: upIcon.implicitHeight + Tokens.padding.small * 2
 
             StateLayer {
-                radius: Tokens.rounding.small
+                radius: Tokens.rounding.medium
                 disabled: root.dialog.cwd.length === 1
                 onClicked: root.dialog.cwd.pop()
             }
@@ -46,7 +46,7 @@ StyledRect {
         StyledRect {
             Layout.fillWidth: true
 
-            radius: Tokens.rounding.small
+            radius: Tokens.rounding.medium
             color: Colours.tPalette.m3surfaceContainerHigh
 
             implicitHeight: pathComponents.implicitHeight + pathComponents.anchors.margins * 2
@@ -95,7 +95,7 @@ StyledRect {
                                         root.dialog.cwd = root.dialog.cwd.slice(0, folder.index + 1);
                                     }
 
-                                    radius: Tokens.rounding.small
+                                    radius: Tokens.rounding.medium
                                 }
                             }
 

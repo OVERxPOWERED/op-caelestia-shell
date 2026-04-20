@@ -29,7 +29,7 @@ CollapsibleSection {
                 Layout.fillWidth: true
 
                 color: Qt.alpha(Colours.tPalette.m3surfaceContainer, modelData.variant === Schemes.currentVariant ? Colours.tPalette.m3surfaceContainer.a : 0)
-                radius: Tokens.rounding.normal
+                radius: Tokens.rounding.large
                 border.width: modelData.variant === Schemes.currentVariant ? 1 : 0
                 border.color: Colours.palette.m3primary
                 implicitHeight: variantRow.implicitHeight + Tokens.padding.normal * 2

@@ -19,8 +19,8 @@ RowLayout {
             Layout.fillWidth: true
             implicitHeight: weather.implicitHeight
 
-            topLeftRadius: Tokens.rounding.large
-            radius: Tokens.rounding.small
+            topLeftRadius: Tokens.rounding.extraLarge
+            radius: Tokens.rounding.medium
             color: Colours.tPalette.m3surfaceContainer
 
             WeatherInfo {
@@ -34,7 +34,7 @@ RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            radius: Tokens.rounding.small
+            radius: Tokens.rounding.medium
             color: Colours.tPalette.m3surfaceContainer
 
             Fetch {}
@@ -44,8 +44,8 @@ RowLayout {
             Layout.fillWidth: true
             implicitHeight: media.implicitHeight
 
-            bottomLeftRadius: Tokens.rounding.large
-            radius: Tokens.rounding.small
+            bottomLeftRadius: Tokens.rounding.extraLarge
+            radius: Tokens.rounding.medium
             color: Colours.tPalette.m3surfaceContainer
 
             Media {
@@ -68,8 +68,8 @@ RowLayout {
             Layout.fillWidth: true
             implicitHeight: resources.implicitHeight
 
-            topRightRadius: Tokens.rounding.large
-            radius: Tokens.rounding.small
+            topRightRadius: Tokens.rounding.extraLarge
+            radius: Tokens.rounding.medium
             color: Colours.tPalette.m3surfaceContainer
 
             Resources {
@@ -81,8 +81,8 @@ RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            bottomRightRadius: Tokens.rounding.large
-            radius: Tokens.rounding.small
+            bottomRightRadius: Tokens.rounding.extraLarge
+            radius: Tokens.rounding.medium
             color: Colours.tPalette.m3surfaceContainer
 
             NotifDock {

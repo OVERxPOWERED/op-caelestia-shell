@@ -26,7 +26,7 @@ Item {
         anchors.centerIn: parent
         width: 400
         height: 350
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.extraLarge
         color: Colours.tPalette.m3surfaceContainer
         visible: !Config.dashboard.performance.showCpu && !(Config.dashboard.performance.showGpu && SystemUsage.gpuType !== "NONE") && !Config.dashboard.performance.showMemory && !Config.dashboard.performance.showStorage && !Config.dashboard.performance.showNetwork && !(UPower.displayDevice.isLaptopBattery && Config.dashboard.performance.showBattery)
 
@@ -166,7 +166,7 @@ Item {
         property real animatedPercentage: 0
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.extraLarge
         Component.onCompleted: animatedPercentage = percentage
         onPercentageChanged: animatedPercentage = percentage
 
@@ -346,7 +346,7 @@ Item {
         property real animatedTemp: 0
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.extraLarge
         Component.onCompleted: {
             animatedUsage = usage;
             animatedTemp = tempProgress;
@@ -462,7 +462,7 @@ Item {
         property real animatedPercentage: 0
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.extraLarge
         clip: true
         Component.onCompleted: animatedPercentage = percentage
         onPercentageChanged: animatedPercentage = percentage
@@ -529,7 +529,7 @@ Item {
         property color accentColor: Colours.palette.m3secondary
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.extraLarge
         clip: true
         Component.onCompleted: {
             diskCount = SystemUsage.disks.length;
@@ -650,7 +650,7 @@ Item {
         property color accentColor: Colours.palette.m3primary
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.extraLarge
         clip: true
 
         Ref {

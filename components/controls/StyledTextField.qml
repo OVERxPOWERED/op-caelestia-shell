@@ -25,7 +25,7 @@ TextField {
 
         implicitWidth: 2
         color: Colours.palette.m3primary
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
 
         Connections {
             function onCursorPositionChanged(): void {

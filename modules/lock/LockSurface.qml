@@ -138,7 +138,7 @@ WlSessionLockSurface {
                 Anim {
                     target: lockBg
                     property: "radius"
-                    to: lockContent.Tokens.rounding.large * 1.5
+                    to: lockContent.Tokens.rounding.extraLarge * 1.5
                 }
                 Anim {
                     target: lockContent

@@ -290,7 +290,7 @@ Item {
                             StyledRect {
                                 Layout.fillWidth: true
                                 implicitHeight: workspacesShownRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {
@@ -326,7 +326,7 @@ Item {
                             StyledRect {
                                 Layout.fillWidth: true
                                 implicitHeight: workspacesActiveIndicatorRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {
@@ -360,7 +360,7 @@ Item {
                             StyledRect {
                                 Layout.fillWidth: true
                                 implicitHeight: workspacesOccupiedBgRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {
@@ -394,7 +394,7 @@ Item {
                             StyledRect {
                                 Layout.fillWidth: true
                                 implicitHeight: workspacesShowWindowsRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {
@@ -428,7 +428,7 @@ Item {
                             StyledRect {
                                 Layout.fillWidth: true
                                 implicitHeight: workspacesMaxWindowIconsRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {
@@ -464,7 +464,7 @@ Item {
                             StyledRect {
                                 Layout.fillWidth: true
                                 implicitHeight: workspacesPerMonitorRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {

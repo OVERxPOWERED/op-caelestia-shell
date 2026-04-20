@@ -82,7 +82,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.topMargin: Tokens.spacing.smaller
 
-        radius: Tokens.rounding.small
+        radius: Tokens.rounding.medium
         color: "transparent"
 
         Loader {
@@ -187,7 +187,7 @@ Item {
             id: clearBtn
 
             icon: "clear_all"
-            radius: Tokens.rounding.normal
+            radius: Tokens.rounding.large
             padding: Tokens.padding.normal
             font.pointSize: Math.round(Tokens.font.size.large * 1.2)
             onClicked: clearTimer.start()

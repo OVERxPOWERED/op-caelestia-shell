@@ -120,7 +120,7 @@ Popup {
         implicitHeight: tooltipText.implicitHeight + Tokens.padding.smaller * 2
 
         color: Colours.palette.m3surfaceContainerHighest
-        radius: Tokens.rounding.small
+        radius: Tokens.rounding.medium
         antialiasing: true
 
         // Add elevation for depth

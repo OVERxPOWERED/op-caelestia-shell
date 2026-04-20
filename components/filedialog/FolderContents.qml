@@ -43,7 +43,7 @@ Item {
         Rectangle {
             anchors.fill: parent
             anchors.margins: Tokens.padding.small
-            radius: Tokens.rounding.small
+            radius: Tokens.rounding.medium
         }
     }
 
@@ -167,7 +167,7 @@ Item {
         implicitWidth: Sizes.itemWidth
         implicitHeight: nonAnimHeight
 
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         color: Qt.alpha(Colours.tPalette.m3surfaceContainerHighest, GridView.isCurrentItem ? Colours.tPalette.m3surfaceContainerHighest.a : 0)
         z: GridView.isCurrentItem || implicitHeight !== nonAnimHeight ? 1 : 0
         clip: true

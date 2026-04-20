@@ -118,7 +118,7 @@ Item {
                     implicitHeight: actionInner.implicitHeight + Tokens.padding.small * 2
 
                     Layout.preferredWidth: implicitWidth + (actionStateLayer.pressed ? Tokens.padding.large : 0)
-                    radius: actionStateLayer.pressed ? Tokens.rounding.small / 2 : Tokens.rounding.small
+                    radius: actionStateLayer.pressed ? Tokens.rounding.medium / 2 : Tokens.rounding.medium
                     color: Colours.layer(Colours.palette.m3surfaceContainerHighest, 4)
 
                     Timer {

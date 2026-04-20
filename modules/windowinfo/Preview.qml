@@ -30,7 +30,7 @@ Item {
         implicitWidth: view.implicitWidth
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.small
+        radius: Tokens.rounding.medium
 
         Loader {
             asynchronous: true

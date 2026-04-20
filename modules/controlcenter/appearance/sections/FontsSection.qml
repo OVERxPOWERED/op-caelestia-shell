@@ -52,7 +52,7 @@ CollapsibleSection {
 
                     width: ListView.view.width
                     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                    radius: Tokens.rounding.normal
+                    radius: Tokens.rounding.large
                     border.width: isCurrent ? 1 : 0
                     border.color: Colours.palette.m3primary
                     implicitHeight: fontFamilySansRow.implicitHeight + Tokens.padding.normal * 2
@@ -133,7 +133,7 @@ CollapsibleSection {
 
                     width: ListView.view.width
                     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                    radius: Tokens.rounding.normal
+                    radius: Tokens.rounding.large
                     border.width: isCurrent ? 1 : 0
                     border.color: Colours.palette.m3primary
                     implicitHeight: fontFamilyMonoRow.implicitHeight + Tokens.padding.normal * 2
@@ -216,7 +216,7 @@ CollapsibleSection {
 
                     width: ListView.view.width
                     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                    radius: Tokens.rounding.normal
+                    radius: Tokens.rounding.large
                     border.width: isCurrent ? 1 : 0
                     border.color: Colours.palette.m3primary
                     implicitHeight: fontFamilyMaterialRow.implicitHeight + Tokens.padding.normal * 2

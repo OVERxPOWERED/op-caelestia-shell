@@ -43,7 +43,7 @@ Loader {
                 anchors.fill: parent
                 anchors.rightMargin: -parent.width * (1 - root.deformMatrix.m11) / 2 // Additional bit to account for deform
                 anchors.bottomMargin: -parent.height * 0.1 // Additional bit to account for overshoot
-                topLeftRadius: Tokens.rounding.large
+                topLeftRadius: Tokens.rounding.extraLarge
                 color: Colours.palette.m3scrim
             }
 
@@ -138,7 +138,7 @@ Loader {
 
         StyledRect {
             anchors.centerIn: parent
-            radius: Tokens.rounding.large
+            radius: Tokens.rounding.extraLarge
             color: Colours.palette.m3surfaceContainerHigh
 
             scale: 0

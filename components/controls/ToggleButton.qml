@@ -27,7 +27,7 @@ StyledRect {
     Layout.preferredWidth: implicitWidth + (toggleStateLayer.pressed ? Tokens.padding.normal * 2 : toggled ? Tokens.padding.small * 2 : 0)
     implicitWidth: toggleBtnInner.implicitWidth + horizontalPadding * 2
     implicitHeight: toggleBtnIcon.implicitHeight + verticalPadding * 2
-    radius: toggled || toggleStateLayer.pressed ? Tokens.rounding.small : Math.min(width, height) / 2 * Math.min(1, Tokens.rounding.scale)
+    radius: toggled || toggleStateLayer.pressed ? Tokens.rounding.medium : Math.min(width, height) / 2 * Math.min(1, Tokens.rounding.scale)
     color: toggled ? Colours.palette[`m3${accent.toLowerCase()}`] : Colours.palette[`m3${accent.toLowerCase()}Container`]
 
     Connections {

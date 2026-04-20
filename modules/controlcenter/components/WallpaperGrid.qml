@@ -34,7 +34,7 @@ GridView {
         required property int index
         readonly property bool isCurrent: modelData && modelData.path === Wallpapers.actualCurrent
         readonly property real itemMargin: Tokens.spacing.normal / 2
-        readonly property real itemRadius: Tokens.rounding.normal
+        readonly property real itemRadius: Tokens.rounding.large
 
         width: root.cellWidth
         height: root.cellHeight

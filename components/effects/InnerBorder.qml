@@ -38,7 +38,7 @@ StyledRect {
 
             anchors.fill: parent
             anchors.margins: Tokens.padding.normal
-            radius: Tokens.rounding.normal
+            radius: Tokens.rounding.large
         }
     }
 }

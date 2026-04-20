@@ -31,7 +31,7 @@ StyledRect {
             Layout.rightMargin: Tokens.spacing.normal
 
             color: Colours.tPalette.m3surfaceContainerHigh
-            radius: Tokens.rounding.small
+            radius: Tokens.rounding.medium
 
             StyledText {
                 anchors.fill: parent
@@ -43,7 +43,7 @@ StyledRect {
 
         StyledRect {
             color: Colours.tPalette.m3surfaceContainerHigh
-            radius: Tokens.rounding.small
+            radius: Tokens.rounding.medium
 
             implicitWidth: cancelText.implicitWidth + Tokens.padding.normal * 2
             implicitHeight: cancelText.implicitHeight + Tokens.padding.normal * 2
@@ -66,7 +66,7 @@ StyledRect {
 
         StyledRect {
             color: Colours.tPalette.m3surfaceContainerHigh
-            radius: Tokens.rounding.small
+            radius: Tokens.rounding.medium
 
             implicitWidth: cancelText.implicitWidth + Tokens.padding.normal * 2
             implicitHeight: cancelText.implicitHeight + Tokens.padding.normal * 2

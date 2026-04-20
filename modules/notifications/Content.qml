@@ -49,7 +49,7 @@ Item {
         anchors.margins: root.padding
 
         color: "transparent"
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
 
         StyledListView {
             id: list

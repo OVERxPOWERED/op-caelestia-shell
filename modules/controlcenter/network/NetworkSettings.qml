@@ -148,7 +148,7 @@ ColumnLayout {
 
         background: StyledRect {
             color: Colours.palette.m3surface
-            radius: Tokens.rounding.large
+            radius: Tokens.rounding.extraLarge
         }
 
         StyledFlickable {

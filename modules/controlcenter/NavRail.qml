@@ -54,7 +54,7 @@ Item {
                 implicitHeight: root.session.navExpanded ? normalWinIcon.implicitHeight + Tokens.padding.normal * 2 : nonAnimWidth
 
                 color: Colours.palette.m3primaryContainer
-                radius: Tokens.rounding.small
+                radius: Tokens.rounding.medium
 
                 StateLayer {
                     id: normalWinState

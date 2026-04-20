@@ -63,7 +63,7 @@ ColumnLayout {
         StateLayer {
             anchors.fill: parent
             color: Colours.palette.m3onSurface
-            radius: Tokens.rounding.normal
+            radius: Tokens.rounding.large
             showHoverBackground: false
             onClicked: {
                 root.toggleRequested();
@@ -87,7 +87,7 @@ ColumnLayout {
             id: backgroundRect
 
             anchors.fill: parent
-            radius: Tokens.rounding.normal
+            radius: Tokens.rounding.large
             color: Colours.transparency.enabled ? Colours.layer(Colours.palette.m3surfaceContainer, root.nested ? 3 : 2) : (root.nested ? Colours.palette.m3surfaceContainerHigh : Colours.palette.m3surfaceContainer)
             opacity: root.showBackground && root.expanded ? 1.0 : 0.0
             visible: root.showBackground

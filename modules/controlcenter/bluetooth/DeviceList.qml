@@ -140,7 +140,7 @@ DeviceList {
             implicitHeight: deviceInner.implicitHeight + Tokens.padding.normal * 2
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
-            radius: Tokens.rounding.normal
+            radius: Tokens.rounding.large
 
             StateLayer {
                 id: stateLayer
@@ -163,7 +163,7 @@ DeviceList {
                     implicitWidth: implicitHeight
                     implicitHeight: icon.implicitHeight + Tokens.padding.normal * 2
 
-                    radius: Tokens.rounding.normal
+                    radius: Tokens.rounding.large
                     color: device.connected ? Colours.palette.m3primaryContainer : (device.modelData && device.modelData.bonded) ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainerHigh
 
                     StyledRect {

@@ -28,7 +28,7 @@ Item {
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         onClicked: root.onClicked()
     }
 
@@ -66,7 +66,7 @@ Item {
 
         StyledRect {
             color: Colours.palette.m3tertiary
-            radius: Tokens.rounding.normal
+            radius: Tokens.rounding.large
             clip: true
 
             implicitWidth: (stateLayer.containsMouse ? label.implicitWidth + label.anchors.rightMargin : 0) + icon.implicitWidth + Tokens.padding.normal * 2

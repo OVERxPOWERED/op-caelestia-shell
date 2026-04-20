@@ -183,7 +183,7 @@ Item {
                 implicitHeight: parent.height + Tokens.sizes.dashboard.tabIndicatorSpacing * 2
 
                 color: "transparent"
-                radius: Tokens.rounding.small
+                radius: Tokens.rounding.medium
 
                 StyledRect {
                     id: stateLayer

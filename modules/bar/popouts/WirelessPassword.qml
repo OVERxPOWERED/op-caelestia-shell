@@ -129,7 +129,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredWidth: 400
         implicitHeight: content.implicitHeight + Tokens.padding.large * 2
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
         visible: root.shouldBeVisible || root.isClosing
         opacity: root.shouldBeVisible && !root.isClosing ? 1 : 0
@@ -336,7 +336,7 @@ ColumnLayout {
 
                 StyledRect {
                     anchors.fill: parent
-                    radius: Tokens.rounding.normal
+                    radius: Tokens.rounding.large
                     color: passwordContainer.activeFocus ? Qt.lighter(Colours.tPalette.m3surfaceContainer, 1.05) : Colours.tPalette.m3surfaceContainer
                     border.width: passwordContainer.activeFocus || connectButton.hasError ? 4 : (root.shouldBeVisible ? 1 : 0)
                     border.color: {
@@ -365,7 +365,7 @@ ColumnLayout {
                 StateLayer {
                     hoverEnabled: false
                     cursorShape: Qt.IBeamCursor
-                    radius: Tokens.rounding.normal
+                    radius: Tokens.rounding.large
                     onClicked: passwordContainer.forceActiveFocus()
                 }
 
@@ -408,7 +408,7 @@ ColumnLayout {
                         implicitHeight: charList.implicitHeight
 
                         color: Colours.palette.m3onSurface
-                        radius: Tokens.rounding.small / 2
+                        radius: Tokens.rounding.medium / 2
 
                         opacity: 0
                         scale: 0

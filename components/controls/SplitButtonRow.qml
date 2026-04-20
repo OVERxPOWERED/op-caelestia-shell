@@ -21,7 +21,7 @@ StyledRect {
 
     Layout.fillWidth: true
     implicitHeight: row.implicitHeight + Tokens.padding.large * 2
-    radius: Tokens.rounding.normal
+    radius: Tokens.rounding.large
     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
     clip: false

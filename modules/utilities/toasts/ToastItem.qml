@@ -15,7 +15,7 @@ StyledRect {
     anchors.right: parent.right
     implicitHeight: layout.implicitHeight + Tokens.padding.smaller * 2
 
-    radius: Tokens.rounding.normal
+    radius: Tokens.rounding.large
     color: {
         if (root.modelData.type === Toast.Success)
             return Colours.palette.m3successContainer;
@@ -56,7 +56,7 @@ StyledRect {
         spacing: Tokens.spacing.normal
 
         StyledRect {
-            radius: Tokens.rounding.normal
+            radius: Tokens.rounding.large
             color: {
                 if (root.modelData.type === Toast.Success)
                     return Colours.palette.m3success;

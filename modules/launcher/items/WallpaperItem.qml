@@ -25,7 +25,7 @@ Item {
     implicitHeight: image.height + label.height + Tokens.spacing.small / 2 + Tokens.padding.large + Tokens.padding.normal
 
     StateLayer {
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         onClicked: {
             Wallpapers.setWallpaper(root.modelData.path);
             root.visibilities.launcher = false;
@@ -49,7 +49,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         y: Tokens.padding.large
         color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
 
         implicitWidth: Tokens.sizes.launcher.wallpaperWidth
         implicitHeight: implicitWidth / 16 * 9

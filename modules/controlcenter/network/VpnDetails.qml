@@ -305,7 +305,7 @@ DeviceDetails {
 
         background: StyledRect {
             color: Colours.palette.m3surfaceContainerHigh
-            radius: Tokens.rounding.large
+            radius: Tokens.rounding.extraLarge
 
             Elevation {
                 anchors.fill: parent
@@ -338,7 +338,7 @@ DeviceDetails {
                     Layout.fillWidth: true
                     implicitHeight: 40
                     color: displayNameField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                     border.width: 1
                     border.color: displayNameField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -375,7 +375,7 @@ DeviceDetails {
                     Layout.fillWidth: true
                     implicitHeight: 40
                     color: interfaceNameField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                     border.width: 1
                     border.color: interfaceNameField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -413,7 +413,7 @@ DeviceDetails {
                     Layout.fillWidth: true
                     implicitHeight: 40
                     color: connectCmdFieldEdit.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                     border.width: 1
                     border.color: connectCmdFieldEdit.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -451,7 +451,7 @@ DeviceDetails {
                     Layout.fillWidth: true
                     implicitHeight: 40
                     color: disconnectCmdFieldEdit.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                     border.width: 1
                     border.color: disconnectCmdFieldEdit.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 

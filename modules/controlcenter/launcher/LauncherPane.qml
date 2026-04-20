@@ -312,7 +312,7 @@ Item {
                             implicitHeight: 40
 
                             color: isSelected ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
-                            radius: Tokens.rounding.normal
+                            radius: Tokens.rounding.large
 
                             opacity: 0
 

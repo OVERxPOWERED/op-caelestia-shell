@@ -40,7 +40,7 @@ StyledRect {
     Layout.fillWidth: true
     implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
 
-    radius: Tokens.rounding.normal
+    radius: Tokens.rounding.large
     color: Colours.tPalette.m3surfaceContainer
 
     ColumnLayout {
@@ -155,7 +155,7 @@ StyledRect {
     component Toggle: IconButton {
         Layout.fillWidth: true
         Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.smaller : 0)
-        radius: stateLayer.pressed ? Tokens.rounding.small / 2 : internalChecked ? Tokens.rounding.small : Tokens.rounding.normal
+        radius: stateLayer.pressed ? Tokens.rounding.medium / 2 : internalChecked ? Tokens.rounding.medium : Tokens.rounding.large
         inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
         toggle: true
         radiusAnim.duration: Tokens.anim.durations.expressiveFastSpatial

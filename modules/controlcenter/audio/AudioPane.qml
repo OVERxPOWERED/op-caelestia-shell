@@ -93,7 +93,7 @@ Item {
                                     Layout.fillWidth: true
 
                                     color: Audio.sink?.id === modelData.id ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
-                                    radius: Tokens.rounding.normal
+                                    radius: Tokens.rounding.large
                                     implicitHeight: outputRowLayout.implicitHeight + Tokens.padding.normal * 2
 
                                     StateLayer {
@@ -170,7 +170,7 @@ Item {
                                     Layout.fillWidth: true
 
                                     color: Audio.source?.id === modelData.id ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
-                                    radius: Tokens.rounding.normal
+                                    radius: Tokens.rounding.large
                                     implicitHeight: inputRowLayout.implicitHeight + Tokens.padding.normal * 2
 
                                     StateLayer {
@@ -314,7 +314,7 @@ Item {
                                     implicitWidth: implicitHeight
                                     implicitHeight: muteIcon.implicitHeight + Tokens.padding.normal * 2
 
-                                    radius: Tokens.rounding.normal
+                                    radius: Tokens.rounding.large
                                     color: Audio.muted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
 
                                     StateLayer {
@@ -432,7 +432,7 @@ Item {
                                     implicitWidth: implicitHeight
                                     implicitHeight: muteInputIcon.implicitHeight + Tokens.padding.normal * 2
 
-                                    radius: Tokens.rounding.normal
+                                    radius: Tokens.rounding.large
                                     color: Audio.sourceMuted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
 
                                     StateLayer {
@@ -566,7 +566,7 @@ Item {
                                             implicitWidth: implicitHeight
                                             implicitHeight: streamMuteIcon.implicitHeight + Tokens.padding.normal * 2
 
-                                            radius: Tokens.rounding.normal
+                                            radius: Tokens.rounding.large
                                             color: Audio.getStreamMuted(modelData) ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
 
                                             StateLayer {

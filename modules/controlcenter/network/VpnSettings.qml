@@ -83,7 +83,7 @@ ColumnLayout {
                     width: ListView.view ? ListView.view.width : undefined
                     implicitHeight: 60
                     color: Colours.tPalette.m3surfaceContainerHigh
-                    radius: Tokens.rounding.normal
+                    radius: Tokens.rounding.large
 
                     RowLayout {
                         anchors.left: parent.left

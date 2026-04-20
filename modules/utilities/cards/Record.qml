@@ -16,7 +16,7 @@ StyledRect {
     Layout.fillWidth: true
     implicitHeight: layout.implicitHeight + layout.anchors.margins * 2
 
-    radius: Tokens.rounding.normal
+    radius: Tokens.rounding.large
     color: Colours.tPalette.m3surfaceContainer
 
     ColumnLayout {

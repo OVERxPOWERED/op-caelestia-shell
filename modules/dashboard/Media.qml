@@ -499,7 +499,7 @@ Item {
 
     component PlayerControl: IconButton {
         Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.smaller : 0)
-        radius: stateLayer.pressed ? Tokens.rounding.small / 2 : internalChecked ? Tokens.rounding.small : implicitHeight / 2
+        radius: stateLayer.pressed ? Tokens.rounding.medium / 2 : internalChecked ? Tokens.rounding.medium : implicitHeight / 2
         radiusAnim.duration: Tokens.anim.durations.expressiveFastSpatial
         radiusAnim.easing: Tokens.anim.expressiveFastSpatial
 

@@ -72,7 +72,7 @@ StyledFlickable {
                             Layout.fillWidth: true
                             implicitHeight: deviceStatus.implicitHeight + Tokens.padding.large * 2
 
-                            radius: Tokens.rounding.normal
+                            radius: Tokens.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
 
                             ColumnLayout {
@@ -131,7 +131,7 @@ StyledFlickable {
                             Layout.fillWidth: true
                             implicitHeight: deviceProps.implicitHeight + Tokens.padding.large * 2
 
-                            radius: Tokens.rounding.normal
+                            radius: Tokens.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
 
                             ColumnLayout {
@@ -209,7 +209,7 @@ StyledFlickable {
                                             rightPadding: Tokens.padding.normal
 
                                             background: StyledRect {
-                                                radius: Tokens.rounding.small
+                                                radius: Tokens.rounding.medium
                                                 border.width: 2
                                                 border.color: Colours.palette.m3primary
                                                 opacity: root.session.bt.editingDeviceName ? 1 : 0
@@ -233,7 +233,7 @@ StyledFlickable {
                                         implicitWidth: implicitHeight
                                         implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.smaller * 2
 
-                                        radius: Tokens.rounding.small
+                                        radius: Tokens.rounding.medium
                                         color: Colours.palette.m3secondaryContainer
                                         opacity: root.session.bt.editingDeviceName ? 1 : 0
                                         scale: root.session.bt.editingDeviceName ? 1 : 0.5
@@ -272,7 +272,7 @@ StyledFlickable {
                                         implicitWidth: implicitHeight
                                         implicitHeight: editIcon.implicitHeight + Tokens.padding.smaller * 2
 
-                                        radius: root.session.bt.editingDeviceName ? Tokens.rounding.small : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
+                                        radius: root.session.bt.editingDeviceName ? Tokens.rounding.medium : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
                                         color: Qt.alpha(Colours.palette.m3primary, root.session.bt.editingDeviceName ? 1 : 0)
 
                                         StateLayer {
@@ -337,7 +337,7 @@ StyledFlickable {
                             Layout.fillWidth: true
                             implicitHeight: deviceInfo.implicitHeight + Tokens.padding.large * 2
 
-                            radius: Tokens.rounding.normal
+                            radius: Tokens.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
 
                             ColumnLayout {
@@ -589,7 +589,7 @@ StyledFlickable {
             implicitWidth: 64
             implicitHeight: 64
 
-            radius: Tokens.rounding.normal
+            radius: Tokens.rounding.large
             color: root.session.bt.fabMenuOpen ? Colours.palette.m3primary : Colours.palette.m3primaryContainer
 
             states: State {

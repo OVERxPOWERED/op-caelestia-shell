@@ -65,7 +65,7 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
 
                 StateLayer {
-                    radius: Tokens.rounding.normal
+                    radius: Tokens.rounding.large
                     onClicked: root.popouts.detachRequested("winfo")
                 }
 
@@ -84,7 +84,7 @@ Item {
 
         ClippingWrapperRectangle {
             color: "transparent"
-            radius: Tokens.rounding.small
+            radius: Tokens.rounding.medium
 
             ScreencopyView {
                 id: preview

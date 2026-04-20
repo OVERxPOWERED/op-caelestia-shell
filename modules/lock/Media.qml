@@ -76,8 +76,7 @@ Item {
             Layout.bottomMargin: Tokens.spacing.large
             text: qsTr("Now playing")
             color: Colours.palette.m3onSurfaceVariant
-            font.family: Tokens.font.family.mono
-            font.weight: 500
+            font: Tokens.font.mono.builders.small.weight(500).build()
         }
 
         StyledText {
@@ -86,9 +85,7 @@ Item {
             text: Players.active?.trackArtist ?? qsTr("No media")
             color: Colours.palette.m3primary
             horizontalAlignment: Text.AlignHCenter
-            font.pointSize: Tokens.font.size.large
-            font.family: Tokens.font.family.mono
-            font.weight: 600
+            font: Tokens.font.mono.builders.large.weight(600).build()
             elide: Text.ElideRight
         }
 
@@ -97,8 +94,7 @@ Item {
             animate: true
             text: Players.active?.trackTitle ?? qsTr("No media")
             horizontalAlignment: Text.AlignHCenter
-            font.pointSize: Tokens.font.size.larger
-            font.family: Tokens.font.family.mono
+            font: Tokens.font.mono.large
             elide: Text.ElideRight
         }
 
@@ -176,7 +172,7 @@ Item {
 
             anchors.centerIn: parent
             color: control.active ? Colours.palette[`m3on${control.colour}`] : Colours.palette[`m3on${control.colour}Container`]
-            font.pointSize: Tokens.font.size.large
+            font: Tokens.font.icon.large
             fill: control.active ? 1 : 0
 
             Behavior on fill {

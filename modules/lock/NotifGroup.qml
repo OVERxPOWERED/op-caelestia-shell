@@ -99,7 +99,7 @@ StyledRect {
                 MaterialIcon {
                     text: Icons.getNotifIcon(root.notifs[0]?.summary, root.urgency)
                     color: root.urgency === "critical" ? Colours.palette.m3onError : root.urgency === "low" ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                    font.pointSize: Tokens.font.size.large
+                    font: Tokens.font.icon.large
                 }
             }
 
@@ -154,7 +154,7 @@ StyledRect {
                     Layout.fillWidth: true
                     text: root.modelData
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }
 
@@ -162,7 +162,7 @@ StyledRect {
                     animate: true
                     text: root.notifs[0]?.timeStr ?? ""
                     color: Colours.palette.m3outline
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                 }
 
                 StyledRect {
@@ -193,7 +193,7 @@ StyledRect {
                             animate: true
                             text: root.notifs.length
                             color: root.urgency === "critical" ? Colours.palette.m3onError : Colours.palette.m3onSurface
-                            font.pointSize: Tokens.font.size.small
+                            font: Tokens.font.body.small
                         }
 
                         MaterialIcon {
@@ -329,8 +329,7 @@ StyledRect {
             id: metrics
 
             text: `${notifLine.modelData.summary} ${notifLine.modelData.body}`.replace(/\n/g, " ")
-            font.pointSize: notifLine.font.pointSize
-            font.family: notifLine.font.family
+            font: notifLine.font
             elideWidth: notifLine.width
             elide: Text.ElideRight
         }

@@ -14,7 +14,7 @@ Row {
     required property FileDialog facePicker
 
     padding: Tokens.padding.large
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
 
     StyledClippingRect {
         implicitWidth: info.implicitHeight
@@ -106,7 +106,7 @@ Row {
         id: info
 
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         Item {
             id: line

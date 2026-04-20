@@ -23,7 +23,7 @@ DeviceList {
 
     headerComponent: Component {
         RowLayout {
-            spacing: Tokens.spacing.smaller
+            spacing: Tokens.spacing.medium
 
             StyledText {
                 text: qsTr("Settings")
@@ -81,7 +81,7 @@ DeviceList {
                 anchors.fill: parent
                 anchors.margins: Tokens.padding.medium
 
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 StyledRect {
                     implicitWidth: implicitHeight
@@ -124,7 +124,7 @@ DeviceList {
 
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: Tokens.spacing.smaller
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
                             Layout.fillWidth: true

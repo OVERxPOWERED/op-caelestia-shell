@@ -34,7 +34,7 @@ ColumnLayout {
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: Tokens.padding.medium
             anchors.rightMargin: Tokens.padding.medium
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             StyledText {
                 text: root.title
@@ -117,7 +117,7 @@ ColumnLayout {
                 id: descriptionText
 
                 Layout.fillWidth: true
-                Layout.topMargin: root.description !== "" ? Tokens.spacing.smaller : 0
+                Layout.topMargin: root.description !== "" ? Tokens.spacing.medium : 0
                 Layout.bottomMargin: root.description !== "" ? Tokens.spacing.small : 0
                 visible: root.description !== ""
                 text: root.description

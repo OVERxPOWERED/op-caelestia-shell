@@ -43,11 +43,11 @@ Item {
 
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: Tokens.spacing.smaller
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
                             text: qsTr("Network")

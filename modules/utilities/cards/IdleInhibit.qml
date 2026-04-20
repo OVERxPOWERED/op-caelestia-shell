@@ -22,7 +22,7 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledRect {
             implicitWidth: implicitHeight
@@ -73,7 +73,7 @@ StyledRect {
         asynchronous: true
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.topMargin: Tokens.spacing.larger
+        anchors.topMargin: Tokens.spacing.large
         anchors.bottomMargin: IdleInhibitor.enabled ? Tokens.padding.large : -implicitHeight
         anchors.leftMargin: Tokens.padding.large
 

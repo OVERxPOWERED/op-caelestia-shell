@@ -11,7 +11,7 @@ import qs.services
 Item {
     id: root
 
-    readonly property int minWidth: 400 + 400 + Tokens.spacing.normal + 120 + Tokens.padding.extraLargeIncreased
+    readonly property int minWidth: 400 + 400 + Tokens.spacing.medium + 120 + Tokens.padding.extraLargeIncreased
 
     function displayTemp(temp: real): string {
         return `${Math.ceil(GlobalConfig.services.useFahrenheitPerformance ? temp * 1.8 + 32 : temp)}°${GlobalConfig.services.useFahrenheitPerformance ? "F" : "C"}`;
@@ -32,7 +32,7 @@ Item {
 
         ColumnLayout {
             anchors.centerIn: parent
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
@@ -62,7 +62,7 @@ Item {
 
         anchors.left: parent.left
         anchors.right: parent.right
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
         visible: !placeholder.visible
 
         Ref {
@@ -73,11 +73,11 @@ Item {
             id: mainColumn
 
             Layout.fillWidth: true
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
                 visible: Config.dashboard.performance.showCpu || (Config.dashboard.performance.showGpu && SystemUsage.gpuType !== "NONE")
 
                 HeroCard {
@@ -115,7 +115,7 @@ Item {
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
                 visible: Config.dashboard.performance.showMemory || Config.dashboard.performance.showStorage || Config.dashboard.performance.showNetwork
 
                 GaugeCard {
@@ -288,7 +288,7 @@ Item {
             text: parent.icon
             fill: 1
             color: parent.accentColor
-            font.pointSize: Tokens.spacing.large
+            font.pointSize: Tokens.spacing.largeIncreased
         }
 
         StyledText {
@@ -368,7 +368,7 @@ Item {
             anchors.leftMargin: Tokens.padding.large
             anchors.topMargin: Math.round(Tokens.padding.large * 1.2)
 
-            width: parent.width - anchors.leftMargin - usageColumn.anchors.rightMargin - usageLabel.width - Tokens.spacing.normal
+            width: parent.width - anchors.leftMargin - usageColumn.anchors.rightMargin - usageLabel.width - Tokens.spacing.medium
             icon: heroCard.icon
             title: heroCard.title
             accentColor: heroCard.accentColor
@@ -470,7 +470,7 @@ Item {
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: Tokens.padding.large
-            spacing: Tokens.spacing.smaller
+            spacing: Tokens.spacing.medium
 
             CardHeader {
                 icon: gaugeCard.icon
@@ -568,7 +568,7 @@ Item {
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: Tokens.padding.large
-            spacing: Tokens.spacing.smaller
+            spacing: Tokens.spacing.medium
 
             CardHeader {
                 icon: "hard_disk"
@@ -729,7 +729,7 @@ Item {
             // Download row
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 MaterialIcon {
                     text: "download"
@@ -761,7 +761,7 @@ Item {
             // Upload row
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 MaterialIcon {
                     text: "upload"
@@ -793,7 +793,7 @@ Item {
             // Session totals
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 MaterialIcon {
                     text: "history"

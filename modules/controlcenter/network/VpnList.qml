@@ -18,7 +18,7 @@ ColumnLayout {
     property bool showHeader: true
     property int pendingSwitchIndex: -1
 
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
 
     Connections {
         function onConnectedChanged() {
@@ -76,7 +76,7 @@ ColumnLayout {
         Layout.preferredHeight: contentHeight
 
         interactive: false
-        spacing: Tokens.spacing.smaller
+        spacing: Tokens.spacing.medium
 
         model: ScriptModel {
             values: GlobalConfig.utilities.vpn.provider.map((provider, index) => {
@@ -124,7 +124,7 @@ ColumnLayout {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.margins: Tokens.padding.medium
 
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     StyledRect {
                         implicitWidth: implicitHeight
@@ -159,7 +159,7 @@ ColumnLayout {
 
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: Tokens.spacing.smaller
+                            spacing: Tokens.spacing.medium
 
                             StyledText {
                                 Layout.fillWidth: true
@@ -445,7 +445,7 @@ ColumnLayout {
                 id: selectionContent
 
                 anchors.fill: parent
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
                 visible: vpnDialog.currentState === "selection"
                 opacity: vpnDialog.currentState === "selection" ? 1 : 0
 
@@ -470,7 +470,7 @@ ColumnLayout {
                 }
 
                 TextButton {
-                    Layout.topMargin: Tokens.spacing.normal
+                    Layout.topMargin: Tokens.spacing.medium
                     Layout.fillWidth: true
                     text: qsTr("NetBird")
                     inactiveColour: Colours.tPalette.m3surfaceContainerHigh
@@ -551,7 +551,7 @@ ColumnLayout {
                 }
 
                 TextButton {
-                    Layout.topMargin: Tokens.spacing.normal
+                    Layout.topMargin: Tokens.spacing.medium
                     Layout.fillWidth: true
                     text: qsTr("Cancel")
                     inactiveColour: Colours.palette.m3secondaryContainer
@@ -564,7 +564,7 @@ ColumnLayout {
                 id: formContent
 
                 anchors.fill: parent
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
                 visible: vpnDialog.currentState === "form"
                 opacity: vpnDialog.currentState === "form" ? 1 : 0
 
@@ -582,7 +582,7 @@ ColumnLayout {
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Tokens.spacing.smaller / 2
+                    spacing: Tokens.spacing.medium / 2
 
                     StyledText {
                         text: qsTr("Display Name")
@@ -619,7 +619,7 @@ ColumnLayout {
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Tokens.spacing.smaller / 2
+                    spacing: Tokens.spacing.medium / 2
 
                     StyledText {
                         text: qsTr("Interface (e.g., wg0, torguard)")
@@ -656,7 +656,7 @@ ColumnLayout {
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Tokens.spacing.smaller / 2
+                    spacing: Tokens.spacing.medium / 2
                     visible: vpnDialog.editIndex >= 0 ? (vpnDialog.connectCmd.length > 0) : (vpnDialog.providerName === "custom")
 
                     StyledText {
@@ -694,7 +694,7 @@ ColumnLayout {
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Tokens.spacing.smaller / 2
+                    spacing: Tokens.spacing.medium / 2
                     visible: vpnDialog.editIndex >= 0 ? (vpnDialog.connectCmd.length > 0) : (vpnDialog.providerName === "custom")
 
                     StyledText {
@@ -731,9 +731,9 @@ ColumnLayout {
                 }
 
                 RowLayout {
-                    Layout.topMargin: Tokens.spacing.normal
+                    Layout.topMargin: Tokens.spacing.medium
                     Layout.fillWidth: true
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     TextButton {
                         Layout.fillWidth: true

@@ -37,10 +37,10 @@ Item {
 
         Column {
             anchors.left: icon.right
-            anchors.leftMargin: Tokens.spacing.larger
+            anchors.leftMargin: Tokens.spacing.large
             anchors.verticalCenter: icon.verticalCenter
 
-            width: parent.width - icon.width - anchors.leftMargin - (current.active ? current.width + Tokens.spacing.normal : 0)
+            width: parent.width - icon.width - anchors.leftMargin - (current.active ? current.width + Tokens.spacing.medium : 0)
             spacing: 0
 
             StyledText {

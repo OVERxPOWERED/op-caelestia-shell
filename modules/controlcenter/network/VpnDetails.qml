@@ -37,7 +37,7 @@ DeviceDetails {
     sections: [
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 SectionHeader {
                     title: qsTr("Connection status")
@@ -91,8 +91,8 @@ DeviceDetails {
 
                     RowLayout {
                         Layout.fillWidth: true
-                        Layout.topMargin: Tokens.spacing.normal
-                        spacing: Tokens.spacing.normal
+                        Layout.topMargin: Tokens.spacing.medium
+                        spacing: Tokens.spacing.medium
 
                         TextButton {
                             Layout.fillWidth: true
@@ -147,7 +147,7 @@ DeviceDetails {
 
                     TextButton {
                         Layout.fillWidth: true
-                        Layout.topMargin: Tokens.spacing.normal
+                        Layout.topMargin: Tokens.spacing.medium
                         visible: root.providerEnabled && VPN.status.state === "needs-auth" && VPN.status.authUrl !== ""
                         text: qsTr("Open Login Page")
                         inactiveColour: Colours.palette.m3tertiaryContainer
@@ -160,7 +160,7 @@ DeviceDetails {
 
                     StyledText {
                         Layout.fillWidth: true
-                        Layout.topMargin: Tokens.spacing.normal
+                        Layout.topMargin: Tokens.spacing.medium
                         visible: root.providerEnabled && VPN.status.state === "needs-auth" && VPN.status.authUrl === ""
                         text: qsTr("Click 'Connect' to generate authentication URL")
                         font.pointSize: Tokens.font.size.small
@@ -173,7 +173,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 SectionHeader {
                     title: qsTr("Provider details")
@@ -316,7 +316,7 @@ DeviceDetails {
         }
 
         contentItem: ColumnLayout {
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             StyledText {
                 text: qsTr("Edit VPN Provider")
@@ -326,7 +326,7 @@ DeviceDetails {
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.smaller / 2
+                spacing: Tokens.spacing.medium / 2
 
                 StyledText {
                     text: qsTr("Display Name")
@@ -363,7 +363,7 @@ DeviceDetails {
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.smaller / 2
+                spacing: Tokens.spacing.medium / 2
 
                 StyledText {
                     text: qsTr("Interface (e.g., wg0, torguard)")
@@ -400,7 +400,7 @@ DeviceDetails {
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.smaller / 2
+                spacing: Tokens.spacing.medium / 2
                 visible: editVpnDialog.connectCmd.length > 0
 
                 StyledText {
@@ -438,7 +438,7 @@ DeviceDetails {
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.smaller / 2
+                spacing: Tokens.spacing.medium / 2
                 visible: editVpnDialog.disconnectCmd.length > 0
 
                 StyledText {
@@ -475,9 +475,9 @@ DeviceDetails {
             }
 
             RowLayout {
-                Layout.topMargin: Tokens.spacing.normal
+                Layout.topMargin: Tokens.spacing.medium
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 TextButton {
                     Layout.fillWidth: true

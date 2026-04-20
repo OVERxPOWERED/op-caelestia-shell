@@ -43,7 +43,7 @@ Item {
 
             Row {
                 anchors.centerIn: parent
-                spacing: Tokens.spacing.large
+                spacing: Tokens.spacing.largeIncreased
 
                 MaterialIcon {
                     text: "sentiment_stressed"

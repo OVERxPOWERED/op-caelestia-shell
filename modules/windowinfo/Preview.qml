@@ -25,7 +25,7 @@ Item {
         anchors.top: parent.top
         anchors.bottom: label.top
         anchors.topMargin: Tokens.padding.large
-        anchors.bottomMargin: Tokens.spacing.normal
+        anchors.bottomMargin: Tokens.spacing.medium
 
         implicitWidth: view.implicitWidth
 

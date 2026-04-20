@@ -36,7 +36,7 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.large
+        spacing: Tokens.spacing.largeIncreased
 
         MaterialIcon {
             animate: true
@@ -109,7 +109,7 @@ ColumnLayout {
         id: forecastLoader
 
         asynchronous: true
-        Layout.topMargin: Tokens.spacing.smaller
+        Layout.topMargin: Tokens.spacing.medium
         Layout.bottomMargin: Tokens.padding.extraLargeIncreased
         Layout.fillWidth: true
 
@@ -117,7 +117,7 @@ ColumnLayout {
         visible: active
 
         sourceComponent: RowLayout {
-            spacing: Tokens.spacing.large
+            spacing: Tokens.spacing.largeIncreased
 
             Repeater {
                 model: {

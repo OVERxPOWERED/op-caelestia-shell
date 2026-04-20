@@ -17,7 +17,7 @@ ColumnLayout {
 
     required property Session session
 
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
 
     SettingsHeader {
         icon: "router"
@@ -25,7 +25,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         title: qsTr("Ethernet")
         description: qsTr("Ethernet device information")
     }
@@ -46,7 +46,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         title: qsTr("Wireless")
         description: qsTr("WiFi network settings")
     }
@@ -62,7 +62,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         title: qsTr("VPN")
         description: qsTr("VPN provider settings")
         visible: GlobalConfig.utilities.vpn.enabled || GlobalConfig.utilities.vpn.provider.length > 0
@@ -87,7 +87,7 @@ ColumnLayout {
 
         TextButton {
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.normal
+            Layout.topMargin: Tokens.spacing.medium
             Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.medium * 2
             text: qsTr("⚙ Manage VPN Providers")
             inactiveColour: Colours.palette.m3secondaryContainer
@@ -100,7 +100,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         title: qsTr("Current connection")
         description: qsTr("Active network connection information")
     }

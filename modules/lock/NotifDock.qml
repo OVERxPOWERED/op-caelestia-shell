@@ -19,7 +19,7 @@ ColumnLayout {
     anchors.fill: parent
     anchors.margins: Tokens.padding.large
 
-    spacing: Tokens.spacing.smaller
+    spacing: Tokens.spacing.medium
 
     StyledText {
         Layout.fillWidth: true
@@ -46,7 +46,7 @@ ColumnLayout {
             opacity: Notifs.list.length > 0 && !Config.lock.hideNotifs ? 0 : 1
 
             sourceComponent: ColumnLayout {
-                spacing: Tokens.spacing.large
+                spacing: Tokens.spacing.largeIncreased
 
                 Image {
                     asynchronous: true

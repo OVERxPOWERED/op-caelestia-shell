@@ -109,13 +109,13 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 ColumnLayout {
                     Layout.fillWidth: true
                     Layout.maximumWidth: 500
                     Layout.alignment: Qt.AlignTop
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     SectionContainer {
                         Layout.fillWidth: true
@@ -218,7 +218,7 @@ Item {
                 ColumnLayout {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignTop
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     SectionContainer {
                         Layout.fillWidth: true
@@ -314,8 +314,8 @@ Item {
                         GridLayout {
                             Layout.fillWidth: true
                             columns: 2
-                            columnSpacing: Tokens.spacing.normal
-                            rowSpacing: Tokens.spacing.normal
+                            columnSpacing: Tokens.spacing.medium
+                            rowSpacing: Tokens.spacing.medium
 
                             SwitchRow {
                                 Layout.fillWidth: true

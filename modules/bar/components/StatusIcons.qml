@@ -31,7 +31,7 @@ StyledRect {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Tokens.padding.medium
 
-        spacing: Tokens.spacing.smaller / 2
+        spacing: Tokens.spacing.medium / 2
 
         // Lock keys status
         WrappedLoader {
@@ -172,7 +172,7 @@ StyledRect {
             active: Config.bar.status.showBluetooth
 
             sourceComponent: ColumnLayout {
-                spacing: Tokens.spacing.smaller / 2
+                spacing: Tokens.spacing.medium / 2
 
                 // Bluetooth icon
                 MaterialIcon {

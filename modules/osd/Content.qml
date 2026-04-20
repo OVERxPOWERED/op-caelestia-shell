@@ -27,7 +27,7 @@ Item {
         id: layout
 
         anchors.centerIn: parent
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         // Speaker volume
         CustomMouseArea {

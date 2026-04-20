@@ -30,7 +30,7 @@ Item {
 
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledText {
             text: qsTr("Output device")
@@ -53,7 +53,7 @@ Item {
         }
 
         StyledText {
-            Layout.topMargin: Tokens.spacing.smaller
+            Layout.topMargin: Tokens.spacing.medium
             text: qsTr("Input device")
             font.weight: 500
         }
@@ -72,7 +72,7 @@ Item {
         }
 
         StyledText {
-            Layout.topMargin: Tokens.spacing.smaller
+            Layout.topMargin: Tokens.spacing.medium
             Layout.bottomMargin: -Tokens.spacing.small / 2
             text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
             font.weight: 500
@@ -105,7 +105,7 @@ Item {
 
         IconTextButton {
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.normal
+            Layout.topMargin: Tokens.spacing.medium
             inactiveColour: Colours.palette.m3primaryContainer
             inactiveOnColour: Colours.palette.m3onPrimaryContainer
             verticalPadding: Tokens.padding.extraSmall

@@ -69,7 +69,7 @@ ColumnLayout {
         }
     }
 
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
     implicitWidth: 400
     implicitHeight: content.implicitHeight + Tokens.padding.extraLargeIncreased
     visible: shouldBeVisible || isClosing
@@ -172,7 +172,7 @@ ColumnLayout {
             anchors.verticalCenter: parent.verticalCenter
             anchors.margins: Tokens.padding.large
 
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
@@ -261,7 +261,7 @@ ColumnLayout {
                 property string passwordBuffer: ""
 
                 objectName: "passwordContainer"
-                Layout.topMargin: Tokens.spacing.large
+                Layout.topMargin: Tokens.spacing.largeIncreased
                 Layout.fillWidth: true
                 implicitHeight: Math.max(48, charList.implicitHeight + Tokens.padding.medium * 2)
                 focus: true
@@ -463,9 +463,9 @@ ColumnLayout {
             }
 
             RowLayout {
-                Layout.topMargin: Tokens.spacing.normal
+                Layout.topMargin: Tokens.spacing.medium
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 TextButton {
                     id: cancelButton

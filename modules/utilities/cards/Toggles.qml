@@ -48,7 +48,7 @@ StyledRect {
 
         anchors.fill: parent
         anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledText {
             text: qsTr("Quick Toggles")

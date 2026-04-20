@@ -27,7 +27,7 @@ ColumnLayout {
         onClicked: root.props.recordingListExpanded = !root.props.recordingListExpanded
 
         RowLayout {
-            spacing: Tokens.spacing.smaller
+            spacing: Tokens.spacing.medium
 
             MaterialIcon {
                 Layout.alignment: Qt.AlignVCenter
@@ -195,7 +195,7 @@ ColumnLayout {
                 }
 
                 RowLayout {
-                    spacing: Tokens.spacing.smaller
+                    spacing: Tokens.spacing.medium
 
                     MaterialIcon {
                         Layout.alignment: Qt.AlignHCenter

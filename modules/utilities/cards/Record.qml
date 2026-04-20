@@ -24,10 +24,10 @@ StyledRect {
 
         anchors.fill: parent
         anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         RowLayout {
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
             z: 1
 
             StyledRect {
@@ -187,7 +187,7 @@ StyledRect {
         id: recordingControls
 
         RowLayout {
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             StyledRect {
                 radius: Tokens.rounding.full

@@ -112,10 +112,10 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
 
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 RowLayout {
-                    spacing: Tokens.spacing.smaller
+                    spacing: Tokens.spacing.medium
 
                     StyledText {
                         text: qsTr("Dashboard")

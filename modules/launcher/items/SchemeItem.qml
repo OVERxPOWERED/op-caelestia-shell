@@ -61,10 +61,10 @@ Item {
 
         Column {
             anchors.left: preview.right
-            anchors.leftMargin: Tokens.spacing.normal
+            anchors.leftMargin: Tokens.spacing.medium
             anchors.verticalCenter: parent.verticalCenter
 
-            width: parent.width - preview.width - anchors.leftMargin - (current.active ? current.width + Tokens.spacing.normal : 0)
+            width: parent.width - preview.width - anchors.leftMargin - (current.active ? current.width + Tokens.spacing.medium : 0)
             spacing: 0
 
             StyledText {

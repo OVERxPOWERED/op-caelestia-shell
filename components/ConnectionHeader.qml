@@ -9,7 +9,7 @@ ColumnLayout {
     required property string icon
     required property string title
 
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
     Layout.alignment: Qt.AlignHCenter
 
     MaterialIcon {

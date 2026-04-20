@@ -80,7 +80,7 @@ Item {
         anchors.right: parent.right
         anchors.top: title.bottom
         anchors.bottom: parent.bottom
-        anchors.topMargin: Tokens.spacing.smaller
+        anchors.topMargin: Tokens.spacing.medium
 
         radius: Tokens.rounding.medium
         color: "transparent"
@@ -92,7 +92,7 @@ Item {
             opacity: root.notifCount > 0 ? 0 : 1
 
             sourceComponent: ColumnLayout {
-                spacing: Tokens.spacing.large
+                spacing: Tokens.spacing.largeIncreased
 
                 Image {
                     asynchronous: true

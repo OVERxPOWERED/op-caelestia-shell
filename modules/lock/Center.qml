@@ -20,7 +20,7 @@ ColumnLayout {
     Layout.fillWidth: false
     Layout.fillHeight: true
 
-    spacing: Tokens.spacing.large * 2
+    spacing: Tokens.spacing.largeIncreased * 2
 
     RowLayout {
         Layout.alignment: Qt.AlignHCenter
@@ -83,7 +83,7 @@ ColumnLayout {
     }
 
     StyledClippingRect {
-        Layout.topMargin: Tokens.spacing.large * 2
+        Layout.topMargin: Tokens.spacing.largeIncreased * 2
         Layout.alignment: Qt.AlignHCenter
 
         implicitWidth: root.centerWidth / 2
@@ -148,7 +148,7 @@ ColumnLayout {
 
             anchors.fill: parent
             anchors.margins: Tokens.padding.extraSmall
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             Item {
                 implicitWidth: implicitHeight
@@ -212,7 +212,7 @@ ColumnLayout {
 
     Item {
         Layout.fillWidth: true
-        Layout.topMargin: -Tokens.spacing.large
+        Layout.topMargin: -Tokens.spacing.largeIncreased
 
         implicitHeight: Math.max(message.implicitHeight, stateMessage.implicitHeight)
 

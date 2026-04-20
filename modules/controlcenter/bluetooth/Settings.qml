@@ -16,7 +16,7 @@ ColumnLayout {
 
     required property Session session
 
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
 
     SettingsHeader {
         icon: "bluetooth"
@@ -24,7 +24,7 @@ ColumnLayout {
     }
 
     StyledText {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Adapter status")
         font.pointSize: Tokens.font.size.larger
         font.weight: 500
@@ -50,7 +50,7 @@ ColumnLayout {
             anchors.verticalCenter: parent.verticalCenter
             anchors.margins: Tokens.padding.large
 
-            spacing: Tokens.spacing.larger
+            spacing: Tokens.spacing.large
 
             Toggle {
                 label: qsTr("Powered")
@@ -85,7 +85,7 @@ ColumnLayout {
     }
 
     StyledText {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Adapter properties")
         font.pointSize: Tokens.font.size.larger
         font.weight: 500
@@ -111,11 +111,11 @@ ColumnLayout {
             anchors.verticalCenter: parent.verticalCenter
             anchors.margins: Tokens.padding.large
 
-            spacing: Tokens.spacing.larger
+            spacing: Tokens.spacing.large
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 StyledText {
                     Layout.fillWidth: true
@@ -145,7 +145,7 @@ ColumnLayout {
                         anchors.margins: Tokens.padding.medium
                         anchors.topMargin: Tokens.padding.small
                         anchors.bottomMargin: Tokens.padding.small
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
                             Layout.leftMargin: Tokens.padding.extraSmall
@@ -224,7 +224,7 @@ ColumnLayout {
                                         anchors.right: parent.right
                                         anchors.verticalCenter: parent.verticalCenter
                                         anchors.margins: Tokens.padding.medium
-                                        spacing: Tokens.spacing.normal
+                                        spacing: Tokens.spacing.medium
 
                                         StyledText {
                                             Layout.fillWidth: true
@@ -264,7 +264,7 @@ ColumnLayout {
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 StyledText {
                     Layout.fillWidth: true
@@ -442,7 +442,7 @@ ColumnLayout {
     }
 
     StyledText {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Adapter information")
         font.pointSize: Tokens.font.size.larger
         font.weight: 500
@@ -481,7 +481,7 @@ ColumnLayout {
             }
 
             StyledText {
-                Layout.topMargin: Tokens.spacing.normal
+                Layout.topMargin: Tokens.spacing.medium
                 text: qsTr("Dbus path")
             }
 
@@ -492,7 +492,7 @@ ColumnLayout {
             }
 
             StyledText {
-                Layout.topMargin: Tokens.spacing.normal
+                Layout.topMargin: Tokens.spacing.medium
                 text: qsTr("Adapter id")
             }
 
@@ -510,7 +510,7 @@ ColumnLayout {
         property alias toggle: toggle
 
         Layout.fillWidth: true
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledText {
             Layout.fillWidth: true

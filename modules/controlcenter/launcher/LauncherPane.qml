@@ -152,7 +152,7 @@ Item {
                 spacing: Tokens.spacing.small
 
                 RowLayout {
-                    spacing: Tokens.spacing.smaller
+                    spacing: Tokens.spacing.medium
 
                     StyledText {
                         text: qsTr("Launcher")
@@ -186,7 +186,7 @@ Item {
                 }
 
                 StyledText {
-                    Layout.topMargin: Tokens.spacing.large
+                    Layout.topMargin: Tokens.spacing.largeIncreased
                     text: qsTr("Applications (%1)").arg(root.searchText ? root.filteredApps.length : allAppsDb.apps.length)
                     font.pointSize: Tokens.font.size.normal
                     font.weight: 500
@@ -199,7 +199,7 @@ Item {
 
                 StyledRect {
                     Layout.fillWidth: true
-                    Layout.topMargin: Tokens.spacing.normal
+                    Layout.topMargin: Tokens.spacing.medium
                     Layout.bottomMargin: Tokens.spacing.small
 
                     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
@@ -339,7 +339,7 @@ Item {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.margins: Tokens.padding.medium
 
-                                spacing: Tokens.spacing.normal
+                                spacing: Tokens.spacing.medium
 
                                 IconImage {
                                     asynchronous: true
@@ -517,7 +517,7 @@ Item {
             readonly property var displayedApp: parent && parent.displayedApp !== undefined ? parent.displayedApp : null
 
             anchors.fill: parent
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             SettingsHeader {
                 Layout.leftMargin: Tokens.padding.extraLargeIncreased
@@ -535,11 +535,11 @@ Item {
                 Layout.topMargin: Tokens.padding.extraLargeIncreased
                 visible: displayedApp !== null
                 implicitWidth: Math.max(appIconImage.implicitWidth, appTitleText.implicitWidth)
-                implicitHeight: appIconImage.implicitHeight + Tokens.spacing.normal + appTitleText.implicitHeight
+                implicitHeight: appIconImage.implicitHeight + Tokens.spacing.medium + appTitleText.implicitHeight
 
                 ColumnLayout {
                     anchors.centerIn: parent
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     IconImage {
                         id: appIconImage
@@ -573,7 +573,7 @@ Item {
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.topMargin: Tokens.spacing.large
+                Layout.topMargin: Tokens.spacing.largeIncreased
                 Layout.leftMargin: Tokens.padding.extraLargeIncreased
                 Layout.rightMargin: Tokens.padding.extraLargeIncreased
 
@@ -594,10 +594,10 @@ Item {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         SwitchRow {
-                            Layout.topMargin: Tokens.spacing.normal
+                            Layout.topMargin: Tokens.spacing.medium
                             visible: appDetailsLayout.displayedApp !== null
                             label: qsTr("Mark as favourite")
                             checked: root.favouriteChecked
@@ -629,7 +629,7 @@ Item {
                             }
                         }
                         SwitchRow {
-                            Layout.topMargin: Tokens.spacing.normal
+                            Layout.topMargin: Tokens.spacing.medium
                             visible: appDetailsLayout.displayedApp !== null
                             label: qsTr("Hide from launcher")
                             checked: root.hideFromLauncherChecked

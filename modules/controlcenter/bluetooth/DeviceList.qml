@@ -32,7 +32,7 @@ DeviceList {
 
     headerComponent: Component {
         RowLayout {
-            spacing: Tokens.spacing.smaller
+            spacing: Tokens.spacing.medium
 
             StyledText {
                 text: qsTr("Bluetooth")
@@ -157,7 +157,7 @@ DeviceList {
                 anchors.fill: parent
                 anchors.margins: Tokens.padding.medium
 
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 StyledRect {
                     implicitWidth: implicitHeight

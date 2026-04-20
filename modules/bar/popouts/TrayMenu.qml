@@ -138,7 +138,7 @@ StackView {
                             id: label
 
                             anchors.left: icon.right
-                            anchors.leftMargin: icon.active ? Tokens.spacing.smaller : 0
+                            anchors.leftMargin: icon.active ? Tokens.spacing.medium : 0
 
                             text: labelMetrics.elidedText
                             color: item.modelData.enabled ? Colours.palette.m3onSurface : Colours.palette.m3outline
@@ -152,7 +152,7 @@ StackView {
                             font.family: label.font.family
 
                             elide: Text.ElideRight
-                            elideWidth: root.Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + root.Tokens.spacing.normal : 0)
+                            elideWidth: root.Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + root.Tokens.spacing.medium : 0)
                         }
 
                         Loader {

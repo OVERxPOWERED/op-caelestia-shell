@@ -74,7 +74,7 @@ Item {
             id: layout
 
             anchors.centerIn: parent
-            spacing: Tokens.spacing.larger * root.clockScale
+            spacing: Tokens.spacing.large * root.clockScale
 
             RowLayout {
                 spacing: Tokens.spacing.small
@@ -120,8 +120,8 @@ Item {
             StyledRect {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 4 * root.clockScale
-                Layout.topMargin: Tokens.spacing.larger * root.clockScale
-                Layout.bottomMargin: Tokens.spacing.larger * root.clockScale
+                Layout.topMargin: Tokens.spacing.large * root.clockScale
+                Layout.bottomMargin: Tokens.spacing.large * root.clockScale
                 radius: Tokens.rounding.full
                 color: root.safePrimary
                 opacity: 0.8

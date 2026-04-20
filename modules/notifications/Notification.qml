@@ -228,7 +228,7 @@ StyledRect {
 
                 anchors.top: parent.top
                 anchors.left: image.right
-                anchors.leftMargin: Tokens.spacing.smaller
+                anchors.leftMargin: Tokens.spacing.medium
 
                 animate: true
                 text: appNameMetrics.elidedText
@@ -258,7 +258,7 @@ StyledRect {
 
                 anchors.top: parent.top
                 anchors.left: image.right
-                anchors.leftMargin: Tokens.spacing.smaller
+                anchors.leftMargin: Tokens.spacing.medium
 
                 animate: true
                 text: summaryMetrics.elidedText
@@ -441,7 +441,7 @@ StyledRect {
                 anchors.top: body.bottom
                 anchors.topMargin: Tokens.spacing.small
 
-                spacing: Tokens.spacing.smaller
+                spacing: Tokens.spacing.medium
 
                 opacity: root.expanded ? 1 : 0
 

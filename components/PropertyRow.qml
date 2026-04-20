@@ -14,7 +14,7 @@ ColumnLayout {
     spacing: Tokens.spacing.small / 2
 
     StyledText {
-        Layout.topMargin: root.showTopMargin ? Tokens.spacing.normal : 0
+        Layout.topMargin: root.showTopMargin ? Tokens.spacing.medium : 0
         text: root.label
     }
 

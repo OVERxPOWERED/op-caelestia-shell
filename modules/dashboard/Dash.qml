@@ -12,8 +12,8 @@ GridLayout {
     required property DashboardState dashState
     required property FileDialog facePicker
 
-    rowSpacing: Tokens.spacing.normal
-    columnSpacing: Tokens.spacing.normal
+    rowSpacing: Tokens.spacing.medium
+    columnSpacing: Tokens.spacing.medium
 
     Rect {
         Layout.column: 2

@@ -64,7 +64,7 @@ CollapsibleSection {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.margins: Tokens.padding.medium
 
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     MaterialIcon {
                         text: modelData.icon

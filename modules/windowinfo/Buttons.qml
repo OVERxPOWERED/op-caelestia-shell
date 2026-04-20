@@ -21,7 +21,7 @@ ColumnLayout {
         Layout.leftMargin: Tokens.padding.large
         Layout.rightMargin: Tokens.padding.large
 
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledText {
             Layout.fillWidth: true
@@ -62,14 +62,14 @@ ColumnLayout {
         Layout.preferredHeight: root.moveToWsExpanded ? implicitHeight : 0
         clip: true
 
-        topMargin: Tokens.spacing.normal
-        bottomMargin: Tokens.spacing.normal
+        topMargin: Tokens.spacing.medium
+        bottomMargin: Tokens.spacing.medium
 
         GridLayout {
             id: wsGrid
 
-            rowSpacing: Tokens.spacing.smaller
-            columnSpacing: Tokens.spacing.normal
+            rowSpacing: Tokens.spacing.medium
+            columnSpacing: Tokens.spacing.medium
             columns: 5
 
             Repeater {
@@ -103,7 +103,7 @@ ColumnLayout {
         Layout.rightMargin: Tokens.padding.large
         Layout.bottomMargin: Tokens.padding.large
 
-        spacing: root.client?.lastIpcObject.floating ? Tokens.spacing.normal : Tokens.spacing.small
+        spacing: root.client?.lastIpcObject.floating ? Tokens.spacing.medium : Tokens.spacing.small
 
         Button {
             color: Colours.palette.m3secondaryContainer

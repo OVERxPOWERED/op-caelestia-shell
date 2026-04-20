@@ -64,7 +64,7 @@ DeviceDetails {
     sections: [
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 SectionHeader {
                     title: qsTr("Connection status")
@@ -86,7 +86,7 @@ DeviceDetails {
 
                     TextButton {
                         Layout.fillWidth: true
-                        Layout.topMargin: Tokens.spacing.normal
+                        Layout.topMargin: Tokens.spacing.medium
                         Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.medium * 2
                         visible: {
                             if (!root.network || !root.network.ssid) {
@@ -112,7 +112,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 SectionHeader {
                     title: qsTr("Network properties")
@@ -155,7 +155,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 SectionHeader {
                     title: qsTr("Connection information")

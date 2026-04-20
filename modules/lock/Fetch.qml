@@ -21,7 +21,7 @@ ColumnLayout {
     RowLayout {
         Layout.fillWidth: true
         Layout.fillHeight: false
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledRect {
             implicitWidth: prompt.implicitWidth + Tokens.padding.medium * 2
@@ -74,7 +74,7 @@ ColumnLayout {
             Layout.topMargin: Tokens.padding.medium
             Layout.bottomMargin: Tokens.padding.medium
             Layout.leftMargin: iconLoader.active ? 0 : width * 0.1
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             WrappedLoader {
                 Layout.fillWidth: true
@@ -125,10 +125,10 @@ ColumnLayout {
         active: root.height > 180
 
         sourceComponent: RowLayout {
-            spacing: Tokens.spacing.large
+            spacing: Tokens.spacing.largeIncreased
 
             Repeater {
-                model: Math.max(0, Math.min(8, root.width / (Tokens.font.size.larger * 2 + Tokens.spacing.large)))
+                model: Math.max(0, Math.min(8, root.width / (Tokens.font.size.larger * 2 + Tokens.spacing.largeIncreased)))
 
                 StyledRect {
                     required property int index

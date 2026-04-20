@@ -38,11 +38,11 @@ Item {
 
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: Tokens.spacing.smaller
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
                             text: qsTr("Audio")
@@ -110,7 +110,7 @@ Item {
                                         anchors.verticalCenter: parent.verticalCenter
                                         anchors.margins: Tokens.padding.medium
 
-                                        spacing: Tokens.spacing.normal
+                                        spacing: Tokens.spacing.medium
 
                                         MaterialIcon {
                                             text: Audio.sink?.id === modelData.id ? "speaker" : "speaker_group"
@@ -187,7 +187,7 @@ Item {
                                         anchors.verticalCenter: parent.verticalCenter
                                         anchors.margins: Tokens.padding.medium
 
-                                        spacing: Tokens.spacing.normal
+                                        spacing: Tokens.spacing.medium
 
                                         MaterialIcon {
                                             text: "mic"
@@ -229,7 +229,7 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     SettingsHeader {
                         icon: "volume_up"
@@ -242,7 +242,7 @@ Item {
                     }
 
                     SectionContainer {
-                        contentSpacing: Tokens.spacing.normal
+                        contentSpacing: Tokens.spacing.medium
 
                         ColumnLayout {
                             Layout.fillWidth: true
@@ -250,7 +250,7 @@ Item {
 
                             RowLayout {
                                 Layout.fillWidth: true
-                                spacing: Tokens.spacing.normal
+                                spacing: Tokens.spacing.medium
 
                                 StyledText {
                                     text: qsTr("Volume")
@@ -360,7 +360,7 @@ Item {
                     }
 
                     SectionContainer {
-                        contentSpacing: Tokens.spacing.normal
+                        contentSpacing: Tokens.spacing.medium
 
                         ColumnLayout {
                             Layout.fillWidth: true
@@ -368,7 +368,7 @@ Item {
 
                             RowLayout {
                                 Layout.fillWidth: true
-                                spacing: Tokens.spacing.normal
+                                spacing: Tokens.spacing.medium
 
                                 StyledText {
                                     text: qsTr("Volume")
@@ -478,7 +478,7 @@ Item {
                     }
 
                     SectionContainer {
-                        contentSpacing: Tokens.spacing.normal
+                        contentSpacing: Tokens.spacing.medium
 
                         ColumnLayout {
                             Layout.fillWidth: true
@@ -493,11 +493,11 @@ Item {
                                     required property int index
 
                                     Layout.fillWidth: true
-                                    spacing: Tokens.spacing.smaller
+                                    spacing: Tokens.spacing.medium
 
                                     RowLayout {
                                         Layout.fillWidth: true
-                                        spacing: Tokens.spacing.normal
+                                        spacing: Tokens.spacing.medium
 
                                         MaterialIcon {
                                             text: "apps"

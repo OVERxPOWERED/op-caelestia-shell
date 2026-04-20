@@ -53,7 +53,7 @@ StyledRect {
         anchors.margins: Tokens.padding.small
         anchors.leftMargin: Tokens.padding.medium
         anchors.rightMargin: Tokens.padding.medium
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledRect {
             radius: Tokens.rounding.large

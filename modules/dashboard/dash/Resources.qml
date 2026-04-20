@@ -11,7 +11,7 @@ Row {
     anchors.bottom: parent.bottom
 
     padding: Tokens.padding.large
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
 
     Ref {
         service: SystemUsage

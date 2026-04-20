@@ -9,11 +9,11 @@ RowLayout {
 
     required property var lock
 
-    spacing: Tokens.spacing.large * 2
+    spacing: Tokens.spacing.largeIncreased * 2
 
     ColumnLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledRect {
             Layout.fillWidth: true
@@ -62,7 +62,7 @@ RowLayout {
 
     ColumnLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledRect {
             Layout.fillWidth: true

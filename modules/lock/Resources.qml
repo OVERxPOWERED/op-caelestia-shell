@@ -13,8 +13,8 @@ GridLayout {
     anchors.right: parent.right
     anchors.margins: Tokens.padding.large
 
-    rowSpacing: Tokens.spacing.large
-    columnSpacing: Tokens.spacing.large
+    rowSpacing: Tokens.spacing.largeIncreased
+    columnSpacing: Tokens.spacing.largeIncreased
     rows: 2
     columns: 2
 

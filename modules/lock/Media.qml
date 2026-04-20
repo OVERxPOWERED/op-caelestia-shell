@@ -73,7 +73,7 @@ Item {
 
         StyledText {
             Layout.topMargin: Tokens.padding.large
-            Layout.bottomMargin: Tokens.spacing.larger
+            Layout.bottomMargin: Tokens.spacing.large
             text: qsTr("Now playing")
             color: Colours.palette.m3onSurfaceVariant
             font.family: Tokens.font.family.mono
@@ -104,10 +104,10 @@ Item {
 
         RowLayout {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Tokens.spacing.large * 1.2
+            Layout.topMargin: Tokens.spacing.largeIncreased * 1.2
             Layout.bottomMargin: Tokens.padding.large
 
-            spacing: Tokens.spacing.large
+            spacing: Tokens.spacing.largeIncreased
 
             PlayerControl {
                 icon: "skip_previous"

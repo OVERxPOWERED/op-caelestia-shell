@@ -24,7 +24,7 @@ Item {
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         anchors.leftMargin: Tokens.padding.medium * 2
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         states: State {
             name: "expanded"
@@ -42,7 +42,7 @@ Item {
         }
 
         Loader {
-            Layout.topMargin: Tokens.spacing.large
+            Layout.topMargin: Tokens.spacing.largeIncreased
             asynchronous: true
             active: !root.session.floating
             visible: active
@@ -88,7 +88,7 @@ Item {
 
                     anchors.left: normalWinIcon.right
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.leftMargin: Tokens.spacing.normal
+                    anchors.leftMargin: Tokens.spacing.medium
 
                     text: qsTr("Float window")
                     color: Colours.palette.m3onPrimaryContainer
@@ -121,7 +121,7 @@ Item {
             NavItem {
                 required property int index
 
-                Layout.topMargin: index === 0 ? Tokens.spacing.large * 2 : 0
+                Layout.topMargin: index === 0 ? Tokens.spacing.largeIncreased * 2 : 0
                 icon: PaneRegistry.getByIndex(index).icon
                 label: PaneRegistry.getByIndex(index).label
             }
@@ -206,7 +206,7 @@ Item {
 
                 anchors.left: icon.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: Tokens.spacing.normal
+                anchors.leftMargin: Tokens.spacing.medium
 
                 opacity: 0
                 text: item.label

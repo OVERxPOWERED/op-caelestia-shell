@@ -44,7 +44,7 @@ Item {
 
         Item {
             anchors.left: icon.right
-            anchors.leftMargin: Tokens.spacing.normal
+            anchors.leftMargin: Tokens.spacing.medium
             anchors.verticalCenter: icon.verticalCenter
 
             implicitWidth: parent.width - icon.width - favouriteIcon.width

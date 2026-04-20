@@ -29,7 +29,7 @@ StyledRect {
         StyledText {
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Tokens.padding.extraSmall / 2
-            Layout.bottomMargin: Tokens.spacing.normal
+            Layout.bottomMargin: Tokens.spacing.medium
             text: qsTr("Files")
             color: Colours.palette.m3onSurface
             font.pointSize: Tokens.font.size.larger
@@ -69,7 +69,7 @@ StyledRect {
                     anchors.leftMargin: Tokens.padding.large
                     anchors.rightMargin: Tokens.padding.large
 
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     MaterialIcon {
                         text: {

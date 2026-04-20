@@ -52,7 +52,7 @@ StyledRect {
         id: toggleBtnInner
 
         anchors.centerIn: parent
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         MaterialIcon {
             id: toggleBtnIcon

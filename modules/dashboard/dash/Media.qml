@@ -119,7 +119,7 @@ Item {
 
         anchors.top: cover.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: Tokens.spacing.normal
+        anchors.topMargin: Tokens.spacing.medium
 
         animate: true
         horizontalAlignment: Text.AlignHCenter
@@ -169,7 +169,7 @@ Item {
 
         anchors.top: artist.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: Tokens.spacing.smaller
+        anchors.topMargin: Tokens.spacing.medium
 
         spacing: Tokens.spacing.small
 

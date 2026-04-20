@@ -29,7 +29,7 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: icon.right
-        anchors.leftMargin: Tokens.spacing.large
+        anchors.leftMargin: Tokens.spacing.largeIncreased
 
         spacing: Tokens.spacing.small
 

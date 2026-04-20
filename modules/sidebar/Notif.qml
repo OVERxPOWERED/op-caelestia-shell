@@ -131,7 +131,7 @@ StyledRect {
     component ExpandedBody: ColumnLayout {
         readonly property alias body: bodyText
 
-        spacing: Tokens.spacing.smaller
+        spacing: Tokens.spacing.medium
 
         StyledText {
             id: bodyText

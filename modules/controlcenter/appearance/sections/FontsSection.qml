@@ -72,7 +72,7 @@ CollapsibleSection {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.margins: Tokens.padding.medium
 
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
                             text: modelData
@@ -153,7 +153,7 @@ CollapsibleSection {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.margins: Tokens.padding.medium
 
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
                             text: modelData
@@ -236,7 +236,7 @@ CollapsibleSection {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.margins: Tokens.padding.medium
 
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
                             text: modelData
@@ -264,7 +264,7 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.normal
+        contentSpacing: Tokens.spacing.medium
 
         SliderInput {
             Layout.fillWidth: true

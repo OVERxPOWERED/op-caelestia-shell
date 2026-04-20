@@ -164,7 +164,7 @@ Loader {
 
                 anchors.fill: parent
                 anchors.margins: Tokens.padding.large * 1.5
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 StyledText {
                     text: qsTr("Delete recording?")
@@ -180,9 +180,9 @@ Loader {
                 }
 
                 RowLayout {
-                    Layout.topMargin: Tokens.spacing.normal
+                    Layout.topMargin: Tokens.spacing.medium
                     Layout.alignment: Qt.AlignRight
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     TextButton {
                         text: qsTr("Cancel")

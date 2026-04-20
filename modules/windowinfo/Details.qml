@@ -35,8 +35,8 @@ ColumnLayout {
         Layout.preferredHeight: 1
         Layout.leftMargin: Tokens.padding.extraLargeIncreased
         Layout.rightMargin: Tokens.padding.extraLargeIncreased
-        Layout.topMargin: Tokens.spacing.normal
-        Layout.bottomMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.medium
+        Layout.bottomMargin: Tokens.spacing.largeIncreased
 
         color: Colours.palette.m3secondary
     }
@@ -134,7 +134,7 @@ ColumnLayout {
         Layout.rightMargin: Tokens.padding.large
         Layout.fillWidth: true
 
-        spacing: Tokens.spacing.smaller
+        spacing: Tokens.spacing.medium
 
         MaterialIcon {
             id: icon

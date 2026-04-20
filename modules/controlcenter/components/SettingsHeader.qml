@@ -18,7 +18,7 @@ Item {
         id: column
 
         anchors.centerIn: parent
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         MaterialIcon {
             Layout.alignment: Qt.AlignHCenter

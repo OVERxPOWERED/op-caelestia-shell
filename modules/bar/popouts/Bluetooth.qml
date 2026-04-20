@@ -169,7 +169,7 @@ ColumnLayout {
 
     IconTextButton {
         Layout.fillWidth: true
-        Layout.topMargin: Tokens.spacing.normal
+        Layout.topMargin: Tokens.spacing.medium
         inactiveColour: Colours.palette.m3primaryContainer
         inactiveOnColour: Colours.palette.m3onPrimaryContainer
         verticalPadding: Tokens.padding.extraSmall
@@ -186,7 +186,7 @@ ColumnLayout {
 
         Layout.fillWidth: true
         Layout.rightMargin: Tokens.padding.extraSmall
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledText {
             Layout.fillWidth: true

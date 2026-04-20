@@ -19,14 +19,14 @@ Item {
         id: child
 
         anchors.centerIn: parent
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         RowLayout {
             id: detailsRow
 
             anchors.left: parent.left
             anchors.right: parent.right
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             IconImage {
                 id: icon

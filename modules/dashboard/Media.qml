@@ -201,7 +201,7 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: visualiser.right
-        anchors.leftMargin: Tokens.spacing.normal
+        anchors.leftMargin: Tokens.spacing.medium
 
         spacing: Tokens.spacing.small
 
@@ -260,7 +260,7 @@ Item {
 
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Tokens.spacing.small
-            Layout.bottomMargin: Tokens.spacing.smaller
+            Layout.bottomMargin: Tokens.spacing.medium
 
             spacing: Tokens.spacing.small
 
@@ -377,7 +377,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: playerChanger.parent == leftSection ? -playerChanger.height : 0
         anchors.left: details.right
-        anchors.leftMargin: Tokens.spacing.normal
+        anchors.leftMargin: Tokens.spacing.medium
 
         visible: lyricMenu.height === 0 || opacity > 0
         opacity: lyricMenu.height === 0 ? 1 : 0
@@ -416,7 +416,7 @@ Item {
         anchors.top: parent.top
         anchors.left: details.right
         anchors.right: parent.right
-        anchors.leftMargin: Tokens.spacing.normal
+        anchors.leftMargin: Tokens.spacing.medium
 
         contentHeight: !root.lyricsShowingDebounced ? root.detailsHeightWithoutLyrics + Tokens.padding.large * 5 : root.detailsHeightWithoutLyrics + lyricsViewInDetails.implicitHeight
 

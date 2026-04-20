@@ -9,7 +9,7 @@ import qs.services
 Column {
     id: root
 
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
     width: Tokens.sizes.bar.batteryWidth
 
     StyledText {
@@ -109,7 +109,7 @@ Column {
 
         anchors.horizontalCenter: parent.horizontalCenter
 
-        implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + Tokens.padding.medium * 2 + Tokens.spacing.large * 2
+        implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + Tokens.padding.medium * 2 + Tokens.spacing.largeIncreased * 2
         implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + Tokens.padding.small
 
         color: Colours.tPalette.m3surfaceContainer

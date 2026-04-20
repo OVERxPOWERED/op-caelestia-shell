@@ -40,7 +40,7 @@ SectionContainer {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         SwitchRow {
             Layout.fillWidth: true

@@ -54,10 +54,10 @@ StyledFlickable {
             sections: [
                 Component {
                     ColumnLayout {
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
-                            Layout.topMargin: Tokens.spacing.large
+                            Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Connection status")
                             font.pointSize: Tokens.font.size.larger
                             font.weight: 500
@@ -83,7 +83,7 @@ StyledFlickable {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.margins: Tokens.padding.large
 
-                                spacing: Tokens.spacing.larger
+                                spacing: Tokens.spacing.large
 
                                 Toggle {
                                     label: qsTr("Connected")
@@ -113,10 +113,10 @@ StyledFlickable {
                 },
                 Component {
                     ColumnLayout {
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
-                            Layout.topMargin: Tokens.spacing.large
+                            Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Device properties")
                             font.pointSize: Tokens.font.size.larger
                             font.weight: 500
@@ -142,7 +142,7 @@ StyledFlickable {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.margins: Tokens.padding.large
 
-                                spacing: Tokens.spacing.larger
+                                spacing: Tokens.spacing.large
 
                                 RowLayout {
                                     Layout.fillWidth: true
@@ -319,10 +319,10 @@ StyledFlickable {
                 },
                 Component {
                     ColumnLayout {
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
-                            Layout.topMargin: Tokens.spacing.large
+                            Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Device information")
                             font.pointSize: Tokens.font.size.larger
                             font.weight: 500
@@ -382,7 +382,7 @@ StyledFlickable {
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Tokens.spacing.normal
+                                    Layout.topMargin: Tokens.spacing.medium
                                     text: qsTr("Dbus path")
                                 }
 
@@ -393,7 +393,7 @@ StyledFlickable {
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Tokens.spacing.normal
+                                    Layout.topMargin: Tokens.spacing.medium
                                     text: qsTr("MAC address")
                                 }
 
@@ -404,7 +404,7 @@ StyledFlickable {
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Tokens.spacing.normal
+                                    Layout.topMargin: Tokens.spacing.medium
                                     text: qsTr("Bonded")
                                 }
 
@@ -415,7 +415,7 @@ StyledFlickable {
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Tokens.spacing.normal
+                                    Layout.topMargin: Tokens.spacing.medium
                                     text: qsTr("System name")
                                 }
 
@@ -544,7 +544,7 @@ StyledFlickable {
                     id: fabMenuItemInner
 
                     anchors.centerIn: parent
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
                     opacity: 0
 
                     MaterialIcon {
@@ -650,7 +650,7 @@ StyledFlickable {
         property alias toggle: toggle
 
         Layout.fillWidth: true
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledText {
             Layout.fillWidth: true

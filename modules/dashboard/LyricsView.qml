@@ -46,7 +46,7 @@ StyledListView {
         property bool isCurrent: ListView.isCurrentItem
 
         width: ListView.view.width
-        height: hasContent ? (lyricText.contentHeight + Tokens.spacing.large) : 0
+        height: hasContent ? (lyricText.contentHeight + Tokens.spacing.largeIncreased) : 0
 
         MultiEffect {
             id: effect

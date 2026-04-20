@@ -60,7 +60,7 @@ StyledRect {
         anchors.top: parent.top
         anchors.margins: Tokens.padding.medium
 
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         Item {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -148,7 +148,7 @@ StyledRect {
             RowLayout {
                 Layout.bottomMargin: -parent.spacing
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.smaller
+                spacing: Tokens.spacing.medium
 
                 StyledText {
                     Layout.fillWidth: true

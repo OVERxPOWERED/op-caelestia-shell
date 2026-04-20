@@ -172,10 +172,10 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
 
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 RowLayout {
-                    spacing: Tokens.spacing.smaller
+                    spacing: Tokens.spacing.medium
 
                     StyledText {
                         text: qsTr("Taskbar")
@@ -269,14 +269,14 @@ Item {
                     id: mainRowLayout
 
                     Layout.fillWidth: true
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     ColumnLayout {
                         id: leftColumnLayout
 
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         SectionContainer {
                             Layout.fillWidth: true
@@ -304,7 +304,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -340,7 +340,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -374,7 +374,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -408,7 +408,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -442,7 +442,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -478,7 +478,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -543,7 +543,7 @@ Item {
 
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         SectionContainer {
                             Layout.fillWidth: true
@@ -610,7 +610,7 @@ Item {
                             }
 
                             SectionContainer {
-                                contentSpacing: Tokens.spacing.normal
+                                contentSpacing: Tokens.spacing.medium
 
                                 SliderInput {
                                     Layout.fillWidth: true
@@ -669,7 +669,7 @@ Item {
 
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         SectionContainer {
                             Layout.fillWidth: true

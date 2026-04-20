@@ -372,7 +372,7 @@ ColumnLayout {
 
         Layout.fillWidth: true
         Layout.rightMargin: Tokens.padding.extraSmall
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledText {
             Layout.fillWidth: true

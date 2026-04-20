@@ -17,7 +17,7 @@ Item {
         id: layout
 
         anchors.fill: parent
-        spacing: Tokens.spacing.smaller
+        spacing: Tokens.spacing.medium
 
         RowLayout {
             Layout.leftMargin: Tokens.padding.large
@@ -46,7 +46,7 @@ Item {
             }
 
             Row {
-                spacing: Tokens.spacing.large
+                spacing: Tokens.spacing.largeIncreased
 
                 WeatherStat {
                     icon: "wb_twilight"
@@ -75,7 +75,7 @@ Item {
                 id: bigInfoRow
 
                 anchors.centerIn: parent
-                spacing: Tokens.spacing.large
+                spacing: Tokens.spacing.largeIncreased
 
                 MaterialIcon {
                     Layout.alignment: Qt.AlignVCenter
@@ -108,7 +108,7 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Tokens.spacing.smaller
+            spacing: Tokens.spacing.medium
 
             DetailCard {
                 icon: "water_drop"
@@ -131,7 +131,7 @@ Item {
         }
 
         StyledText {
-            Layout.topMargin: Tokens.spacing.normal
+            Layout.topMargin: Tokens.spacing.medium
             Layout.leftMargin: Tokens.padding.medium
             visible: forecastRepeater.count > 0
             text: qsTr("7-Day Forecast")
@@ -142,7 +142,7 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Tokens.spacing.smaller
+            spacing: Tokens.spacing.medium
 
             Repeater {
                 id: forecastRepeater
@@ -218,7 +218,7 @@ Item {
 
         Row {
             anchors.centerIn: parent
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             MaterialIcon {
                 text: detailRoot.icon

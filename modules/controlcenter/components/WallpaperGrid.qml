@@ -15,11 +15,11 @@ GridView {
 
     required property Session session
 
-    readonly property int minCellWidth: 200 + Tokens.spacing.normal
+    readonly property int minCellWidth: 200 + Tokens.spacing.medium
     readonly property int columnsCount: Math.max(1, Math.floor(width / minCellWidth))
 
     cellWidth: width / columnsCount
-    cellHeight: 140 + Tokens.spacing.normal
+    cellHeight: 140 + Tokens.spacing.medium
 
     model: Wallpapers.list
 
@@ -33,7 +33,7 @@ GridView {
         required property var modelData
         required property int index
         readonly property bool isCurrent: modelData && modelData.path === Wallpapers.actualCurrent
-        readonly property real itemMargin: Tokens.spacing.normal / 2
+        readonly property real itemMargin: Tokens.spacing.medium / 2
         readonly property real itemRadius: Tokens.rounding.large
 
         width: root.cellWidth
@@ -205,8 +205,8 @@ GridView {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.leftMargin: Tokens.padding.medium + Tokens.spacing.normal / 2
-            anchors.rightMargin: Tokens.padding.medium + Tokens.spacing.normal / 2
+            anchors.leftMargin: Tokens.padding.medium + Tokens.spacing.medium / 2
+            anchors.rightMargin: Tokens.padding.medium + Tokens.spacing.medium / 2
             anchors.bottomMargin: Tokens.padding.medium
 
             text: modelData.name

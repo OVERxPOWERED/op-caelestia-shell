@@ -67,7 +67,7 @@ CollapsibleSection {
                     anchors.fill: parent
                     anchors.margins: Tokens.padding.medium
 
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     StyledRect {
                         id: preview

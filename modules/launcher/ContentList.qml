@@ -110,7 +110,7 @@ Item {
         opacity: root.currentList?.count === 0 ? 1 : 0
         scale: root.currentList?.count === 0 ? 1 : 0.5
 
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
         padding: Tokens.padding.large
 
         anchors.horizontalCenter: parent.horizontalCenter

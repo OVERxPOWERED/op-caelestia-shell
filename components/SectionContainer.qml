@@ -8,7 +8,7 @@ StyledRect {
     id: root
 
     default property alias content: contentColumn.data
-    property real contentSpacing: Tokens.spacing.larger
+    property real contentSpacing: Tokens.spacing.large
     property bool alignTop: false
 
     Layout.fillWidth: true

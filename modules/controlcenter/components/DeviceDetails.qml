@@ -30,7 +30,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         Loader {
             id: headerLoader

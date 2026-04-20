@@ -28,7 +28,7 @@ StyledRect {
         StyledRect {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.rightMargin: Tokens.spacing.normal
+            Layout.rightMargin: Tokens.spacing.medium
 
             color: Colours.tPalette.m3surfaceContainerHigh
             radius: Tokens.rounding.medium

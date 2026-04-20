@@ -16,7 +16,7 @@ Item {
     readonly property bool shouldBeActive: visibilities.launcher && Config.launcher.enabled
 
     readonly property real maxHeight: {
-        let max = screen.height - Config.border.thickness * 2 - Tokens.spacing.large;
+        let max = screen.height - Config.border.thickness * 2 - Tokens.spacing.largeIncreased;
         if (visibilities.dashboard)
             max -= panels.dashboard.nonAnimHeight;
         return max;

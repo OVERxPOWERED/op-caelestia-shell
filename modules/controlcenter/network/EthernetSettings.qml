@@ -15,7 +15,7 @@ ColumnLayout {
 
     required property Session session
 
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
 
     SettingsHeader {
         icon: "cable"
@@ -23,7 +23,7 @@ ColumnLayout {
     }
 
     StyledText {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Ethernet devices")
         font.pointSize: Tokens.font.size.larger
         font.weight: 500
@@ -62,7 +62,7 @@ ColumnLayout {
             }
 
             StyledText {
-                Layout.topMargin: Tokens.spacing.normal
+                Layout.topMargin: Tokens.spacing.medium
                 text: qsTr("Connected devices")
             }
 

@@ -25,7 +25,7 @@ Item {
         if (count === 0)
             return 0;
 
-        let height = (count - 1) * Tokens.spacing.smaller;
+        let height = (count - 1) * Tokens.spacing.medium;
         for (let i = 0; i < count; i++)
             height += (list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0;
 
@@ -89,9 +89,9 @@ Item {
 
                     let height = 0;
                     for (let i = 0; i < count; i++) {
-                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Tokens.spacing.smaller;
+                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Tokens.spacing.medium;
 
-                        if (height - Tokens.spacing.smaller >= scrollY)
+                        if (height - Tokens.spacing.medium >= scrollY)
                             return i;
                     }
 
@@ -110,9 +110,9 @@ Item {
 
                     let height = 0;
                     for (let i = count - 1; i >= 0; i--) {
-                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Tokens.spacing.smaller;
+                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Tokens.spacing.medium;
 
-                        if (height - Tokens.spacing.smaller >= scrollY)
+                        if (height - Tokens.spacing.medium >= scrollY)
                             return count - i - 1;
                     }
 
@@ -140,7 +140,7 @@ Item {
         }
 
         implicitWidth: notif.implicitWidth
-        implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : Tokens.spacing.smaller)
+        implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : Tokens.spacing.medium)
 
         ListView.onRemove: removeAnim.start()
 
@@ -183,7 +183,7 @@ Item {
 
         ClippingRectangle {
             anchors.top: parent.top
-            anchors.topMargin: wrapper.idx === 0 ? 0 : Tokens.spacing.smaller
+            anchors.topMargin: wrapper.idx === 0 ? 0 : Tokens.spacing.medium
 
             color: "transparent"
             radius: notif.radius

@@ -30,7 +30,7 @@ StyledRect {
         sourceComponent: ColumnLayout {
             anchors.fill: parent
             anchors.margins: Tokens.padding.large
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             // Header: icon, backend selector, refresh, toggle
             RowLayout {
@@ -41,7 +41,7 @@ StyledRect {
                     text: "lyrics"
                     fill: 1
                     color: Colours.palette.m3primary
-                    font.pointSize: Tokens.spacing.large
+                    font.pointSize: Tokens.spacing.largeIncreased
                 }
 
                 Rectangle {

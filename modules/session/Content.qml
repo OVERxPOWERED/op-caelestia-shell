@@ -13,7 +13,7 @@ Column {
     required property DrawerVisibilities visibilities
 
     padding: Tokens.padding.large
-    spacing: Tokens.spacing.large
+    spacing: Tokens.spacing.largeIncreased
 
     SessionButton {
         id: logout

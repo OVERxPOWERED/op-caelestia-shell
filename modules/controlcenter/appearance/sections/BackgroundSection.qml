@@ -39,8 +39,7 @@ CollapsibleSection {
     StyledText {
         Layout.topMargin: Tokens.spacing.medium
         text: qsTr("Desktop Clock")
-        font.pointSize: Tokens.font.size.larger
-        font.weight: 500
+        font: Tokens.font.body.builders.large.weight(500).build()
     }
 
     SwitchRow {
@@ -69,8 +68,7 @@ CollapsibleSection {
 
         StyledText {
             text: qsTr("Positioning")
-            font.pointSize: Tokens.font.size.larger
-            font.weight: 500
+            font: Tokens.font.body.builders.large.weight(500).build()
         }
 
         SplitButtonRow {
@@ -160,8 +158,7 @@ CollapsibleSection {
 
         StyledText {
             text: qsTr("Shadow")
-            font.pointSize: Tokens.font.size.larger
-            font.weight: 500
+            font: Tokens.font.body.builders.large.weight(500).build()
         }
 
         SwitchRow {
@@ -229,8 +226,7 @@ CollapsibleSection {
 
         StyledText {
             text: qsTr("Background")
-            font.pointSize: Tokens.font.size.larger
-            font.weight: 500
+            font: Tokens.font.body.builders.large.weight(500).build()
         }
 
         SwitchRow {
@@ -280,8 +276,7 @@ CollapsibleSection {
     StyledText {
         Layout.topMargin: Tokens.spacing.medium
         text: qsTr("Visualiser")
-        font.pointSize: Tokens.font.size.larger
-        font.weight: 500
+        font: Tokens.font.body.builders.large.weight(500).build()
     }
 
     SwitchRow {

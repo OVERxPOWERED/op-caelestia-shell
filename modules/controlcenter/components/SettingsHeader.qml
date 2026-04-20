@@ -23,15 +23,13 @@ Item {
         MaterialIcon {
             Layout.alignment: Qt.AlignHCenter
             text: root.icon
-            font.pointSize: Tokens.font.size.extraLarge * 3
-            font.bold: true
+            font: Tokens.font.icon.builders.xl.size(84).weight(Font.Bold).build()
         }
 
         StyledText {
             Layout.alignment: Qt.AlignHCenter
             text: root.title
-            font.pointSize: Tokens.font.size.large
-            font.bold: true
+            font: Tokens.font.title.builders.medium.weight(Font.Bold).build()
         }
     }
 }

@@ -26,7 +26,7 @@ ColumnLayout {
         StyledText {
             visible: root.label !== ""
             text: root.label
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.label.medium
             color: root.readonly ? Colours.palette.m3outline : Colours.palette.m3onSurface
         }
 
@@ -38,12 +38,12 @@ ColumnLayout {
             visible: root.readonly
             text: "lock"
             color: Colours.palette.m3outline
-            font.pointSize: Tokens.font.size.small
+            font: Tokens.font.icon.small
         }
 
         StyledText {
             text: Math.round(root.value) + (root.suffix !== "" ? " " + root.suffix : "")
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.body.medium
             color: root.readonly ? Colours.palette.m3outline : Colours.palette.m3onSurface
         }
     }

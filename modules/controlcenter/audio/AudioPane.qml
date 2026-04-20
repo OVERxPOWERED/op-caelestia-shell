@@ -46,8 +46,7 @@ Item {
 
                         StyledText {
                             text: qsTr("Audio")
-                            font.pointSize: Tokens.font.size.large
-                            font.weight: 500
+                            font: Tokens.font.body.builders.large.weight(500).build()
                         }
 
                         Item {
@@ -72,8 +71,7 @@ Item {
 
                                 StyledText {
                                     text: qsTr("Devices (%1)").arg(Audio.sinks.length)
-                                    font.pointSize: Tokens.font.size.normal
-                                    font.weight: 500
+                                    font: Tokens.font.body.builders.medium.weight(500).build()
                                 }
                             }
 
@@ -114,7 +112,7 @@ Item {
 
                                         MaterialIcon {
                                             text: Audio.sink?.id === modelData.id ? "speaker" : "speaker_group"
-                                            font.pointSize: Tokens.font.size.large
+                                            font: Tokens.font.icon.large
                                             fill: Audio.sink?.id === modelData.id ? 1 : 0
                                         }
 
@@ -124,7 +122,7 @@ Item {
                                             maximumLineCount: 1
 
                                             text: modelData.description || qsTr("Unknown")
-                                            font.weight: Audio.sink?.id === modelData.id ? 500 : 400
+                                            font: Audio.sink?.id === modelData.id ? Tokens.font.body.builders.small.weight(500).build() : Tokens.font.body.builders.small.weight(400).build()
                                         }
                                     }
                                 }
@@ -149,8 +147,7 @@ Item {
 
                                 StyledText {
                                     text: qsTr("Devices (%1)").arg(Audio.sources.length)
-                                    font.pointSize: Tokens.font.size.normal
-                                    font.weight: 500
+                                    font: Tokens.font.body.builders.medium.weight(500).build()
                                 }
                             }
 
@@ -191,7 +188,7 @@ Item {
 
                                         MaterialIcon {
                                             text: "mic"
-                                            font.pointSize: Tokens.font.size.large
+                                            font: Tokens.font.icon.large
                                             fill: Audio.source?.id === modelData.id ? 1 : 0
                                         }
 
@@ -201,7 +198,7 @@ Item {
                                             maximumLineCount: 1
 
                                             text: modelData.description || qsTr("Unknown")
-                                            font.weight: Audio.source?.id === modelData.id ? 500 : 400
+                                            font: Audio.source?.id === modelData.id ? Tokens.font.body.builders.small.weight(500).build() : Tokens.font.body.builders.small.weight(400).build()
                                         }
                                     }
                                 }
@@ -254,8 +251,7 @@ Item {
 
                                 StyledText {
                                     text: qsTr("Volume")
-                                    font.pointSize: Tokens.font.size.normal
-                                    font.weight: 500
+                                    font: Tokens.font.body.builders.medium.weight(500).build()
                                 }
 
                                 Item {
@@ -306,7 +302,7 @@ Item {
                                 StyledText {
                                     text: "%"
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Tokens.font.size.normal
+                                    font: Tokens.font.body.medium
                                     opacity: Audio.muted ? 0.5 : 1
                                 }
 
@@ -372,8 +368,7 @@ Item {
 
                                 StyledText {
                                     text: qsTr("Volume")
-                                    font.pointSize: Tokens.font.size.normal
-                                    font.weight: 500
+                                    font: Tokens.font.body.builders.medium.weight(500).build()
                                 }
 
                                 Item {
@@ -424,7 +419,7 @@ Item {
                                 StyledText {
                                     text: "%"
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Tokens.font.size.normal
+                                    font: Tokens.font.body.medium
                                     opacity: Audio.sourceMuted ? 0.5 : 1
                                 }
 
@@ -501,7 +496,7 @@ Item {
 
                                         MaterialIcon {
                                             text: "apps"
-                                            font.pointSize: Tokens.font.size.normal
+                                            font: Tokens.font.icon.medium
                                             fill: 0
                                         }
 
@@ -510,8 +505,7 @@ Item {
                                             elide: Text.ElideRight
                                             maximumLineCount: 1
                                             text: Audio.getStreamName(modelData)
-                                            font.pointSize: Tokens.font.size.normal
-                                            font.weight: 500
+                                            font: Tokens.font.body.builders.medium.weight(500).build()
                                         }
 
                                         StyledInputField {
@@ -558,7 +552,7 @@ Item {
                                         StyledText {
                                             text: "%"
                                             color: Colours.palette.m3outline
-                                            font.pointSize: Tokens.font.size.normal
+                                            font: Tokens.font.body.medium
                                             opacity: Audio.getStreamMuted(modelData) ? 0.5 : 1
                                         }
 
@@ -617,7 +611,7 @@ Item {
                                 visible: Audio.streams.length === 0
                                 text: qsTr("No applications currently playing audio")
                                 color: Colours.palette.m3outline
-                                font.pointSize: Tokens.font.size.small
+                                font: Tokens.font.body.small
                                 horizontalAlignment: Text.AlignHCenter
                             }
                         }

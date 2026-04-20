@@ -76,7 +76,7 @@ CollapsibleSection {
 
                         StyledText {
                             text: modelData
-                            font.pointSize: Tokens.font.size.normal
+                            font: Tokens.font.body.medium
                         }
 
                         Item {
@@ -90,7 +90,7 @@ CollapsibleSection {
                             sourceComponent: MaterialIcon {
                                 text: "check"
                                 color: Colours.palette.m3onSurfaceVariant
-                                font.pointSize: Tokens.font.size.large
+                                font: Tokens.font.icon.large
                             }
                         }
                     }
@@ -157,7 +157,7 @@ CollapsibleSection {
 
                         StyledText {
                             text: modelData
-                            font.pointSize: Tokens.font.size.normal
+                            font: Tokens.font.body.medium
                         }
 
                         Item {
@@ -171,7 +171,7 @@ CollapsibleSection {
                             sourceComponent: MaterialIcon {
                                 text: "check"
                                 color: Colours.palette.m3onSurfaceVariant
-                                font.pointSize: Tokens.font.size.large
+                                font: Tokens.font.icon.large
                             }
                         }
                     }
@@ -240,7 +240,7 @@ CollapsibleSection {
 
                         StyledText {
                             text: modelData
-                            font.pointSize: Tokens.font.size.normal
+                            font: Tokens.font.body.medium
                         }
 
                         Item {
@@ -254,7 +254,7 @@ CollapsibleSection {
                             sourceComponent: MaterialIcon {
                                 text: "check"
                                 color: Colours.palette.m3onSurfaceVariant
-                                font.pointSize: Tokens.font.size.large
+                                font: Tokens.font.icon.large
                             }
                         }
                     }

@@ -68,21 +68,21 @@ CollapsibleSection {
 
                     MaterialIcon {
                         text: modelData.icon
-                        font.pointSize: Tokens.font.size.large
+                        font: Tokens.font.icon.large
                         fill: modelData.variant === Schemes.currentVariant ? 1 : 0
                     }
 
                     StyledText {
                         Layout.fillWidth: true
                         text: modelData.name
-                        font.weight: modelData.variant === Schemes.currentVariant ? 500 : 400
+                        font: modelData.variant === Schemes.currentVariant ? Tokens.font.body.builders.small.weight(500).build() : Tokens.font.body.builders.small.weight(400).build()
                     }
 
                     MaterialIcon {
                         visible: modelData.variant === Schemes.currentVariant
                         text: "check"
                         color: Colours.palette.m3primary
-                        font.pointSize: Tokens.font.size.large
+                        font: Tokens.font.icon.large
                     }
                 }
             }

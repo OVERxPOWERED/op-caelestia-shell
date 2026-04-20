@@ -76,7 +76,7 @@ ColumnLayout {
         StyledText {
             visible: root.label !== ""
             text: root.label
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.label.medium
         }
 
         Item {
@@ -138,7 +138,7 @@ ColumnLayout {
             visible: root.suffix !== ""
             text: root.suffix
             color: Colours.palette.m3outline
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.body.medium
         }
     }
 

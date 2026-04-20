@@ -35,7 +35,7 @@ StyledRect {
         StyledText {
             visible: root.title !== ""
             text: root.title
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.title.small
         }
 
         GridLayout {

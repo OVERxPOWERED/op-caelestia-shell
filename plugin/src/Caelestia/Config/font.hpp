@@ -59,6 +59,7 @@ public:
         : QObject(parent) {}
 
     void bind(FontStyleConfig* cfg);
+    void setScale(qreal scale);
 
     [[nodiscard]] QFont large() const;
     [[nodiscard]] QFont medium() const;
@@ -70,9 +71,10 @@ signals:
 protected:
     virtual void rebuild();
 
-    static QFont buildFont(const FontConfig* cfg, const QString& fallbackFamily);
+    static QFont buildFont(const FontConfig* cfg, const QString& fallbackFamily, qreal scale);
 
     FontStyleConfig* m_cfg = nullptr;
+    qreal m_scale = 1;
     QFont m_large;
     QFont m_medium;
     QFont m_small;
@@ -148,6 +150,7 @@ signals:
 
 private:
     void rebuildClock();
+    void rebuildScale();
 
     AppearanceFont* m_font = nullptr;
     FontStyle* m_headline;

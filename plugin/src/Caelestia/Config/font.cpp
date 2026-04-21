@@ -17,11 +17,13 @@ QFont FontStyleBase::small() const {
     return m_small;
 }
 
-QFont FontStyleBase::buildFont(const FontConfig* cfg, const QString& fallbackFamily) {
+QFont FontStyleBase::buildFont(const FontConfig* cfg, const QString& fallbackFamily, qreal scale) {
     QFont font;
     font.setFamily(cfg->family().isEmpty() ? fallbackFamily : cfg->family());
-    font.setPointSize(cfg->size() > 0 ? cfg->size() : 1);
-    font.setVariableAxis("opsz", static_cast<float>(font.pointSize()));
+    const int scaledSize = static_cast<int>(cfg->size() * scale);
+    const int cappedSize = scaledSize > 0 ? scaledSize : 1;
+    font.setPointSize(cappedSize);
+    font.setVariableAxis("opsz", static_cast<float>(cappedSize));
     font.setWeight(QFont::Weight(cfg->weight()));
     font.setVariableAxis("wght", font.weight());
     font.setItalic(cfg->italic());
@@ -61,15 +63,22 @@ void FontStyleBase::bind(FontStyleConfig* cfg) {
 void FontStyleBase::rebuild() {
     if (m_cfg) {
         const auto family = m_cfg->family();
-        m_large = buildFont(m_cfg->large(), family);
-        m_medium = buildFont(m_cfg->medium(), family);
-        m_small = buildFont(m_cfg->small(), family);
+        m_large = buildFont(m_cfg->large(), family, m_scale);
+        m_medium = buildFont(m_cfg->medium(), family, m_scale);
+        m_small = buildFont(m_cfg->small(), family, m_scale);
     } else {
         m_large = QFont();
         m_medium = QFont();
         m_small = QFont();
     }
     emit fontsChanged();
+}
+
+void FontStyleBase::setScale(qreal scale) {
+    if (qFuzzyCompare(m_scale + 1.0, scale + 1.0))
+        return;
+    m_scale = scale;
+    rebuild();
 }
 
 // FontStyle
@@ -119,10 +128,10 @@ IconFontBuilders* IconFontStyle::builders() const {
 void IconFontStyle::rebuild() {
     if (auto* cfg = qobject_cast<IconFontStyleConfig*>(m_cfg)) {
         const auto family = cfg->family();
-        m_large = buildFont(cfg->large(), family);
-        m_medium = buildFont(cfg->medium(), family);
-        m_small = buildFont(cfg->small(), family);
-        m_extraLarge = buildFont(cfg->extraLarge(), family);
+        m_large = buildFont(cfg->large(), family, m_scale);
+        m_medium = buildFont(cfg->medium(), family, m_scale);
+        m_small = buildFont(cfg->small(), family, m_scale);
+        m_extraLarge = buildFont(cfg->extraLarge(), family, m_scale);
     } else {
         m_large = QFont();
         m_medium = QFont();
@@ -210,6 +219,7 @@ void FontTokens::bindFont(AppearanceFont* font) {
     m_font = font;
 
     if (font) {
+        rebuildScale();
         m_headline->bind(font->headline());
         m_title->bind(font->title());
         m_body->bind(font->body());
@@ -218,7 +228,9 @@ void FontTokens::bindFont(AppearanceFont* font) {
         m_icon->bind(font->icon());
 
         connect(font, &AppearanceFont::clockChanged, this, &FontTokens::rebuildClock);
+        connect(font, &AppearanceFont::scaleChanged, this, &FontTokens::rebuildScale);
     } else {
+        rebuildScale();
         m_headline->bind(nullptr);
         m_title->bind(nullptr);
         m_body->bind(nullptr);
@@ -228,6 +240,16 @@ void FontTokens::bindFont(AppearanceFont* font) {
     }
 
     rebuildClock();
+}
+
+void FontTokens::rebuildScale() {
+    const qreal s = m_font ? m_font->scale() : 1;
+    m_headline->setScale(s);
+    m_title->setScale(s);
+    m_body->setScale(s);
+    m_label->setScale(s);
+    m_mono->setScale(s);
+    m_icon->setScale(s);
 }
 
 void FontTokens::rebuildClock() {

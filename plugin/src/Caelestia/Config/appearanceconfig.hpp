@@ -180,6 +180,7 @@ class AppearanceFont : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
+    CONFIG_PROPERTY(qreal, scale, 1)
     CONFIG_SUBOBJECT(FontStyleConfig, headline)
     CONFIG_SUBOBJECT(FontStyleConfig, title)
     CONFIG_SUBOBJECT(FontStyleConfig, body)

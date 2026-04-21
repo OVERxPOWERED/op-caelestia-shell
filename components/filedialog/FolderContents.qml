@@ -59,7 +59,7 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 text: "scan_delete"
                 color: Colours.palette.m3outline
-                fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 2).weight(Font.Medium).build()
+                fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).weight(Font.Medium).build()
             }
 
             StyledText {

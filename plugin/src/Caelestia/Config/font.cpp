@@ -79,6 +79,14 @@ FontBuilders* FontStyle::builders() const {
 
 // IconFontStyle
 
+IconFontStyle::IconFontStyle(QObject* parent)
+    : FontStyleBase(parent)
+    , m_builders(new IconFontBuilders(this, this)) {}
+
+FontBuilder IconFontStyle::size(int pointSize) {
+    return FontBuilder(m_small).size(pointSize);
+}
+
 void IconFontStyle::bind(IconFontStyleConfig* cfg) {
     if (m_cfg == cfg)
         return;
@@ -99,8 +107,8 @@ QFont IconFontStyle::extraLarge() const {
     return m_extraLarge;
 }
 
-FontBuilder IconFontStyle::builder() const {
-    return FontBuilder(m_large);
+IconFontBuilders* IconFontStyle::builders() const {
+    return m_builders;
 }
 
 void IconFontStyle::rebuild() {
@@ -136,6 +144,15 @@ FontBuilder FontBuilders::medium() const {
 
 FontBuilder FontBuilders::small() const {
     return FontBuilder(m_style->small());
+}
+
+// IconFontBuilders
+
+IconFontBuilders::IconFontBuilders(const IconFontStyle* style, QObject* parent)
+    : FontBuilders(style, parent) {}
+
+FontBuilder IconFontBuilders::extraLarge() const {
+    return FontBuilder(static_cast<const IconFontStyle*>(m_style)->extraLarge());
 }
 
 // FontTokens

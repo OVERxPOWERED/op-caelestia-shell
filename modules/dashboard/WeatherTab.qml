@@ -79,7 +79,7 @@ Item {
                 MaterialIcon {
                     Layout.alignment: Qt.AlignVCenter
                     text: Weather.icon
-                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 3).build()
+                    fontStyle: Tokens.font.icon.builders.extraLarge.scale(3).build()
                     color: Colours.palette.m3secondary
                     animate: true
                 }

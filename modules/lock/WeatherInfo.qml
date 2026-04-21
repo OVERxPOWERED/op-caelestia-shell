@@ -41,7 +41,7 @@ ColumnLayout {
             animate: true
             text: Weather.icon
             color: Colours.palette.m3secondary
-            fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 2.5).build()
+            fontStyle: Tokens.font.icon.builders.extraLarge.scale(2.5).build()
         }
 
         ColumnLayout {
@@ -150,7 +150,7 @@ ColumnLayout {
                     MaterialIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: forecastHour.modelData?.icon ?? "cloud_alert"
-                        fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 1.5).weight(Font.Medium).build()
+                        fontStyle: Tokens.font.icon.builders.extraLarge.scale(1.5).weight(Font.Medium).build()
                     }
 
                     StyledText {

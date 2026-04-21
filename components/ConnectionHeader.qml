@@ -16,7 +16,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         animate: true
         text: root.icon
-        fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 3).weight(Font.Bold).build()
+        fontStyle: Tokens.font.icon.builders.extraLarge.scale(3).weight(Font.Bold).build()
     }
 
     StyledText {

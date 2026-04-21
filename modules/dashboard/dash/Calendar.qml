@@ -61,7 +61,7 @@ CustomMouseArea {
                     anchors.centerIn: parent
                     text: "chevron_left"
                     color: Colours.palette.m3tertiary
-                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.medium.pointSize).weight(Font.Bold).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.icon.medium.pointSize).weight(Font.Bold).build()
                 }
             }
 
@@ -118,7 +118,7 @@ CustomMouseArea {
                     anchors.centerIn: parent
                     text: "chevron_right"
                     color: Colours.palette.m3tertiary
-                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.medium.pointSize).weight(Font.Bold).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.icon.medium.pointSize).weight(Font.Bold).build()
                 }
             }
         }

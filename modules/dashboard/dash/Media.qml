@@ -98,7 +98,7 @@ Item {
             grade: 200
             text: "art_track"
             color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.builder.size((parent.width * 0.4) || 1).build()
+            fontStyle: Tokens.font.icon.size((parent.width * 0.4) || 1).build()
         }
 
         Image {

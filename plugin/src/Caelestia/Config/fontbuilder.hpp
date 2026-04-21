@@ -29,6 +29,9 @@ public:
     [[nodiscard]] Q_INVOKABLE FontBuilder grade(float value);
     [[nodiscard]] Q_INVOKABLE FontBuilder width(float value);
 
+    // Operations
+    [[nodiscard]] Q_INVOKABLE FontBuilder scale(qreal factor);
+
 private:
     QFont m_font;
 };

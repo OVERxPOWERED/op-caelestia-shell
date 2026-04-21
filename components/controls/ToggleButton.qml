@@ -61,7 +61,7 @@ StyledRect {
             fill: root.toggled ? 1 : 0
             text: root.icon
             color: root.toggled ? Colours.palette[`m3on${root.accent}`] : Colours.palette[`m3on${root.accent}Container`]
-            fontStyle: Tokens.font.icon.builder.size(root.iconSize).build()
+            fontStyle: Tokens.font.icon.size(root.iconSize).build()
 
             Behavior on fill {
                 Anim {}

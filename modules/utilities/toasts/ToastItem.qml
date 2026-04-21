@@ -84,7 +84,7 @@ StyledRect {
                         return Colours.palette.m3onError;
                     return Colours.palette.m3onSurfaceVariant;
                 }
-                fontStyle: Tokens.font.icon.builder.size(Math.round(Tokens.font.icon.large.pointSize * 1.2)).build()
+                fontStyle: Tokens.font.icon.builders.large.scale(1.2).build()
             }
         }
 

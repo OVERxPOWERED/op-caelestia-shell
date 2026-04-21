@@ -29,7 +29,7 @@ Row {
             text: "person"
             fill: 1
             grade: 200
-            fontStyle: Tokens.font.icon.builder.size(Math.floor(info.implicitHeight / 2) || 1).build()
+            fontStyle: Tokens.font.icon.size(Math.floor(info.implicitHeight / 2) || 1).build()
             visible: pfp.status !== Image.Ready
         }
 

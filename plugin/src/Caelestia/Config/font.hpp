@@ -11,6 +11,7 @@ class FontConfig;
 class FontStyleConfig;
 class IconFontStyleConfig;
 class FontStyleBase;
+class IconFontStyle;
 
 class FontBuilders : public QObject {
     Q_OBJECT
@@ -30,8 +31,20 @@ public:
 signals:
     void buildersChanged();
 
-private:
+protected:
     const FontStyleBase* m_style;
+};
+
+class IconFontBuilders : public FontBuilders {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    Q_PROPERTY(caelestia::config::FontBuilder extraLarge READ extraLarge NOTIFY buildersChanged FINAL)
+
+public:
+    explicit IconFontBuilders(const IconFontStyle* style, QObject* parent = nullptr);
+
+    [[nodiscard]] FontBuilder extraLarge() const;
 };
 
 class FontStyleBase : public QObject {
@@ -85,22 +98,24 @@ class IconFontStyle : public FontStyleBase {
     QML_ANONYMOUS
 
     Q_PROPERTY(QFont extraLarge READ extraLarge NOTIFY fontsChanged FINAL)
-    Q_PROPERTY(caelestia::config::FontBuilder builder READ builder NOTIFY fontsChanged FINAL)
+    Q_PROPERTY(caelestia::config::IconFontBuilders* builders READ builders CONSTANT FINAL)
 
 public:
-    explicit IconFontStyle(QObject* parent = nullptr)
-        : FontStyleBase(parent) {}
+    explicit IconFontStyle(QObject* parent = nullptr);
+
+    Q_INVOKABLE FontBuilder size(int pointSize);
 
     void bind(IconFontStyleConfig* cfg);
 
     [[nodiscard]] QFont extraLarge() const;
-    [[nodiscard]] FontBuilder builder() const;
+    [[nodiscard]] IconFontBuilders* builders() const;
 
 protected:
     void rebuild() override;
 
 private:
     QFont m_extraLarge;
+    IconFontBuilders* m_builders;
 };
 
 class FontTokens : public QObject {

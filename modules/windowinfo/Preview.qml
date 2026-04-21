@@ -44,7 +44,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                     text: "web_asset_off"
                     color: Colours.palette.m3outline
-                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 3).build()
+                    fontStyle: Tokens.font.icon.builders.extraLarge.scale(3).build()
                 }
 
                 StyledText {

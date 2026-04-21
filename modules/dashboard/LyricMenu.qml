@@ -41,7 +41,7 @@ StyledRect {
                     text: "lyrics"
                     fill: 1
                     color: Colours.palette.m3primary
-                    fontStyle: Tokens.font.icon.builder.size(Tokens.spacing.large).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.spacing.large).build()
                 }
 
                 Rectangle {

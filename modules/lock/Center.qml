@@ -87,7 +87,7 @@ ColumnLayout {
 
             text: "person"
             color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.builder.size(Math.floor(root.centerWidth / 4)).build()
+            fontStyle: Tokens.font.icon.size(Math.floor(root.centerWidth / 4)).build()
             visible: pfp.status !== Image.Ready
         }
 
@@ -194,7 +194,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     text: "arrow_forward"
                     color: root.lock.pam.buffer ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
-                    fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.large.pointSize).weight(Font.Medium).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.icon.large.pointSize).weight(Font.Medium).build()
                 }
             }
         }

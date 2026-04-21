@@ -37,7 +37,7 @@ Item {
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "tune"
-                fontStyle: Tokens.font.icon.builder.size(Tokens.font.icon.extraLarge.pointSize * 2).build()
+                fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).build()
                 color: Colours.palette.m3onSurfaceVariant
             }
 
@@ -287,7 +287,7 @@ Item {
             text: parent.icon
             fill: 1
             color: parent.accentColor
-            fontStyle: Tokens.font.icon.builder.size(Tokens.spacing.large).build()
+            fontStyle: Tokens.font.icon.size(Tokens.spacing.large).build()
         }
 
         StyledText {

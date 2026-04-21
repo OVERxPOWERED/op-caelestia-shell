@@ -17,9 +17,9 @@ QFont FontStyleBase::small() const {
     return m_small;
 }
 
-QFont FontStyleBase::buildFont(const FontConfig* cfg) {
+QFont FontStyleBase::buildFont(const FontConfig* cfg, const QString& fallbackFamily) {
     QFont font;
-    font.setFamily(cfg->family());
+    font.setFamily(cfg->family().isEmpty() ? fallbackFamily : cfg->family());
     font.setPointSize(cfg->size());
     font.setWeight(QFont::Weight(cfg->weight()));
     font.setItalic(cfg->italic());
@@ -38,6 +38,7 @@ void FontStyleBase::bind(FontStyleConfig* cfg) {
         return;
 
     if (m_cfg) {
+        disconnect(m_cfg, nullptr, this, nullptr);
         disconnect(m_cfg->large(), nullptr, this, nullptr);
         disconnect(m_cfg->medium(), nullptr, this, nullptr);
         disconnect(m_cfg->small(), nullptr, this, nullptr);
@@ -46,6 +47,7 @@ void FontStyleBase::bind(FontStyleConfig* cfg) {
     m_cfg = cfg;
 
     if (cfg) {
+        connect(cfg, &ConfigObject::propertiesChanged, this, &FontStyleBase::rebuild);
         connect(cfg->large(), &ConfigObject::propertiesChanged, this, &FontStyleBase::rebuild);
         connect(cfg->medium(), &ConfigObject::propertiesChanged, this, &FontStyleBase::rebuild);
         connect(cfg->small(), &ConfigObject::propertiesChanged, this, &FontStyleBase::rebuild);
@@ -56,9 +58,10 @@ void FontStyleBase::bind(FontStyleConfig* cfg) {
 
 void FontStyleBase::rebuild() {
     if (m_cfg) {
-        m_large = buildFont(m_cfg->large());
-        m_medium = buildFont(m_cfg->medium());
-        m_small = buildFont(m_cfg->small());
+        const auto family = m_cfg->family();
+        m_large = buildFont(m_cfg->large(), family);
+        m_medium = buildFont(m_cfg->medium(), family);
+        m_small = buildFont(m_cfg->small(), family);
     } else {
         m_large = QFont();
         m_medium = QFont();
@@ -113,10 +116,11 @@ IconFontBuilders* IconFontStyle::builders() const {
 
 void IconFontStyle::rebuild() {
     if (auto* cfg = qobject_cast<IconFontStyleConfig*>(m_cfg)) {
-        m_large = buildFont(cfg->large());
-        m_medium = buildFont(cfg->medium());
-        m_small = buildFont(cfg->small());
-        m_extraLarge = buildFont(cfg->extraLarge());
+        const auto family = cfg->family();
+        m_large = buildFont(cfg->large(), family);
+        m_medium = buildFont(cfg->medium(), family);
+        m_small = buildFont(cfg->small(), family);
+        m_extraLarge = buildFont(cfg->extraLarge(), family);
     } else {
         m_large = QFont();
         m_medium = QFont();

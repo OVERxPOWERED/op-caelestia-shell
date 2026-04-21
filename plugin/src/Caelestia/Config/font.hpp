@@ -70,7 +70,7 @@ signals:
 protected:
     virtual void rebuild();
 
-    static QFont buildFont(const FontConfig* cfg);
+    static QFont buildFont(const FontConfig* cfg, const QString& fallbackFamily);
 
     FontStyleConfig* m_cfg = nullptr;
     QFont m_large;

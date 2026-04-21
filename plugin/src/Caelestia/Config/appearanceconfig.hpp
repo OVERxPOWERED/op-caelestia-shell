@@ -131,7 +131,8 @@ class FontConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(QString, family, QStringLiteral("GoogleSansFlex"))
+    // Empty family inherits from the parent FontStyleConfig.
+    CONFIG_PROPERTY(QString, family, {})
     CONFIG_PROPERTY(int, size, 14)
     CONFIG_PROPERTY(int, weight, QFont::Normal)
     CONFIG_PROPERTY(bool, italic, false)
@@ -141,18 +142,14 @@ public:
     explicit FontConfig(QObject* parent = nullptr)
         : ConfigObject(parent) {}
 
-    void setDefaults(const QString& family, int size, int weight = QFont::Normal, const QVariantMap& vaxes = {}) {
-        m_family = family;
-        m_size = size;
-        m_weight = weight;
-        m_vaxes = vaxes;
-    }
+    void setDefaults(int size, int weight = QFont::Normal, const QVariantMap& vaxes = {});
 };
 
 class FontStyleConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
+    CONFIG_PROPERTY(QString, family, QStringLiteral("GoogleSansFlex"))
     CONFIG_SUBOBJECT(FontConfig, large)
     CONFIG_SUBOBJECT(FontConfig, medium)
     CONFIG_SUBOBJECT(FontConfig, small)
@@ -163,6 +160,8 @@ public:
         , m_large(new FontConfig(this))
         , m_medium(new FontConfig(this))
         , m_small(new FontConfig(this)) {}
+
+    void setDefaultFamily(const QString& family);
 };
 
 class IconFontStyleConfig : public FontStyleConfig {
@@ -202,30 +201,36 @@ public:
         const auto mono = QStringLiteral("CaskaydiaCove NF");
         const auto icons = QStringLiteral("Material Symbols Rounded");
 
-        m_headline->large()->setDefaults(sans, 32, QFont::Normal);
-        m_headline->medium()->setDefaults(sans, 28, QFont::Normal);
-        m_headline->small()->setDefaults(sans, 24, QFont::Normal);
+        m_headline->setDefaultFamily(sans);
+        m_headline->large()->setDefaults(32, QFont::Normal);
+        m_headline->medium()->setDefaults(28, QFont::Normal);
+        m_headline->small()->setDefaults(24, QFont::Normal);
 
-        m_title->large()->setDefaults(sans, 22, QFont::Medium);
-        m_title->medium()->setDefaults(sans, 16, QFont::Medium);
-        m_title->small()->setDefaults(sans, 14, QFont::Medium);
+        m_title->setDefaultFamily(sans);
+        m_title->large()->setDefaults(22, QFont::Medium);
+        m_title->medium()->setDefaults(16, QFont::Medium);
+        m_title->small()->setDefaults(14, QFont::Medium);
 
-        m_body->large()->setDefaults(sans, 16, QFont::Normal);
-        m_body->medium()->setDefaults(sans, 14, QFont::Normal);
-        m_body->small()->setDefaults(sans, 12, QFont::Normal);
+        m_body->setDefaultFamily(sans);
+        m_body->large()->setDefaults(16, QFont::Normal);
+        m_body->medium()->setDefaults(14, QFont::Normal);
+        m_body->small()->setDefaults(12, QFont::Normal);
 
-        m_label->large()->setDefaults(sans, 14, QFont::Medium);
-        m_label->medium()->setDefaults(sans, 12, QFont::Medium);
-        m_label->small()->setDefaults(sans, 11, QFont::Medium);
+        m_label->setDefaultFamily(sans);
+        m_label->large()->setDefaults(14, QFont::Medium);
+        m_label->medium()->setDefaults(12, QFont::Medium);
+        m_label->small()->setDefaults(11, QFont::Medium);
 
-        m_mono->large()->setDefaults(mono, 16, QFont::Normal);
-        m_mono->medium()->setDefaults(mono, 14, QFont::Normal);
-        m_mono->small()->setDefaults(mono, 12, QFont::Normal);
+        m_mono->setDefaultFamily(mono);
+        m_mono->large()->setDefaults(16, QFont::Normal);
+        m_mono->medium()->setDefaults(14, QFont::Normal);
+        m_mono->small()->setDefaults(12, QFont::Normal);
 
-        m_icon->extraLarge()->setDefaults(icons, static_cast<int>(48 / 1.33), QFont::Normal);
-        m_icon->large()->setDefaults(icons, static_cast<int>(32 / 1.33), QFont::Normal);
-        m_icon->medium()->setDefaults(icons, static_cast<int>(24 / 1.33), QFont::Normal);
-        m_icon->small()->setDefaults(icons, static_cast<int>(20 / 1.33), QFont::Normal);
+        m_icon->setDefaultFamily(icons);
+        m_icon->extraLarge()->setDefaults(static_cast<int>(48 / 1.33), QFont::Normal);
+        m_icon->large()->setDefaults(static_cast<int>(32 / 1.33), QFont::Normal);
+        m_icon->medium()->setDefaults(static_cast<int>(24 / 1.33), QFont::Normal);
+        m_icon->small()->setDefaults(static_cast<int>(20 / 1.33), QFont::Normal);
     }
 };
 

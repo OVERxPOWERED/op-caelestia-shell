@@ -20,7 +20,7 @@ QFont FontStyleBase::small() const {
 QFont FontStyleBase::buildFont(const FontConfig* cfg, const QString& fallbackFamily) {
     QFont font;
     font.setFamily(cfg->family().isEmpty() ? fallbackFamily : cfg->family());
-    font.setPointSize(cfg->size());
+    font.setPointSize(cfg->size() > 0 ? cfg->size() : 1);
     font.setWeight(QFont::Weight(cfg->weight()));
     font.setItalic(cfg->italic());
 

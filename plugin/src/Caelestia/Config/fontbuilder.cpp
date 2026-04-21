@@ -11,6 +11,8 @@ FontBuilder FontBuilder::family(const QString& family) {
 }
 
 FontBuilder FontBuilder::size(int pointSize) {
+    if (pointSize <= 0)
+        pointSize = 1;
     m_font.setPointSize(pointSize);
     m_font.setVariableAxis("opsz", static_cast<float>(pointSize));
     return *this;

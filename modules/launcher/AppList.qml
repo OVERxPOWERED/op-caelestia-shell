@@ -167,7 +167,8 @@ StyledListView {
         enabled: !root.state
 
         Anim {
-            properties: "opacity,scale"
+            type: Anim.DefaultEffects
+            property: "opacity"
             from: 0
             to: 1
         }
@@ -177,7 +178,8 @@ StyledListView {
         enabled: !root.state
 
         Anim {
-            properties: "opacity,scale"
+            type: Anim.DefaultEffects
+            property: "opacity"
             from: 1
             to: 0
         }
@@ -188,7 +190,8 @@ StyledListView {
             property: "y"
         }
         Anim {
-            properties: "opacity,scale"
+            type: Anim.DefaultEffects
+            property: "opacity"
             to: 1
         }
     }
@@ -199,7 +202,8 @@ StyledListView {
             type: Anim.StandardSmall
         }
         Anim {
-            properties: "opacity,scale"
+            type: Anim.DefaultEffects
+            property: "opacity"
             to: 1
         }
     }
@@ -209,7 +213,8 @@ StyledListView {
             property: "y"
         }
         Anim {
-            properties: "opacity,scale"
+            type: Anim.DefaultEffects
+            property: "opacity"
             to: 1
         }
     }

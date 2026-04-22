@@ -92,7 +92,9 @@ ColumnLayout {
             visible: root.showBackground
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
 
@@ -109,7 +111,9 @@ ColumnLayout {
             opacity: root.expanded ? 1.0 : 0.0
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
 
             StyledText {

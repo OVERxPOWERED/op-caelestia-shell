@@ -92,6 +92,7 @@ ColumnLayout {
 
             add: Transition {
                 Anim {
+                    type: Anim.DefaultEffects
                     property: "opacity"
                     from: 0
                     to: 1
@@ -106,6 +107,7 @@ ColumnLayout {
 
             remove: Transition {
                 Anim {
+                    type: Anim.DefaultEffects
                     property: "opacity"
                     to: 0
                 }
@@ -117,6 +119,7 @@ ColumnLayout {
 
             move: Transition {
                 Anim {
+                    type: Anim.DefaultEffects
                     properties: "opacity,scale"
                     to: 1
                 }
@@ -128,6 +131,7 @@ ColumnLayout {
 
             displaced: Transition {
                 Anim {
+                    type: Anim.DefaultEffects
                     properties: "opacity,scale"
                     to: 1
                 }

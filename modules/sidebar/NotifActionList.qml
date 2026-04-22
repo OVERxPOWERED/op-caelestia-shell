@@ -65,7 +65,9 @@ Item {
             opacity: flickable.contentX > 0 ? 0 : 1
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
 
@@ -78,7 +80,9 @@ Item {
             opacity: flickable.contentX < flickable.contentWidth - parent.width ? 0 : 1
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
     }

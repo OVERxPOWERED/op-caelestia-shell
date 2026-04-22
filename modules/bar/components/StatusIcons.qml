@@ -57,7 +57,9 @@ StyledRect {
                         color: root.colour
 
                         Behavior on opacity {
-                            Anim {}
+                            Anim {
+                                type: Anim.DefaultEffects
+                            }
                         }
 
                         Behavior on scale {
@@ -88,7 +90,9 @@ StyledRect {
                         color: root.colour
 
                         Behavior on opacity {
-                            Anim {}
+                            Anim {
+                                type: Anim.DefaultEffects
+                            }
                         }
 
                         Behavior on scale {

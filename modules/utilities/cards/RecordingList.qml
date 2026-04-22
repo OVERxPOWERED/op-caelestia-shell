@@ -129,31 +129,25 @@ ColumnLayout {
 
         add: Transition {
             Anim {
+                type: Anim.DefaultEffects
                 property: "opacity"
                 from: 0
-                to: 1
-            }
-            Anim {
-                property: "scale"
-                from: 0.5
                 to: 1
             }
         }
 
         remove: Transition {
             Anim {
+                type: Anim.DefaultEffects
                 property: "opacity"
                 to: 0
-            }
-            Anim {
-                property: "scale"
-                to: 0.5
             }
         }
 
         displaced: Transition {
             Anim {
-                properties: "opacity,scale"
+                type: Anim.DefaultEffects
+                property: "opacity"
                 to: 1
             }
             Anim {
@@ -182,7 +176,9 @@ ColumnLayout {
                     Layout.preferredHeight: root.props.recordingListExpanded ? implicitHeight : 0
 
                     Behavior on opacity {
-                        Anim {}
+                        Anim {
+                            type: Anim.DefaultEffects
+                        }
                     }
 
                     Behavior on scale {
@@ -207,7 +203,9 @@ ColumnLayout {
                         Layout.preferredWidth: !root.props.recordingListExpanded ? implicitWidth : 0
 
                         Behavior on opacity {
-                            Anim {}
+                            Anim {
+                                type: Anim.DefaultEffects
+                            }
                         }
 
                         Behavior on scale {
@@ -227,7 +225,9 @@ ColumnLayout {
             }
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
 

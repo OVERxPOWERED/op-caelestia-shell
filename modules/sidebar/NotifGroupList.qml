@@ -107,6 +107,7 @@ LazyListView {
                 onFinished: notif.modelData?.unlock(notif)
 
                 Anim {
+                    type: Anim.DefaultEffects
                     target: notif
                     property: "opacity"
                     to: 0
@@ -137,7 +138,9 @@ LazyListView {
             }
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
 
             Behavior on scale {

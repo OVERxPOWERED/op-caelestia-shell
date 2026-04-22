@@ -111,7 +111,9 @@ StyledWindow {
         color: Colours.palette.m3scrim
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.SlowEffects
+            }
         }
     }
 

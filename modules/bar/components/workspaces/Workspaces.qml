@@ -108,7 +108,9 @@ StyledClippingRect {
         }
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
     }
 
@@ -134,7 +136,9 @@ StyledClippingRect {
         }
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
     }
 

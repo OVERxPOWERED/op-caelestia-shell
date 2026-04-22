@@ -38,6 +38,7 @@ StyledRect {
 
     Behavior on opacity {
         Anim {
+            type: Anim.DefaultEffects
             duration: Tokens.anim.durations.expressiveFastSpatial
         }
     }

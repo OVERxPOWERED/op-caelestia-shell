@@ -205,7 +205,9 @@ StyledRect {
                     }
 
                     Behavior on opacity {
-                        Anim {}
+                        Anim {
+                            type: Anim.DefaultEffects
+                        }
                     }
 
                     Behavior on Layout.preferredWidth {
@@ -226,6 +228,7 @@ StyledRect {
                         running: true
 
                         Anim {
+                            type: Anim.DefaultEffects
                             target: notif
                             property: "opacity"
                             from: 0
@@ -250,6 +253,7 @@ StyledRect {
                         onFinished: notif.modelData.unlock(notif)
 
                         Anim {
+                            type: Anim.DefaultEffects
                             target: notif
                             property: "opacity"
                             to: 0
@@ -287,7 +291,9 @@ StyledRect {
                 }
 
                 Behavior on opacity {
-                    Anim {}
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
                 }
             }
         }

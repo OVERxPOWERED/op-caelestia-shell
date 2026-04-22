@@ -87,6 +87,8 @@ Item {
     }
 
     Behavior on opacity {
-        Anim {}
+        Anim {
+            type: Anim.DefaultEffects
+        }
     }
 }

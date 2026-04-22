@@ -72,6 +72,7 @@ WlSessionLockSurface {
                     duration: Tokens.anim.durations.small
                 }
                 Anim {
+                    type: Anim.Standard
                     target: lockContent
                     property: "opacity"
                     to: 0
@@ -120,11 +121,13 @@ WlSessionLockSurface {
                     easing: Tokens.anim.standardDecel
                 }
                 Anim {
+                    type: Anim.DefaultEffects
                     target: lockIcon
                     property: "opacity"
                     to: 0
                 }
                 Anim {
+                    type: Anim.DefaultEffects
                     target: content
                     property: "opacity"
                     to: 1

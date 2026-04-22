@@ -239,7 +239,9 @@ StyledRect {
                 opacity: root.expanded ? 1 : 0
 
                 Behavior on opacity {
-                    Anim {}
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
                 }
             }
 
@@ -387,7 +389,9 @@ StyledRect {
                 opacity: root.expanded ? 0 : 1
 
                 Behavior on opacity {
-                    Anim {}
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
                 }
             }
 
@@ -427,7 +431,9 @@ StyledRect {
                 opacity: root.expanded ? 1 : 0
 
                 Behavior on opacity {
-                    Anim {}
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
                 }
             }
 
@@ -443,7 +449,9 @@ StyledRect {
                 opacity: root.expanded ? 1 : 0
 
                 Behavior on opacity {
-                    Anim {}
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
                 }
 
                 Action {

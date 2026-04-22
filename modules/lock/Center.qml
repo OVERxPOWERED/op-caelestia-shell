@@ -160,7 +160,9 @@ ColumnLayout {
                     opacity: root.lock.pam.passwd.active ? 0 : 1
 
                     Behavior on opacity {
-                        Anim {}
+                        Anim {
+                            type: Anim.DefaultEffects
+                        }
                     }
                 }
 
@@ -268,7 +270,9 @@ ColumnLayout {
             }
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
 
@@ -356,6 +360,7 @@ ColumnLayout {
             Anim {
                 id: appearAnim
 
+                type: Anim.DefaultEffects
                 target: message
                 properties: "scale,opacity"
                 to: 1

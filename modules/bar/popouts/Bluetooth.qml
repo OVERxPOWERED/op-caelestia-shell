@@ -84,7 +84,9 @@ ColumnLayout {
             }
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
 
             Behavior on scale {
@@ -140,7 +142,9 @@ ColumnLayout {
                     opacity: device.loading ? 0 : 1
 
                     Behavior on opacity {
-                        Anim {}
+                        Anim {
+                            type: Anim.DefaultEffects
+                        }
                     }
                 }
             }

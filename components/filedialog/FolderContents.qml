@@ -70,7 +70,9 @@ Item {
         }
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
     }
 
@@ -124,6 +126,7 @@ Item {
 
         remove: Transition {
             Anim {
+                type: Anim.DefaultEffects
                 property: "opacity"
                 to: 0
             }
@@ -135,6 +138,7 @@ Item {
 
         displaced: Transition {
             Anim {
+                type: Anim.DefaultEffects
                 properties: "opacity,scale"
                 to: 1
                 easing: Tokens.anim.standardDecel

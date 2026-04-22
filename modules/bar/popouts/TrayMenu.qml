@@ -57,7 +57,9 @@ StackView {
         StackView.onRemoved: destroy()
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
 
         Behavior on scale {

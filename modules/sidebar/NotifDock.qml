@@ -50,7 +50,9 @@ Item {
             }
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
 
@@ -202,6 +204,7 @@ Item {
 
         Behavior on opacity {
             Anim {
+                type: Anim.DefaultEffects
                 duration: Tokens.anim.durations.expressiveFastSpatial
             }
         }

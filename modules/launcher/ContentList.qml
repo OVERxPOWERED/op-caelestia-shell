@@ -60,7 +60,7 @@ Item {
                 property: "opacity"
                 from: 1
                 to: 0
-                type: Anim.StandardSmall
+                type: Anim.DefaultEffects
             }
             PropertyAction {}
             Anim {
@@ -68,7 +68,7 @@ Item {
                 property: "opacity"
                 from: 0
                 to: 1
-                type: Anim.StandardSmall
+                type: Anim.DefaultEffects
             }
         }
     }
@@ -141,7 +141,9 @@ Item {
         }
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
 
         Behavior on scale {

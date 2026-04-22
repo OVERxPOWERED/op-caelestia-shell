@@ -99,7 +99,9 @@ Item {
                 opacity: stateLayer.containsMouse ? 1 : 0
 
                 Behavior on opacity {
-                    Anim {}
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
                 }
             }
 

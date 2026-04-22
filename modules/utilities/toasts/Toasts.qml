@@ -120,6 +120,7 @@ Item {
             onFinished: toast.modelData.unlock(toast)
 
             Anim {
+                type: Anim.DefaultEffects
                 target: toast
                 property: "opacity"
                 to: 0
@@ -138,7 +139,9 @@ Item {
         }
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
 
         Behavior on scale {

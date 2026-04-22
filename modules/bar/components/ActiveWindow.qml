@@ -130,7 +130,9 @@ Item {
         height: implicitWidth
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
     }
 }

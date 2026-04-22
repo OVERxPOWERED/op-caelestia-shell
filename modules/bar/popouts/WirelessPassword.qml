@@ -137,7 +137,9 @@ ColumnLayout {
         Keys.onEscapePressed: root.closeDialog()
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
 
         Behavior on scale {
@@ -153,6 +155,7 @@ ColumnLayout {
             }
 
             Anim {
+                type: Anim.DefaultEffects
                 target: parent
                 property: "opacity"
                 to: 0
@@ -377,7 +380,9 @@ ColumnLayout {
                     opacity: passwordContainer.passwordBuffer ? 0 : 1
 
                     Behavior on opacity {
-                        Anim {}
+                        Anim {
+                            type: Anim.DefaultEffects
+                        }
                     }
                 }
 
@@ -425,6 +430,7 @@ ColumnLayout {
                             }
                             ParallelAnimation {
                                 Anim {
+                                    type: Anim.DefaultEffects
                                     target: ch
                                     property: "opacity"
                                     to: 0
@@ -443,7 +449,9 @@ ColumnLayout {
                         }
 
                         Behavior on opacity {
-                            Anim {}
+                            Anim {
+                                type: Anim.DefaultEffects
+                            }
                         }
 
                         Behavior on scale {

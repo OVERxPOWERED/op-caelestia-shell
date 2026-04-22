@@ -48,7 +48,7 @@ MouseArea {
 
     Behavior on opacity {
         Anim {
-            duration: Tokens.anim.durations.small
+            type: Anim.DefaultEffects
         }
     }
 

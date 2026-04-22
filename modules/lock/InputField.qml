@@ -54,7 +54,9 @@ Item {
         opacity: root.buffer ? 0 : 1
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
     }
 
@@ -110,6 +112,7 @@ Item {
                 }
                 ParallelAnimation {
                     Anim {
+                        type: Anim.DefaultEffects
                         target: ch
                         property: "opacity"
                         to: 0
@@ -128,7 +131,9 @@ Item {
             }
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
 
             Behavior on scale {

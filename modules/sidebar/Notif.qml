@@ -182,6 +182,7 @@ StyledRect {
                         property: "active"
                     }
                     Anim {
+                        type: Anim.DefaultEffects
                         property: "opacity"
                     }
                 }
@@ -192,6 +193,7 @@ StyledRect {
 
                 SequentialAnimation {
                     Anim {
+                        type: Anim.DefaultEffects
                         property: "opacity"
                     }
                     PropertyAction {

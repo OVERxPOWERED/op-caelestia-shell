@@ -65,7 +65,9 @@ Item {
             opacity: view.contentY > 0 ? 0 : 1
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
 
@@ -79,7 +81,9 @@ Item {
             opacity: view.contentY < view.contentHeight - parent.height + Tokens.padding.extraSmall ? 0 : 1
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
     }

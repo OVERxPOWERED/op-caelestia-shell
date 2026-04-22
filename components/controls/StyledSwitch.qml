@@ -39,7 +39,9 @@ Switch {
                 opacity: root.pressed ? 0.1 : root.hovered ? 0.08 : 0
 
                 Behavior on opacity {
-                    Anim {}
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
                 }
             }
 

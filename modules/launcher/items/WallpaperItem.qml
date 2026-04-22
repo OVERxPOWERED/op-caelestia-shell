@@ -39,7 +39,9 @@ Item {
         level: 4
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
     }
 
@@ -90,6 +92,8 @@ Item {
     }
 
     Behavior on opacity {
-        Anim {}
+        Anim {
+            type: Anim.DefaultEffects
+        }
     }
 }

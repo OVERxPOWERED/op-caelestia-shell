@@ -85,8 +85,7 @@ MouseArea {
         target: circle
         property: "opacity"
         to: 0
-        easing: Tokens.anim.expressiveSlowEffects
-        duration: Tokens.anim.durations.expressiveSlowEffects
+        type: Anim.SlowEffects
     }
 
     StyledRect {
@@ -179,8 +178,7 @@ MouseArea {
 
     Behavior on stateOpacity {
         Anim {
-            easing: Tokens.anim.expressiveDefaultEffects
-            duration: Tokens.anim.durations.expressiveDefaultEffects
+            type: Anim.DefaultEffects
         }
     }
 }

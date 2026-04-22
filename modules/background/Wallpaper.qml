@@ -12,22 +12,24 @@ Item {
     id: root
 
     property string source: Wallpapers.current
-    property Image current: one
+    property CachingImage current
     property bool completed
 
     onSourceChanged: {
         if (!source)
             current = null;
-        else if (current === one)
-            two.update();
         else
-            one.update();
+            current = imgComp.createObject(this, {
+                path: source
+            });
     }
 
     Component.onCompleted: {
         if (source)
             Qt.callLater(() => {
-                one.update();
+                current = imgComp.createObject(this, {
+                    path: source
+                });
                 completed = true;
             });
     }
@@ -98,48 +100,34 @@ Item {
         }
     }
 
-    Img {
-        id: one
-    }
+    Component {
+        id: imgComp
 
-    Img {
-        id: two
-    }
+        CachingImage {
+            id: img
 
-    component Img: CachingImage {
-        id: img
+            anchors.fill: parent
 
-        function update(): void {
-            if (path === root.source)
-                root.current = this;
-            else
-                path = root.source;
-        }
+            opacity: 0
 
-        anchors.fill: parent
-
-        opacity: 0
-        scale: Wallpapers.showPreview ? 1 : 0.8
-
-        onStatusChanged: {
-            if (status === Image.Ready)
-                root.current = this;
-        }
-
-        states: State {
-            name: "visible"
-            when: root.current === img
-
-            PropertyChanges {
-                img.opacity: 1
-                img.scale: 1
+            onStatusChanged: {
+                if (status === Image.Ready)
+                    anim.start();
             }
-        }
 
-        transitions: Transition {
-            Anim {
-                target: img
-                properties: "opacity,scale"
+            Anim on opacity {
+                id: anim
+
+                type: Anim.SlowEffects
+                running: false
+                from: 0
+                to: 1
+            }
+
+            Timer {
+                running: root.current !== img && root.current?.status === Image.Ready
+                interval: anim.duration
+                onTriggered: img.destroy()
             }
         }
     }

@@ -257,7 +257,6 @@ ColumnLayout {
             scale: shouldBeVisible && !message.msg ? 1 : 0.7
             opacity: shouldBeVisible && !message.msg ? 1 : 0
             color: Colours.palette.m3onSurfaceVariant
-            animateProp: "opacity"
 
             font: Tokens.font.mono.small
             horizontalAlignment: Qt.AlignHCenter

@@ -8,10 +8,6 @@ Text {
     id: root
 
     property bool animate: false
-    property string animateProp: "scale"
-    property real animateFrom: 0
-    property real animateTo: 1
-    property int animateDuration: Tokens.anim.durations.normal
 
     renderType: Text.NativeRendering
     textFormat: Text.PlainText
@@ -27,20 +23,18 @@ Text {
 
         SequentialAnimation {
             Anim {
-                to: root.animateFrom
-                easing: Tokens.anim.standardAccel
+                target: root
+                property: "opacity"
+                to: 0
+                type: Anim.FastEffects
             }
             PropertyAction {}
             Anim {
-                to: root.animateTo
-                easing: Tokens.anim.standardDecel
+                target: root
+                property: "opacity"
+                to: 1
+                type: Anim.DefaultEffects
             }
         }
-    }
-
-    component Anim: NumberAnimation {
-        target: root
-        property: root.animateProp
-        duration: root.animateDuration / 2
     }
 }

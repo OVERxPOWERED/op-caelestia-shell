@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import M3Shapes
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -36,56 +37,38 @@ CustomMouseArea {
 
         anchors.fill: parent
         anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.small
+        spacing: Tokens.spacing.extraSmall
 
         RowLayout {
             id: monthNavigationRow
 
             Layout.fillWidth: true
-            spacing: Tokens.spacing.small
+            spacing: Tokens.spacing.extraSmall
 
-            Item {
-                implicitWidth: implicitHeight
-                implicitHeight: prevMonthText.implicitHeight + Tokens.padding.small
-
-                StateLayer {
-                    id: prevMonthStateLayer
-
-                    radius: Tokens.rounding.full
-                    onClicked: root.dashState.currentDate = new Date(root.currYear, root.currMonth - 1, 1)
-                }
-
-                MaterialIcon {
-                    id: prevMonthText
-
-                    anchors.centerIn: parent
-                    text: "chevron_left"
-                    color: Colours.palette.m3tertiary
-                    fontStyle: Tokens.font.icon.size(Tokens.font.icon.medium.pointSize).weight(Font.Bold).build()
-                }
+            IconButton {
+                icon: "chevron_left"
+                type: IconButton.Text
+                font: Tokens.font.icon.builders.small.weight(Font.Bold).build()
+                inactiveOnColour: Colours.palette.m3tertiary
+                padding: Tokens.padding.small
+                onClicked: root.dashState.currentDate = new Date(root.currYear, root.currMonth - 1, 1)
             }
 
             Item {
                 Layout.fillWidth: true
+                Layout.fillHeight: true
 
-                implicitWidth: monthYearDisplay.implicitWidth + Tokens.padding.small
-                implicitHeight: monthYearDisplay.implicitHeight + Tokens.padding.small
+                implicitWidth: monthYearDisplay.implicitWidth + Tokens.padding.large * 2
+                implicitHeight: monthYearDisplay.implicitHeight + Tokens.padding.extraSmall * 2
 
                 StateLayer {
-                    onClicked: {
-                        root.dashState.currentDate = new Date();
-                    }
-
-                    anchors.fill: monthYearDisplay
-                    anchors.margins: -Tokens.padding.extraSmall
-                    anchors.leftMargin: -Tokens.padding.medium
-                    anchors.rightMargin: -Tokens.padding.medium
-
+                    color: Colours.palette.m3primary
                     radius: Tokens.rounding.full
                     disabled: {
                         const now = new Date();
                         return root.currMonth === now.getMonth() && root.currYear === now.getFullYear();
                     }
+                    onClicked: root.dashState.currentDate = new Date()
                 }
 
                 StyledText {
@@ -94,32 +77,17 @@ CustomMouseArea {
                     anchors.centerIn: parent
                     text: grid.title
                     color: Colours.palette.m3primary
-                    font: Tokens.font.body.builders.medium.weight(Font.Medium).capitalisation(Font.Capitalize).build()
+                    font: Tokens.font.title.builders.small.capitalisation(Font.Capitalize).build()
                 }
             }
 
-            Item {
-                implicitWidth: implicitHeight
-                implicitHeight: nextMonthText.implicitHeight + Tokens.padding.small
-
-                StateLayer {
-                    id: nextMonthStateLayer
-
-                    onClicked: {
-                        root.dashState.currentDate = new Date(root.currYear, root.currMonth + 1, 1);
-                    }
-
-                    radius: Tokens.rounding.full
-                }
-
-                MaterialIcon {
-                    id: nextMonthText
-
-                    anchors.centerIn: parent
-                    text: "chevron_right"
-                    color: Colours.palette.m3tertiary
-                    fontStyle: Tokens.font.icon.size(Tokens.font.icon.medium.pointSize).weight(Font.Bold).build()
-                }
+            IconButton {
+                icon: "chevron_right"
+                type: IconButton.Text
+                font: Tokens.font.icon.builders.small.weight(Font.Bold).build()
+                inactiveOnColour: Colours.palette.m3tertiary
+                padding: Tokens.padding.small
+                onClicked: root.dashState.currentDate = new Date(root.currYear, root.currMonth + 1, 1)
             }
         }
 
@@ -134,7 +102,7 @@ CustomMouseArea {
 
                 horizontalAlignment: Text.AlignHCenter
                 text: model.shortName
-                font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+                font: Tokens.font.body.builders.small.weight(Font.Medium).build()
                 color: (model.day === 0 || model.day === 6) ? Colours.palette.m3secondary : Colours.palette.m3onSurfaceVariant
             }
         }
@@ -177,12 +145,12 @@ CustomMouseArea {
                             return Colours.palette.m3onSurfaceVariant;
                         }
                         opacity: dayItem.model.today || dayItem.model.month === grid.month ? 1 : 0.4
-                        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+                        font: Tokens.font.body.small
                     }
                 }
             }
 
-            StyledRect {
+            MaterialShape {
                 id: todayIndicator
 
                 readonly property Item todayItem: grid.contentItem.children.find(c => c.model.today) ?? null
@@ -193,14 +161,14 @@ CustomMouseArea {
                         today = todayItem;
                 }
 
-                x: today ? today.x + (today.width - implicitWidth) / 2 : 0
-                y: today?.y ?? 0
+                // I have no idea why it needs -1 but oh well
+                x: today ? today.x + (today.width - implicitWidth) / 2 - 1 : 0
+                y: today ? today.y - Tokens.padding.extraSmall - 1 : 0
 
-                implicitWidth: today?.implicitWidth ?? 0
-                implicitHeight: today?.implicitHeight ?? 0
+                implicitSize: today ? Math.max(today.implicitWidth, today.implicitHeight) + Tokens.padding.extraSmall * 2 : 0
+                shape: MaterialShape.Sunny
 
                 clip: true
-                radius: Tokens.rounding.full
                 color: Colours.palette.m3primary
 
                 opacity: todayItem ? 1 : 0
@@ -219,23 +187,23 @@ CustomMouseArea {
                 }
 
                 Behavior on opacity {
-                    Anim {}
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
                 }
 
                 Behavior on scale {
-                    Anim {}
+                    Anim {
+                        type: Anim.FastSpatial
+                    }
                 }
 
                 Behavior on x {
-                    Anim {
-                        type: Anim.DefaultSpatial
-                    }
+                    Anim {}
                 }
 
                 Behavior on y {
-                    Anim {
-                        type: Anim.DefaultSpatial
-                    }
+                    Anim {}
                 }
             }
         }

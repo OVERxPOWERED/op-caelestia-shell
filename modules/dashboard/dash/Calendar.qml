@@ -49,7 +49,6 @@ CustomMouseArea {
                 icon: "chevron_left"
                 type: IconButton.Text
                 font: Tokens.font.icon.builders.small.weight(Font.Bold).build()
-                inactiveOnColour: Colours.palette.m3tertiary
                 padding: Tokens.padding.small
                 onClicked: root.dashState.currentDate = new Date(root.currYear, root.currMonth - 1, 1)
             }
@@ -85,7 +84,6 @@ CustomMouseArea {
                 icon: "chevron_right"
                 type: IconButton.Text
                 font: Tokens.font.icon.builders.small.weight(Font.Bold).build()
-                inactiveOnColour: Colours.palette.m3tertiary
                 padding: Tokens.padding.small
                 onClicked: root.dashState.currentDate = new Date(root.currYear, root.currMonth + 1, 1)
             }
@@ -103,7 +101,7 @@ CustomMouseArea {
                 horizontalAlignment: Text.AlignHCenter
                 text: model.shortName
                 font: Tokens.font.body.builders.small.weight(Font.Medium).build()
-                color: (model.day === 0 || model.day === 6) ? Colours.palette.m3secondary : Colours.palette.m3onSurfaceVariant
+                color: (model.day === 0 || model.day === 6) ? Colours.palette.m3tertiary : Colours.palette.m3onSurface
             }
         }
 
@@ -140,7 +138,7 @@ CustomMouseArea {
                         color: {
                             const dayOfWeek = dayItem.model.date.getDay();
                             if (dayOfWeek === 0 || dayOfWeek === 6)
-                                return Colours.palette.m3secondary;
+                                return Colours.palette.m3tertiary;
 
                             return Colours.palette.m3onSurfaceVariant;
                         }

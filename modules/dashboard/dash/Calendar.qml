@@ -138,7 +138,7 @@ CustomMouseArea {
                         horizontalAlignment: Text.AlignHCenter
                         text: grid.locale.toString(dayItem.model.day)
                         color: {
-                            const dayOfWeek = dayItem.model.date.getUTCDay();
+                            const dayOfWeek = dayItem.model.date.getDay();
                             if (dayOfWeek === 0 || dayOfWeek === 6)
                                 return Colours.palette.m3secondary;
 

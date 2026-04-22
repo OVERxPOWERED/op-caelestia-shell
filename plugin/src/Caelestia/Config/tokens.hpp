@@ -177,7 +177,7 @@ class DashboardTokens : public ConfigObject {
 
     CONFIG_PROPERTY(int, tabIndicatorHeight, 3)
     CONFIG_PROPERTY(int, tabIndicatorSpacing, 5)
-    CONFIG_PROPERTY(int, userWidth, 320)
+    CONFIG_PROPERTY(int, userWidth, 340)
     CONFIG_PROPERTY(int, logoSize, 30)
     CONFIG_PROPERTY(int, uptimeSize, 30)
     CONFIG_PROPERTY(int, bubbleSize, 8)
@@ -186,7 +186,7 @@ class DashboardTokens : public ConfigObject {
     CONFIG_PROPERTY(int, mediaProgressSweep, 180)
     CONFIG_PROPERTY(int, mediaProgressThickness, 8)
     CONFIG_PROPERTY(int, resourceProgressThickness, 10)
-    CONFIG_PROPERTY(int, weatherWidth, 250)
+    CONFIG_PROPERTY(int, weatherWidth, 275)
     CONFIG_PROPERTY(int, mediaCoverArtSize, 150)
     CONFIG_PROPERTY(int, mediaVisualiserSize, 80)
     CONFIG_PROPERTY(int, resourceSize, 200)

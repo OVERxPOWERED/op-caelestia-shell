@@ -82,7 +82,7 @@ ColumnLayout {
             }
 
             Behavior on opacity {
-                Anim {}
+                Anim { type: Anim.DefaultEffects }
             }
 
             Behavior on scale {
@@ -155,7 +155,7 @@ ColumnLayout {
                     opacity: networkItem.loading ? 0 : 1
 
                     Behavior on opacity {
-                        Anim {}
+                        Anim { type: Anim.DefaultEffects }
                     }
                 }
             }
@@ -201,7 +201,7 @@ ColumnLayout {
             }
 
             Behavior on opacity {
-                Anim {}
+                Anim { type: Anim.DefaultEffects }
             }
         }
 
@@ -265,7 +265,7 @@ ColumnLayout {
             }
 
             Behavior on opacity {
-                Anim {}
+                Anim { type: Anim.DefaultEffects }
             }
 
             Behavior on scale {
@@ -323,7 +323,7 @@ ColumnLayout {
                     opacity: ethernetItem.loading ? 0 : 1
 
                     Behavior on opacity {
-                        Anim {}
+                        Anim { type: Anim.DefaultEffects }
                     }
                 }
             }

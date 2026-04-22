@@ -9,6 +9,7 @@ Item {
     anchors.centerIn: parent
 
     implicitWidth: icon.implicitWidth + info.implicitWidth + info.anchors.leftMargin
+    implicitHeight: Math.max(icon.implicitHeight, info.implicitHeight) + Tokens.padding.largeIncreased
 
     Component.onCompleted: Weather.reload()
 

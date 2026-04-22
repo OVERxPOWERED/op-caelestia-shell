@@ -71,3 +71,15 @@ if("shell" IN_LIST ENABLE_MODULES)
 
     install(FILES LICENSE DESTINATION "${INSTALL_QSCONFDIR}")
 endif()
+
+if("plugin" IN_LIST ENABLE_MODULES OR "shell" IN_LIST ENABLE_MODULES)
+    message(STATUS "Fetching M3Shapes module")
+    include(FetchContent)
+    FetchContent_Declare(
+        m3shapes_external
+        GIT_REPOSITORY https://github.com/soramanew/m3shapes.git
+        GIT_TAG        main
+    )
+    FetchContent_MakeAvailable(m3shapes_external)
+    message(STATUS "Done fetching M3Shapes module")
+endif()

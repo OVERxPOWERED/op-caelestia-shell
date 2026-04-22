@@ -177,8 +177,10 @@ class DashboardTokens : public ConfigObject {
 
     CONFIG_PROPERTY(int, tabIndicatorHeight, 3)
     CONFIG_PROPERTY(int, tabIndicatorSpacing, 5)
-    CONFIG_PROPERTY(int, infoWidth, 200)
-    CONFIG_PROPERTY(int, infoIconSize, 25)
+    CONFIG_PROPERTY(int, userWidth, 320)
+    CONFIG_PROPERTY(int, logoSize, 30)
+    CONFIG_PROPERTY(int, uptimeSize, 30)
+    CONFIG_PROPERTY(int, bubbleSize, 8)
     CONFIG_PROPERTY(int, dateTimeWidth, 110)
     CONFIG_PROPERTY(int, mediaWidth, 200)
     CONFIG_PROPERTY(int, mediaProgressSweep, 180)

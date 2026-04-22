@@ -66,7 +66,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: Tokens.padding.medium
+        anchors.topMargin: Math.min(anchors.margins, Math.max(0, anchors.margins - Config.border.thickness))
         anchors.margins: Tokens.padding.large
 
         nonAnimWidth: root.nonAnimWidth - anchors.margins * 2
@@ -198,14 +198,10 @@ Item {
     }
 
     Behavior on implicitWidth {
-        Anim {
-            type: Anim.EmphasizedLarge
-        }
+        Anim {}
     }
 
     Behavior on implicitHeight {
-        Anim {
-            type: Anim.EmphasizedLarge
-        }
+        Anim {}
     }
 }

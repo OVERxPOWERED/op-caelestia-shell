@@ -20,7 +20,7 @@ public:
     [[nodiscard]] Q_INVOKABLE FontBuilder stretch(int stretch);
     [[nodiscard]] Q_INVOKABLE FontBuilder letterSpacing(qreal spacing, bool absolute = true);
     [[nodiscard]] Q_INVOKABLE FontBuilder capitalisation(QFont::Capitalization cap);
-    [[nodiscard]] Q_INVOKABLE FontBuilder vaxis(QFont::Tag tag, float value);
+    [[nodiscard]] Q_INVOKABLE FontBuilder vaxis(const QString& tag, float value);
     [[nodiscard]] Q_INVOKABLE FontBuilder vaxes(QVariantMap axes);
     [[nodiscard]] Q_INVOKABLE QFont build() const;
 

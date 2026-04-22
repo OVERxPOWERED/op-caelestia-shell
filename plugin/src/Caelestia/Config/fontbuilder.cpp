@@ -1,6 +1,9 @@
 #include "fontbuilder.hpp"
+#include <qloggingcategory.h>
 
 namespace caelestia::config {
+
+Q_LOGGING_CATEGORY(lcFontBuilder, "caelestia.fontbuilder", QtInfoMsg)
 
 FontBuilder::FontBuilder(QFont font)
     : m_font(std::move(font)) {}
@@ -44,15 +47,24 @@ FontBuilder FontBuilder::capitalisation(QFont::Capitalization cap) {
     return *this;
 }
 
-FontBuilder FontBuilder::vaxis(QFont::Tag tag, float value) {
-    m_font.setVariableAxis(tag, value);
+FontBuilder FontBuilder::vaxis(const QString& tag, float value) {
+    if (auto t = QFont::Tag::fromString(tag))
+        m_font.setVariableAxis(*t, value);
+    else
+        qCWarning(lcFontBuilder) << "Unable to convert tag" << tag << "to QFont::Tag";
     return *this;
 }
 
 FontBuilder FontBuilder::vaxes(QVariantMap axes) {
     for (auto it = axes.constBegin(); it != axes.constEnd(); ++it) {
-        if (auto tag = QFont::Tag::fromString(it.key()))
-            m_font.setVariableAxis(*tag, it.value().toFloat());
+        if (it.value().canConvert<float>()) {
+            if (auto tag = QFont::Tag::fromString(it.key()))
+                m_font.setVariableAxis(*tag, it.value().toFloat());
+            else
+                qCWarning(lcFontBuilder) << "Unable to convert tag" << it.key() << "to QFont::Tag";
+        } else {
+            qCWarning(lcFontBuilder) << "Unable to convert value" << it.value() << "to float";
+        }
     }
     return *this;
 }

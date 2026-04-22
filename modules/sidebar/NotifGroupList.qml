@@ -132,9 +132,7 @@ LazyListView {
             Behavior on y {
                 enabled: notif.LazyListView.ready
 
-                Anim {
-                    type: Anim.DefaultSpatial
-                }
+                Anim {}
             }
 
             Behavior on opacity {
@@ -148,9 +146,7 @@ LazyListView {
             }
 
             Behavior on x {
-                Anim {
-                    type: Anim.DefaultSpatial
-                }
+                Anim {}
             }
         }
     }

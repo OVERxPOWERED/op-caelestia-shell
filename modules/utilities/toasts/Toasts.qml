@@ -111,7 +111,6 @@ Item {
             properties: "opacity,scale"
             from: 0
             to: 1
-            type: Anim.DefaultSpatial
         }
 
         ParallelAnimation {
@@ -149,9 +148,7 @@ Item {
         }
 
         Behavior on anchors.bottomMargin {
-            Anim {
-                type: Anim.DefaultSpatial
-            }
+            Anim {}
         }
     }
 }

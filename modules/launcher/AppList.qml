@@ -41,9 +41,7 @@ StyledListView {
         implicitHeight: root.currentItem?.implicitHeight ?? 0
 
         Behavior on y {
-            Anim {
-                type: Anim.DefaultSpatial
-            }
+            Anim {}
         }
     }
 

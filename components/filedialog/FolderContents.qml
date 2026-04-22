@@ -120,7 +120,6 @@ Item {
                 properties: "opacity,scale"
                 from: 0
                 to: 1
-                type: Anim.DefaultSpatial
             }
         }
 
@@ -145,7 +144,6 @@ Item {
             }
             Anim {
                 properties: "x,y"
-                type: Anim.DefaultSpatial
             }
         }
     }

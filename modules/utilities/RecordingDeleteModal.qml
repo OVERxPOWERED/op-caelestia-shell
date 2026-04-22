@@ -202,9 +202,7 @@ Loader {
             }
 
             Behavior on scale {
-                Anim {
-                    type: Anim.DefaultSpatial
-                }
+                Anim {}
             }
         }
     }

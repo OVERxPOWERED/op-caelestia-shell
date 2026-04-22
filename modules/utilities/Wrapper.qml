@@ -64,9 +64,7 @@ Item {
     ]
 
     Behavior on offsetScale {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
+        Anim {}
     }
 
     Loader {

@@ -99,9 +99,7 @@ Item {
     }
 
     Behavior on implicitHeight {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
+        Anim {}
     }
 
     component Title: StyledText {

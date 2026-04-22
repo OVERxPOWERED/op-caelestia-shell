@@ -40,9 +40,7 @@ Item {
     Component.onCompleted: Qt.callLater(() => Apps) // Load apps on init
 
     Behavior on offsetScale {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
+        Anim {}
     }
 
     Loader {

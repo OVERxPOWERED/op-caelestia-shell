@@ -57,7 +57,6 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                type: Anim.DefaultSpatial
             }
         },
         Transition {

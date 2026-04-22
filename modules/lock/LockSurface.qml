@@ -36,7 +36,6 @@ WlSessionLockSurface {
                 target: lockContent
                 properties: "implicitWidth,implicitHeight"
                 to: lockContent.size
-                type: Anim.DefaultSpatial
             }
             Anim {
                 target: lockBg
@@ -47,7 +46,6 @@ WlSessionLockSurface {
                 target: content
                 property: "scale"
                 to: 0
-                type: Anim.DefaultSpatial
             }
             Anim {
                 target: content
@@ -136,7 +134,6 @@ WlSessionLockSurface {
                     target: content
                     property: "scale"
                     to: 1
-                    type: Anim.DefaultSpatial
                 }
                 Anim {
                     target: lockBg
@@ -147,13 +144,11 @@ WlSessionLockSurface {
                     target: lockContent
                     property: "implicitWidth"
                     to: (root.screen?.height ?? 0) * lockContent.Tokens.sizes.lock.heightMult * lockContent.Tokens.sizes.lock.ratio
-                    type: Anim.DefaultSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "implicitHeight"
                     to: (root.screen?.height ?? 0) * lockContent.Tokens.sizes.lock.heightMult
-                    type: Anim.DefaultSpatial
                 }
             }
         }

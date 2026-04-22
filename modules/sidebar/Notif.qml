@@ -123,9 +123,7 @@ StyledRect {
     }
 
     Behavior on implicitHeight {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
+        Anim {}
     }
 
     component ExpandedBody: ColumnLayout {

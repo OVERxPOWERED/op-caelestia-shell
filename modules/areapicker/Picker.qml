@@ -168,17 +168,17 @@ MouseArea {
                 to: 0
                 type: Anim.StandardLarge
             }
-            ExAnim {
+            Anim {
                 target: root
                 properties: "rsx,rsy"
                 to: 0
             }
-            ExAnim {
+            Anim {
                 target: root
                 property: "sw"
                 to: root.screen.width
             }
-            ExAnim {
+            Anim {
                 target: root
                 property: "sh"
                 to: root.screen.height
@@ -284,28 +284,24 @@ MouseArea {
     Behavior on rsx {
         enabled: !root.pressed
 
-        ExAnim {}
+        Anim {}
     }
 
     Behavior on rsy {
         enabled: !root.pressed
 
-        ExAnim {}
+        Anim {}
     }
 
     Behavior on sw {
         enabled: !root.pressed
 
-        ExAnim {}
+        Anim {}
     }
 
     Behavior on sh {
         enabled: !root.pressed
 
-        ExAnim {}
-    }
-
-    component ExAnim: Anim {
-        type: Anim.DefaultSpatial
+        Anim {}
     }
 }

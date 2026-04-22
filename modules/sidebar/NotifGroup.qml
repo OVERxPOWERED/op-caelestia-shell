@@ -61,9 +61,7 @@ StyledRect {
     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
     Behavior on implicitHeight {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
+        Anim {}
     }
 
     RowLayout {
@@ -221,15 +219,11 @@ StyledRect {
                             Layout.topMargin: root.expanded ? -Math.floor(Tokens.padding.extraSmall) : 0
 
                             Behavior on rotation {
-                                Anim {
-                                    type: Anim.DefaultSpatial
-                                }
+                                Anim {}
                             }
 
                             Behavior on Layout.topMargin {
-                                Anim {
-                                    type: Anim.DefaultSpatial
-                                }
+                                Anim {}
                             }
                         }
                     }

@@ -90,9 +90,7 @@ MouseArea {
             origin.y: root.thisSideY === Menu.Bottom ? menu.height : 0
 
             Behavior on yScale {
-                Anim {
-                    type: Anim.DefaultSpatial
-                }
+                Anim {}
             }
         }
 

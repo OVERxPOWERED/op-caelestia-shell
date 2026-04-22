@@ -102,15 +102,11 @@ Item {
                 }
 
                 Behavior on implicitWidth {
-                    Anim {
-                        type: Anim.DefaultSpatial
-                    }
+                    Anim {}
                 }
 
                 Behavior on implicitHeight {
-                    Anim {
-                        type: Anim.DefaultSpatial
-                    }
+                    Anim {}
                 }
             }
         }
@@ -159,7 +155,6 @@ Item {
 
             Anim {
                 properties: "implicitWidth,implicitHeight"
-                type: Anim.DefaultSpatial
             }
         }
 

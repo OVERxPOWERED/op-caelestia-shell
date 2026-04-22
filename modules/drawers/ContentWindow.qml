@@ -73,21 +73,15 @@ StyledWindow {
     anchors.right: true
 
     Behavior on borderThickness {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
+        Anim {}
     }
 
     Behavior on borderRounding {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
+        Anim {}
     }
 
     Behavior on shadowOpacity {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
+        Anim {}
     }
 
     HyprlandFocusGrab {
@@ -218,9 +212,7 @@ StyledWindow {
             implicitWidth: panels.popouts.width * (1 + extraWidth)
 
             Behavior on extraWidth {
-                Anim {
-                    type: Anim.DefaultSpatial
-                }
+                Anim {}
             }
         }
     }

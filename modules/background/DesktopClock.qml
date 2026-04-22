@@ -150,9 +150,7 @@ Item {
     }
 
     Behavior on clockScale {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
+        Anim {}
     }
 
     Behavior on implicitWidth {

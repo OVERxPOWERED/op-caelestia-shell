@@ -100,9 +100,7 @@ StyledRect {
         }
 
         Behavior on anchors.bottomMargin {
-            Anim {
-                type: Anim.DefaultSpatial
-            }
+            Anim {}
         }
 
         Behavior on opacity {
@@ -117,8 +115,6 @@ StyledRect {
     }
 
     Behavior on implicitHeight {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
+        Anim {}
     }
 }

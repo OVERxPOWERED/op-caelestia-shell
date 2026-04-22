@@ -101,7 +101,6 @@ ColumnLayout {
                     property: "scale"
                     from: 0
                     to: 1
-                    type: Anim.DefaultSpatial
                 }
             }
 
@@ -125,7 +124,6 @@ ColumnLayout {
                 }
                 Anim {
                     property: "y"
-                    type: Anim.DefaultSpatial
                 }
             }
 
@@ -137,7 +135,6 @@ ColumnLayout {
                 }
                 Anim {
                     property: "y"
-                    type: Anim.DefaultSpatial
                 }
             }
         }

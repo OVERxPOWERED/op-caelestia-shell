@@ -25,8 +25,7 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: logoShape.right
-        anchors.topMargin: Tokens.padding.extraSmall
-        anchors.leftMargin: -Tokens.padding.extraLarge
+        anchors.leftMargin: -(Tokens.padding.largeIncreased + Tokens.padding.extraLarge) / 2
         implicitWidth: height
 
         MaterialShape {
@@ -104,6 +103,7 @@ Item {
 
         anchors.bottom: parent.bottom
         anchors.left: pfpContainer.right
+        anchors.bottomMargin: -Tokens.padding.small // Clamshell is taller than what it is visually
         anchors.leftMargin: -Tokens.padding.extraLargeIncreased
         implicitSize: Tokens.sizes.dashboard.uptimeSize + Tokens.padding.small * 2
         shape: MaterialShape.ClamShell

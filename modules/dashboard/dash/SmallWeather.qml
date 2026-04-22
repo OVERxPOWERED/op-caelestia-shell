@@ -22,7 +22,7 @@ Item {
         animate: true
         text: Weather.icon
         color: Colours.palette.m3secondary
-        fontStyle: Tokens.font.icon.builders.extraLarge.scale(1.8).build()
+        fontStyle: Tokens.font.icon.builders.extraLarge.scale(1.6).build()
     }
 
     Column {
@@ -40,7 +40,7 @@ Item {
             animate: true
             text: Weather.temp
             color: Colours.palette.m3primary
-            font: Tokens.font.headline.builders.large.width(110).weight(Font.DemiBold).build()
+            font: Tokens.font.headline.builders.medium.width(110).weight(Font.DemiBold).build()
         }
 
         StyledText {
@@ -48,7 +48,7 @@ Item {
 
             animate: true
             text: Weather.description
-            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+            font: Tokens.font.body.small
 
             elide: Text.ElideRight
             width: Math.min(implicitWidth, root.parent.width - icon.implicitWidth - info.anchors.leftMargin - Tokens.padding.extraLargeIncreased)

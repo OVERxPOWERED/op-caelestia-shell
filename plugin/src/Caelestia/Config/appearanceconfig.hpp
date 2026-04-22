@@ -201,26 +201,27 @@ public:
         const auto sans = QStringLiteral("GoogleSansFlex");
         const auto mono = QStringLiteral("CaskaydiaCove NF");
         const auto icons = QStringLiteral("Material Symbols Rounded");
+        const QVariantMap vaxes = { { "ROND", 25 } };
 
         m_headline->setDefaultFamily(sans);
-        m_headline->large()->setDefaults(32, QFont::Normal);
-        m_headline->medium()->setDefaults(28, QFont::Normal);
-        m_headline->small()->setDefaults(24, QFont::Normal);
+        m_headline->large()->setDefaults(32, QFont::Medium, vaxes);
+        m_headline->medium()->setDefaults(28, QFont::Medium, vaxes);
+        m_headline->small()->setDefaults(24, QFont::Medium, vaxes);
 
         m_title->setDefaultFamily(sans);
-        m_title->large()->setDefaults(22, QFont::Medium);
-        m_title->medium()->setDefaults(16, QFont::Medium);
-        m_title->small()->setDefaults(14, QFont::Medium);
+        m_title->large()->setDefaults(22, QFont::Medium, vaxes);
+        m_title->medium()->setDefaults(16, QFont::Medium, vaxes);
+        m_title->small()->setDefaults(14, QFont::Medium, vaxes);
 
         m_body->setDefaultFamily(sans);
-        m_body->large()->setDefaults(16, QFont::Normal);
-        m_body->medium()->setDefaults(14, QFont::Normal);
-        m_body->small()->setDefaults(12, QFont::Normal);
+        m_body->large()->setDefaults(16, QFont::Normal, vaxes);
+        m_body->medium()->setDefaults(14, QFont::Normal, vaxes);
+        m_body->small()->setDefaults(12, QFont::Normal, vaxes);
 
         m_label->setDefaultFamily(sans);
-        m_label->large()->setDefaults(14, QFont::Medium);
-        m_label->medium()->setDefaults(12, QFont::Medium);
-        m_label->small()->setDefaults(11, QFont::Medium);
+        m_label->large()->setDefaults(14, QFont::Medium, vaxes);
+        m_label->medium()->setDefaults(12, QFont::Medium, vaxes);
+        m_label->small()->setDefaults(11, QFont::Medium, vaxes);
 
         m_mono->setDefaultFamily(mono);
         m_mono->large()->setDefaults(16, QFont::Normal);

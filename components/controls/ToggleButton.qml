@@ -64,7 +64,9 @@ StyledRect {
             fontStyle: Tokens.font.icon.size(root.iconSize).build()
 
             Behavior on fill {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
 

@@ -181,7 +181,9 @@ DeviceList {
                         fill: device.connected ? 1 : 0
 
                         Behavior on fill {
-                            Anim {}
+                            Anim {
+                                type: Anim.DefaultEffects
+                            }
                         }
                     }
                 }

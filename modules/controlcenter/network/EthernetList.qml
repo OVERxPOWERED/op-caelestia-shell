@@ -105,7 +105,9 @@ DeviceList {
                         color: modelData.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
 
                         Behavior on fill {
-                            Anim {}
+                            Anim {
+                                type: Anim.DefaultEffects
+                            }
                         }
                     }
                 }

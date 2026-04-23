@@ -1,6 +1,6 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Layouts
-import QtQuick.Effects
 import M3Shapes
 import Caelestia.Config
 import qs.components
@@ -48,11 +48,8 @@ Item {
             anchors.fill: parent
             path: `${Paths.home}/.face`
             layer.enabled: true
-            layer.effect: MultiEffect {
-                maskEnabled: true
+            layer.effect: Mask {
                 maskSource: shape
-                maskThresholdMin: 0.5
-                maskSpreadAtMin: 1
             }
         }
     }

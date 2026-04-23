@@ -1,13 +1,13 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Caelestia.Config
 import Caelestia.Models
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.components.filedialog
 import qs.components.images
 import qs.services
@@ -24,12 +24,9 @@ Item {
         color: Colours.tPalette.m3surfaceContainer
 
         layer.enabled: true
-        layer.effect: MultiEffect {
+        layer.effect: Mask {
             maskSource: mask
-            maskEnabled: true
             maskInverted: true
-            maskThresholdMin: 0.5
-            maskSpreadAtMin: 1
         }
     }
 

@@ -1,12 +1,12 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Caelestia
 import qs.components
+import qs.components.effects
 import qs.services
 
 MouseArea {
@@ -230,12 +230,9 @@ MouseArea {
         opacity: 0.3
 
         layer.enabled: true
-        layer.effect: MultiEffect {
+        layer.effect: Mask {
             maskSource: selectionWrapper
-            maskEnabled: true
             maskInverted: true
-            maskSpreadAtMin: 1
-            maskThresholdMin: 0.5
         }
     }
 

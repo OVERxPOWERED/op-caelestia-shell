@@ -19,9 +19,7 @@ Item {
         return active?.length ? (active.position % active.length) / active.length : 0;
     }
 
-    readonly property real arcCoverGap: Tokens.spacing.small
-    readonly property real arcRadius: (cover.width + Tokens.sizes.dashboard.mediaProgressThickness) / 2 + arcCoverGap
-    readonly property real arcGap: (Tokens.spacing.extraSmall + Tokens.sizes.dashboard.mediaProgressThickness) / arcRadius * 180 / Math.PI
+    readonly property real arcCoverGap: Tokens.spacing.extraSmall
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
@@ -45,59 +43,22 @@ Item {
         service: Audio.beatTracker
     }
 
-    Shape {
-        preferredRendererType: Shape.CurveRenderer
-        opacity: Math.min(1, remainingArc.sweepAngle)
+    CircularProgress {
+        id: prog
 
-        ShapePath {
-            fillColor: "transparent"
-            strokeColor: Colours.palette.m3secondaryContainer
-            strokeWidth: Math.min(1, remainingArc.sweepAngle) * root.Tokens.sizes.dashboard.mediaProgressThickness
-            capStyle: ShapePath.RoundCap
+        anchors.centerIn: cover
+        implicitSize: cover.width + root.arcCoverGap + thickness * 2
 
-            PathAngleArc {
-                id: remainingArc
-
-                centerX: cover.x + cover.width / 2
-                centerY: cover.y + cover.height / 2
-                radiusX: root.arcRadius
-                radiusY: root.arcRadius
-                startAngle: -90 - root.Tokens.sizes.dashboard.mediaProgressSweep / 2 + root.playerProgress * root.Tokens.sizes.dashboard.mediaProgressSweep + root.arcGap
-                sweepAngle: Math.max(0.1, root.Tokens.sizes.dashboard.mediaProgressSweep * (1 - root.playerProgress) - root.arcGap)
-            }
-
-            Behavior on strokeColor {
-                CAnim {}
-            }
-        }
-    }
-
-    WavyLine {
-        anchors.fill: cover
-        anchors.margins: -lineWidth * amplitudeMultiplier * 2 - lineWidth - root.arcCoverGap
-
-        lineWidth: Tokens.sizes.dashboard.mediaProgressThickness
-        color: Colours.palette.m3primary
-        pathType: WavyLine.Arc
-        radius: root.arcRadius
-        frequency: 8
-        startAngle: -fullAngle / 2
-        fullAngle: Tokens.sizes.dashboard.mediaProgressSweep
+        fgColour: Colours.palette.m3primary
+        strokeWidth: Tokens.sizes.dashboard.mediaProgressThickness
+        startAngle: -90 - sweepAngle / 2
+        sweepAngle: Tokens.sizes.dashboard.mediaProgressSweep
         value: root.playerProgress
 
-        Anim on waveProgress {
-            running: true
-            paused: !Players.active?.isPlaying
-            from: 0
-            to: 1
-            duration: 2000
-            easing.type: Easing.Linear
-            loops: Animation.Infinite
-        }
-
-        Behavior on color {
-            CAnim {}
-        }
+        wavy: true
+        waveFrequency: 8
+        waveDuration: 2000
+        wavePaused: !Players.active?.isPlaying
     }
 
     Item {
@@ -106,7 +67,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Tokens.padding.large + Tokens.sizes.dashboard.mediaProgressThickness + root.arcCoverGap
+        anchors.margins: Tokens.padding.medium + root.arcCoverGap + prog.thickness
         implicitHeight: width
 
         // Slight glow to separate from bg

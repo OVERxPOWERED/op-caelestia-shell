@@ -19,7 +19,7 @@ WavyLine::WavyLine(QQuickItem* parent)
     , m_fullAngle(360)
     , m_radius(-1)
     , m_value(1)
-    , m_startAngleRad(-M_PI / 2.0)
+    , m_startAngleRad(0)
     , m_fullAngleRad(2 * M_PI) {
     setAntialiasing(true);
 }
@@ -127,7 +127,7 @@ qreal WavyLine::startAngle() const {
 void WavyLine::setStartAngle(qreal startAngle) {
     if (!qFuzzyCompare(m_startAngle + 1.0, startAngle + 1.0)) {
         m_startAngle = startAngle;
-        m_startAngleRad = startAngle * M_PI / 180.0 - M_PI / 2.0;
+        m_startAngleRad = startAngle * M_PI / 180.0;
         emit startAngleChanged();
         update();
     }

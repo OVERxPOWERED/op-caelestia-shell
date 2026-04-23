@@ -1,8 +1,14 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Shapes
+import QtQuick.Effects
+import M3Shapes
 import Caelestia.Config
 import Caelestia.Services
+import Caelestia.Components
 import qs.components
+import qs.components.effects
 import qs.services
 import qs.utils
 
@@ -13,6 +19,10 @@ Item {
         const active = Players.active;
         return active?.length ? (active.position % active.length) / active.length : 0;
     }
+
+    readonly property real arcCoverGap: Tokens.spacing.small
+    readonly property real arcRadius: (cover.width + Tokens.sizes.dashboard.mediaProgressThickness) / 2 + arcCoverGap
+    readonly property real arcGap: (Tokens.spacing.extraSmall + Tokens.sizes.dashboard.mediaProgressThickness) / arcRadius * 180 / Math.PI
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
@@ -38,40 +48,23 @@ Item {
 
     Shape {
         preferredRendererType: Shape.CurveRenderer
+        opacity: Math.min(1, remainingArc.sweepAngle)
 
         ShapePath {
             fillColor: "transparent"
-            strokeColor: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-            strokeWidth: root.Tokens.sizes.dashboard.mediaProgressThickness
-            capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+            strokeColor: Colours.palette.m3secondaryContainer
+            strokeWidth: Math.min(1, remainingArc.sweepAngle) * root.Tokens.sizes.dashboard.mediaProgressThickness
+            capStyle: ShapePath.RoundCap
 
             PathAngleArc {
+                id: remainingArc
+
                 centerX: cover.x + cover.width / 2
                 centerY: cover.y + cover.height / 2
-                radiusX: (cover.width + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
-                radiusY: (cover.height + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
-                startAngle: -90 - root.Tokens.sizes.dashboard.mediaProgressSweep / 2
-                sweepAngle: root.Tokens.sizes.dashboard.mediaProgressSweep
-            }
-
-            Behavior on strokeColor {
-                CAnim {}
-            }
-        }
-
-        ShapePath {
-            fillColor: "transparent"
-            strokeColor: Colours.palette.m3primary
-            strokeWidth: root.Tokens.sizes.dashboard.mediaProgressThickness
-            capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
-
-            PathAngleArc {
-                centerX: cover.x + cover.width / 2
-                centerY: cover.y + cover.height / 2
-                radiusX: (cover.width + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
-                radiusY: (cover.height + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
-                startAngle: -90 - root.Tokens.sizes.dashboard.mediaProgressSweep / 2
-                sweepAngle: root.Tokens.sizes.dashboard.mediaProgressSweep * root.playerProgress
+                radiusX: root.arcRadius
+                radiusY: root.arcRadius
+                startAngle: -90 - root.Tokens.sizes.dashboard.mediaProgressSweep / 2 + root.playerProgress * root.Tokens.sizes.dashboard.mediaProgressSweep + root.arcGap
+                sweepAngle: Math.max(0.1, root.Tokens.sizes.dashboard.mediaProgressSweep * (1 - root.playerProgress) - root.arcGap)
             }
 
             Behavior on strokeColor {
@@ -80,17 +73,78 @@ Item {
         }
     }
 
-    StyledClippingRect {
+    WavyLine {
+        anchors.fill: cover
+        anchors.margins: -lineWidth * amplitudeMultiplier * 2 - lineWidth - root.arcCoverGap
+
+        lineWidth: Tokens.sizes.dashboard.mediaProgressThickness
+        color: Colours.palette.m3primary
+        pathType: WavyLine.Arc
+        radius: root.arcRadius
+        frequency: 8
+        startAngle: -fullAngle / 2
+        fullAngle: Tokens.sizes.dashboard.mediaProgressSweep
+        value: root.playerProgress
+
+        Anim on waveProgress {
+            running: true
+            paused: !Players.active?.isPlaying
+            from: 0
+            to: 1
+            duration: 2000
+            easing.type: Easing.Linear
+            loops: Animation.Infinite
+        }
+
+        Behavior on color {
+            CAnim {}
+        }
+    }
+
+    Item {
         id: cover
 
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Tokens.padding.large + Tokens.sizes.dashboard.mediaProgressThickness + Tokens.spacing.small
-
+        anchors.margins: Tokens.padding.large + Tokens.sizes.dashboard.mediaProgressThickness + root.arcCoverGap
         implicitHeight: width
-        color: Colours.tPalette.m3surfaceContainerHigh
-        radius: Infinity
+
+        // Slight glow to separate from bg
+        layer.enabled: true
+        layer.effect: MultiEffect {
+            shadowEnabled: true
+            blurMax: 1
+            shadowColor: Colours.palette.m3outline
+            shadowOpacity: 0.3
+        }
+
+        Item {
+            id: coverShape
+
+            anchors.fill: parent
+            layer.enabled: true
+
+            MaterialShape {
+                implicitSize: cover.width
+                shape: MaterialShape.Cookie12Sided
+                color: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
+
+                Anim on rotation {
+                    running: true
+                    paused: !Players.active?.isPlaying
+                    from: 360
+                    to: 0
+                    duration: 23500
+                    easing.type: Easing.Linear
+                    loops: Animation.Infinite
+                }
+
+                Behavior on color {
+                    CAnim {}
+                }
+            }
+        }
 
         MaterialIcon {
             anchors.centerIn: parent
@@ -111,6 +165,11 @@ Item {
             fillMode: Image.PreserveAspectCrop
             sourceSize.width: width
             sourceSize.height: height
+
+            layer.enabled: true
+            layer.effect: Mask {
+                maskSource: coverShape
+            }
         }
     }
 

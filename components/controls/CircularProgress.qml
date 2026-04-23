@@ -23,7 +23,7 @@ Item {
     property bool wavy: false
     property alias waveFrequency: wave.frequency
     property alias waveAmplitude: wave.amplitudeMultiplier
-    property alias wavePaused: waveProgAnim.paused
+    property bool wavePaused
     property alias waveDuration: waveProgAnim.duration
 
     readonly property real size: Math.min(width, height)
@@ -86,6 +86,7 @@ Item {
             id: waveProgAnim
 
             running: true
+            paused: root.wavePaused || wave.amplitudeMultiplier === 0
             from: 0
             to: 1
             duration: 2000

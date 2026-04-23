@@ -220,6 +220,8 @@ ProgressBar {
     }
 
     component Wave: WavyLine {
+        id: wave
+
         anchors.verticalCenter: parent.verticalCenter
         implicitHeight: lineWidth * amplitudeMultiplier * 2 + lineWidth
 
@@ -232,7 +234,7 @@ ProgressBar {
 
         Anim on waveProgress {
             running: true
-            paused: root.wavePaused
+            paused: wave.amplitudeMultiplier === 0 || root.wavePaused
             from: 0
             to: 1
             duration: root.waveDuration

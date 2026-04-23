@@ -19,6 +19,10 @@ StyledRect {
     property alias font: label.fontStyle
     property int type: IconButton.Filled
     property bool disabled
+    property bool isRound
+
+    readonly property alias pressed: stateLayer.pressed
+    readonly property alias hovered: stateLayer.containsMouse
 
     property alias stateLayer: stateLayer
     property alias label: label
@@ -44,7 +48,7 @@ StyledRect {
 
     onCheckedChanged: internalChecked = checked
 
-    radius: internalChecked ? Tokens.rounding.medium : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
+    radius: stateLayer.pressed ? Tokens.rounding.small : internalChecked ? Tokens.rounding.medium : isRound ? implicitHeight / 2 * Math.min(1, Tokens.rounding.scale) : Tokens.rounding.large
     color: type === IconButton.Text ? "transparent" : disabled ? disabledColour : internalChecked ? activeColour : inactiveColour
 
     implicitWidth: implicitHeight
@@ -79,6 +83,8 @@ StyledRect {
     Behavior on radius {
         Anim {
             id: radiusAnim
+
+            type: Anim.DefaultEffects
         }
     }
 }

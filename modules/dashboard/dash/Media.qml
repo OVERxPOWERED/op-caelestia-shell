@@ -1,13 +1,12 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Shapes
 import QtQuick.Effects
 import M3Shapes
 import Caelestia.Config
 import Caelestia.Services
-import Caelestia.Components
 import qs.components
+import qs.components.controls
 import qs.components.effects
 import qs.services
 import qs.utils
@@ -223,30 +222,51 @@ Item {
         elide: Text.ElideRight
     }
 
-    Row {
+    Item {
         id: controls
 
         anchors.top: artist.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.topMargin: Tokens.spacing.medium
+        anchors.margins: Tokens.padding.large
 
-        spacing: Tokens.spacing.small
+        implicitHeight: Math.max(previousBtn.implicitHeight, playPauseBtn.implicitHeight, nextBtn.implicitHeight)
 
         PlayerControl {
+            id: previousBtn
+
+            anchors.left: parent.left
+            width: Math.round(implicitWidth * shapeMorphExpansion - playPauseBtn.implicitWidth * (playPauseBtn.shapeMorphExpansion - 1))
+
+            type: IconButton.Tonal
             icon: "skip_previous"
-            canUse: Players.active?.canGoPrevious ?? false
+            disabled: !Players.active?.canGoPrevious
             onClicked: Players.active?.previous()
         }
 
         PlayerControl {
+            id: playPauseBtn
+
+            anchors.left: previousBtn.right
+            anchors.right: nextBtn.left
+            anchors.margins: Tokens.spacing.small
+
             icon: Players.active?.isPlaying ? "pause" : "play_arrow"
-            canUse: Players.active?.canTogglePlaying ?? false
+            checked: Players.active?.isPlaying
+            disabled: !Players.active?.canTogglePlaying
             onClicked: Players.active?.togglePlaying()
         }
 
         PlayerControl {
+            id: nextBtn
+
+            anchors.right: parent.right
+            width: Math.round(implicitWidth * shapeMorphExpansion - playPauseBtn.implicitWidth * (playPauseBtn.shapeMorphExpansion - 1))
+
+            type: IconButton.Tonal
             icon: "skip_next"
-            canUse: Players.active?.canGoNext ?? false
+            disabled: !Players.active?.canGoNext
             onClicked: Players.active?.next()
         }
     }
@@ -269,33 +289,16 @@ Item {
         fillMode: AnimatedImage.PreserveAspectFit
     }
 
-    component PlayerControl: StyledRect {
-        id: control
+    component PlayerControl: IconButton {
+        property real shapeMorphExpansion: pressed ? 1.16 : 1
 
-        required property string icon
-        required property bool canUse
+        font: Tokens.font.icon.medium
+        isRound: true
 
-        signal clicked
-
-        implicitWidth: Math.max(icon.implicitHeight, icon.implicitHeight) + Tokens.padding.extraSmall
-        implicitHeight: implicitWidth
-
-        StateLayer {
-            disabled: !control.canUse
-            radius: Tokens.rounding.full
-            onClicked: control.clicked()
-        }
-
-        MaterialIcon {
-            id: icon
-
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: font.pointSize * 0.05
-
-            animate: true
-            text: control.icon
-            color: control.canUse ? Colours.palette.m3onSurface : Colours.palette.m3outline
-            fontStyle: Tokens.font.icon.large
+        Behavior on shapeMorphExpansion {
+            Anim {
+                type: Anim.FastSpatial
+            }
         }
     }
 }

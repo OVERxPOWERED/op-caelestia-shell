@@ -1,3 +1,4 @@
+import "performance"
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -82,34 +83,24 @@ Item {
 
                 HeroCard {
                     Layout.fillWidth: true
-                    Layout.minimumWidth: 400
-                    Layout.preferredHeight: 150
                     visible: Config.dashboard.performance.showCpu
                     icon: "memory"
-                    title: SystemUsage.cpuName ? `CPU - ${SystemUsage.cpuName}` : qsTr("CPU")
-                    mainValue: `${Math.round(SystemUsage.cpuPerc * 100)}%`
-                    mainLabel: qsTr("Usage")
-                    secondaryValue: root.displayTemp(SystemUsage.cpuTemp)
-                    secondaryLabel: qsTr("Temp")
+                    label: qsTr("CPU")
+                    subLabel: SystemUsage.cpuName
                     usage: SystemUsage.cpuPerc
                     temperature: SystemUsage.cpuTemp
-                    accentColor: Colours.palette.m3primary
+                    accent: Colours.palette.m3primary
                 }
 
                 HeroCard {
                     Layout.fillWidth: true
-                    Layout.minimumWidth: 400
-                    Layout.preferredHeight: 150
                     visible: Config.dashboard.performance.showGpu && SystemUsage.gpuType !== "NONE"
                     icon: "desktop_windows"
-                    title: SystemUsage.gpuName ? `GPU - ${SystemUsage.gpuName}` : qsTr("GPU")
-                    mainValue: `${Math.round(SystemUsage.gpuPerc * 100)}%`
-                    mainLabel: qsTr("Usage")
-                    secondaryValue: root.displayTemp(SystemUsage.gpuTemp)
-                    secondaryLabel: qsTr("Temp")
+                    label: qsTr("GPU")
+                    subLabel: SystemUsage.gpuName
                     usage: SystemUsage.gpuPerc
                     temperature: SystemUsage.gpuTemp
-                    accentColor: Colours.palette.m3secondary
+                    accent: Colours.palette.m3secondary
                 }
             }
 
@@ -321,125 +312,6 @@ Item {
         }
 
         Behavior on animatedValue {
-            Anim {
-                type: Anim.StandardLarge
-            }
-        }
-    }
-
-    component HeroCard: StyledClippingRect {
-        id: heroCard
-
-        property string icon
-        property string title
-        property string mainValue
-        property string mainLabel
-        property string secondaryValue
-        property string secondaryLabel
-        property real usage: 0
-        property real temperature: 0
-        property color accentColor: Colours.palette.m3primary
-        readonly property real maxTemp: 100
-        readonly property real tempProgress: Math.min(1, Math.max(0, temperature / maxTemp))
-        property real animatedUsage: 0
-        property real animatedTemp: 0
-
-        color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.extraLarge
-        Component.onCompleted: {
-            animatedUsage = usage;
-            animatedTemp = tempProgress;
-        }
-        onUsageChanged: animatedUsage = usage
-        onTempProgressChanged: animatedTemp = tempProgress
-
-        StyledRect {
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            implicitWidth: parent.width * heroCard.animatedUsage
-            color: Qt.alpha(heroCard.accentColor, 0.15)
-        }
-
-        CardHeader {
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.leftMargin: Tokens.padding.large
-            anchors.topMargin: Math.round(Tokens.padding.large * 1.2)
-
-            width: parent.width - anchors.leftMargin - usageColumn.anchors.rightMargin - usageLabel.width - Tokens.spacing.medium
-            icon: heroCard.icon
-            title: heroCard.title
-            accentColor: heroCard.accentColor
-        }
-
-        Column {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.margins: Math.round(Tokens.padding.large * 1.2)
-            anchors.bottomMargin: Math.round(Tokens.padding.large * 1.3)
-
-            spacing: Tokens.spacing.small
-
-            Row {
-                spacing: Tokens.spacing.small
-
-                StyledText {
-                    text: heroCard.secondaryValue
-                    font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
-                }
-
-                StyledText {
-                    text: heroCard.secondaryLabel
-                    font: Tokens.font.body.small
-                    color: Colours.palette.m3onSurfaceVariant
-                    anchors.baseline: parent.children[0].baseline
-                }
-            }
-
-            ProgressBar {
-                implicitWidth: parent.width * 0.5
-                implicitHeight: 6
-                value: heroCard.tempProgress
-                fgColor: heroCard.accentColor
-                bgColor: Qt.alpha(heroCard.accentColor, 0.2)
-            }
-        }
-
-        Column {
-            id: usageColumn
-
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.margins: Tokens.padding.large
-            anchors.rightMargin: 32
-            spacing: 0
-
-            StyledText {
-                id: usageLabel
-
-                anchors.right: parent.right
-                text: heroCard.mainLabel
-                font: Tokens.font.body.medium
-                color: Colours.palette.m3onSurfaceVariant
-            }
-
-            StyledText {
-                anchors.right: parent.right
-                text: heroCard.mainValue
-                font: Tokens.font.body.builders.large.size(28).weight(Font.Medium).build()
-                color: heroCard.accentColor
-            }
-        }
-
-        Behavior on animatedUsage {
-            Anim {
-                type: Anim.StandardLarge
-            }
-        }
-
-        Behavior on animatedTemp {
             Anim {
                 type: Anim.StandardLarge
             }

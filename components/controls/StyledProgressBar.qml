@@ -26,7 +26,6 @@ ProgressBar {
     property int waveFrequency: 6
     property real waveAmplitude: 0.5
     property int waveDuration: 1000
-    property bool animateIndeterminate
 
     property int indeterminateAnimState: StyledProgressBar.Stopped
 
@@ -46,7 +45,7 @@ ProgressBar {
     }
 
     function updateIAnimState(): void {
-        if (indeterminate && animateIndeterminate) {
+        if (indeterminate) {
             manager.completeEndProgress = 0;
             indeterminateAnimState = StyledProgressBar.Running;
         } else if (indeterminateAnimState === StyledProgressBar.Running) {
@@ -55,7 +54,6 @@ ProgressBar {
     }
 
     onIndeterminateChanged: updateIAnimState()
-    onAnimateIndeterminateChanged: updateIAnimState()
     Component.onCompleted: updateIAnimState()
 
     implicitWidth: 200
@@ -63,13 +61,14 @@ ProgressBar {
 
     contentItem: Loader {
         anchors.fill: parent
+        asynchronous: true
         sourceComponent: root.indeterminate || root.indeterminateAnimState !== StyledProgressBar.Stopped ? indeterminateComp : determinateComp
     }
 
     LinearIndicatorManager {
         id: manager
 
-        gap: Tokens.spacing.extraSmall
+        gap: root.Tokens.spacing.extraSmall
 
         Anim on progress {
             running: root.indeterminateAnimState !== StyledProgressBar.Stopped
@@ -91,10 +90,6 @@ ProgressBar {
         }
     }
 
-    Behavior on value {
-        Anim {}
-    }
-
     Component {
         id: determinateComp
 
@@ -109,7 +104,7 @@ ProgressBar {
             Line {
                 property real implicitSize
 
-                Component.onCompleted: implicitSize = Qt.binding(() => parent.width * (1 - root.visualPosition) < parent.height ? parent.height : 4)
+                Component.onCompleted: implicitSize = Qt.binding(() => parent.width - wave.implicitWidth < parent.height ? parent.height : 4)
 
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
@@ -131,14 +126,11 @@ ProgressBar {
             Wave {
                 id: wave
 
-                readonly property real targetWidth: parent.width * root.visualPosition
-
                 anchors.left: parent.left
+                Component.onCompleted: implicitWidth = Qt.binding(() => parent.width * root.visualPosition)
 
-                Anim on implicitWidth {
-                    running: true
-                    to: wave.targetWidth
-                    onFinished: wave.implicitWidth = Qt.binding(() => wave.targetWidth)
+                Behavior on implicitWidth {
+                    Anim {}
                 }
             }
         }
@@ -216,7 +208,7 @@ ProgressBar {
         implicitHeight: parent.height
 
         radius: Tokens.rounding.full
-        color: root.fgColour
+        color: root.bgColour
     }
 
     component Wave: WavyLine {

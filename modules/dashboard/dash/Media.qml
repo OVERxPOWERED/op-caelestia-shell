@@ -214,7 +214,7 @@ Item {
             anchors.margins: Tokens.spacing.small
 
             icon: Players.active?.isPlaying ? "pause" : "play_arrow"
-            checked: Players.active?.isPlaying
+            checked: Players.active?.isPlaying ?? false
             disabled: !Players.active?.canTogglePlaying
             onClicked: Players.active?.togglePlaying()
         }

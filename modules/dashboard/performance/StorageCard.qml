@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Caelestia.Config
+import Caelestia.Services
 import qs.components
 import qs.components.controls
 import qs.services
@@ -10,13 +11,17 @@ StyledRect {
     id: root
 
     readonly property color accent: Colours.palette.m3secondary
-    readonly property real percentage: SystemUsage.primaryDisk?.perc ?? 0
+    readonly property real percentage: Storage.primaryDisk?.perc ?? 0
 
     color: Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.extraExtraLarge
 
     implicitWidth: layout.implicitWidth + layout.anchors.margins * 2
     implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
+
+    ServiceRef {
+        service: Storage
+    }
 
     ColumnLayout {
         id: layout
@@ -83,11 +88,11 @@ StyledRect {
 
                 StyledText {
                     text: {
-                        if (!SystemUsage.primaryDisk)
+                        if (!Storage.primaryDisk)
                             return qsTr("No disks detected");
 
-                        const usedFmt = SystemUsage.formatKib(SystemUsage.primaryDisk.used);
-                        const totalFmt = SystemUsage.formatKib(SystemUsage.primaryDisk.total);
+                        const usedFmt = Storage.formatKib(Storage.primaryDisk.used);
+                        const totalFmt = Storage.formatKib(Storage.primaryDisk.total);
                         return `${usedFmt.value.toFixed(1)} / ${Math.floor(totalFmt.value)} ${totalFmt.unit}`;
                     }
                     font: Tokens.font.body.large
@@ -100,20 +105,20 @@ StyledRect {
             Layout.alignment: Qt.AlignHCenter
 
             type: SplitButton.Tonal
-            disabled: !SystemUsage.disks.length
+            disabled: !Storage.disks.length
             fallbackIcon: "storage"
             fallbackText: qsTr("No disks")
             menuOnTop: true
             minLeftWidth: row.implicitWidth * 0.6
 
             menuItems: disks.instances
-            active: menuItems.find(m => m.modelData === SystemUsage.primaryDisk) ?? menuItems[0] ?? null
-            menu.onItemSelected: item => SystemUsage.manualPrimaryDisk = (item as DiskItem).modelData
+            active: menuItems.find(m => m.modelData === Storage.primaryDisk) ?? menuItems[0] ?? null
+            menu.onItemSelected: item => Storage.manualPrimaryDisk = (item as DiskItem).modelData
 
             Variants {
                 id: disks
 
-                model: SystemUsage.disks
+                model: Storage.disks
 
                 DiskItem {}
             }
@@ -123,7 +128,7 @@ StyledRect {
     component DiskItem: MenuItem {
         required property var modelData
 
-        icon: modelData === SystemUsage.primaryDisk ? "check" : ""
+        icon: modelData === Storage.primaryDisk ? "check" : ""
         text: modelData.mount
         activeIcon: "storage"
     }

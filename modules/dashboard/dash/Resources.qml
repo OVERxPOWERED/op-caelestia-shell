@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
+import Caelestia.Services
 import qs.components
 import qs.components.controls
-import qs.components.misc
 import qs.services
 
 Item {
@@ -14,8 +14,16 @@ Item {
 
     implicitWidth: layout.implicitWidth + layout.anchors.margins * 2
 
-    Ref {
-        service: SystemUsage
+    ServiceRef {
+        service: Cpu
+    }
+
+    ServiceRef {
+        service: Memory
+    }
+
+    ServiceRef {
+        service: Storage
     }
 
     ColumnLayout {
@@ -29,18 +37,18 @@ Item {
 
         Resource {
             icon: "memory"
-            value: SystemUsage.cpuPerc
+            value: Cpu.percentage
         }
 
         Resource {
             icon: "memory_alt"
-            value: SystemUsage.memPerc
+            value: Memory.percentage
             fgColour: Colours.palette.m3tertiary
         }
 
         Resource {
             icon: "hard_disk"
-            value: SystemUsage.storagePerc
+            value: Storage.percentage
             fgColour: Colours.palette.m3secondary
         }
     }

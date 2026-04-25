@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
+import Caelestia.Services
 import qs.components
 import qs.components.controls
 import qs.services
@@ -15,6 +16,10 @@ StyledRect {
 
     implicitWidth: layout.implicitWidth + Tokens.padding.extraLargeIncreased * 2
     implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
+
+    ServiceRef {
+        service: Memory
+    }
 
     ColumnLayout {
         id: layout
@@ -47,7 +52,7 @@ StyledRect {
             sweepAngle: 270
 
             fgColour: root.accent
-            value: SystemUsage.memPerc
+            value: Memory.percentage
 
             Behavior on clampedVal {
                 Anim {}
@@ -62,7 +67,7 @@ StyledRect {
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: Math.round(SystemUsage.memPerc * 100) + "%"
+                    text: Math.round(Memory.percentage * 100) + "%"
                     font: Tokens.font.title.builders.large.width(90).build()
                     color: root.accent
                 }
@@ -79,8 +84,8 @@ StyledRect {
         StyledText {
             Layout.alignment: Qt.AlignHCenter
             text: {
-                const usedFmt = SystemUsage.formatKib(SystemUsage.memUsed);
-                const totalFmt = SystemUsage.formatKib(SystemUsage.memTotal);
+                const usedFmt = Memory.formatKib(Memory.used);
+                const totalFmt = Memory.formatKib(Memory.total);
                 return `${usedFmt.value.toFixed(1)} / ${Math.floor(totalFmt.value)} ${totalFmt.unit}`;
             }
             font: Tokens.font.body.medium

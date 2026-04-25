@@ -5,8 +5,8 @@ import QtQuick.Layouts
 import Quickshell.Services.UPower
 import Caelestia.Config
 import Caelestia.Internal
+import Caelestia.Services
 import qs.components
-import qs.components.misc
 import qs.services
 
 Item {
@@ -29,7 +29,7 @@ Item {
         height: 350
         radius: Tokens.rounding.extraLarge
         color: Colours.tPalette.m3surfaceContainer
-        visible: !Config.dashboard.performance.showCpu && !(Config.dashboard.performance.showGpu && SystemUsage.gpuType !== "NONE") && !Config.dashboard.performance.showMemory && !Config.dashboard.performance.showStorage && !Config.dashboard.performance.showNetwork && !(UPower.displayDevice.isLaptopBattery && Config.dashboard.performance.showBattery)
+        visible: !Config.dashboard.performance.showCpu && !(Config.dashboard.performance.showGpu && Gpu.type !== Gpu.None) && !Config.dashboard.performance.showMemory && !Config.dashboard.performance.showStorage && !Config.dashboard.performance.showNetwork && !(UPower.displayDevice.isLaptopBattery && Config.dashboard.performance.showBattery)
 
         ColumnLayout {
             anchors.centerIn: parent
@@ -66,8 +66,12 @@ Item {
         spacing: Tokens.spacing.medium
         visible: !placeholder.visible
 
-        Ref {
-            service: SystemUsage
+        ServiceRef {
+            service: root.Config.dashboard.performance.showCpu ? Cpu : null
+        }
+
+        ServiceRef {
+            service: root.Config.dashboard.performance.showGpu && Gpu.type !== Gpu.None ? Gpu : null
         }
 
         ColumnLayout {
@@ -79,27 +83,27 @@ Item {
             RowLayout {
                 Layout.fillWidth: true
                 spacing: Tokens.spacing.medium
-                visible: Config.dashboard.performance.showCpu || (Config.dashboard.performance.showGpu && SystemUsage.gpuType !== "NONE")
+                visible: Config.dashboard.performance.showCpu || (Config.dashboard.performance.showGpu && Gpu.type !== Gpu.None)
 
                 HeroCard {
                     Layout.fillWidth: true
                     visible: Config.dashboard.performance.showCpu
                     icon: "memory"
                     label: qsTr("CPU")
-                    subLabel: SystemUsage.cpuName
-                    usage: SystemUsage.cpuPerc
-                    temperature: SystemUsage.cpuTemp
+                    subLabel: Cpu.name
+                    usage: Cpu.percentage
+                    temperature: Cpu.temperature
                     accent: Colours.palette.m3primary
                 }
 
                 HeroCard {
                     Layout.fillWidth: true
-                    visible: Config.dashboard.performance.showGpu && SystemUsage.gpuType !== "NONE"
+                    visible: Config.dashboard.performance.showGpu && Gpu.type !== Gpu.None
                     icon: "desktop_windows"
                     label: qsTr("GPU")
-                    subLabel: SystemUsage.gpuName
-                    usage: SystemUsage.gpuPerc
-                    temperature: SystemUsage.gpuTemp
+                    subLabel: Gpu.name
+                    usage: Gpu.percentage
+                    temperature: Gpu.temperature
                     accent: Colours.palette.m3secondary
                 }
             }

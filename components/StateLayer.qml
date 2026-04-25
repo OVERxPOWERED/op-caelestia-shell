@@ -134,14 +134,14 @@ MouseArea {
             startY: 0
 
             PathLine {
-                x: root.width - root.clamp(base.topLeftRadius)
+                x: root.width - root.clamp(base.topRightRadius)
                 y: 0
             }
             PathArc {
-                relativeX: root.clamp(base.topLeftRadius)
-                relativeY: root.clamp(base.topLeftRadius)
-                radiusX: root.clamp(base.topLeftRadius)
-                radiusY: root.clamp(base.topLeftRadius)
+                relativeX: root.clamp(base.topRightRadius)
+                relativeY: root.clamp(base.topRightRadius)
+                radiusX: root.clamp(base.topRightRadius)
+                radiusY: root.clamp(base.topRightRadius)
             }
             PathLine {
                 x: root.width

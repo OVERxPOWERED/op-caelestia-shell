@@ -93,7 +93,7 @@ StyledRect {
             }
 
             StyledText {
-                text: Math.round(root.temperature) + (GlobalConfig.services.useFahrenheitPerformance ? "°F" : "°C")
+                text: `${Math.ceil(GlobalConfig.services.useFahrenheitPerformance ? root.temperature * 1.8 + 32 : root.temperature)}°${GlobalConfig.services.useFahrenheitPerformance ? "F" : "C"}`
                 font: Tokens.font.body.builders.medium.build()
             }
         }

@@ -192,6 +192,8 @@ class DashboardTokens : public ConfigObject {
     CONFIG_PROPERTY(int, perfHeroCardWidth, 400)
     CONFIG_PROPERTY(int, perfUsageShapeSize, 100)
     CONFIG_PROPERTY(int, perfStorageTextWidth, 160)
+    CONFIG_PROPERTY(int, perfNetworkCardWidth, 280)
+    CONFIG_PROPERTY(int, perfNetworkCardHeight, 220)
 
 public:
     explicit DashboardTokens(QObject* parent = nullptr)

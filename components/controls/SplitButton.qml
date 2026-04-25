@@ -19,14 +19,15 @@ Row {
     property bool menuOnTop
     property string fallbackIcon
     property string fallbackText
+    property real minLeftWidth
 
     property alias menuItems: menu.items
     property alias active: menu.active
     property alias expanded: menu.expanded
-    property alias menu: menu
-    property alias iconLabel: iconLabel
-    property alias label: label
-    property alias stateLayer: stateLayer
+    readonly property alias menu: menu
+    readonly property alias iconLabel: iconLabel
+    readonly property alias label: label
+    readonly property alias stateLayer: stateLayer
 
     property color colour: type == SplitButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondaryContainer
     property color textColour: type == SplitButton.Filled ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondaryContainer
@@ -41,14 +42,14 @@ Row {
         bottomRightRadius: Tokens.rounding.medium / 2
         color: root.disabled ? root.disabledColour : root.colour
 
-        implicitWidth: textRow.implicitWidth + root.horizontalPadding * 2
+        implicitWidth: Math.max(root.minLeftWidth, textRow.implicitWidth + root.horizontalPadding * 2)
         implicitHeight: expandBtn.implicitHeight
 
         StateLayer {
             id: stateLayer
 
-            rect.topRightRadius: parent.topRightRadius
-            rect.bottomRightRadius: parent.bottomRightRadius
+            topRightRadius: parent.topRightRadius
+            bottomRightRadius: parent.bottomRightRadius
             color: root.textColour
             disabled: root.disabled
             onClicked: root.active?.clicked()

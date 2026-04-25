@@ -125,10 +125,8 @@ Item {
                     visible: Config.dashboard.performance.showMemory
                 }
 
-                StorageGaugeCard {
-                    Layout.minimumWidth: 250
-                    Layout.preferredHeight: 220
-                    Layout.fillWidth: !Config.dashboard.performance.showNetwork
+                StorageCard {
+                    Layout.fillHeight: true
                     visible: Config.dashboard.performance.showStorage
                 }
 
@@ -373,132 +371,6 @@ Item {
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: gaugeCard.subtitle
-                font: Tokens.font.body.small
-                color: Colours.palette.m3onSurfaceVariant
-            }
-        }
-
-        Behavior on animatedPercentage {
-            Anim {
-                type: Anim.StandardLarge
-            }
-        }
-    }
-
-    component StorageGaugeCard: StyledRect {
-        id: storageGaugeCard
-
-        property int currentDiskIndex: 0
-        readonly property var currentDisk: SystemUsage.disks.length > 0 ? SystemUsage.disks[currentDiskIndex] : null
-        property int diskCount: 0
-        readonly property real arcStartAngle: 0.75 * Math.PI
-        readonly property real arcSweep: 1.5 * Math.PI
-        property real animatedPercentage: 0
-        property color accentColor: Colours.palette.m3secondary
-
-        color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.extraLarge
-        clip: true
-        Component.onCompleted: {
-            diskCount = SystemUsage.disks.length;
-            if (currentDisk)
-                animatedPercentage = currentDisk.perc;
-        }
-        onCurrentDiskChanged: {
-            if (currentDisk)
-                animatedPercentage = currentDisk.perc;
-        }
-
-        // Update diskCount and animatedPercentage when disks data changes
-        Connections {
-            function onDisksChanged() {
-                if (SystemUsage.disks.length !== storageGaugeCard.diskCount)
-                    storageGaugeCard.diskCount = SystemUsage.disks.length;
-
-                // Update animated percentage when disk data refreshes
-                if (storageGaugeCard.currentDisk)
-                    storageGaugeCard.animatedPercentage = storageGaugeCard.currentDisk.perc;
-            }
-
-            target: SystemUsage
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onWheel: wheel => {
-                if (wheel.angleDelta.y > 0)
-                    storageGaugeCard.currentDiskIndex = (storageGaugeCard.currentDiskIndex - 1 + storageGaugeCard.diskCount) % storageGaugeCard.diskCount;
-                else if (wheel.angleDelta.y < 0)
-                    storageGaugeCard.currentDiskIndex = (storageGaugeCard.currentDiskIndex + 1) % storageGaugeCard.diskCount;
-            }
-        }
-
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: Tokens.padding.large
-            spacing: Tokens.spacing.medium
-
-            CardHeader {
-                icon: "hard_disk"
-                title: {
-                    const base = qsTr("Storage");
-                    if (!storageGaugeCard.currentDisk)
-                        return base;
-
-                    return `${base} - ${storageGaugeCard.currentDisk.mount}`;
-                }
-                accentColor: storageGaugeCard.accentColor
-
-                // Scroll hint icon
-                MaterialIcon {
-                    text: "unfold_more"
-                    color: Colours.palette.m3onSurfaceVariant
-                    fontStyle: Tokens.font.icon.medium
-                    visible: storageGaugeCard.diskCount > 1
-                    opacity: 0.7
-                    ToolTip.visible: hintHover.hovered
-                    ToolTip.text: qsTr("Scroll to switch disks")
-                    ToolTip.delay: 500
-
-                    HoverHandler {
-                        id: hintHover
-                    }
-                }
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                ArcGauge {
-                    anchors.centerIn: parent
-                    width: Math.min(parent.width, parent.height)
-                    height: width
-                    percentage: storageGaugeCard.animatedPercentage
-                    accentColor: storageGaugeCard.accentColor
-                    trackColor: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-                    startAngle: storageGaugeCard.arcStartAngle
-                    sweepAngle: storageGaugeCard.arcSweep
-                }
-
-                StyledText {
-                    anchors.centerIn: parent
-                    text: storageGaugeCard.currentDisk ? `${Math.round(storageGaugeCard.currentDisk.perc * 100)}%` : "—"
-                    font: Tokens.font.body.builders.large.size(28).weight(Font.Medium).build()
-                    color: storageGaugeCard.accentColor
-                }
-            }
-
-            StyledText {
-                Layout.alignment: Qt.AlignHCenter
-                text: {
-                    if (!storageGaugeCard.currentDisk)
-                        return "—";
-
-                    const usedFmt = SystemUsage.formatKib(storageGaugeCard.currentDisk.used);
-                    const totalFmt = SystemUsage.formatKib(storageGaugeCard.currentDisk.total);
-                    return `${usedFmt.value.toFixed(1)} / ${Math.floor(totalFmt.value)} ${totalFmt.unit}`;
-                }
                 font: Tokens.font.body.small
                 color: Colours.palette.m3onSurfaceVariant
             }

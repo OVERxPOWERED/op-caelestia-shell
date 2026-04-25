@@ -38,6 +38,8 @@ Singleton {
 
     // Individual disks: Array of { mount, used, total, free, perc }
     property var disks: []
+    property var manualPrimaryDisk
+    readonly property var primaryDisk: manualPrimaryDisk ?? disks[0] ?? null
 
     property real lastCpuIdle
     property real lastCpuTotal

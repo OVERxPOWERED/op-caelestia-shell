@@ -36,7 +36,7 @@ StyledRect {
         implicitSize: Math.max(icon.implicitWidth, icon.implicitHeight) + Tokens.padding.medium * 2
         value: root.usage
 
-        Behavior on value {
+        Behavior on clampedVal {
             Anim {}
         }
 
@@ -102,6 +102,7 @@ StyledRect {
             value: root.temperature / 100
             implicitHeight: Tokens.padding.small
             fgColour: root.accent
+            indeterminate: isNaN(root.usage) || isNaN(root.temperature)
         }
     }
 
@@ -139,7 +140,7 @@ StyledRect {
 
         StyledText {
             anchors.centerIn: parent
-            text: Math.round(root.usage * 100) + "%"
+            text: isNaN(root.usage) ? "...%" : Math.round(root.usage * 100) + "%"
             color: root.accent
             font: Tokens.font.headline.builders.small.width(50).build()
         }

@@ -53,7 +53,7 @@ Item {
         implicitSize: height
         strokeWidth: Tokens.sizes.dashboard.resourceProgressThickness
 
-        Behavior on value {
+        Behavior on clampedVal {
             Anim {}
         }
 

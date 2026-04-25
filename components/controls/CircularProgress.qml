@@ -28,7 +28,7 @@ Item {
 
     readonly property real size: Math.min(width, height)
     readonly property real arcRadius: (size - padding - strokeWidth * (1 + waveAmplitude * 2)) / 2
-    readonly property real clampedVal: Math.max(1 / 360, Math.min(1, value))
+    property real clampedVal: Math.max(1 / 360, Math.min(1, isNaN(value) ? 0 : value)) // Not readonly for animations
     readonly property real gapAngle: ((spacing + strokeWidth) / (arcRadius || 1)) * (180 / Math.PI)
     readonly property real dotAngleRad: (startAngle + sweepAngle - gapAngle * (sweepAngle < 360 ? 0 : 1)) * Math.PI / 180
 

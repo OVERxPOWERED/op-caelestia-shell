@@ -109,22 +109,6 @@ Item {
                 spacing: Tokens.spacing.medium
                 visible: Config.dashboard.performance.showMemory || Config.dashboard.performance.showStorage || Config.dashboard.performance.showNetwork
 
-                GaugeCard {
-                    Layout.minimumWidth: 250
-                    Layout.preferredHeight: 220
-                    Layout.fillWidth: !Config.dashboard.performance.showStorage && !Config.dashboard.performance.showNetwork
-                    icon: "memory_alt"
-                    title: qsTr("Memory")
-                    percentage: SystemUsage.memPerc
-                    subtitle: {
-                        const usedFmt = SystemUsage.formatKib(SystemUsage.memUsed);
-                        const totalFmt = SystemUsage.formatKib(SystemUsage.memTotal);
-                        return `${usedFmt.value.toFixed(1)} / ${Math.floor(totalFmt.value)} ${totalFmt.unit}`;
-                    }
-                    accentColor: Colours.palette.m3tertiary
-                    visible: Config.dashboard.performance.showMemory
-                }
-
                 StorageCard {
                     Layout.fillHeight: true
                     visible: Config.dashboard.performance.showStorage
@@ -135,6 +119,11 @@ Item {
                     Layout.minimumWidth: 200
                     Layout.preferredHeight: 220
                     visible: Config.dashboard.performance.showNetwork
+                }
+
+                MemoryCard {
+                    Layout.fillHeight: true
+                    visible: Config.dashboard.performance.showMemory
                 }
             }
         }
@@ -284,102 +273,6 @@ Item {
             text: parent.title
             font: Tokens.font.body.medium
             elide: Text.ElideRight
-        }
-    }
-
-    component ProgressBar: StyledRect {
-        id: progressBar
-
-        property real value: 0
-        property color fgColor: Colours.palette.m3primary
-        property color bgColor: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-        property real animatedValue: 0
-
-        color: bgColor
-        radius: Tokens.rounding.full
-        Component.onCompleted: animatedValue = value
-        onValueChanged: animatedValue = value
-
-        StyledRect {
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            width: parent.width * progressBar.animatedValue
-            color: progressBar.fgColor
-            radius: Tokens.rounding.full
-        }
-
-        Behavior on animatedValue {
-            Anim {
-                type: Anim.StandardLarge
-            }
-        }
-    }
-
-    component GaugeCard: StyledRect {
-        id: gaugeCard
-
-        property string icon
-        property string title
-        property real percentage: 0
-        property string subtitle
-        property color accentColor: Colours.palette.m3primary
-        readonly property real arcStartAngle: 0.75 * Math.PI
-        readonly property real arcSweep: 1.5 * Math.PI
-        property real animatedPercentage: 0
-
-        color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.extraLarge
-        clip: true
-        Component.onCompleted: animatedPercentage = percentage
-        onPercentageChanged: animatedPercentage = percentage
-
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: Tokens.padding.large
-            spacing: Tokens.spacing.medium
-
-            CardHeader {
-                icon: gaugeCard.icon
-                title: gaugeCard.title
-                accentColor: gaugeCard.accentColor
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                ArcGauge {
-                    anchors.centerIn: parent
-                    width: Math.min(parent.width, parent.height)
-                    height: width
-                    percentage: gaugeCard.animatedPercentage
-                    accentColor: gaugeCard.accentColor
-                    trackColor: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-                    startAngle: gaugeCard.arcStartAngle
-                    sweepAngle: gaugeCard.arcSweep
-                }
-
-                StyledText {
-                    anchors.centerIn: parent
-                    text: `${Math.round(gaugeCard.percentage * 100)}%`
-                    font: Tokens.font.body.builders.large.size(28).weight(Font.Medium).build()
-                    color: gaugeCard.accentColor
-                }
-            }
-
-            StyledText {
-                Layout.alignment: Qt.AlignHCenter
-                text: gaugeCard.subtitle
-                font: Tokens.font.body.small
-                color: Colours.palette.m3onSurfaceVariant
-            }
-        }
-
-        Behavior on animatedPercentage {
-            Anim {
-                type: Anim.StandardLarge
-            }
         }
     }
 

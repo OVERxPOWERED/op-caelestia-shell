@@ -35,6 +35,7 @@ StyledRect {
         RowLayout {
             id: row
 
+            Layout.alignment: Qt.AlignHCenter
             spacing: Tokens.spacing.large
 
             CircularProgress {

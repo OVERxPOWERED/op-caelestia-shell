@@ -61,11 +61,7 @@ StyledWindow {
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || panels.dashboard.needsKeyboard ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
-    mask: Regions {
-        bar: bar
-        panels: panels
-        win: root
-    }
+    mask: hasFullscreen ? emptyRegion : regions
 
     anchors.top: true
     anchors.bottom: true
@@ -82,6 +78,18 @@ StyledWindow {
 
     Behavior on shadowOpacity {
         Anim {}
+    }
+
+    Region {
+        id: emptyRegion
+    }
+
+    Regions {
+        id: regions
+
+        bar: bar
+        panels: panels
+        win: root
     }
 
     HyprlandFocusGrab {

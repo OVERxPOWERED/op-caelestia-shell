@@ -85,16 +85,11 @@ private:
             return;
         }
 
-        // Get size from requested size, or the source's original size
-        QSize size = m_requestedSize;
-        if (size.width() <= 0 || size.height() <= 0) {
-            const QImageReader reader(path);
-            size = reader.size();
-            if (!size.isValid() || size.isEmpty()) {
-                m_error = QStringLiteral("Could not determine size for: ") + path;
-                qCWarning(lcCProv).noquote() << m_error;
-                return;
-            }
+        // Use original image if requested size is invalid
+        if (m_requestedSize.width() <= 0 || m_requestedSize.height() <= 0) {
+            m_image = QImage(path);
+            qCDebug(lcCProv) << "Given source size is invalid, not caching.";
+            return;
         }
 
         const QString sha = sha256sum(path);
@@ -105,7 +100,7 @@ private:
 
         // clang-format off
         const QString filename = QStringLiteral("%1@%2x%3-%4.png")
-            .arg(sha).arg(size.width()).arg(size.height()).arg(fillSuffix(m_fillMode));
+            .arg(sha).arg(m_requestedSize.width()).arg(m_requestedSize.height()).arg(fillSuffix(m_fillMode));
         // clang-format on
         const QString cache = cacheDir() + QLatin1Char('/') + filename;
 
@@ -129,13 +124,13 @@ private:
         // Scale to requested size
         switch (m_fillMode) {
         case CachingImageProvider::FillMode::Crop:
-            image = image.scaled(size, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+            image = image.scaled(m_requestedSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
             break;
         case CachingImageProvider::FillMode::Fit:
-            image = image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            image = image.scaled(m_requestedSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             break;
         case CachingImageProvider::FillMode::Stretch:
-            image = image.scaled(size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            image = image.scaled(m_requestedSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
             break;
         }
 
@@ -143,11 +138,12 @@ private:
             m_image = image;
         } else {
             // Crop or fit
-            QImage canvas(size, QImage::Format_ARGB32);
+            QImage canvas(m_requestedSize, QImage::Format_ARGB32);
             canvas.fill(Qt::transparent);
 
             QPainter painter(&canvas);
-            painter.drawImage((size.width() - image.width()) / 2, (size.height() - image.height()) / 2, image);
+            painter.drawImage(
+                (m_requestedSize.width() - image.width()) / 2, (m_requestedSize.height() - image.height()) / 2, image);
             painter.end();
 
             m_image = canvas;

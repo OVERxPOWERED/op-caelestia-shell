@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import Caelestia.Config
 import Caelestia.Models
 import qs.components
@@ -66,7 +67,10 @@ Item {
             anchors.fill: parent
             path: root.modelData.path
             smooth: !root.PathView.view.moving
-            sourceSize: Qt.size(image.implicitWidth, image.implicitHeight)
+            sourceSize: {
+                const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
+                return Qt.size(image.implicitWidth * dpr, image.implicitHeight * dpr);
+            }
         }
     }
 

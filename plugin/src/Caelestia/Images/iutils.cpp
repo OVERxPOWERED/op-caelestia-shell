@@ -16,6 +16,9 @@ IUtils* IUtils::create(QQmlEngine* engine, QJSEngine* jsEngine) {
 }
 
 QUrl IUtils::urlForPath(const QString& path, int fillMode) {
+    if (path.isEmpty())
+        return QUrl();
+
     QString prefix;
     switch (fillMode) {
     case 1: // Image.PreserveAspectFit

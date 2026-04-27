@@ -47,8 +47,12 @@ private:
             return;
         }
 
-        // Use original image if requested size is invalid
-        if (m_requestedSize.width() <= 0 || m_requestedSize.height() <= 0) {
+        QSize size = m_requestedSize;
+        const bool needsW = size.width() <= 0;
+        const bool needsH = size.height() <= 0;
+
+        // If both dimensions are missing, return the original directly
+        if (needsW && needsH) {
             qCDebug(lcCProv).noquote() << "Given source size is invalid, returning original:" << path;
             m_image = QImage(path);
             if (m_image.isNull()) {
@@ -58,8 +62,24 @@ private:
             return;
         }
 
+        // If one dimension is missing, derive it from the source aspect ratio
+        if (needsW || needsH) {
+            const QImageReader sourceReader(path);
+            const QSize sourceSize = sourceReader.size();
+            if (!sourceSize.isValid() || sourceSize.isEmpty()) {
+                m_error = QStringLiteral("Could not determine source size for: ") + path;
+                qCWarning(lcCProv).noquote() << m_error;
+                return;
+            }
+
+            if (needsW)
+                size.setWidth(qRound(size.height() * sourceSize.width() / static_cast<qreal>(sourceSize.height())));
+            else
+                size.setHeight(qRound(size.width() * sourceSize.height() / static_cast<qreal>(sourceSize.width())));
+        }
+
         // Try to use cached image
-        const auto cachePath = ImageCacher::cachePathFor(path, m_requestedSize, m_fillMode);
+        const auto cachePath = ImageCacher::cachePathFor(path, size, m_fillMode);
         if (!cachePath.isEmpty()) {
             QImageReader cacheReader(cachePath);
             if (cacheReader.canRead()) {
@@ -70,7 +90,7 @@ private:
         }
 
         // Schedule cache job (this call will return the original image, but later ones will use cache)
-        ImageCacher::instance()->schedule(path, cachePath, m_requestedSize, m_fillMode);
+        ImageCacher::instance()->schedule(path, cachePath, size, m_fillMode);
 
         m_image = QImage(path);
         if (m_image.isNull()) {

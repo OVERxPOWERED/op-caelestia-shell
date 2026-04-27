@@ -9,6 +9,5 @@ Image {
     asynchronous: true
     fillMode: Image.PreserveAspectCrop
     source: IUtils.urlForPath(path, fillMode)
-    sourceSize.width: width
-    sourceSize.height: height
+    sourceSize: Qt.size(width, height)
 }

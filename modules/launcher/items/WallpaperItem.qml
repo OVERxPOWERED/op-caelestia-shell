@@ -66,6 +66,7 @@ Item {
             anchors.fill: parent
             path: root.modelData.path
             smooth: !root.PathView.view.moving
+            sourceSize: Qt.size(image.implicitWidth, image.implicitHeight)
         }
     }
 

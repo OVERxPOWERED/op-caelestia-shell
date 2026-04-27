@@ -1,28 +1,14 @@
 import QtQuick
-import Quickshell
-import Caelestia.Internal
-import qs.utils
+import Caelestia.Images
 
 Image {
     id: root
 
-    property alias path: manager.path
+    property string path
 
     asynchronous: true
     fillMode: Image.PreserveAspectCrop
-
-    Connections {
-        function onDevicePixelRatioChanged(): void {
-            manager.updateSource();
-        }
-
-        target: QsWindow.window
-    }
-
-    CachingImageManager {
-        id: manager
-
-        item: root
-        cacheDir: Qt.resolvedUrl(Paths.imagecache)
-    }
+    source: IUtils.urlForPath(path, fillMode)
+    sourceSize.width: width
+    sourceSize.height: height
 }

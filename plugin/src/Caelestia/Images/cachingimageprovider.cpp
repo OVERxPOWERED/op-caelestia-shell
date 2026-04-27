@@ -9,6 +9,7 @@
 #include <qloggingcategory.h>
 #include <qpainter.h>
 #include <qrunnable.h>
+#include <qsavefile.h>
 #include <qthreadpool.h>
 
 Q_LOGGING_CATEGORY(lcCProv, "caelestia.images.cacheprovider", QtInfoMsg)
@@ -152,11 +153,20 @@ private:
             m_image = canvas;
         }
 
+        // Save to cache
         const QString parent = QFileInfo(cache).absolutePath();
-        if (QDir().mkpath(parent) && m_image.save(cache))
-            qCDebug(lcCProv).noquote() << "Saved to" << cache;
-        else
-            qCWarning(lcCProv).noquote() << "Failed to save to" << cache;
+        if (!QDir().mkpath(parent)) {
+            qCWarning(lcCProv).noquote() << "Failed to create cache dir" << parent;
+            return;
+        }
+
+        QSaveFile saveFile(cache);
+        if (!saveFile.open(QIODevice::WriteOnly) || !m_image.save(&saveFile, "PNG") || !saveFile.commit()) {
+            qCWarning(lcCProv).noquote() << "Failed to save to" << cache << ":" << saveFile.errorString();
+            return;
+        }
+
+        qCDebug(lcCProv).noquote() << "Saved to" << cache;
     }
 
     QString m_id;

@@ -1,16 +1,14 @@
 #pragma once
 
+#include "imagecacher.hpp"
+
 #include <qquickimageprovider.h>
 
 namespace caelestia::images {
 
 class CachingImageProvider : public QQuickAsyncImageProvider {
 public:
-    enum class FillMode {
-        Crop,
-        Fit,
-        Stretch
-    };
+    using FillMode = ImageCacher::FillMode;
 
     explicit CachingImageProvider(FillMode fillMode);
 

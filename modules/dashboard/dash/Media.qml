@@ -20,6 +20,7 @@ Item {
     }
 
     readonly property real arcCoverGap: Tokens.spacing.extraSmall
+    property bool coverHadPrevious
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
@@ -110,9 +111,35 @@ Item {
             anchors.centerIn: parent
 
             grade: 200
-            text: "art_track"
+            text: image.status === Image.Error ? "broken_image" : "art_track"
             color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.size((parent.width * 0.4) || 1).build()
+            fontStyle: Tokens.font.icon.size((parent.width * 0.35) || 1).build()
+            opacity: image.status === Image.Null || image.status === Image.Error ? 1 : 0
+            animate: true
+
+            Behavior on opacity {
+                Anim {
+                    type: Anim.DefaultEffects
+                }
+            }
+        }
+
+        Loader {
+            anchors.centerIn: parent
+            asynchronous: true
+            active: opacity > 0
+            opacity: image.status === Image.Loading ? 1 : 0
+
+            sourceComponent: LoadingIndicator {
+                implicitSize: cover.width * 0.3
+                color: Colours.palette.m3primaryContainer
+            }
+
+            Behavior on opacity {
+                Anim {
+                    type: Anim.DefaultEffects
+                }
+            }
         }
 
         Image {
@@ -129,6 +156,49 @@ Item {
             layer.enabled: true
             layer.effect: Mask {
                 maskSource: coverShape
+            }
+
+            retainWhileLoading: true
+            opacity: 0
+
+            onStatusChanged: {
+                if (!opacityInAnim.running && image.status === Image.Ready) {
+                    opacityInAnim.type = root.coverHadPrevious ? Anim.DefaultEffects : Anim.StandardLarge;
+                    opacityInAnim.start();
+                }
+            }
+
+            Anim on opacity {
+                id: opacityInAnim
+
+                running: false
+                to: 1
+                type: Anim.DefaultEffects
+            }
+
+            Behavior on source {
+                SequentialAnimation {
+                    Anim {
+                        target: image
+                        property: "opacity"
+                        to: 0
+                        type: Anim.FastEffects
+                    }
+                    PropertyAction {
+                        target: root
+                        property: "coverHadPrevious"
+                        value: image.source
+                    }
+                    PropertyAction {}
+                    ScriptAction {
+                        script: {
+                            if (!opacityInAnim.running && image.status === Image.Ready) {
+                                opacityInAnim.type = root.coverHadPrevious ? Anim.DefaultEffects : Anim.StandardLarge;
+                                opacityInAnim.start();
+                            }
+                        }
+                    }
+                }
             }
         }
     }

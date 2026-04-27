@@ -28,8 +28,9 @@ Gpu::Gpu(QObject* parent)
     : TickingService(parent) {
     auto* svc = caelestia::config::GlobalConfig::instance()->services();
     m_userType = parseType(svc->gpuType());
-    QObject::connect(svc, &caelestia::config::ServiceConfig::gpuTypeChanged, this,
-        [this, svc] { setUserType(parseType(svc->gpuType())); });
+    QObject::connect(svc, &caelestia::config::ServiceConfig::gpuTypeChanged, this, [this, svc] {
+        setUserType(parseType(svc->gpuType()));
+    });
 
     // Detection must run before any ServiceRef appears: callers may gate the ref on
     // `type !== Gpu.None`, which would otherwise deadlock the detection.

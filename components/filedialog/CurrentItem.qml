@@ -18,7 +18,7 @@ Item {
         ShapePath {
             id: path
 
-            readonly property real rounding: Tokens.rounding.medium
+            readonly property real rounding: root.Tokens.rounding.medium
             readonly property bool flatten: root.implicitHeight < rounding * 2
             readonly property real roundingY: flatten ? root.implicitHeight / 2 : rounding
 

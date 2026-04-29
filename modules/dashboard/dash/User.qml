@@ -40,16 +40,74 @@ Item {
             Behavior on color {
                 CAnim {}
             }
+
+            MouseArea {
+                id: mouse
+
+                containmentMask: QtObject {
+                    function contains(pt: point): bool {
+                        return shape.contains(pt) && !logoShape.contains(mouse.mapToItem(logoShape, pt)) && !uptimeShape.contains(mouse.mapToItem(uptimeShape, pt));
+                    }
+                }
+
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    root.visibilities.dashboard = false;
+                    root.facePicker.open();
+                }
+            }
         }
 
-        CachingImage {
-            id: pfp
-
+        Item {
             anchors.fill: parent
-            path: `${Paths.home}/.face`
             layer.enabled: true
             layer.effect: Mask {
                 maskSource: shape
+            }
+
+            CachingImage {
+                anchors.fill: parent
+                path: `${Paths.home}/.face`
+            }
+
+            StyledRect {
+                anchors.fill: parent
+                color: Qt.alpha(Colours.palette.m3scrim, 0.4)
+                opacity: mouse.containsMouse ? 1 : 0
+                layer.enabled: opacity < 1
+
+                Behavior on opacity {
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
+                }
+
+                MaterialShape {
+                    anchors.centerIn: parent
+                    implicitSize: parent.height * 0.7
+                    shape: MaterialShape.Diamond
+                    color: Colours.palette.m3primary
+                    scale: mouse.pressed ? 0.9 : mouse.containsMouse ? 1 : 0.7
+
+                    Behavior on color {
+                        CAnim {}
+                    }
+
+                    Behavior on scale {
+                        Anim {
+                            type: Anim.FastSpatial
+                        }
+                    }
+
+                    MaterialIcon {
+                        anchors.centerIn: parent
+                        text: "person_edit"
+                        color: Colours.palette.m3onPrimary
+                        fontStyle: Tokens.font.icon.large
+                    }
+                }
             }
         }
     }

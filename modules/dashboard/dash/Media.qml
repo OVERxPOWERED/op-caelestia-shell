@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Effects
+import Quickshell
 import M3Shapes
 import Caelestia.Config
 import Caelestia.Services
@@ -150,8 +151,11 @@ Item {
             source: Players.getArtUrl(Players.active)
             asynchronous: true
             fillMode: Image.PreserveAspectCrop
-            sourceSize.width: width
-            sourceSize.height: height
+
+            sourceSize: {
+                const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
+                return Qt.size(width * dpr, height * dpr);
+            }
 
             layer.enabled: true
             layer.effect: Mask {

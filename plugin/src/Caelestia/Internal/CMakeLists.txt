@@ -2,7 +2,6 @@ qml_module(caelestia-internal
     URI Caelestia.Internal
     SOURCES
         arcgauge.cpp
-        cachingimagemanager.cpp
         circularbuffer.cpp
         circularindicatormanager.cpp
         linearindicatormanager.cpp
@@ -14,7 +13,6 @@ qml_module(caelestia-internal
     LIBRARIES
         Qt::Gui
         Qt::Quick
-        Qt::Concurrent
         Qt::Network
         Qt::DBus
 )

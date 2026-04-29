@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import Caelestia.Config
 import Caelestia.Models
 import qs.components
@@ -64,11 +65,13 @@ Item {
         }
 
         CachingImage {
+            anchors.fill: parent
             path: root.modelData.path
             smooth: !root.PathView.view.moving
-            cache: true
-
-            anchors.fill: parent
+            sourceSize: {
+                const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
+                return Qt.size(image.implicitWidth * dpr, image.implicitHeight * dpr);
+            }
         }
     }
 

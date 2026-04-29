@@ -1,7 +1,6 @@
 qml_module(caelestia-internal
     URI Caelestia.Internal
     SOURCES
-        arcgauge.cpp
         circularbuffer.cpp
         circularindicatormanager.cpp
         linearindicatormanager.cpp

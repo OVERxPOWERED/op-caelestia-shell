@@ -32,11 +32,12 @@ StyledWindow {
         return monitor?.activeWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false;
     }
 
-    property real sdfBorderOffset: hasFullscreen ? 2 : 0 // SDFs joins are not exact, so offset by 2px to ensure nothing shows
-    property real borderThickness: hasFullscreen ? 0 : contentItem.Config.border.thickness
+    property real fsTransitionProg: hasFullscreen ? 1 : 0
+    readonly property real sdfBorderOffset: 2 * fsTransitionProg // SDFs joins are not exact, so offset by 2px to ensure nothing shows
+    readonly property real borderThickness: contentItem.Config.border.thickness * (1 - fsTransitionProg)
+    readonly property real borderRounding: contentItem.Config.border.rounding * (1 - fsTransitionProg)
+    readonly property real shadowOpacity: 0.7 * (1 - fsTransitionProg)
     readonly property real borderLayoutThickness: hasFullscreen ? 0 : contentItem.Config.border.thickness
-    property real borderRounding: hasFullscreen ? 0 : contentItem.Config.border.rounding
-    property real shadowOpacity: hasFullscreen ? 0 : 0.7
 
     readonly property int dragMaskPadding: {
         if (focusGrab.active || panels.popouts.isDetached)
@@ -60,7 +61,7 @@ StyledWindow {
 
     name: "drawers"
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.layer: fsTransitionProg > 0 ? WlrLayer.Overlay : WlrLayer.Top
     WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || panels.dashboard.needsKeyboard ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
     mask: hasFullscreen ? emptyRegion : regions
@@ -70,26 +71,8 @@ StyledWindow {
     anchors.left: true
     anchors.right: true
 
-    Behavior on sdfBorderOffset {
+    Behavior on fsTransitionProg {
         Anim {}
-    }
-
-    Behavior on borderThickness {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
-    }
-
-    Behavior on borderRounding {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
-    }
-
-    Behavior on shadowOpacity {
-        Anim {
-            type: Anim.DefaultSpatial
-        }
     }
 
     Region {

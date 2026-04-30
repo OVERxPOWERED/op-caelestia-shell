@@ -84,9 +84,8 @@ StyledRect {
         StyledText {
             Layout.alignment: Qt.AlignHCenter
             text: {
-                const usedFmt = Memory.formatKib(Memory.used);
-                const totalFmt = Memory.formatKib(Memory.total);
-                return `${usedFmt.value.toFixed(1)} / ${Math.floor(totalFmt.value)} ${totalFmt.unit}`;
+                const fmt = UsageFmt.formatKib(Memory.used, Memory.total);
+                return `${fmt.value.toFixed(1)} / ${Math.floor(fmt.total)} ${fmt.unit}`;
             }
             font: Tokens.font.body.medium
         }

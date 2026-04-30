@@ -1,7 +1,5 @@
 #include "memory.hpp"
 
-#include "usagefmt.hpp"
-
 #include <qfile.h>
 #include <qregularexpression.h>
 
@@ -20,10 +18,6 @@ qreal Memory::total() const {
 
 qreal Memory::percentage() const {
     return m_total > 0.0 ? m_used / m_total : 0.0;
-}
-
-QVariantMap Memory::formatKib(qreal kib) const {
-    return usagefmt::formatKib(kib);
 }
 
 void Memory::tick() {

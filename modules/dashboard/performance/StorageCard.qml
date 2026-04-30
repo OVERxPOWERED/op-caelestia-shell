@@ -92,9 +92,8 @@ StyledRect {
                         if (!Storage.primaryDisk)
                             return qsTr("No disks detected");
 
-                        const usedFmt = Storage.formatKib(Storage.primaryDisk.used);
-                        const totalFmt = Storage.formatKib(Storage.primaryDisk.total);
-                        return `${usedFmt.value.toFixed(1)} / ${Math.floor(totalFmt.value)} ${totalFmt.unit}`;
+                        const fmt = UsageFmt.formatKib(Storage.primaryDisk.used, Storage.primaryDisk.total);
+                        return `${fmt.value.toFixed(1)} / ${Math.floor(fmt.total)} ${fmt.unit}`;
                     }
                     font: Tokens.font.body.large
                     color: root.accent

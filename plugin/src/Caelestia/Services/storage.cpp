@@ -1,7 +1,5 @@
 #include "storage.hpp"
 
-#include "usagefmt.hpp"
-
 #include <algorithm>
 #include <cmath>
 #include <qdir.h>
@@ -154,10 +152,6 @@ DiskInfo* Storage::primaryDisk() const {
         return m;
     }
     return m_disks.isEmpty() ? nullptr : m_disks.first();
-}
-
-QVariantMap Storage::formatKib(qreal kib) const {
-    return usagefmt::formatKib(kib);
 }
 
 bool Storage::isPseudoFs(QByteArrayView fsType) {

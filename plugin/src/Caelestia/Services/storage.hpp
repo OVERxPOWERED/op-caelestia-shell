@@ -30,8 +30,6 @@ public:
     void setManualPrimaryDisk(DiskInfo* disk);
     [[nodiscard]] DiskInfo* primaryDisk() const;
 
-    Q_INVOKABLE [[nodiscard]] QVariantMap formatKib(qreal kib) const;
-
 signals:
     void disksChanged();
     void percentageChanged();

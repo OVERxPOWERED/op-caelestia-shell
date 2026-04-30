@@ -23,8 +23,6 @@ public:
     [[nodiscard]] qreal total() const;
     [[nodiscard]] qreal percentage() const;
 
-    Q_INVOKABLE [[nodiscard]] QVariantMap formatKib(qreal kib) const;
-
 signals:
     void changed();
 

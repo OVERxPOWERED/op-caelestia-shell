@@ -31,6 +31,8 @@ StyledWindow {
         }
         return monitor?.activeWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false;
     }
+
+    property real sdfBorderOffset: hasFullscreen ? 2 : 0 // SDFs joins are not exact, so offset by 2px to ensure nothing shows
     property real borderThickness: hasFullscreen ? 0 : contentItem.Config.border.thickness
     readonly property real borderLayoutThickness: hasFullscreen ? 0 : contentItem.Config.border.thickness
     property real borderRounding: hasFullscreen ? 0 : contentItem.Config.border.rounding
@@ -67,6 +69,10 @@ StyledWindow {
     anchors.bottom: true
     anchors.left: true
     anchors.right: true
+
+    Behavior on sdfBorderOffset {
+        Anim {}
+    }
 
     Behavior on borderThickness {
         Anim {
@@ -149,10 +155,10 @@ StyledWindow {
             anchors.margins: -50 // Make border thicker to smooth out bulge from closed drawers
             group: blobGroup
             radius: root.borderRounding
-            borderLeft: bar.implicitWidth - anchors.margins
-            borderRight: root.borderThickness - anchors.margins
-            borderTop: root.borderThickness - anchors.margins
-            borderBottom: root.borderThickness - anchors.margins
+            borderLeft: bar.implicitWidth - anchors.margins - root.sdfBorderOffset
+            borderRight: root.borderThickness - anchors.margins - root.sdfBorderOffset
+            borderTop: root.borderThickness - anchors.margins - root.sdfBorderOffset
+            borderBottom: root.borderThickness - anchors.margins - root.sdfBorderOffset
         }
 
         PanelBg {

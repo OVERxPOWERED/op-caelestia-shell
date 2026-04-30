@@ -57,6 +57,7 @@ StyledWindow {
         visibilities.launcher = false;
         visibilities.session = false;
         visibilities.dashboard = false;
+        panels.popouts.close();
     }
 
     name: "drawers"

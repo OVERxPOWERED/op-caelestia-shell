@@ -22,6 +22,7 @@ Item {
 
     readonly property real arcCoverGap: Tokens.spacing.extraSmall
     property bool coverHadPrevious
+    property color coverFallbackColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
@@ -31,6 +32,10 @@ Item {
         Anim {
             type: Anim.StandardLarge
         }
+    }
+
+    Behavior on coverFallbackColour {
+        CAnim {}
     }
 
     Timer {
@@ -82,15 +87,18 @@ Item {
         }
 
         Item {
-            id: coverShape
+            id: coverShapeWrapper
 
             anchors.fill: parent
             layer.enabled: true
+            opacity: root.coverFallbackColour.a
 
             MaterialShape {
+                id: coverShape
+
                 implicitSize: cover.width
                 shape: MaterialShape.Cookie12Sided
-                color: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
+                color: Qt.alpha(root.coverFallbackColour, 1)
 
                 Anim on rotation {
                     running: true
@@ -159,7 +167,7 @@ Item {
 
             layer.enabled: true
             layer.effect: Mask {
-                maskSource: coverShape
+                maskSource: coverShapeWrapper
             }
 
             retainWhileLoading: true

@@ -16,8 +16,14 @@ Item {
     required property DrawerVisibilities visibilities
     required property FileDialog facePicker
 
+    property color pfpFallbackColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
+
     anchors.fill: parent
     anchors.margins: Tokens.padding.large
+
+    Behavior on pfpFallbackColour {
+        CAnim {}
+    }
 
     Item {
         id: pfpContainer
@@ -34,12 +40,9 @@ Item {
             anchors.centerIn: parent
             implicitSize: parent.height
             shape: MaterialShape.Pill
-            color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
+            color: Qt.alpha(root.pfpFallbackColour, 1)
+            opacity: root.pfpFallbackColour.a
             layer.enabled: true
-
-            Behavior on color {
-                CAnim {}
-            }
 
             MouseArea {
                 id: mouse
@@ -67,14 +70,30 @@ Item {
                 maskSource: shape
             }
 
+            Loader {
+                anchors.centerIn: parent
+                asynchronous: true
+                active: pfp.status !== Image.Ready
+
+                sourceComponent: MaterialIcon {
+                    text: "person_add"
+                    color: Colours.palette.m3onSurfaceVariant
+                    fontStyle: Tokens.font.icon.extraLarge
+                    fill: 1
+                    grade: -2 // Ugh material symbols are such a pain with fill
+                }
+            }
+
             CachingImage {
+                id: pfp
+
                 anchors.fill: parent
                 path: `${Paths.home}/.face`
             }
 
             StyledRect {
                 anchors.fill: parent
-                color: Qt.alpha(Colours.palette.m3scrim, 0.4)
+                color: Qt.alpha(Colours.palette.m3scrim, pfp.status === Image.Ready ? 0.4 : 0)
                 opacity: mouse.containsMouse ? 1 : 0
                 layer.enabled: opacity < 1
 

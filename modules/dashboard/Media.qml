@@ -9,6 +9,7 @@ import Caelestia.Config
 import Caelestia.Services
 import qs.components
 import qs.components.controls
+import qs.components.widgets
 import qs.services
 import qs.utils
 
@@ -106,9 +107,11 @@ Item {
 
         readonly property real centerX: width / 2
         readonly property real centerY: height / 2
-        readonly property real innerX: cover.implicitWidth / 2 + Tokens.spacing.small
-        readonly property real innerY: cover.implicitHeight / 2 + Tokens.spacing.small
-        property color colour: Colours.palette.m3primary
+        readonly property real coverMaxRadius: {
+            const bounds = cover.shape.pathBounds();
+            return Math.max(bounds.width, bounds.height) / 2;
+        }
+        readonly property real spacing: Tokens.spacing.medium
 
         anchors.fill: cover
         anchors.margins: -Tokens.sizes.dashboard.mediaVisualiserSize
@@ -133,6 +136,10 @@ Item {
 
             readonly property real angle: modelData * 2 * Math.PI / GlobalConfig.services.visualiserBars
             readonly property real magnitude: value * root.Tokens.sizes.dashboard.mediaVisualiserSize
+            readonly property real shapeEdgeDist: {
+                cover.shape.rotation; // Update when shape rotation changes
+                return cover.shape.distanceAtAngle(modelData * 360 / GlobalConfig.services.visualiserBars);
+            }
             readonly property real cos: Math.cos(angle)
             readonly property real sin: Math.sin(angle)
 
@@ -140,12 +147,12 @@ Item {
             strokeWidth: 360 / GlobalConfig.services.visualiserBars - root.Tokens.spacing.small / 4
             strokeColor: Colours.palette.m3primary
 
-            startX: visualiser.centerX + (visualiser.innerX + strokeWidth / 2) * cos
-            startY: visualiser.centerY + (visualiser.innerY + strokeWidth / 2) * sin
+            startX: visualiser.centerX + (shapeEdgeDist + visualiser.spacing + strokeWidth / 2) * cos
+            startY: visualiser.centerY + (shapeEdgeDist + visualiser.spacing + strokeWidth / 2) * sin
 
             PathLine {
-                x: visualiser.centerX + (visualiser.innerX + visualiserBar.strokeWidth / 2 + visualiserBar.magnitude) * visualiserBar.cos
-                y: visualiser.centerY + (visualiser.innerY + visualiserBar.strokeWidth / 2 + visualiserBar.magnitude) * visualiserBar.sin
+                x: visualiser.centerX + (visualiser.coverMaxRadius + visualiser.spacing + visualiserBar.strokeWidth / 2 + visualiserBar.magnitude) * visualiserBar.cos
+                y: visualiser.centerY + (visualiser.coverMaxRadius + visualiser.spacing + visualiserBar.strokeWidth / 2 + visualiserBar.magnitude) * visualiserBar.sin
             }
 
             Behavior on strokeColor {
@@ -154,7 +161,7 @@ Item {
         }
     }
 
-    StyledClippingRect {
+    CoverArt {
         id: cover
 
         anchors.verticalCenter: parent.verticalCenter
@@ -164,36 +171,10 @@ Item {
         implicitWidth: Tokens.sizes.dashboard.mediaCoverArtSize
         implicitHeight: Tokens.sizes.dashboard.mediaCoverArtSize
 
-        color: Colours.tPalette.m3surfaceContainerHigh
-        radius: Infinity
-
-        MaterialIcon {
-            anchors.centerIn: parent
-
-            grade: 200
-            text: "art_track"
-            color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.size((parent.width * 0.4) || 1).build()
-        }
-
-        Image {
-            id: image
-
+        MouseArea {
             anchors.fill: parent
-
-            source: Players.getArtUrl(Players.active)
-            asynchronous: true
-            fillMode: Image.PreserveAspectCrop
-            sourceSize: {
-                const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
-                return Qt.size(width * dpr, height * dpr);
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    LyricsService.toggleVisibility();
-                }
+            onClicked: {
+                LyricsService.toggleVisibility();
             }
         }
     }

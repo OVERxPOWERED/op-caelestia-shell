@@ -62,12 +62,18 @@ CustomMouseArea {
 
                 StateLayer {
                     color: Colours.palette.m3primary
-                    radius: Tokens.rounding.full
+                    radius: pressed ? Tokens.rounding.small : Tokens.rounding.large
                     disabled: {
                         const now = new Date();
                         return root.currMonth === now.getMonth() && root.currYear === now.getFullYear();
                     }
                     onClicked: root.dashState.currentDate = new Date()
+
+                    Behavior on radius {
+                        Anim {
+                            type: Anim.DefaultEffects
+                        }
+                    }
                 }
 
                 StyledText {

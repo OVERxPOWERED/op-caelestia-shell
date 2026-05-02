@@ -63,7 +63,7 @@ StyledRect {
                     Layout.fillWidth: true
                     text: modelData.label
                     checked: _checked
-                    toggle: false
+                    isToggle: false
                     type: TextButton.Tonal
 
                     // Create binding in Component.onCompleted

@@ -256,7 +256,7 @@ StyledRect {
             IconButton {
                 label.animate: true
                 icon: Recorder.paused ? "play_arrow" : "pause"
-                toggle: true
+                isToggle: true
                 checked: Recorder.paused
                 type: IconButton.Tonal
                 font: Tokens.font.icon.large

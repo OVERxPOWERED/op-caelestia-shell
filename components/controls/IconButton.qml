@@ -3,88 +3,42 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-StyledRect {
+ButtonBase {
     id: root
 
-    enum Type {
-        Filled,
-        Tonal,
-        Text
-    }
-
     property alias icon: label.text
-    property bool checked
-    property bool toggle
-    property real padding: type === IconButton.Text ? Tokens.padding.extraSmall / 2 : Tokens.padding.small
-    property alias font: label.fontStyle
-    property int type: IconButton.Filled
-    property bool disabled
-    property bool isRound
+    readonly property alias label: label
 
-    readonly property alias pressed: stateLayer.pressed
-    readonly property alias hovered: stateLayer.containsMouse
+    padding: type === IconButton.Text ? Tokens.padding.extraSmall / 2 : Tokens.padding.small
 
-    property alias stateLayer: stateLayer
-    property alias label: label
-    property alias radiusAnim: radiusAnim
-
-    property bool internalChecked
-    property color activeColour: type === IconButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondary
-    property color inactiveColour: {
-        if (!toggle && type === IconButton.Filled)
+    activeColour: type === IconButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondary
+    inactiveColour: {
+        if (!isToggle && type === IconButton.Filled)
             return Colours.palette.m3primary;
         return type === IconButton.Filled ? Colours.tPalette.m3surfaceContainer : Colours.palette.m3secondaryContainer;
     }
-    property color activeOnColour: type === IconButton.Filled ? Colours.palette.m3onPrimary : type === IconButton.Tonal ? Colours.palette.m3onSecondary : Colours.palette.m3primary
-    property color inactiveOnColour: {
-        if (!toggle && type === IconButton.Filled)
+    activeOnColour: type === IconButton.Filled ? Colours.palette.m3onPrimary : type === IconButton.Tonal ? Colours.palette.m3onSecondary : Colours.palette.m3primary
+    inactiveOnColour: {
+        if (!isToggle && type === IconButton.Filled)
             return Colours.palette.m3onPrimary;
         return type === IconButton.Tonal ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant;
     }
-    property color disabledColour: Qt.alpha(Colours.palette.m3onSurface, 0.1)
-    property color disabledOnColour: Qt.alpha(Colours.palette.m3onSurface, 0.38)
-
-    signal clicked
-
-    onCheckedChanged: internalChecked = checked
-
-    radius: stateLayer.pressed ? Tokens.rounding.small : internalChecked ? Tokens.rounding.medium : isRound ? implicitHeight / 2 * Math.min(1, Tokens.rounding.scale) : Tokens.rounding.large
-    color: type === IconButton.Text ? "transparent" : disabled ? disabledColour : internalChecked ? activeColour : inactiveColour
 
     implicitWidth: implicitHeight
     implicitHeight: label.implicitHeight + padding * 2
-
-    StateLayer {
-        id: stateLayer
-
-        color: root.internalChecked ? root.activeOnColour : root.inactiveOnColour
-        disabled: root.disabled
-        onClicked: {
-            if (root.toggle)
-                root.internalChecked = !root.internalChecked;
-            root.clicked();
-        }
-    }
 
     MaterialIcon {
         id: label
 
         anchors.centerIn: parent
-        color: root.disabled ? root.disabledOnColour : root.internalChecked ? root.activeOnColour : root.inactiveOnColour
-        fill: !root.toggle || root.internalChecked ? 1 : 0
+        color: root.onColour
+        fontStyle: root.font
+        fill: !root.isToggle || root.internalChecked ? 1 : 0
 
         Behavior on fill {
             Anim {
                 type: Anim.DefaultEffects
             }
-        }
-    }
-
-    Behavior on radius {
-        Anim {
-            id: radiusAnim
-
-            type: Anim.DefaultEffects
         }
     }
 }

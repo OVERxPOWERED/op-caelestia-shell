@@ -266,7 +266,7 @@ Item {
             PlayerControl {
                 icon: Players.active?.isPlaying ? "pause" : "play_arrow"
                 label.animate: true
-                toggle: true
+                isToggle: true
                 padding: Tokens.padding.extraSmall / 2
                 checked: Players.active?.isPlaying ?? false
                 font: Tokens.font.icon.builders.large.scale(1.5).build()

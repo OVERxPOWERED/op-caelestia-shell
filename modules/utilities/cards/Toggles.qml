@@ -114,7 +114,7 @@ StyledRect {
                     delegate: Toggle {
                         icon: "settings"
                         inactiveOnColour: Colours.palette.m3onSurfaceVariant
-                        toggle: false
+                        isToggle: false
                         onClicked: {
                             root.visibilities.utilities = false;
                             root.popouts.detach("network");
@@ -143,7 +143,7 @@ StyledRect {
                         icon: "vpn_key"
                         checked: VPN.connected && VPN.status.state !== "needs-auth" && VPN.status.state !== "error"
                         enabled: !VPN.connecting
-                        toggle: VPN.status.state !== "needs-auth" && VPN.status.state !== "error"
+                        isToggle: VPN.status.state !== "needs-auth" && VPN.status.state !== "error"
                         inactiveOnColour: Colours.palette.m3onSurfaceVariant
                         onClicked: VPN.toggle()
                     }
@@ -157,7 +157,7 @@ StyledRect {
         Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.small : 0)
         radius: stateLayer.pressed ? Tokens.rounding.medium / 2 : internalChecked ? Tokens.rounding.medium : Tokens.rounding.large
         inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
-        toggle: true
+        isToggle: true
         radiusAnim.duration: Tokens.anim.durations.expressiveFastSpatial
         radiusAnim.easing: Tokens.anim.expressiveFastSpatial
 

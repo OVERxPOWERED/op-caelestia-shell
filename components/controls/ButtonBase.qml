@@ -21,6 +21,7 @@ StyledRect {
 
     property bool radiusMorph
     property alias shapeMorph: stateLayer.shapeMorph
+    property bool fillWidth // For ButtonRow
 
     property font font
     property int type: ButtonBase.Filled
@@ -42,6 +43,7 @@ StyledRect {
     property color disabledOnColour: Qt.alpha(Colours.palette.m3onSurface, 0.38)
 
     property bool internalChecked
+    property real shapeMorphExpansion: pressed ? 1.16 : 1
     readonly property color onColour: disabled ? disabledOnColour : internalChecked ? activeOnColour : inactiveOnColour
 
     signal clicked
@@ -80,6 +82,12 @@ StyledRect {
             id: radiusAnim
 
             type: Anim.DefaultEffects
+        }
+    }
+
+    Behavior on shapeMorphExpansion {
+        Anim {
+            type: Anim.FastSpatial
         }
     }
 }

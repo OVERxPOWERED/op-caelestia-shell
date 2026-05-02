@@ -43,7 +43,7 @@ StyledRect {
     property color disabledOnColour: Qt.alpha(Colours.palette.m3onSurface, 0.38)
 
     property bool internalChecked
-    property real shapeMorphExpansion: pressed ? 1.16 : 1
+    property real shapeMorphExpansion: shapeMorph && pressed ? 1.16 : 1
     readonly property color onColour: disabled ? disabledOnColour : internalChecked ? activeOnColour : inactiveOnColour
 
     signal clicked

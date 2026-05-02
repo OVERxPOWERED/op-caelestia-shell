@@ -9,6 +9,7 @@ ButtonBase {
     property alias icon: label.text
     readonly property alias label: label
 
+    font: Tokens.font.icon.medium
     padding: type === IconButton.Text ? Tokens.padding.extraSmall / 2 : Tokens.padding.small
 
     activeColour: type === IconButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondary

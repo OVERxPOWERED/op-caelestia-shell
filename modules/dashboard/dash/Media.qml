@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import Caelestia.Components
 import Caelestia.Config
 import Caelestia.Services
 import qs.components
@@ -119,7 +120,7 @@ Item {
         elide: Text.ElideRight
     }
 
-    Item {
+    ButtonRow {
         id: controls
 
         anchors.top: artist.bottom
@@ -128,41 +129,29 @@ Item {
         anchors.topMargin: Tokens.spacing.medium
         anchors.margins: Tokens.padding.large
 
-        implicitHeight: Math.max(previousBtn.implicitHeight, playPauseBtn.implicitHeight, nextBtn.implicitHeight)
+        spacing: Tokens.spacing.small
 
-        PlayerControl {
-            id: previousBtn
-
-            anchors.left: parent.left
-            width: Math.round(implicitWidth * shapeMorphExpansion - playPauseBtn.implicitWidth * (playPauseBtn.shapeMorphExpansion - 1))
-
+        IconButton {
             type: IconButton.Tonal
             icon: "skip_previous"
+            isRound: true
             disabled: !Players.active?.canGoPrevious
             onClicked: Players.active?.previous()
         }
 
-        PlayerControl {
-            id: playPauseBtn
-
-            anchors.left: previousBtn.right
-            anchors.right: nextBtn.left
-            anchors.margins: Tokens.spacing.small
-
+        IconButton {
+            fillWidth: true
             icon: Players.active?.isPlaying ? "pause" : "play_arrow"
+            isRound: true
             checked: Players.active?.isPlaying ?? false
             disabled: !Players.active?.canTogglePlaying
             onClicked: Players.active?.togglePlaying()
         }
 
-        PlayerControl {
-            id: nextBtn
-
-            anchors.right: parent.right
-            width: Math.round(implicitWidth * shapeMorphExpansion - playPauseBtn.implicitWidth * (playPauseBtn.shapeMorphExpansion - 1))
-
+        IconButton {
             type: IconButton.Tonal
             icon: "skip_next"
+            isRound: true
             disabled: !Players.active?.canGoNext
             onClicked: Players.active?.next()
         }
@@ -184,18 +173,5 @@ Item {
         source: Paths.absolutePath(Config.paths.mediaGif)
         asynchronous: true
         fillMode: AnimatedImage.PreserveAspectFit
-    }
-
-    component PlayerControl: IconButton {
-        property real shapeMorphExpansion: pressed ? 1.16 : 1
-
-        font: Tokens.font.icon.medium
-        isRound: true
-
-        Behavior on shapeMorphExpansion {
-            Anim {
-                type: Anim.FastSpatial
-            }
-        }
     }
 }

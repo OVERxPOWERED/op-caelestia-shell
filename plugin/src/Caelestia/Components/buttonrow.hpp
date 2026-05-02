@@ -28,7 +28,6 @@ private slots:
 
 private:
     void relayout();
-    static qreal getMorphExpansion(const QQuickItem* item);
     static qreal getMorphExpansion(const QQuickItem* item, qreal width);
 
     bool m_dirty;

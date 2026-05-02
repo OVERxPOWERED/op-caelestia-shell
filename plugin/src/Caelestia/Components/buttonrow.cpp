@@ -59,41 +59,51 @@ void ButtonRow::invalidate() {
 }
 
 void ButtonRow::relayout() {
-    const auto children = childItems();
-    const auto nChildren = children.size();
+    const auto allChildren = childItems();
+
+    QList<QQuickItem*> validChildren;
+    for (auto* const child : allChildren) {
+        if (child->isVisible() && !child->inherits("QQuickRepeater"))
+            validChildren.append(child);
+    }
+    const auto nChildren = validChildren.size();
     const auto totalSpacing = static_cast<qreal>(nChildren - 1) * m_spacing;
 
     qreal reservedWidth = 0;
+    qreal unreservedWidth = 0;
     int fillWidthCount = 0;
     qreal maxHeight = 0;
-    for (auto* const child : children) {
-        if (!child->isVisible())
-            continue;
-
+    for (auto* const child : validChildren) {
         maxHeight = qMax(maxHeight, child->implicitHeight());
 
         const auto prop = child->property("fillWidth");
         if (!prop.isValid())
             continue;
 
-        if (prop.toBool())
+        if (prop.toBool()) {
             fillWidthCount++;
-        else
+            unreservedWidth += child->implicitWidth();
+        } else {
             reservedWidth += child->implicitWidth();
+        }
     }
 
     if (fillWidthCount == 0)
         fillWidthCount = 1; // Avoid divide by 0
 
-    qreal accX = 0;
     const auto widthPerItem = (width() - totalSpacing - reservedWidth) / static_cast<qreal>(fillWidthCount);
-    for (int i = 0; i < nChildren; ++i) {
-        auto* const child = children[i];
-        if (!child->isVisible())
-            continue;
 
-        auto prevExtraWidth = i > 0 ? getMorphExpansion(children[i - 1]) : 0.0;
-        auto nextExtraWidth = i < nChildren - 1 ? getMorphExpansion(children[i + 1]) : 0.0;
+    QList<qreal> baseWidths;
+    baseWidths.reserve(nChildren);
+    for (auto* const child : validChildren)
+        baseWidths.append(child->property("fillWidth").toBool() ? widthPerItem : child->implicitWidth());
+
+    qreal accX = 0;
+    for (int i = 0; i < nChildren; ++i) {
+        auto* const child = validChildren[i];
+
+        auto prevExtraWidth = i > 0 ? getMorphExpansion(validChildren[i - 1], baseWidths[i - 1]) : 0.0;
+        auto nextExtraWidth = i < nChildren - 1 ? getMorphExpansion(validChildren[i + 1], baseWidths[i + 1]) : 0.0;
 
         // Items at edges push by full amount, items in middle push by half
         if (i > 1)
@@ -101,9 +111,7 @@ void ButtonRow::relayout() {
         if (i < nChildren - 2)
             nextExtraWidth /= 2;
 
-        const auto childWidth = child->property("fillWidth").toBool() ? widthPerItem : child->implicitWidth();
-
-        child->setWidth(childWidth + getMorphExpansion(child, childWidth) - prevExtraWidth - nextExtraWidth);
+        child->setWidth(baseWidths[i] + getMorphExpansion(child, baseWidths[i]) - prevExtraWidth - nextExtraWidth);
         child->setHeight(maxHeight);
 
         child->setX(accX);
@@ -111,12 +119,8 @@ void ButtonRow::relayout() {
         accX += child->width() + m_spacing;
     }
 
-    setImplicitWidth(reservedWidth + totalSpacing);
+    setImplicitWidth(reservedWidth + unreservedWidth + totalSpacing);
     setImplicitHeight(maxHeight);
-}
-
-qreal ButtonRow::getMorphExpansion(const QQuickItem* item) {
-    return getMorphExpansion(item, item->implicitWidth());
 }
 
 qreal ButtonRow::getMorphExpansion(const QQuickItem* item, qreal width) {

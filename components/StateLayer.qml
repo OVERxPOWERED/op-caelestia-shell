@@ -29,7 +29,7 @@ MouseArea {
         const d2 = distSq(width, 0);
         const d3 = distSq(0, height);
         const d4 = distSq(width, height);
-        return Math.sqrt(Math.max(d1, d2, d3, d4)) * (shapeMorph ? 1.16 : 1);
+        return Math.sqrt(Math.max(d1, d2, d3, d4)) + (shapeMorph ? 24 : 0);
     }
     property real endRadiusAtPress
 

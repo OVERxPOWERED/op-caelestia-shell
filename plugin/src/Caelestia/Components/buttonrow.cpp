@@ -102,8 +102,10 @@ void ButtonRow::relayout() {
     for (int i = 0; i < nChildren; ++i) {
         auto* const child = validChildren[i];
 
-        auto prevExtraWidth = i > 0 ? getMorphExpansion(validChildren[i - 1], baseWidths[i - 1]) : 0.0;
-        auto nextExtraWidth = i < nChildren - 1 ? getMorphExpansion(validChildren[i + 1], baseWidths[i + 1]) : 0.0;
+        // clang-format off
+        auto prevExtraWidth = i > 0             ? getMorphExpansion(validChildren[i - 1]) : 0.0;
+        auto nextExtraWidth = i < nChildren - 1 ? getMorphExpansion(validChildren[i + 1]) : 0.0;
+        // clang-format on
 
         // Items at edges push by full amount, items in middle push by half
         if (i > 1)
@@ -111,7 +113,7 @@ void ButtonRow::relayout() {
         if (i < nChildren - 2)
             nextExtraWidth /= 2;
 
-        child->setWidth(baseWidths[i] + getMorphExpansion(child, baseWidths[i]) - prevExtraWidth - nextExtraWidth);
+        child->setWidth(baseWidths[i] + getMorphExpansion(child) - prevExtraWidth - nextExtraWidth);
         child->setHeight(maxHeight);
 
         child->setX(accX);
@@ -123,9 +125,8 @@ void ButtonRow::relayout() {
     setImplicitHeight(maxHeight);
 }
 
-qreal ButtonRow::getMorphExpansion(const QQuickItem* item, qreal width) {
-    const auto prop = item->property("shapeMorphExpansion");
-    return width * (prop.isValid() ? prop.toReal() - 1 : 0.0);
+qreal ButtonRow::getMorphExpansion(const QQuickItem* item) {
+    return item->property("shapeMorphExpansion").toReal();
 }
 
 } // namespace caelestia::components

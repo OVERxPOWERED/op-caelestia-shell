@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Bluetooth
+import Caelestia.Components
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -56,23 +57,23 @@ StyledRect {
         }
 
         QuickToggleRow {
-            rowModel: root.needExtraRow ? root.quickToggles.slice(0, root.splitIndex) : root.quickToggles
+            model: root.needExtraRow ? root.quickToggles.slice(0, root.splitIndex) : root.quickToggles
         }
 
         QuickToggleRow {
             visible: root.needExtraRow
-            rowModel: root.needExtraRow ? root.quickToggles.slice(root.splitIndex) : []
+            model: root.needExtraRow ? root.quickToggles.slice(root.splitIndex) : []
         }
     }
 
-    component QuickToggleRow: RowLayout {
-        property var rowModel: []
+    component QuickToggleRow: ButtonRow {
+        property alias model: repeater.model
 
         Layout.fillWidth: true
         spacing: Tokens.spacing.small
 
         Repeater {
-            model: parent.rowModel
+            id: repeater
 
             delegate: DelegateChooser {
                 role: "id"
@@ -153,18 +154,10 @@ StyledRect {
     }
 
     component Toggle: IconButton {
-        Layout.fillWidth: true
-        Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.small : 0)
-        radius: stateLayer.pressed ? Tokens.rounding.medium / 2 : internalChecked ? Tokens.rounding.medium : Tokens.rounding.large
         inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
+        fillWidth: true
         isToggle: true
-        radiusAnim.duration: Tokens.anim.durations.expressiveFastSpatial
-        radiusAnim.easing: Tokens.anim.expressiveFastSpatial
-
-        Behavior on Layout.preferredWidth {
-            Anim {
-                type: Anim.FastSpatial
-            }
-        }
+        isRound: true
+        shapeMorph: true
     }
 }

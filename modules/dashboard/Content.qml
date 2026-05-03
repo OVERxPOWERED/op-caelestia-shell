@@ -42,7 +42,7 @@ Item {
                 component: performanceComponent,
                 iconName: "speed",
                 text: qsTr("Performance"),
-                enabled: Config.dashboard.showPerformance && (Config.dashboard.performance.showCpu || Config.dashboard.performance.showGpu || Config.dashboard.performance.showMemory || Config.dashboard.performance.showStorage || Config.dashboard.performance.showNetwork || Config.dashboard.performance.showBattery)
+                enabled: Config.dashboard.showPerformance
             },
             {
                 component: weatherComponent,

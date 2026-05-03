@@ -89,6 +89,14 @@ ColumnLayout {
             Layout.fillWidth: true
             value: Players.active ? Players.active.position / (Players.active.length || 1) : 0
             enabled: Players.active?.canSeek ?? false
+            animateWave: Players.active?.isPlaying ?? false
+            waveFrequency: 5
+            waveDuration: 2000
+            onInteraction: value => {
+                const active = Players.active;
+                if (active?.canSeek && active?.positionSupported)
+                    active.position = value * active.length;
+            }
         }
 
         StyledText {

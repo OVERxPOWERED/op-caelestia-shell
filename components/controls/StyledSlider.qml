@@ -22,7 +22,7 @@ Slider {
     signal interaction(v: real)
 
     implicitWidth: 200
-    implicitHeight: 8
+    implicitHeight: 12
 
     contentItem: Item {
         anchors.fill: parent
@@ -64,8 +64,8 @@ Slider {
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: Tokens.spacing.extraSmall
 
-            implicitWidth: parent.height * 0.75
-            implicitHeight: parent.height * (mouse.pressed ? 5 : 4)
+            implicitWidth: 4
+            implicitHeight: parent.height * (mouse.pressed ? 4 : 3)
 
             radius: Tokens.rounding.full
             color: root.fgColour
@@ -84,7 +84,7 @@ Slider {
             anchors.verticalCenter: parent.verticalCenter
             implicitHeight: lineWidth * amplitudeMultiplier * 2 + lineWidth
 
-            lineWidth: parent.height - 1
+            lineWidth: parent.height * (root.wavy ? 0.7 : 1)
             amplitudeMultiplier: root.wavy ? 0.5 : 0
             startX: x
             fullLength: parent.width - handle.implicitWidth - handle.anchors.leftMargin

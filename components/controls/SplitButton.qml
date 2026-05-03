@@ -28,6 +28,8 @@ Row {
     readonly property alias iconLabel: iconLabel
     readonly property alias label: label
     readonly property alias stateLayer: stateLayer
+    readonly property alias textRow: textRow
+    readonly property alias expandBtn: expandBtn
 
     property color colour: type == SplitButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondaryContainer
     property color textColour: type == SplitButton.Filled ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondaryContainer

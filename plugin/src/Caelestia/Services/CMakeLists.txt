@@ -15,6 +15,8 @@ qml_module(caelestia-services
         memory.cpp
         diskinfo.cpp
         storage.cpp
+        lyriccandidate.cpp
+        lyrics.cpp
     LIBRARIES
         PkgConfig::Pipewire
         PkgConfig::Aubio

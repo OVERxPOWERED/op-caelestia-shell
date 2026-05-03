@@ -180,7 +180,6 @@ class DashboardTokens : public ConfigObject {
     CONFIG_PROPERTY(int, userWidth, 340)
     CONFIG_PROPERTY(int, logoSize, 30)
     CONFIG_PROPERTY(int, uptimeSize, 30)
-    CONFIG_PROPERTY(int, bubbleSize, 8)
     CONFIG_PROPERTY(int, dateTimeWidth, 110)
     CONFIG_PROPERTY(int, mediaWidth, 200)
     CONFIG_PROPERTY(int, mediaProgressSweep, 180)

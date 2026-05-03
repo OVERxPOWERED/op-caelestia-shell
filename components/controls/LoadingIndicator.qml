@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import M3Shapes
 import Caelestia.Config
 import qs.components
@@ -15,50 +16,87 @@ MaterialShape {
     property int shapeIndex
     property real cRotation
     property real lRotation
+    property real thisLRotation
     property bool containsIcon
 
     property bool animated: true
     property int morphAnimRotation: 60
-    property alias morphAnimDelay: morphAnimDelay.duration
+    property real morphScale: 0.14
     property alias rotateAnimDuration: rotateAnim.duration
 
-    readonly property easingCurve scaleCurve: [0.00, 0.56, 0.55, 1.29, 1, 1]
+    property real stiffness: 180
+    property real dampingRatio: 0.6
+    property real visibilityThreshold: 0.075
 
-    implicitSize: 38
-    rotation: cRotation + lRotation
+    readonly property real springDuration: {
+        const wn = Math.sqrt(stiffness);
+        const r = -dampingRatio * wn;
+        const c = 1 / Math.sqrt(1 - dampingRatio * dampingRatio);
+        return Math.log(visibilityThreshold / c) / r;
+    }
+    readonly property real springMaxVelocity: {
+        const wn = Math.sqrt(stiffness);
+        const factor = Math.exp(-z * Math.acos(z) / Math.sqrt(1 - z * z));
+        return wn * factor;
+    }
+    property bool springSettled: true
 
-    shape: shapes[shapeIndex]
-    color: Colours.palette.m3primary
+    function spring(t: real): var {
+        const wn = Math.sqrt(stiffness);
+        const za = dampingRatio * wn;
 
-    animationDuration: Tokens.anim.durations.expressiveSlowSpatial
-    animationEasing: Tokens.anim.expressiveSlowSpatial
+        const wd = wn * Math.sqrt(1 - dampingRatio * dampingRatio);
+        const r = za / wd;
+        const pos = 1 - Math.exp(-za * t) * (Math.cos(wd * t) + r * Math.sin(wd * t));
+        const vel = Math.exp(-za * t) * (wn * wn / wd) * Math.sin(wd * t);
 
-    scale: {
-        const t = scaleCurve.valueForProgress(morphProgress);
-        return 1 + 0.15 * Math.sin(t * Math.PI) / 2;
+        return [pos, vel];
     }
 
-    SequentialAnimation {
+    implicitSize: 38
+    color: Colours.palette.m3primary
+    toShape: shapes[0]
+
+    ElapsedTimer {
+        id: timer
+    }
+
+    FrameAnimation {
+        running: root.animated && !root.springSettled
+        onTriggered: {
+            const t = timer.elapsed();
+
+            if (t >= root.springDuration) {
+                root.springSettled = true;
+            } else {
+                const [pos, vel] = root.spring(t);
+                root.morphProgress = Math.min(1, pos); // Overshooting the morph looks weird
+                root.thisLRotation = pos * root.morphAnimRotation;
+                root.scale = 1 + vel * root.morphScale / root.springMaxVelocity;
+            }
+        }
+    }
+
+    Timer {
+        interval: 650
+        repeat: true
+        triggeredOnStart: true
         running: root.animated
-        loops: Animation.Infinite
+        onTriggered: {
+            root.beginBatchUpdate();
+            root.fromShape = root.toShape;
+            root.shapeIndex = (root.shapeIndex + 1) % root.shapes.length;
+            root.toShape = root.shapes[root.shapeIndex];
+            root.morphProgress = 0;
 
-        PropertyAction {
-            target: root
-            property: "shapeIndex"
-            value: (root.shapeIndex + 1) % root.shapes.length
-        }
-        RotationAnimation {
-            target: root
-            property: "lRotation"
-            to: (root.lRotation + root.morphAnimRotation) % 360
-            duration: Tokens.anim.durations.expressiveSlowSpatial
-            easing: Tokens.anim.expressiveSlowSpatial
-            direction: RotationAnimation.Shortest
-        }
-        PauseAnimation {
-            id: morphAnimDelay
+            root.rotation = root.rotation;
+            root.lRotation = (root.lRotation + root.thisLRotation) % 360;
+            root.thisLRotation = 0;
+            root.rotation = Qt.binding(() => root.cRotation + root.lRotation + root.thisLRotation);
 
-            duration: 20
+            root.springSettled = false;
+            timer.restart();
+            root.endBatchUpdate();
         }
     }
 
@@ -70,7 +108,7 @@ MaterialShape {
         to: 360
         easing.type: Easing.Linear
         loops: Animation.Infinite
-        duration: 10000
+        duration: 4666
     }
 
     Behavior on color {

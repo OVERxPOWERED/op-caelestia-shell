@@ -83,6 +83,7 @@ ColumnLayout {
             Layout.fillWidth: true
             value: Players.active ? Players.active.position / (Players.active.length || 1) : 0
             enabled: Players.active?.canSeek ?? false
+            wavy: true
             animateWave: Players.active?.isPlaying ?? false
             waveFrequency: 5
             waveDuration: 2000

@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Templates
 import Caelestia
@@ -9,17 +11,20 @@ import qs.services
 Slider {
     id: root
 
-    property bool wavy: true
+    property bool wavy
     property bool animateWave
-    property alias waveFrequency: wave.frequency
-    property alias waveDuration: waveAnim.duration
+    property real waveFrequency: 6
+    property int waveDuration: 1000
 
     property color fgColour: enabled ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3onSurface, 0.38)
     property color bgColour: enabled ? Colours.palette.m3secondaryContainer : Qt.alpha(Colours.palette.m3onSurface, 0.1)
 
     property real pos: visualPosition
+    property real filledWidth
 
     signal interaction(v: real)
+
+    Component.onCompleted: filledWidth = Qt.binding(() => (width - handle.implicitWidth - handle.anchors.leftMargin) * pos)
 
     implicitWidth: 200
     implicitHeight: 12
@@ -35,10 +40,10 @@ Slider {
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: Tokens.spacing.extraSmall
 
-            implicitHeight: Math.min(width, parent.height)
-            opacity: implicitHeight / parent.height
+            implicitHeight: parent.height * (parent.height <= 12 ? opacity : Math.min(opacity * 2, 1))
+            opacity: Math.min(width, 12) / 12
 
-            radius: Tokens.rounding.full
+            radius: Tokens.rounding.medium
             topLeftRadius: Tokens.rounding.extraSmall / 2
             bottomLeftRadius: Tokens.rounding.extraSmall / 2
             color: root.bgColour
@@ -47,7 +52,7 @@ Slider {
         StyledRect {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.rightMargin: (parent.height - implicitHeight) / 2 * remaining.opacity
+            anchors.rightMargin: 4 * remaining.opacity
 
             implicitWidth: implicitHeight
             implicitHeight: 4 * remaining.opacity
@@ -60,12 +65,16 @@ Slider {
         StyledRect {
             id: handle
 
-            anchors.left: wave.right
+            anchors.left: filled.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: Tokens.spacing.extraSmall
 
             implicitWidth: 4
-            implicitHeight: parent.height * (mouse.pressed ? 4 : 3)
+            implicitHeight: {
+                const mult = parent.height <= 12 ? 3 : 1.2;
+                const pressMult = parent.height <= 12 ? 4 : 1.5;
+                return parent.height * (mouse.pressed ? pressMult : mult);
+            }
 
             radius: Tokens.rounding.full
             color: root.fgColour
@@ -77,47 +86,56 @@ Slider {
             }
         }
 
-        WavyLine {
-            id: wave
+        Loader {
+            id: filled
 
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            implicitHeight: lineWidth * amplitudeMultiplier * 2 + lineWidth
+            asynchronous: true
 
-            lineWidth: parent.height * (root.wavy ? 0.7 : 1)
-            amplitudeMultiplier: root.wavy ? 0.5 : 0
-            startX: x
-            fullLength: parent.width - handle.implicitWidth - handle.anchors.leftMargin
-            color: root.fgColour
+            sourceComponent: root.wavy ? waveComp : lineComp
+        }
 
-            Component.onCompleted: implicitWidth = Qt.binding(() => fullLength * root.pos)
+        Component {
+            id: lineComp
 
-            Anim on waveProgress {
-                id: waveAnim
+            StyledRect {
+                implicitWidth: root.filledWidth
+                implicitHeight: root.height
 
-                running: true
-                paused: !root.animateWave
-                from: 0
-                to: 1
-                duration: 1000
-                easing.type: Easing.Linear
-                loops: Animation.Infinite
+                radius: Tokens.rounding.medium
+                topRightRadius: Tokens.rounding.extraSmall / 2
+                bottomRightRadius: Tokens.rounding.extraSmall / 2
+                color: root.fgColour
             }
+        }
 
-            Behavior on amplitudeMultiplier {
-                Anim {
-                    type: Anim.DefaultEffects
+        Component {
+            id: waveComp
+
+            WavyLine {
+                lineWidth: root.height * 0.7
+                frequency: root.waveFrequency
+                startX: x
+                fullLength: root.width - handle.implicitWidth - handle.anchors.leftMargin
+                color: root.fgColour
+
+                implicitWidth: root.filledWidth
+                implicitHeight: lineWidth * amplitudeMultiplier * 2 + lineWidth
+
+                Anim on waveProgress {
+                    running: true
+                    paused: !root.animateWave
+                    from: 0
+                    to: 1
+                    duration: root.waveDuration
+                    easing.type: Easing.Linear
+                    loops: Animation.Infinite
                 }
-            }
 
-            Behavior on color {
-                CAnim {}
-            }
-
-            Behavior on implicitWidth {
-                id: widthBehavior
-
-                Anim {}
+                Behavior on color {
+                    CAnim {}
+                }
             }
         }
     }
@@ -156,5 +174,11 @@ Slider {
             widthBehavior.enabled = true;
             dragMovement = 0;
         }
+    }
+
+    Behavior on filledWidth {
+        id: widthBehavior
+
+        Anim {}
     }
 }

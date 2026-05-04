@@ -54,10 +54,6 @@ Item {
                 easing.type: Easing.Linear
                 loops: Animation.Infinite
             }
-
-            Behavior on color {
-                CAnim {}
-            }
         }
     }
 

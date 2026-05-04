@@ -263,9 +263,13 @@ Item {
             required property string modelData
             property real effectScale: ListView.isCurrentItem ? 1 : 0
 
+            anchors.left: ListView.view?.contentItem.left
+            anchors.right: ListView.view?.contentItem.right
+
             text: modelData || ". . ."
             color: ListView.isCurrentItem ? Colours.palette.m3primary : Colours.palette.m3outline
             font: Tokens.font.body.medium
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
             layer.enabled: effectScale > 0
             layer.effect: MultiEffect {

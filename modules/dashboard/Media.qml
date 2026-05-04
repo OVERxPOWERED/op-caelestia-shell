@@ -15,6 +15,10 @@ Item {
     implicitWidth: Tokens.sizes.dashboard.mediaTabWidth
     implicitHeight: Tokens.sizes.dashboard.mediaTabHeight
 
+    BackgroundShapes {
+        anchors.fill: parent
+    }
+
     RowLayout {
         anchors.fill: parent
         anchors.margins: Tokens.padding.large

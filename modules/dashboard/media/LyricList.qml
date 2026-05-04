@@ -278,7 +278,6 @@ Item {
                 shadowOpacity: 0.5 * lyric.effectScale
                 shadowBlur: 0.6 * lyric.effectScale
                 blur: 0.4 * lyric.effectScale
-                autoPaddingEnabled: false
             }
 
             Behavior on effectScale {

@@ -107,6 +107,11 @@ private:
     [[nodiscard]] static QString backendKey(LyricsBackend value);
     [[nodiscard]] static LyricsBackend backendFromKey(const QString& key);
 
+    [[nodiscard]] static const QString& cacheDir();
+    [[nodiscard]] static QString cachePathFor(LyricsBackend backend, const QString& id);
+    [[nodiscard]] static QString readCachedLrc(LyricsBackend backend, const QString& id);
+    static void writeCachedLrc(LyricsBackend backend, const QString& id, const QString& text);
+
     [[nodiscard]] static QVector<LyricLine> parseLrc(const QString& text);
     [[nodiscard]] static QString tryReadLocalLrc(const QString& dir, const QString& artist, const QString& title);
     [[nodiscard]] static QString findLocalLrcRecursive(const QString& dir, const QString& artist, const QString& title);

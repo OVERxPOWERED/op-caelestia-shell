@@ -5,6 +5,7 @@
 #include "../Config/userpaths.hpp"
 
 #include <qdiriterator.h>
+#include <qfileinfo.h>
 #include <qjsonarray.h>
 #include <qnetworkcookiejar.h>
 #include <qsavefile.h>
@@ -134,6 +135,21 @@ void Lyrics::setSelectedCandidate(const LyricCandidate& value) {
 
     cancelInFlight();
     const int reqId = newRequestId();
+
+    if (b == LRCLIB || b == NetEase) {
+        const QString cached = readCachedLrc(b, value.id());
+        if (!cached.isEmpty()) {
+            const auto lines = parseLrc(cached);
+            if (!lines.isEmpty()) {
+                setLines(lines, b);
+                setLoading(false);
+                if (!m_settingFromPrefs) {
+                    persistTrackPrefs();
+                }
+                return;
+            }
+        }
+    }
 
     if (b == LRCLIB) {
         fetchLrclibById(value.id(), reqId);
@@ -520,6 +536,7 @@ void Lyrics::tryLrclib(int reqId) {
             return;
         }
 
+        writeCachedLrc(LRCLIB, QString::number(id), synced);
         setLines(lines, LRCLIB);
         const LyricCandidate cand(LRCLIB, QString::number(id), obj.value(u"trackName"_s).toString(),
             obj.value(u"artistName"_s).toString(), obj.value(u"albumName"_s).toString(),
@@ -677,7 +694,7 @@ void Lyrics::fetchLrclibById(const QString& id, int reqId) {
     auto* reply = getJson(url, lrclibHeaders());
     trackReply(reqId, reply);
 
-    QObject::connect(reply, &QNetworkReply::finished, this, [this, reply, reqId] {
+    QObject::connect(reply, &QNetworkReply::finished, this, [this, reply, reqId, id] {
         reply->deleteLater();
         if (reqId != m_currentRequestId) {
             return;
@@ -694,6 +711,7 @@ void Lyrics::fetchLrclibById(const QString& id, int reqId) {
             setLoading(false);
             return;
         }
+        writeCachedLrc(LRCLIB, id, synced);
         setLines(parseLrc(synced), LRCLIB);
         setLoading(false);
     });
@@ -728,6 +746,7 @@ void Lyrics::fetchNetEaseLyricsById(const QString& id, int reqId) {
             setLoading(false);
             return;
         }
+        writeCachedLrc(NetEase, id, lrc);
         setLines(parseLrc(lrc), NetEase);
         setLoading(false);
     });
@@ -868,6 +887,62 @@ LyricsBackend Lyrics::backendFromKey(const QString& key) {
         return NetEase;
     }
     return Auto;
+}
+
+const QString& Lyrics::cacheDir() {
+    static const QString s_dir = [] {
+        QString cache = qEnvironmentVariable("XDG_CACHE_HOME");
+        if (cache.isEmpty()) {
+            cache = QDir::homePath() + u"/.cache"_s;
+        }
+        return cache + u"/caelestia/lyrics"_s;
+    }();
+    return s_dir;
+}
+
+QString Lyrics::cachePathFor(LyricsBackend backend, const QString& id) {
+    if (id.isEmpty() || backend == Auto || backend == Local) {
+        return {};
+    }
+    return u"%1/%2/%3.lrc"_s.arg(cacheDir(), backendKey(backend), sanitizeFilenamePart(id));
+}
+
+QString Lyrics::readCachedLrc(LyricsBackend backend, const QString& id) {
+    const QString path = cachePathFor(backend, id);
+    if (path.isEmpty()) {
+        return {};
+    }
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly)) {
+        return {};
+    }
+    return QString::fromUtf8(f.readAll());
+}
+
+void Lyrics::writeCachedLrc(LyricsBackend backend, const QString& id, const QString& text) {
+    if (text.isEmpty()) {
+        return;
+    }
+    const QString path = cachePathFor(backend, id);
+    if (path.isEmpty()) {
+        return;
+    }
+    QDir().mkpath(QFileInfo(path).absolutePath());
+
+    QSaveFile out(path);
+    if (!out.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        qCWarning(lcLyrics) << "cannot open" << path << "for write:" << out.errorString();
+        return;
+    }
+    const QByteArray bytes = text.toUtf8();
+    if (out.write(bytes) != bytes.size()) {
+        qCWarning(lcLyrics) << "short write to" << path;
+        out.cancelWriting();
+        return;
+    }
+    if (!out.commit()) {
+        qCWarning(lcLyrics) << "commit failed for" << path << ":" << out.errorString();
+    }
 }
 
 QString Lyrics::tryReadLocalLrc(const QString& dir, const QString& artist, const QString& title) {

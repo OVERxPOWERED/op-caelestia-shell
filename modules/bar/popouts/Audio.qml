@@ -73,7 +73,6 @@ Item {
 
         StyledText {
             Layout.topMargin: Tokens.spacing.medium
-            Layout.bottomMargin: -Tokens.spacing.extraSmall
             text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
             font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
         }
@@ -95,11 +94,7 @@ Item {
                 implicitHeight: parent.implicitHeight
 
                 value: Audio.volume
-                onMoved: Audio.setVolume(value)
-
-                Behavior on value {
-                    Anim {}
-                }
+                onInteraction: value => Audio.setVolume(value)
             }
         }
 

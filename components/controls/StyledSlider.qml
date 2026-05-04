@@ -168,7 +168,10 @@ Slider {
             pressStartX = e.x;
             pressStartPos = root.visualPosition;
         }
-        onPositionChanged: e => dragMovement = (e.x - pressStartX) / width
+        onPositionChanged: e => {
+            dragMovement = (e.x - pressStartX) / width;
+            root.interaction(posBinding.value);
+        }
         onReleased: e => {
             root.interaction(posBinding.value);
             widthBehavior.enabled = true;

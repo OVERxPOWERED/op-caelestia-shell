@@ -241,7 +241,7 @@ Item {
         model: Lyrics.lyrics
         Component.onCompleted: {
             currentIndex = Qt.binding(() => {
-                Lyrics.lyrics; // Force update when lyrics change
+                model; // Force update when lyrics change
                 return Lyrics.indexForTime(Players.active?.position ?? 0);
             });
             positionViewAtIndex(currentIndex, ListView.Center);
@@ -282,6 +282,24 @@ Item {
 
             Behavior on effectScale {
                 Anim {
+                    type: Anim.SlowEffects
+                }
+            }
+        }
+
+        Behavior on model {
+            SequentialAnimation {
+                Anim {
+                    target: lyrics
+                    property: "opacity"
+                    to: 0
+                    type: Anim.DefaultEffects
+                }
+                PropertyAction {}
+                Anim {
+                    target: lyrics
+                    property: "opacity"
+                    to: 1
                     type: Anim.SlowEffects
                 }
             }

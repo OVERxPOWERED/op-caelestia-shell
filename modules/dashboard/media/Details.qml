@@ -30,13 +30,7 @@ ColumnLayout {
         interval: GlobalConfig.dashboard.mediaUpdateInterval
         triggeredOnStart: true
         repeat: true
-        onTriggered: {
-            if (!Players.active)
-                return;
-
-            LyricsService.updatePosition();
-            Players.active.positionChanged();
-        }
+        onTriggered: Players.active?.positionChanged()
     }
 
     StyledText {

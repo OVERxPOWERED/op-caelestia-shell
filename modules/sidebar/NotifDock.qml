@@ -44,7 +44,7 @@ Item {
 
             text: root.notifCount
             color: Colours.palette.m3outline
-            font: Tokens.font.mono.builders.medium.weight(Font.Medium).build()
+            font: Tokens.font.label.large
 
             Behavior on anchors.leftMargin {
                 Anim {}
@@ -63,11 +63,11 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: count.right
             anchors.right: parent.right
-            anchors.leftMargin: Tokens.spacing.small
+            anchors.leftMargin: Tokens.spacing.extraSmall
 
             text: root.notifCount > 0 ? qsTr("notification%1").arg(root.notifCount === 1 ? "" : "s") : qsTr("Notifications")
             color: Colours.palette.m3outline
-            font: Tokens.font.mono.builders.medium.weight(Font.Medium).build()
+            font: Tokens.font.label.large
             elide: Text.ElideRight
         }
     }
@@ -91,7 +91,7 @@ Item {
             opacity: root.notifCount > 0 ? 0 : 1
 
             sourceComponent: ColumnLayout {
-                spacing: Tokens.spacing.largeIncreased
+                spacing: Tokens.spacing.extraLarge
 
                 Image {
                     asynchronous: true
@@ -108,9 +108,9 @@ Item {
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("No Notifications")
+                    text: qsTr("All up to date!")
                     color: Colours.palette.m3outlineVariant
-                    font: Tokens.font.mono.builders.large.weight(Font.Medium).build()
+                    font: Tokens.font.headline.builders.small.width(90).build()
                 }
             }
 

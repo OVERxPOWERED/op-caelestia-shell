@@ -10,7 +10,6 @@ Item {
     id: root
 
     required property DrawerVisibilities visibilities
-    readonly property bool needsKeyboard: false // TODO
 
     implicitWidth: Tokens.sizes.dashboard.mediaTabWidth
     implicitHeight: Tokens.sizes.dashboard.mediaTabHeight

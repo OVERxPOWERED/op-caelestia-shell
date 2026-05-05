@@ -224,7 +224,7 @@ class NotifsTokens : public ConfigObject {
     QML_ANONYMOUS
 
     CONFIG_PROPERTY(int, width, 400)
-    CONFIG_GLOBAL_PROPERTY(int, image, 41)
+    CONFIG_GLOBAL_PROPERTY(int, image, 42)
     CONFIG_PROPERTY(int, badge, 20)
 
 public:

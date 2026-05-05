@@ -46,18 +46,22 @@ StyledRect {
     property real shapeMorphExpansion: shapeMorph && pressed ? 24 : 0 // Apparently it's always 24px no matter the width of the button
     readonly property color onColour: disabled ? disabledOnColour : internalChecked ? activeOnColour : inactiveOnColour
 
+    property real pressedRadius: Tokens.rounding.small
+    property real checkedRadius: Tokens.rounding.medium
+    property real defaultRadius: Tokens.rounding.large
+
     signal clicked
 
     onCheckedChanged: internalChecked = checked
 
     radius: {
         if (radiusMorph && pressed)
-            return Tokens.rounding.small;
+            return pressedRadius;
         if (internalChecked)
-            return Tokens.rounding.medium;
+            return checkedRadius;
         if (isRound)
             return implicitHeight / 2 * Math.min(1, Tokens.rounding.scale);
-        return Tokens.rounding.large;
+        return defaultRadius;
     }
     color: type === ButtonBase.Text ? "transparent" : disabled ? disabledColour : internalChecked ? activeColour : inactiveColour
 

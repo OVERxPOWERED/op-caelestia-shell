@@ -1,12 +1,13 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Shapes
 import Quickshell
 import Quickshell.Services.Notifications
+import Caelestia.Components
 import Caelestia.Config
 import qs.components
+import qs.components.controls
 import qs.components.effects
 import qs.services
 import qs.utils
@@ -18,7 +19,7 @@ StyledRect {
     readonly property bool hasImage: modelData.image.length > 0
     readonly property bool hasAppIcon: modelData.appIcon.length > 0
     readonly property int bodyTextFormat: /[<*_`#\[\]]/.test(modelData.body) ? Text.MarkdownText : Text.PlainText
-    readonly property int nonAnimHeight: summary.implicitHeight + (root.expanded ? appName.height + body.height + actions.height + actions.anchors.topMargin : bodyPreview.height) + inner.anchors.margins * 2
+    readonly property int nonAnimHeight: summary.implicitHeight + (root.expanded ? Tokens.spacing.extraSmall * 2 + appName.height + body.height + actions.height + actions.anchors.topMargin : bodyPreview.height) + inner.anchors.margins * 2
     property bool expanded: Config.notifs.openExpanded
 
     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
@@ -234,7 +235,7 @@ StyledRect {
                 text: appNameMetrics.elidedText
                 maximumLineCount: 1
                 color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.label.small
+                font: Tokens.font.label.medium
 
                 opacity: root.expanded ? 1 : 0
 
@@ -272,6 +273,9 @@ StyledRect {
 
                     PropertyChanges {
                         summary.maximumLineCount: undefined
+                        summary.anchors.topMargin: root.Tokens.spacing.extraSmall
+                        bodyPreview.anchors.topMargin: root.Tokens.spacing.extraSmall
+                        body.anchors.topMargin: root.Tokens.spacing.extraSmall
                     }
 
                     AnchorChanges {
@@ -285,9 +289,10 @@ StyledRect {
                         target: summary
                         property: "maximumLineCount"
                     }
-                    AnchorAnim {
-                        type: AnchorAnim.Standard
+                    Anim {
+                        property: "topMargin"
                     }
+                    AnchorAnim {}
                 }
 
                 Behavior on height {
@@ -326,9 +331,7 @@ StyledRect {
                 }
 
                 transitions: Transition {
-                    AnchorAnim {
-                        type: AnchorAnim.Standard
-                    }
+                    AnchorAnim {}
                 }
             }
 
@@ -352,8 +355,8 @@ StyledRect {
                 anchors.right: parent.right
                 anchors.top: parent.top
 
-                implicitWidth: expandIcon.height
-                implicitHeight: expandIcon.height
+                implicitWidth: expandIcon.implicitHeight
+                implicitHeight: expandIcon.implicitHeight
 
                 StateLayer {
                     radius: Tokens.rounding.full
@@ -365,10 +368,13 @@ StyledRect {
                     id: expandIcon
 
                     anchors.centerIn: parent
-
-                    animate: true
-                    text: root.expanded ? "expand_less" : "expand_more"
+                    text: "expand_more"
                     fontStyle: Tokens.font.icon.medium
+                    rotation: root.expanded ? 180 : 0
+
+                    Behavior on rotation {
+                        Anim {}
+                    }
                 }
             }
 
@@ -437,15 +443,15 @@ StyledRect {
                 }
             }
 
-            RowLayout {
+            ButtonRow {
                 id: actions
 
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.left: body.left
+                anchors.right: body.right
                 anchors.top: body.bottom
                 anchors.topMargin: Tokens.spacing.small
 
-                spacing: Tokens.spacing.medium
-
+                spacing: Tokens.spacing.extraSmall
                 opacity: root.expanded ? 1 : 0
 
                 Behavior on opacity {
@@ -454,64 +460,61 @@ StyledRect {
                     }
                 }
 
-                Action {
-                    modelData: QtObject {
-                        readonly property string text: qsTr("Close")
-
-                        function invoke(): void {
-                            root.modelData.close();
-                        }
-                    }
+                IconButton {
+                    isRound: true
+                    shapeMorph: true
+                    fillWidth: root.modelData.actions.length === 0
+                    inactiveColour: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondary : Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
+                    inactiveOnColour: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurfaceVariant
+                    icon: "close"
+                    padding: Tokens.padding.extraSmall
+                    onClicked: root.modelData.close()
                 }
 
                 Repeater {
                     model: root.modelData.actions
 
-                    delegate: Component {
-                        Action {}
+                    TextButton {
+                        required property var modelData
+
+                        isRound: true
+                        shapeMorph: true
+                        fillWidth: true
+                        inactiveColour: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondary : Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
+                        inactiveOnColour: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurfaceVariant
+                        text: modelData.text
+                        onClicked: modelData.invoke()
+
+                        label.horizontalAlignment: Text.AlignHCenter
+                        label.anchors.left: left
+                        label.anchors.right: right
+                        label.anchors.verticalCenter: verticalCenter
+                        label.anchors.centerIn: undefined
+                        label.anchors.margins: Tokens.padding.medium
+                        label.elide: Text.ElideRight
                     }
                 }
-            }
-        }
-    }
 
-    component Action: StyledRect {
-        id: action
+                IconButton {
+                    isRound: true
+                    shapeMorph: true
+                    fillWidth: root.modelData.actions.length === 0
+                    inactiveColour: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondary : Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
+                    inactiveOnColour: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurfaceVariant
+                    icon: copyTimer.running ? "inventory" : "content_copy"
+                    padding: Tokens.padding.extraSmall
+                    onClicked: {
+                        Quickshell.clipboardText = root.modelData.body;
+                        copyTimer.restart();
+                    }
+                    label.animate: true
 
-        required property var modelData
+                    Timer {
+                        id: copyTimer
 
-        radius: Tokens.rounding.full
-        color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-
-        Layout.preferredWidth: actionText.width + Tokens.padding.medium * 2
-        Layout.preferredHeight: actionText.height + Tokens.padding.small
-        implicitWidth: actionText.width + Tokens.padding.medium * 2
-        implicitHeight: actionText.height + Tokens.padding.small
-
-        StateLayer {
-            radius: Tokens.rounding.full
-            color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurface
-            onClicked: action.modelData.invoke()
-        }
-
-        StyledText {
-            id: actionText
-
-            anchors.centerIn: parent
-            text: actionTextMetrics.elidedText
-            color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.label.small
-        }
-
-        TextMetrics {
-            id: actionTextMetrics
-
-            text: action.modelData.text
-            font: actionText.font
-            elide: Text.ElideRight
-            elideWidth: {
-                const numActions = root.modelData.actions.length + 1;
-                return (inner.width - actions.spacing * (numActions - 1)) / numActions - root.Tokens.padding.medium * 2;
+                        interval: 3000
+                    }
+                }
             }
         }
     }

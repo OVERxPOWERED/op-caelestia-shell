@@ -1,7 +1,6 @@
 import QtQuick
 import Quickshell
 import M3Shapes
-import Caelestia.Config
 import qs.components
 import qs.services
 

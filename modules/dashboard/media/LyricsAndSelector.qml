@@ -18,6 +18,7 @@ Item {
         RowLayout {
             Layout.bottomMargin: -Tokens.spacing.medium
             spacing: Tokens.spacing.medium
+            z: 1
 
             MaterialIcon {
                 Layout.topMargin: Math.round(fontInfo.pointSize * 0.12)
@@ -31,12 +32,7 @@ Item {
                 font: Tokens.font.title.medium
             }
 
-            IconButton {
-                icon: "settings"
-                isToggle: true
-                isRound: true
-                type: IconButton.Tonal
-            }
+            LyricsInfo {}
         }
 
         LyricList {

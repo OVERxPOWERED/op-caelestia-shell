@@ -146,9 +146,7 @@ Column {
             ]
 
             transitions: Transition {
-                AnchorAnim {
-                    type: AnchorAnim.Emphasized
-                }
+                AnchorAnim {}
             }
         }
 
@@ -214,7 +212,7 @@ Column {
 
             text: parent.icon
             fontStyle: Tokens.font.icon.large
-            color: profiles.current === text ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+            color: profiles.current === text ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant
             fill: profiles.current === text ? 1 : 0
 
             Behavior on fill {

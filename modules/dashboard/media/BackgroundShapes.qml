@@ -17,7 +17,8 @@ Item {
     property real maxSpeed: 18
     property real minRotSpeed: -12
     property real maxRotSpeed: 12
-    property real shapeOpacity: 0.16
+    property list<real> lightOpacities: [0.34, 0.34, 0.08, 0.16]
+    property list<real> darkOpacities: [0.16, 0.16, 0.05, 0.16]
 
     function rand(min: real, max: real): real {
         return min + Math.random() * (max - min);
@@ -70,12 +71,12 @@ Item {
         property real vx: root.signedRand(root.minSpeed, root.maxSpeed)
         property real vy: root.signedRand(root.minSpeed, root.maxSpeed)
         property real vr: root.rand(root.minRotSpeed, root.maxRotSpeed)
-        readonly property int colourIdx: Math.floor(Math.random() * 3)
+        readonly property int colourIdx: Math.floor(Math.random() * 4)
 
         implicitSize: root.rand(root.minSize, root.maxSize)
         shape: root.shapePool[Math.floor(Math.random() * root.shapePool.length)]
-        color: [Colours.palette.m3primaryContainer, Colours.palette.m3secondaryContainer, Colours.palette.m3outlineVariant][colourIdx]
-        opacity: root.shapeOpacity
+        color: [Colours.palette.m3primaryContainer, Colours.palette.m3secondaryContainer, Colours.palette.m3tertiaryContainer, Colours.palette.m3outlineVariant][colourIdx]
+        opacity: Colours.light ? root.lightOpacities[colourIdx] : root.darkOpacities[colourIdx]
         rotation: root.rand(0, 360)
 
         Component.onCompleted: {
@@ -85,6 +86,12 @@ Item {
 
         Behavior on color {
             CAnim {}
+        }
+
+        Behavior on opacity {
+            Anim {
+                type: Anim.SlowEffects
+            }
         }
     }
 }

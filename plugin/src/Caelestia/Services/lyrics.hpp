@@ -18,12 +18,11 @@ class Lyrics : public QObject {
     Q_OBJECT
     QML_ELEMENT
     QML_SINGLETON
-    QML_EXTENDED_NAMESPACE(caelestia::services)
 
     Q_PROPERTY(QStringList lyrics READ lyrics NOTIFY lyricsChanged)
-    Q_PROPERTY(LyricsBackend backend READ backend NOTIFY backendChanged)
-    Q_PROPERTY(
-        LyricsBackend preferredBackend READ preferredBackend WRITE setPreferredBackend NOTIFY preferredBackendChanged)
+    Q_PROPERTY(caelestia::services::LyricsBackend::Backend backend READ backend NOTIFY backendChanged)
+    Q_PROPERTY(caelestia::services::LyricsBackend::Backend preferredBackend READ preferredBackend WRITE
+            setPreferredBackend NOTIFY preferredBackendChanged)
     Q_PROPERTY(
         QList<caelestia::services::LyricCandidate> lyricCandidates READ lyricCandidates NOTIFY lyricCandidatesChanged)
     Q_PROPERTY(caelestia::services::LyricCandidate selectedCandidate READ selectedCandidate WRITE setSelectedCandidate
@@ -38,9 +37,9 @@ public:
     explicit Lyrics(QObject* parent = nullptr);
 
     [[nodiscard]] QStringList lyrics() const;
-    [[nodiscard]] LyricsBackend backend() const;
-    [[nodiscard]] LyricsBackend preferredBackend() const;
-    void setPreferredBackend(LyricsBackend value);
+    [[nodiscard]] LyricsBackend::Backend backend() const;
+    [[nodiscard]] LyricsBackend::Backend preferredBackend() const;
+    void setPreferredBackend(LyricsBackend::Backend value);
     [[nodiscard]] QList<LyricCandidate> lyricCandidates() const;
     [[nodiscard]] LyricCandidate selectedCandidate() const;
     void setSelectedCandidate(const LyricCandidate& value);
@@ -69,9 +68,9 @@ signals:
     void trackChanged();
 
 private:
-    void setBackend(LyricsBackend value);
+    void setBackend(LyricsBackend::Backend value);
     void setLoading(bool value);
-    void setLines(QVector<LyricLine> lines, LyricsBackend source);
+    void setLines(QVector<LyricLine> lines, LyricsBackend::Backend source);
     void clearLines();
     void appendCandidates(const QList<LyricCandidate>& add);
     void clearCandidates();
@@ -84,7 +83,7 @@ private:
     void tryLocal(int reqId);
     void tryLrclib(int reqId);
     void tryNetEase(int reqId);
-    void chainNext(LyricsBackend just_failed, int reqId);
+    void chainNext(LyricsBackend::Backend just_failed, int reqId);
 
     void searchLrclibCandidates(int reqId);
     void searchNetEaseCandidates(int reqId);
@@ -104,13 +103,13 @@ private:
     [[nodiscard]] QString lyricsDir() const;
     [[nodiscard]] QString lyricsMapPath() const;
     [[nodiscard]] QString trackKey() const;
-    [[nodiscard]] static QString backendKey(LyricsBackend value);
-    [[nodiscard]] static LyricsBackend backendFromKey(const QString& key);
+    [[nodiscard]] static QString backendKey(LyricsBackend::Backend value);
+    [[nodiscard]] static LyricsBackend::Backend backendFromKey(const QString& key);
 
     [[nodiscard]] static const QString& cacheDir();
-    [[nodiscard]] static QString cachePathFor(LyricsBackend backend, const QString& id);
-    [[nodiscard]] static QString readCachedLrc(LyricsBackend backend, const QString& id);
-    static void writeCachedLrc(LyricsBackend backend, const QString& id, const QString& text);
+    [[nodiscard]] static QString cachePathFor(LyricsBackend::Backend backend, const QString& id);
+    [[nodiscard]] static QString readCachedLrc(LyricsBackend::Backend backend, const QString& id);
+    static void writeCachedLrc(LyricsBackend::Backend backend, const QString& id, const QString& text);
 
     [[nodiscard]] static QVector<LyricLine> parseLrc(const QString& text);
     [[nodiscard]] static QString tryReadLocalLrc(const QString& dir, const QString& artist, const QString& title);
@@ -121,8 +120,8 @@ private:
 
     QVector<LyricLine> m_lines;
     QStringList m_lyrics;
-    LyricsBackend m_backend = Auto;
-    LyricsBackend m_preferredBackend = Auto;
+    LyricsBackend::Backend m_backend = LyricsBackend::Auto;
+    LyricsBackend::Backend m_preferredBackend = LyricsBackend::Auto;
     QList<LyricCandidate> m_candidates;
     LyricCandidate m_selected;
     bool m_loading = false;

@@ -4,21 +4,28 @@
 
 namespace caelestia::services {
 
-Q_NAMESPACE
+class LyricsBackend : public QObject {
+    Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
 
-enum LyricsBackend {
-    Auto = 0,
-    Local = 1,
-    LRCLIB = 2,
-    NetEase = 3,
+public:
+    enum Backend {
+        Auto = 0,
+        Local,
+        LRCLIB,
+        NetEase
+    };
+    Q_ENUM(Backend)
+
+    Q_INVOKABLE QString toString(caelestia::services::LyricsBackend::Backend b);
 };
-Q_ENUM_NS(LyricsBackend)
 
 class LyricCandidate {
     Q_GADGET
     QML_VALUE_TYPE(lyricCandidate)
 
-    Q_PROPERTY(LyricsBackend backend READ backend)
+    Q_PROPERTY(caelestia::services::LyricsBackend::Backend backend READ backend)
     Q_PROPERTY(QString id READ id)
     Q_PROPERTY(QString title READ title)
     Q_PROPERTY(QString artist READ artist)
@@ -27,10 +34,10 @@ class LyricCandidate {
 
 public:
     LyricCandidate() = default;
-    LyricCandidate(
-        LyricsBackend backend, QString id, QString title, QString artist, QString album = {}, qreal duration = 0.0);
+    LyricCandidate(LyricsBackend::Backend backend, QString id, QString title, QString artist, QString album = {},
+        qreal duration = 0.0);
 
-    [[nodiscard]] LyricsBackend backend() const;
+    [[nodiscard]] LyricsBackend::Backend backend() const;
     [[nodiscard]] QString id() const;
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString artist() const;
@@ -42,7 +49,7 @@ public:
     bool operator!=(const LyricCandidate& o) const noexcept;
 
 private:
-    LyricsBackend m_backend = Auto;
+    LyricsBackend::Backend m_backend = LyricsBackend::Auto;
     QString m_id;
     QString m_title;
     QString m_artist;

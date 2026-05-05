@@ -1,11 +1,24 @@
 #include "lyriccandidate.hpp"
 
-#include <utility>
-
 namespace caelestia::services {
 
+QString LyricsBackend::toString(Backend b) {
+    switch (b) {
+    case LyricsBackend::Auto:
+        return QStringLiteral("Auto");
+    case LyricsBackend::Local:
+        return QStringLiteral("Local");
+    case LyricsBackend::LRCLIB:
+        return QStringLiteral("LRCLIB");
+    case LyricsBackend::NetEase:
+        return QStringLiteral("NetEase");
+    default:
+        return QStringLiteral("Unknown");
+    }
+}
+
 LyricCandidate::LyricCandidate(
-    LyricsBackend backend, QString id, QString title, QString artist, QString album, qreal duration)
+    LyricsBackend::Backend backend, QString id, QString title, QString artist, QString album, qreal duration)
     : m_backend(backend)
     , m_id(std::move(id))
     , m_title(std::move(title))
@@ -13,7 +26,7 @@ LyricCandidate::LyricCandidate(
     , m_album(std::move(album))
     , m_duration(duration) {}
 
-LyricsBackend LyricCandidate::backend() const {
+LyricsBackend::Backend LyricCandidate::backend() const {
     return m_backend;
 }
 

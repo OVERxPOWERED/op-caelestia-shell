@@ -78,6 +78,7 @@ BusyIndicator {
         rotation: manager.rotation
         startAngle: manager.startFraction * 360
         value: manager.endFraction - manager.startFraction
+        hasEndIndicator: false
     }
 
     CircularIndicatorManager {

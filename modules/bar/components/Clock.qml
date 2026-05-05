@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Layouts
 import Caelestia.Config
 import qs.components
 import qs.services
@@ -10,6 +11,7 @@ StyledRect {
 
     readonly property color colour: Colours.palette.m3tertiary
     readonly property int padding: Config.bar.clock.background ? Tokens.padding.medium : Tokens.padding.extraSmall
+    readonly property var font: Tokens.font.body.builders.small.scale(1.1)
 
     implicitWidth: Tokens.sizes.bar.innerWidth
     implicitHeight: layout.implicitHeight + root.padding * 2
@@ -17,16 +19,15 @@ StyledRect {
     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Config.bar.clock.background ? Colours.tPalette.m3surfaceContainer.a : 0)
     radius: Tokens.rounding.full
 
-    Column {
+    ColumnLayout {
         id: layout
 
         anchors.centerIn: parent
         spacing: Tokens.spacing.small
 
         Loader {
+            Layout.alignment: Qt.AlignHCenter
             asynchronous: true
-            anchors.horizontalCenter: parent.horizontalCenter
-
             active: Config.bar.clock.showIcon
             visible: active
 
@@ -37,8 +38,7 @@ StyledRect {
         }
 
         StyledText {
-            anchors.horizontalCenter: parent.horizontalCenter
-
+            Layout.alignment: Qt.AlignHCenter
             visible: Config.bar.clock.showDate
 
             horizontalAlignment: StyledText.AlignHCenter
@@ -48,22 +48,53 @@ StyledRect {
         }
 
         Rectangle {
-            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.fillWidth: true
             visible: Config.bar.clock.showDate
-            height: visible ? 1 : 0
-
-            width: parent.width * 0.8
-            color: root.colour
-            opacity: 0.2
+            implicitHeight: 1
+            color: Colours.palette.m3outlineVariant
         }
 
         StyledText {
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            horizontalAlignment: StyledText.AlignHCenter
-            text: Time.format(GlobalConfig.services.useTwelveHourClock ? "hh\nmm\nA" : "hh\nmm")
-            font: Tokens.font.mono.small
+            Layout.alignment: Qt.AlignHCenter
+            text: Time.hourStr
+            font: root.font.width(Math.min(120, Math.max(hourMetrics.width, minMetrics.width) / hourMetrics.width * 100)).build()
             color: root.colour
+
+            TextMetrics {
+                id: hourMetrics
+
+                font: root.font.build()
+                text: Time.hourStr
+            }
+        }
+
+        StyledText {
+            Layout.topMargin: -parent.spacing - 2
+            Layout.alignment: Qt.AlignHCenter
+            text: Time.minuteStr
+            font: root.font.width(Math.min(120, Math.max(hourMetrics.width, minMetrics.width) / minMetrics.width * 100)).build()
+            color: root.colour
+
+            TextMetrics {
+                id: minMetrics
+
+                font: root.font.build()
+                text: Time.minuteStr
+            }
+        }
+
+        Loader {
+            Layout.topMargin: -parent.spacing - 1
+            Layout.alignment: Qt.AlignHCenter
+            asynchronous: true
+            active: GlobalConfig.services.useTwelveHourClock
+            visible: active
+
+            sourceComponent: StyledText {
+                text: Time.amPmStr.toLowerCase()
+                font: Tokens.font.body.builders.small.scale(0.9).build()
+                color: root.colour
+            }
         }
     }
 }

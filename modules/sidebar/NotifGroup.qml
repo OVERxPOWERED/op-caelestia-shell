@@ -113,7 +113,7 @@ StyledRect {
                 MaterialIcon {
                     text: Icons.getNotifIcon(root.activeNotifs[0]?.summary, root.urgency)
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                    fontStyle: Tokens.font.icon.large
+                    fontStyle: Tokens.font.icon.medium
                 }
             }
 
@@ -125,6 +125,7 @@ StyledRect {
                 Loader {
                     asynchronous: true
                     anchors.centerIn: parent
+                    anchors.verticalCenterOffset: sourceComponent === materialIconComp ? 1 : 0
                     sourceComponent: root.image ? imageComp : root.appIcon ? appIconComp : materialIconComp
                 }
             }
@@ -168,13 +169,13 @@ StyledRect {
 
                 anchors.left: parent.left
                 anchors.right: parent.right
-                spacing: Tokens.spacing.medium
+                spacing: Tokens.spacing.small
 
                 StyledText {
                     Layout.fillWidth: true
                     text: root.modelData
                     color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.title.small
+                    font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }
 
@@ -182,7 +183,7 @@ StyledRect {
                     animate: true
                     text: root.activeNotifs[0]?.timeStr ?? ""
                     color: Colours.palette.m3outline
-                    font: Tokens.font.title.small
+                    font: Tokens.font.body.small
                 }
 
                 StyledRect {
@@ -209,14 +210,14 @@ StyledRect {
                             Layout.leftMargin: Tokens.padding.extraSmall / 2
                             animate: true
                             text: root.notifCount
-                            color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurface
-                            font: Tokens.font.label.small
+                            color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurfaceVariant
+                            font: Tokens.font.body.small
                         }
 
                         MaterialIcon {
                             Layout.rightMargin: -Tokens.padding.extraSmall / 2
                             text: "expand_more"
-                            color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurface
+                            color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurfaceVariant
                             rotation: root.expanded ? 180 : 0
                             Layout.topMargin: root.expanded ? -Math.floor(Tokens.padding.extraSmall) : 0
 

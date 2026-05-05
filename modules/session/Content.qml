@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Caelestia.Config
 import qs.components
+import qs.components.controls
 import qs.services
 import qs.utils
 
@@ -13,7 +14,7 @@ Column {
     required property DrawerVisibilities visibilities
 
     padding: Tokens.padding.large
-    spacing: Tokens.spacing.largeIncreased
+    spacing: Tokens.spacing.large
 
     SessionButton {
         id: logout
@@ -76,17 +77,19 @@ Column {
         KeyNavigation.up: hibernate
     }
 
-    component SessionButton: StyledRect {
+    component SessionButton: IconButton {
         id: button
 
-        required property string icon
         required property list<string> command
 
         implicitWidth: Tokens.sizes.session.button
         implicitHeight: Tokens.sizes.session.button
 
-        radius: Tokens.rounding.extraLarge
-        color: button.activeFocus ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
+        inactiveColour: activeFocus ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
+        inactiveOnColour: activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+        radius: pressed ? Tokens.rounding.medium : activeFocus ? Tokens.rounding.extraLarge : Tokens.rounding.largeIncreased
+        font: Tokens.font.icon.builders.large.scale(1.3).build()
+        onClicked: Quickshell.execDetached(button.command)
 
         Keys.onEnterPressed: Quickshell.execDetached(button.command)
         Keys.onReturnPressed: Quickshell.execDetached(button.command)
@@ -112,20 +115,6 @@ Column {
                     event.accepted = true;
                 }
             }
-        }
-
-        StateLayer {
-            radius: parent.radius
-            color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-            onClicked: Quickshell.execDetached(button.command)
-        }
-
-        MaterialIcon {
-            anchors.centerIn: parent
-
-            text: button.icon
-            color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-            fontStyle: Tokens.font.icon.size(Tokens.font.icon.extraLarge.pointSize).weight(Font.Medium).build()
         }
     }
 }

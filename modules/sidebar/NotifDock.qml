@@ -184,9 +184,7 @@ Item {
             id: clearBtn
 
             icon: "clear_all"
-            radius: Tokens.rounding.large
-            padding: Tokens.padding.medium
-            font: Tokens.font.icon.builders.large.scale(1.2).build()
+            font: Tokens.font.icon.large
             onClicked: clearTimer.start()
 
             Elevation {
@@ -206,7 +204,6 @@ Item {
         Behavior on opacity {
             Anim {
                 type: Anim.DefaultEffects
-                duration: Tokens.anim.durations.expressiveFastSpatial
             }
         }
     }

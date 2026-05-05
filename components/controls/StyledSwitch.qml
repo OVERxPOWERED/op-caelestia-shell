@@ -21,7 +21,7 @@ Switch {
         implicitHeight: Tokens.font.body.medium.pointSize + Tokens.padding.small * 2
 
         StyledRect {
-            readonly property real nonAnimWidth: root.pressed ? implicitHeight * 1.3 : implicitHeight
+            readonly property real nonAnimWidth: root.pressed ? implicitHeight * 1.2 : implicitHeight
 
             radius: Tokens.rounding.full
             color: root.checked ? Colours.palette.m3onPrimary : Colours.layer(Colours.palette.m3outline, root.cLayer + 1)
@@ -85,7 +85,7 @@ Switch {
 
                 anchors.centerIn: parent
                 width: height
-                height: parent.implicitHeight - Tokens.padding.small
+                height: parent.implicitHeight - Tokens.padding.medium
                 preferredRendererType: Shape.CurveRenderer
                 asynchronous: true
 
@@ -131,11 +131,15 @@ Switch {
             }
 
             Behavior on x {
-                Anim {}
+                Anim {
+                    type: Anim.FastSpatial
+                }
             }
 
             Behavior on implicitWidth {
-                Anim {}
+                Anim {
+                    type: Anim.FastSpatial
+                }
             }
         }
     }
@@ -147,7 +151,7 @@ Switch {
     }
 
     component PropAnim: PropertyAnimation {
-        duration: Tokens.anim.durations.normal
-        easing: Tokens.anim.standard
+        duration: Tokens.anim.durations.expressiveFastSpatial
+        easing: Tokens.anim.expressiveFastSpatial
     }
 }

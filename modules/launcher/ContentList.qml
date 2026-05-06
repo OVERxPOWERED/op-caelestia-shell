@@ -154,18 +154,12 @@ Item {
     Behavior on implicitWidth {
         enabled: root.visibilities.launcher
 
-        Anim {
-            duration: Tokens.anim.durations.large
-            easing: Tokens.anim.emphasizedDecel
-        }
+        Anim {}
     }
 
     Behavior on implicitHeight {
         enabled: root.visibilities.launcher
 
-        Anim {
-            duration: Tokens.anim.durations.large
-            easing: Tokens.anim.emphasizedDecel
-        }
+        Anim {}
     }
 }

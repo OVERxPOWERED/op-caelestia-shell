@@ -18,7 +18,7 @@ Item {
 
     readonly property alias count: bar.count
 
-    implicitHeight: bar.implicitHeight + indicator.implicitHeight + indicator.anchors.topMargin + separator.implicitHeight
+    implicitHeight: bar.implicitHeight + bar.anchors.topMargin + indicator.implicitHeight + indicator.anchors.topMargin + separator.implicitHeight
 
     TabBar {
         id: bar
@@ -26,6 +26,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
+        anchors.topMargin: Tokens.sizes.dashboard.tabIndicatorSpacing
 
         currentIndex: root.dashState.currentTab
         onCurrentIndexChanged: root.dashState.currentTab = currentIndex

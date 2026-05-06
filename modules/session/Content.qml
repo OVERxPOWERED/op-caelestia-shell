@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -14,6 +15,7 @@ Column {
     required property DrawerVisibilities visibilities
 
     padding: Tokens.padding.large
+    rightPadding: CUtils.clamp(padding - Config.border.thickness, 0, padding)
     spacing: Tokens.spacing.large
 
     SessionButton {

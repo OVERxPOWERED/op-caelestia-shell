@@ -8,8 +8,10 @@ import qs.services
 StyledRect {
     id: root
 
+    readonly property real nonAnimHeight: layout.implicitHeight + (IdleInhibitor.enabled ? activeChip.implicitHeight + activeChip.anchors.topMargin : 0) + Tokens.padding.extraLargeIncreased
+
     Layout.fillWidth: true
-    implicitHeight: layout.implicitHeight + (IdleInhibitor.enabled ? activeChip.implicitHeight + activeChip.anchors.topMargin : 0) + Tokens.padding.extraLargeIncreased
+    implicitHeight: nonAnimHeight
 
     radius: Tokens.rounding.large
     color: Colours.tPalette.m3surfaceContainer

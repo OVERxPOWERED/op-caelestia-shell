@@ -12,6 +12,7 @@ StyledRect {
 
     required property var props
     required property DrawerVisibilities visibilities
+    readonly property real nonAnimHeight: btnLayout.implicitHeight + listOrControls.implicitHeight + layout.spacing + layout.anchors.margins * 2
 
     Layout.fillWidth: true
     implicitHeight: layout.implicitHeight + layout.anchors.margins * 2
@@ -27,8 +28,9 @@ StyledRect {
         spacing: Tokens.spacing.medium
 
         RowLayout {
+            id: btnLayout
+
             spacing: Tokens.spacing.medium
-            z: 1
 
             StyledRect {
                 implicitWidth: implicitHeight

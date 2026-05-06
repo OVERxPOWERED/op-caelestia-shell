@@ -6,6 +6,7 @@ import qs.components
 import qs.components.containers
 import qs.components.widgets
 import qs.services
+import qs.modules.utilities as Utilities
 
 Item {
     id: root
@@ -13,6 +14,7 @@ Item {
     required property DrawerVisibilities visibilities
     required property Item osdPanel
     required property Item sessionPanel
+    required property Item utilitiesPanel
     readonly property int padding: Tokens.padding.large
 
     anchors.top: parent.top
@@ -30,13 +32,19 @@ Item {
             height += (list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0;
 
         if (visibilities.osd) {
-            const h = osdPanel.y - Config.border.rounding * 2 - padding * 2;
+            const h = osdPanel.y - padding;
             if (height > h)
                 height = h;
         }
 
         if (visibilities.session) {
-            const h = sessionPanel.y - Config.border.rounding * 2 - padding * 2;
+            const h = sessionPanel.y - padding;
+            if (height > h)
+                height = h;
+        }
+
+        if (visibilities.utilities) {
+            const h = ((QsWindow.window as QsWindow)?.screen.height ?? 0) - (utilitiesPanel as Utilities.Wrapper).nonAnimHeight - Config.border.thickness * 2 - padding * 2 - Tokens.spacing.extraLarge;
             if (height > h)
                 height = h;
         }

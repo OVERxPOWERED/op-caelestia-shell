@@ -68,6 +68,7 @@ Item {
         sidebarPanel: sidebar
         osdPanel: osdWrapper
         sessionPanel: sessionWrapper
+        utilitiesPanel: utilities
 
         anchors.top: parent.top
         anchors.right: parent.right

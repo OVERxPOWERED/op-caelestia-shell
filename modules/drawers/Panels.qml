@@ -149,5 +149,6 @@ Item {
         anchors.top: notifications.bottom
         anchors.bottom: utilities.top
         anchors.right: parent.right
+        anchors.topMargin: -notifications.anchors.topMargin
     }
 }

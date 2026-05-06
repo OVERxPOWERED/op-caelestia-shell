@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import Caelestia
 import Caelestia.Config
 import qs.components
 
@@ -28,13 +29,14 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.margins: Tokens.padding.large
+        anchors.leftMargin: Tokens.padding.large
+        anchors.margins: CUtils.clamp(anchors.leftMargin - Config.border.thickness, 0, anchors.leftMargin)
         anchors.bottomMargin: 0
 
         active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
-            implicitWidth: Tokens.sizes.sidebar.width - Tokens.padding.extraLargeIncreased
+            implicitWidth: Tokens.sizes.sidebar.width - content.anchors.leftMargin - content.anchors.margins
             props: root.props
             visibilities: root.visibilities
         }

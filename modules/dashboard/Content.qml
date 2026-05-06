@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
+import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.filedialog
@@ -57,7 +58,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: Math.min(anchors.margins, Math.max(0, anchors.margins - Config.border.thickness))
+        anchors.topMargin: CUtils.clamp(anchors.margins - Config.border.thickness, 0, anchors.margins)
         anchors.margins: Tokens.padding.large
 
         nonAnimWidth: root.nonAnimWidth - anchors.margins * 2

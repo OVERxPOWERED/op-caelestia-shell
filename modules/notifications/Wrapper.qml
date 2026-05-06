@@ -18,6 +18,7 @@ Item {
     Content {
         id: content
 
+        anchors.topMargin: -root.anchors.topMargin
         visibilities: root.visibilities
     }
 }

@@ -24,10 +24,10 @@ StyledRect {
 
     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.large
-    implicitWidth: Tokens.sizes.notifs.width
+
     implicitHeight: inner.implicitHeight
 
-    x: Tokens.sizes.notifs.width
+    x: implicitWidth
     Component.onCompleted: {
         x = 0;
         modelData.lock(this);
@@ -68,7 +68,7 @@ StyledRect {
             if (!containsMouse)
                 root.modelData.timer.start();
 
-            if (Math.abs(root.x) < Tokens.sizes.notifs.width * Config.notifs.clearThreshold)
+            if (Math.abs(root.x) < root.implicitWidth * Config.notifs.clearThreshold)
                 root.x = 0;
             else
                 root.modelData.popup = false;

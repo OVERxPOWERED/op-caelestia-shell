@@ -1,6 +1,9 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Quickshell
 import Quickshell.Widgets
+import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.containers
@@ -16,12 +19,13 @@ Item {
     required property Item sessionPanel
     required property Item utilitiesPanel
     readonly property int padding: Tokens.padding.large
+    readonly property int clampedPadding: CUtils.clamp(padding - Config.border.thickness, 0, padding)
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
 
-    implicitWidth: Tokens.sizes.notifs.width + padding * 2
+    implicitWidth: Tokens.sizes.notifs.width
     implicitHeight: {
         const count = list.count;
         if (count === 0)
@@ -32,13 +36,13 @@ Item {
             height += (list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0;
 
         if (visibilities.osd) {
-            const h = osdPanel.y - padding;
+            const h = osdPanel.y - clampedPadding;
             if (height > h)
                 height = h;
         }
 
         if (visibilities.session) {
-            const h = sessionPanel.y - padding;
+            const h = sessionPanel.y - clampedPadding;
             if (height > h)
                 height = h;
         }
@@ -49,12 +53,14 @@ Item {
                 height = h;
         }
 
-        return Math.min(((QsWindow.window as QsWindow)?.screen?.height ?? 0) - Config.border.thickness * 2, height + padding * 2);
+        return Math.min(((QsWindow.window as QsWindow)?.screen?.height ?? 0) + padding - clampedPadding * 2 - Config.border.thickness, height + padding + clampedPadding);
     }
 
     ClippingWrapperRectangle {
         anchors.fill: parent
         anchors.margins: root.padding
+        anchors.topMargin: root.clampedPadding
+        anchors.rightMargin: root.clampedPadding
 
         color: "transparent"
         radius: Tokens.rounding.large
@@ -178,7 +184,7 @@ Item {
             Anim {
                 target: notif
                 property: "x"
-                to: (notif.x >= 0 ? wrapper.Tokens.sizes.notifs.width : -wrapper.Tokens.sizes.notifs.width) * 2
+                to: (notif.x >= 0 ? root.implicitWidth : -root.implicitWidth) * 2
                 duration: Tokens.anim.durations.normal
                 easing: Tokens.anim.emphasized
             }
@@ -202,6 +208,7 @@ Item {
                 id: notif
 
                 modelData: wrapper.modelData
+                implicitWidth: root.implicitWidth - root.padding - root.clampedPadding
             }
         }
     }

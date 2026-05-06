@@ -57,7 +57,10 @@ StyledRect {
         StyledText {
             Layout.alignment: Qt.AlignHCenter
             text: Time.hourStr
-            font: root.font.width(Math.min(120, Math.max(hourMetrics.width, minMetrics.width) / hourMetrics.width * 100)).build()
+            font: {
+                const scale = text === "11" ? 1.15 : Math.min(1.05, Math.max(hourMetrics.width, minMetrics.width) / hourMetrics.width);
+                return root.font.width(scale * 100).letterSpacing(scale).build();
+            }
             color: root.colour
 
             TextMetrics {
@@ -69,10 +72,13 @@ StyledRect {
         }
 
         StyledText {
-            Layout.topMargin: -parent.spacing - 2
+            Layout.topMargin: -parent.spacing - 4
             Layout.alignment: Qt.AlignHCenter
             text: Time.minuteStr
-            font: root.font.width(Math.min(120, Math.max(hourMetrics.width, minMetrics.width) / minMetrics.width * 100)).build()
+            font: {
+                const scale = text === "11" ? 1.15 : Math.min(1.05, Math.max(hourMetrics.width, minMetrics.width) / minMetrics.width);
+                return root.font.width(scale * 100).letterSpacing(scale).build();
+            }
             color: root.colour
 
             TextMetrics {
@@ -84,7 +90,7 @@ StyledRect {
         }
 
         Loader {
-            Layout.topMargin: -parent.spacing - 1
+            Layout.topMargin: -parent.spacing - 4
             Layout.alignment: Qt.AlignHCenter
             asynchronous: true
             active: GlobalConfig.services.useTwelveHourClock

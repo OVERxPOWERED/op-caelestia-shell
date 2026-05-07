@@ -25,6 +25,7 @@ Item {
 
     readonly property real fadeAmount: 0.1
     property bool flag
+    property list<string> lyricList: Lyrics.lyrics
 
     layer.enabled: true
     layer.effect: Mask {
@@ -236,7 +237,7 @@ Item {
         displayMarginBeginning: anchors.topMargin
         displayMarginEnd: anchors.bottomMargin
 
-        model: Lyrics.lyrics
+        model: root.lyricList
         Component.onCompleted: {
             currentIndex = Qt.binding(() => {
                 model; // Force update when lyrics change
@@ -285,26 +286,26 @@ Item {
             }
         }
 
-        Behavior on model {
-            SequentialAnimation {
-                Anim {
-                    target: lyrics
-                    property: "opacity"
-                    to: 0
-                    type: Anim.DefaultEffects
-                }
-                PropertyAction {}
-                Anim {
-                    target: lyrics
-                    property: "opacity"
-                    to: 1
-                    type: Anim.SlowEffects
-                }
-            }
-        }
-
         Behavior on opacity {
             Anim {
+                type: Anim.SlowEffects
+            }
+        }
+    }
+
+    Behavior on lyricList {
+        SequentialAnimation {
+            Anim {
+                target: lyrics
+                property: "opacity"
+                to: 0
+                type: Anim.DefaultEffects
+            }
+            PropertyAction {}
+            Anim {
+                target: lyrics
+                property: "opacity"
+                to: 1
                 type: Anim.SlowEffects
             }
         }

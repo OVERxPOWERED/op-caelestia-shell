@@ -129,7 +129,7 @@ Item {
         anchors.topMargin: Tokens.spacing.medium
         anchors.margins: Tokens.padding.large
 
-        spacing: Tokens.spacing.small
+        spacing: Tokens.spacing.extraSmall
 
         IconButton {
             type: IconButton.Tonal

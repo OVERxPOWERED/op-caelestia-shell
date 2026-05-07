@@ -3,8 +3,10 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Caelestia.Components
 import Caelestia.Config
 import qs.components
+import qs.components.controls
 import qs.components.effects
 import qs.services
 
@@ -72,14 +74,14 @@ Item {
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Tokens.padding.large
+        anchors.margins: Tokens.padding.medium
 
         StyledText {
-            Layout.topMargin: Tokens.padding.large
+            Layout.topMargin: Tokens.padding.medium
             Layout.bottomMargin: Tokens.spacing.large
             text: qsTr("Now playing")
             color: Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.mono.builders.small.weight(Font.Medium).build()
+            font: Tokens.font.label.builders.medium.weight(Font.DemiBold).vaxis("slnt", -4).build()
         }
 
         StyledText {
@@ -88,7 +90,7 @@ Item {
             text: Players.active?.trackArtist ?? qsTr("No media")
             color: Colours.palette.m3primary
             horizontalAlignment: Text.AlignHCenter
-            font: Tokens.font.mono.builders.large.weight(Font.DemiBold).build()
+            font: Tokens.font.body.builders.large.weight(Font.DemiBold).build()
             elide: Text.ElideRight
         }
 
@@ -97,103 +99,43 @@ Item {
             animate: true
             text: Players.active?.trackTitle ?? qsTr("No media")
             horizontalAlignment: Text.AlignHCenter
-            font: Tokens.font.mono.large
+            font: Tokens.font.title.medium
             elide: Text.ElideRight
         }
 
-        RowLayout {
+        ButtonRow {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Tokens.spacing.largeIncreased * 1.2
-            Layout.bottomMargin: Tokens.padding.large
+            Layout.topMargin: Tokens.spacing.medium
+            Layout.bottomMargin: Tokens.padding.extraLarge
 
-            spacing: Tokens.spacing.largeIncreased
+            spacing: Tokens.spacing.extraSmall
 
-            PlayerControl {
+            IconButton {
+                type: IconButton.Tonal
                 icon: "skip_previous"
-                onClicked: {
-                    if (Players.active?.canGoPrevious)
-                        Players.active.previous();
-                }
+                isRound: true
+                shapeMorph: true
+                disabled: !Players.active?.canGoPrevious
+                onClicked: Players.active?.previous()
             }
 
-            PlayerControl {
-                animate: true
-                icon: active ? "pause" : "play_arrow"
-                colour: "Primary"
-                level: active ? 2 : 1
-                active: Players.active?.isPlaying ?? false
-                onClicked: {
-                    if (Players.active?.canTogglePlaying)
-                        Players.active.togglePlaying();
-                }
+            IconButton {
+                icon: Players.active?.isPlaying ? "pause" : "play_arrow"
+                isRound: true
+                shapeMorph: true
+                checked: Players.active?.isPlaying ?? false
+                disabled: !Players.active?.canTogglePlaying
+                onClicked: Players.active?.togglePlaying()
+                implicitWidth: implicitHeight + Tokens.padding.large * 2
             }
 
-            PlayerControl {
+            IconButton {
+                type: IconButton.Tonal
                 icon: "skip_next"
-                onClicked: {
-                    if (Players.active?.canGoNext)
-                        Players.active.next();
-                }
-            }
-        }
-    }
-
-    component PlayerControl: StyledRect {
-        id: control
-
-        property alias animate: controlIcon.animate
-        property alias icon: controlIcon.text
-        property bool active
-        property string colour: "Secondary"
-        property int level: 1
-
-        signal clicked
-
-        Layout.preferredWidth: implicitWidth + (controlState.pressed ? Tokens.padding.medium * 2 : active ? Tokens.padding.small : 0)
-        implicitWidth: controlIcon.implicitWidth + Tokens.padding.extraLargeIncreased
-        implicitHeight: controlIcon.implicitHeight + Tokens.padding.medium * 2
-
-        color: active ? Colours.palette[`m3${colour.toLowerCase()}`] : Colours.palette[`m3${colour.toLowerCase()}Container`]
-        radius: active || controlState.pressed ? Tokens.rounding.large : Math.min(implicitWidth, implicitHeight) / 2 * Math.min(1, Tokens.rounding.scale)
-
-        Elevation {
-            anchors.fill: parent
-            radius: parent.radius
-            z: -1
-            level: controlState.containsMouse && !controlState.pressed ? control.level + 1 : control.level
-        }
-
-        StateLayer {
-            id: controlState
-
-            color: control.active ? Colours.palette[`m3on${control.colour}`] : Colours.palette[`m3on${control.colour}Container`]
-            onClicked: control.clicked()
-        }
-
-        MaterialIcon {
-            id: controlIcon
-
-            anchors.centerIn: parent
-            color: control.active ? Colours.palette[`m3on${control.colour}`] : Colours.palette[`m3on${control.colour}Container`]
-            fontStyle: Tokens.font.icon.large
-            fill: control.active ? 1 : 0
-
-            Behavior on fill {
-                Anim {
-                    type: Anim.DefaultEffects
-                }
-            }
-        }
-
-        Behavior on Layout.preferredWidth {
-            Anim {
-                type: Anim.FastSpatial
-            }
-        }
-
-        Behavior on radius {
-            Anim {
-                type: Anim.FastSpatial
+                isRound: true
+                shapeMorph: true
+                disabled: !Players.active?.canGoNext
+                onClicked: Players.active?.next()
             }
         }
     }

@@ -31,7 +31,7 @@ Item {
         }
 
         layer.enabled: true
-        layer.effect: OpacityMask {
+        layer.effect: Mask {
             maskSource: mask
         }
 

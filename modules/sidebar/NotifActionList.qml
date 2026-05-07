@@ -20,7 +20,7 @@ Item {
 
     layer.enabled: true
     layer.smooth: true
-    layer.effect: OpacityMask {
+    layer.effect: Mask {
         maskSource: gradientMask
     }
 

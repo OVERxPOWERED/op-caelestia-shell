@@ -288,10 +288,12 @@ void BlobShape::updatePolish() {
     // Pre-compute effective per-corner radii (moves O(N²) work from GPU to CPU)
     const float smoothFactor = pad;
     constexpr float minR = 2.0f;
+    const bool cornerFill = m_group->cornerFill();
     const auto rectCount = m_cachedRects.size();
     for (qsizetype i = 0; i < rectCount; ++i) {
         auto& ri = m_cachedRects[i];
         const int riExcludeMask = ri.excludeMask;
+        BlobShape* const si = rectShapes[i];
         float fTr = 1.0f, fBr = 1.0f, fBl = 1.0f, fTl = 1.0f;
 
         const float cTrX = ri.cx + ri.hw, cTrY = ri.cy - ri.hh;
@@ -299,10 +301,13 @@ void BlobShape::updatePolish() {
         const float cBlX = ri.cx - ri.hw, cBlY = ri.cy + ri.hh;
         const float cTlX = ri.cx - ri.hw, cTlY = ri.cy - ri.hh;
 
-        for (qsizetype j = 0; j < rectCount; ++j) {
+        for (qsizetype j = 0; cornerFill && j < rectCount; ++j) {
             if (j == i)
                 continue;
             if (riExcludeMask & (1 << j))
+                continue;
+            BlobShape* const sj = rectShapes[j];
+            if (si->isCornerExcluded(sj) || sj->isCornerExcluded(si))
                 continue;
             const auto& rj = m_cachedRects[j];
             // Skip when the corner is inside rj: it's buried, not on a visible junction,
@@ -321,7 +326,7 @@ void BlobShape::updatePolish() {
                 fTl = std::min(fTl, cpuSmoothstep(0.0f, smoothFactor, sdTl));
         }
 
-        if (m_cachedHasInverted) {
+        if (cornerFill && m_cachedHasInverted) {
             const float icx = m_cachedInvertedInner[0];
             const float icy = m_cachedInvertedInner[1];
             const float ihw = m_cachedInvertedInner[2];

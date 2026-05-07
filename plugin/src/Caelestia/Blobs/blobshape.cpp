@@ -305,10 +305,20 @@ void BlobShape::updatePolish() {
             if (riExcludeMask & (1 << j))
                 continue;
             const auto& rj = m_cachedRects[j];
-            fTr = std::min(fTr, cpuSmoothstep(0.0f, smoothFactor, cpuSdBox(cTrX, cTrY, rj.cx, rj.cy, rj.hw, rj.hh)));
-            fBr = std::min(fBr, cpuSmoothstep(0.0f, smoothFactor, cpuSdBox(cBrX, cBrY, rj.cx, rj.cy, rj.hw, rj.hh)));
-            fBl = std::min(fBl, cpuSmoothstep(0.0f, smoothFactor, cpuSdBox(cBlX, cBlY, rj.cx, rj.cy, rj.hw, rj.hh)));
-            fTl = std::min(fTl, cpuSmoothstep(0.0f, smoothFactor, cpuSdBox(cTlX, cTlY, rj.cx, rj.cy, rj.hw, rj.hh)));
+            // Skip when the corner is inside rj: it's buried, not on a visible junction,
+            // so squaring it would only perturb interior SDF gradients.
+            const float sdTr = cpuSdBox(cTrX, cTrY, rj.cx, rj.cy, rj.hw, rj.hh);
+            const float sdBr = cpuSdBox(cBrX, cBrY, rj.cx, rj.cy, rj.hw, rj.hh);
+            const float sdBl = cpuSdBox(cBlX, cBlY, rj.cx, rj.cy, rj.hw, rj.hh);
+            const float sdTl = cpuSdBox(cTlX, cTlY, rj.cx, rj.cy, rj.hw, rj.hh);
+            if (sdTr >= 0.0f)
+                fTr = std::min(fTr, cpuSmoothstep(0.0f, smoothFactor, sdTr));
+            if (sdBr >= 0.0f)
+                fBr = std::min(fBr, cpuSmoothstep(0.0f, smoothFactor, sdBr));
+            if (sdBl >= 0.0f)
+                fBl = std::min(fBl, cpuSmoothstep(0.0f, smoothFactor, sdBl));
+            if (sdTl >= 0.0f)
+                fTl = std::min(fTl, cpuSmoothstep(0.0f, smoothFactor, sdTl));
         }
 
         if (m_cachedHasInverted) {

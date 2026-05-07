@@ -12,14 +12,15 @@ Item {
     property bool open
     readonly property real padding: Tokens.padding.large
 
-    implicitWidth: btn.implicitWidth
-    implicitHeight: btn.implicitHeight
+    implicitWidth: btn.implicitWidth * 0.9
+    implicitHeight: btn.implicitHeight * 0.9
 
     BlobGroup {
         id: blobGroup
 
         color: Colours.palette.m3surfaceContainerHighest
-        smoothing: 12
+        smoothing: 16
+        cornerFill: false
 
         Behavior on color {
             CAnim {}
@@ -32,7 +33,7 @@ Item {
         anchors.fill: parent
         anchors.margins: !btn.pressed && btn.containsMouse ? -Tokens.padding.extraSmall : 0
         group: blobGroup
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.medium
 
         Behavior on anchors.margins {
             Anim {}
@@ -42,13 +43,14 @@ Item {
     BlobRect {
         id: rect
 
-        x: (btnRect.width - implicitWidth) * 0.7
-        y: (btnRect.height - implicitHeight) * 0.3
-        implicitWidth: btnRect.width * 0.4
-        implicitHeight: btnRect.height * 0.4
+        anchors.right: parent.right
+        anchors.top: parent.top
+
+        implicitWidth: parent.width
+        implicitHeight: parent.height
 
         group: blobGroup
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.medium
         deformScale: 0.00001
 
         states: State {
@@ -56,8 +58,8 @@ Item {
             when: root.open
 
             PropertyChanges {
-                rect.x: -(layout.implicitWidth + root.padding + root.Tokens.padding.medium)
-                rect.y: -root.Tokens.padding.medium
+                rect.anchors.rightMargin: root.width - root.Tokens.spacing.small
+                rect.anchors.topMargin: -root.Tokens.padding.medium
                 rect.implicitWidth: Math.max(layout.implicitWidth, placeholder.implicitWidth) + root.padding * 2
                 rect.implicitHeight: Math.max(layout.implicitHeight, placeholder.implicitHeight) + root.padding * 2
                 content.opacity: 1
@@ -66,10 +68,10 @@ Item {
 
         transitions: Transition {
             Anim {
-                properties: "x,implicitWidth"
+                properties: "rightMargin,implicitWidth"
             }
             Anim {
-                properties: "y,implicitHeight"
+                properties: "topMargin,implicitHeight"
                 easing: root.Tokens.anim.expressiveFastSpatial
             }
             Anim {
@@ -78,27 +80,11 @@ Item {
             }
         }
 
-        Behavior on x {
-            enabled: root.open
-
-            Anim {}
-        }
-
-        Behavior on y {
-            enabled: root.open
-
-            Anim {}
-        }
-
         Behavior on implicitWidth {
-            enabled: root.open
-
             Anim {}
         }
 
         Behavior on implicitHeight {
-            enabled: root.open
-
             Anim {}
         }
 
@@ -204,6 +190,7 @@ Item {
     MouseArea {
         id: btn
 
+        anchors.centerIn: parent
         implicitWidth: implicitHeight
         implicitHeight: icon.implicitHeight + Tokens.padding.extraSmall * 2
         cursorShape: Qt.PointingHandCursor

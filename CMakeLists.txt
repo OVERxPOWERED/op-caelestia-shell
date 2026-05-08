@@ -82,4 +82,9 @@ if("plugin" IN_LIST ENABLE_MODULES OR "shell" IN_LIST ENABLE_MODULES)
     )
     FetchContent_MakeAvailable(m3shapes_external)
     message(STATUS "Done fetching M3Shapes module")
+
+    # Fix m3shapes wrong rpath
+    if(TARGET m3shapesplugin)
+        set_target_properties(m3shapesplugin PROPERTIES INSTALL_RPATH "$ORIGIN")
+    endif()
 endif()

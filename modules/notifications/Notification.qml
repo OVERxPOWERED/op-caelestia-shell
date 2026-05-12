@@ -352,6 +352,7 @@ StyledRect {
 
                 anchors.right: parent.right
                 anchors.top: parent.top
+                anchors.topMargin: -Tokens.padding.extraSmall
 
                 implicitWidth: expandIcon.implicitHeight
                 implicitHeight: expandIcon.implicitHeight
@@ -366,9 +367,14 @@ StyledRect {
                     id: expandIcon
 
                     anchors.centerIn: parent
+                    anchors.verticalCenterOffset: root.expanded ? -1 : 1
                     text: "expand_more"
                     fontStyle: Tokens.font.icon.medium
                     rotation: root.expanded ? 180 : 0
+
+                    Behavior on anchors.verticalCenterOffset {
+                        Anim {}
+                    }
 
                     Behavior on rotation {
                         Anim {}

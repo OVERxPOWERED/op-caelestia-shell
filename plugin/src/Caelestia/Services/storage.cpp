@@ -207,6 +207,18 @@ void Storage::tick() {
     const qreal prevPercentage = percentage();
     QHash<QString, Accum> byDisk;
 
+    // Multiple mounts can share a single backing filesystem (btrfs subvolumes,
+    // bind mounts, etc.) and each one reports identical bytesTotal/bytesAvailable.
+    // Dedupe by source device so the filesystem only contributes once per disk.
+    struct DeviceEntry {
+        quint64 totalBytes = 0;
+        quint64 usedBytes = 0;
+        bool hasRoot = false;
+        QByteArray device;
+    };
+
+    QHash<QByteArray, DeviceEntry> byDevice;
+
     const auto mountedVols = QStorageInfo::mountedVolumes();
     for (const QStorageInfo& v : mountedVols) {
         if (!v.isReady() || !v.isValid() || v.bytesTotal() <= 0) {
@@ -216,24 +228,33 @@ void Storage::tick() {
             continue;
         }
 
-        const QStringList disks = resolveToPhysicalDisks(QString::fromLocal8Bit(v.device()));
-        if (disks.isEmpty()) {
-            continue;
-        }
-
+        const QByteArray device = v.device();
         const auto totalBytes = static_cast<quint64>(v.bytesTotal());
         const auto availBytes = static_cast<quint64>(v.bytesAvailable());
         const quint64 usedBytes = totalBytes > availBytes ? totalBytes - availBytes : 0;
         const bool isRoot = v.rootPath() == QStringLiteral("/");
 
+        DeviceEntry& e = byDevice[device];
+        e.device = device;
+        e.totalBytes = totalBytes;
+        e.usedBytes = usedBytes;
+        e.hasRoot = e.hasRoot || isRoot;
+    }
+
+    for (auto it = byDevice.constBegin(); it != byDevice.constEnd(); ++it) {
+        const DeviceEntry& e = it.value();
+        const QStringList disks = resolveToPhysicalDisks(QString::fromLocal8Bit(e.device));
+        if (disks.isEmpty()) {
+            continue;
+        }
         for (const QString& d : disks) {
             if (d.startsWith(QStringLiteral("zram"))) {
                 continue;
             }
             Accum& a = byDisk[d];
-            a.usedBytes += usedBytes;
-            a.totalBytes += totalBytes;
-            a.hasRoot = a.hasRoot || isRoot;
+            a.usedBytes += e.usedBytes;
+            a.totalBytes += e.totalBytes;
+            a.hasRoot = a.hasRoot || e.hasRoot;
         }
     }
 

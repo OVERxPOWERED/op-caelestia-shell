@@ -165,8 +165,7 @@ CustomMouseArea {
                         today = todayItem;
                 }
 
-                // I have no idea why it needs -1 but oh well
-                x: today ? today.x + (today.width - implicitWidth) / 2 - 1 : 0
+                x: today ? today.x + (today.width - implicitWidth) / 2 : 0
                 y: today ? today.y - Tokens.padding.extraSmall - 1 : 0
 
                 implicitSize: today ? Math.max(today.implicitWidth, today.implicitHeight) + Tokens.padding.extraSmall * 2 : 0

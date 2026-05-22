@@ -9,11 +9,17 @@ import qs.services
 StyledClippingRect {
     id: root
 
+    property real animPerc: UPower.displayDevice.percentage
+
     color: Colours.palette.m3secondaryContainer
     radius: Tokens.rounding.large
 
     implicitWidth: Config.dashboard.performance.showCpu || (Config.dashboard.performance.showGpu && Gpu.type !== Gpu.None) || Config.dashboard.performance.showStorage || Config.dashboard.performance.showMemory ? Tokens.sizes.dashboard.perfBattWidth : Tokens.sizes.dashboard.perfBattWidthSingle
     implicitHeight: Tokens.sizes.dashboard.perfBattHeight
+
+    Behavior on animPerc {
+        Anim {}
+    }
 
     Contents {
         id: layout
@@ -30,15 +36,11 @@ StyledClippingRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        implicitHeight: parent.height * UPower.displayDevice.percentage
+        implicitHeight: parent.height * root.animPerc
 
         color: Colours.palette.m3secondary
         radius: Tokens.rounding.extraSmall
         clip: true
-
-        Behavior on implicitHeight {
-            Anim {}
-        }
 
         Contents {
             anchors.left: parent.left

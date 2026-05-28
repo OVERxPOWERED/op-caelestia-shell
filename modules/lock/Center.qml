@@ -20,6 +20,7 @@ ColumnLayout {
 
     Clock {
         Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: Tokens.padding.large
         centerScale: root.centerScale
     }
 

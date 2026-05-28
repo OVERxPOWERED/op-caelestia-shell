@@ -1,11 +1,11 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.services
+import qs.modules.lock
 
 Item {
     id: root
@@ -13,9 +13,6 @@ Item {
     required property Pam pam
     readonly property alias placeholder: placeholder
     property string buffer
-
-    Layout.fillWidth: true
-    Layout.fillHeight: true
 
     clip: true
 

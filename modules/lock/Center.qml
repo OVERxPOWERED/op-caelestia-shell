@@ -22,58 +22,21 @@ ColumnLayout {
 
     spacing: Tokens.spacing.largeIncreased * 2
 
-    RowLayout {
+    Clock {
         Layout.alignment: Qt.AlignHCenter
-        spacing: Tokens.spacing.small
-
-        StyledText {
-            Layout.alignment: Qt.AlignVCenter
-            text: Time.hourStr
-            color: Colours.palette.m3secondary
-            font: Tokens.font.clock.size(Math.floor(28 * 3 * root.centerScale)).weight(Font.Bold).build()
-        }
-
-        StyledText {
-            Layout.alignment: Qt.AlignVCenter
-            text: ":"
-            color: Colours.palette.m3primary
-            font: Tokens.font.clock.size(Math.floor(28 * 3 * root.centerScale)).weight(Font.Bold).build()
-        }
-
-        StyledText {
-            Layout.alignment: Qt.AlignVCenter
-            text: Time.minuteStr
-            color: Colours.palette.m3secondary
-            font: Tokens.font.clock.size(Math.floor(28 * 3 * root.centerScale)).weight(Font.Bold).build()
-        }
-
-        Loader {
-            asynchronous: true
-            Layout.leftMargin: Tokens.spacing.small
-            Layout.alignment: Qt.AlignVCenter
-
-            active: GlobalConfig.services.useTwelveHourClock
-            visible: active
-
-            sourceComponent: StyledText {
-                text: Time.amPmStr
-                color: Colours.palette.m3primary
-                font: Tokens.font.clock.size(Math.floor(28 * 2 * root.centerScale)).weight(Font.Bold).build()
-            }
-        }
+        centerScale: root.centerScale
     }
 
     StyledText {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: -Tokens.padding.extraLargeIncreased
+        Layout.topMargin: -Tokens.padding.largeIncreased
 
-        text: Time.format("dddd, d MMMM yyyy")
-        color: Colours.palette.m3tertiary
-        font: Tokens.font.mono.builders.large.size(Math.floor(28 * root.centerScale)).weight(Font.Bold).build()
+        text: Time.format("dddd • d MMM").toUpperCase()
+        color: Colours.palette.m3onSurface
+        font: Tokens.font.title.builders.medium.weight(Font.DemiBold).build()
     }
 
     StyledClippingRect {
-        Layout.topMargin: Tokens.spacing.largeIncreased * 2
         Layout.alignment: Qt.AlignHCenter
 
         implicitWidth: root.centerWidth / 2

@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Caelestia.Config
 import qs.components
@@ -39,7 +41,7 @@ Item {
 
         text: Time.minuteStr
         color: Colours.palette.m3secondary
-        font: Tokens.font.headline.builders.large.scale(3.8 * root.centerScale).width(30).build()
+        font: Tokens.font.headline.builders.large.scale((GlobalConfig.services.useTwelveHourClock ? 3.8 : 7) * root.centerScale).width(30).build()
 
         TextMetrics {
             id: minuteMetrics
@@ -49,37 +51,42 @@ Item {
         }
     }
 
-    StyledRect {
+    Loader {
         anchors.left: minutes.left
         anchors.leftMargin: minuteMetrics.tightBoundingRect.x
         y: hourMetrics.tightBoundingRect.height - implicitHeight
 
-        color: Colours.tPalette.m3surfaceContainerHigh
-        radius: Tokens.rounding.large
+        active: GlobalConfig.services.useTwelveHourClock
+        asynchronous: true
 
-        implicitWidth: minuteMetrics.tightBoundingRect.width
-        implicitHeight: amPmMetrics.tightBoundingRect.height + Tokens.padding.large * 2
+        sourceComponent: StyledRect {
+            color: Colours.tPalette.m3surfaceContainerHigh
+            radius: Tokens.rounding.large
 
-        StyledText {
-            id: amPm
+            implicitWidth: minuteMetrics.tightBoundingRect.width
+            implicitHeight: amPmMetrics.tightBoundingRect.height + Tokens.padding.large * 2
 
-            anchors.centerIn: parent
-            width: amPmMetrics.tightBoundingRect.width
-            height: amPmMetrics.tightBoundingRect.height
-            transform: Translate {
-                x: -amPmMetrics.tightBoundingRect.x
-                y: -root.calcTopOff(amPmMetrics)
-            }
+            StyledText {
+                id: amPm
 
-            text: Time.amPmStr
-            color: Colours.palette.m3onSurface
-            font: Tokens.font.headline.builders.small.scale(2 * root.centerScale).width(30).build()
+                anchors.centerIn: parent
+                width: amPmMetrics.tightBoundingRect.width
+                height: amPmMetrics.tightBoundingRect.height
+                transform: Translate {
+                    x: -amPmMetrics.tightBoundingRect.x
+                    y: -root.calcTopOff(amPmMetrics)
+                }
 
-            TextMetrics {
-                id: amPmMetrics
+                text: Time.amPmStr
+                color: Colours.palette.m3onSurface
+                font: Tokens.font.headline.builders.small.scale(2 * root.centerScale).width(30).build()
 
-                text: amPm.text
-                font: amPm.font
+                TextMetrics {
+                    id: amPmMetrics
+
+                    text: amPm.text
+                    font: amPm.font
+                }
             }
         }
     }

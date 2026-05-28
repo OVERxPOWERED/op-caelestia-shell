@@ -16,7 +16,7 @@ ColumnLayout {
     Layout.fillWidth: false
     Layout.fillHeight: true
 
-    spacing: Tokens.spacing.largeIncreased * 2
+    spacing: Tokens.spacing.largeIncreased
 
     Clock {
         Layout.alignment: Qt.AlignHCenter
@@ -25,7 +25,6 @@ ColumnLayout {
 
     StyledText {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: -Tokens.padding.largeIncreased
 
         text: Time.format("dddd • d MMM").toUpperCase()
         color: Colours.palette.m3onSurface
@@ -34,6 +33,8 @@ ColumnLayout {
 
     ProfilePic {
         Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: Tokens.spacing.largeIncreased
+        Layout.bottomMargin: Tokens.spacing.medium
         centerWidth: root.centerWidth
     }
 
@@ -45,7 +46,6 @@ ColumnLayout {
 
     StateMessage {
         Layout.fillWidth: true
-        Layout.topMargin: -Tokens.spacing.largeIncreased
         pam: root.lock.pam
     }
 }

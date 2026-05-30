@@ -40,19 +40,9 @@ RowLayout {
             Fetch {}
         }
 
-        StyledClippingRect {
+        Media {
             Layout.fillWidth: true
-            implicitHeight: media.implicitHeight
-
-            bottomLeftRadius: Tokens.rounding.extraLarge
-            radius: Tokens.rounding.medium
-            color: Colours.tPalette.m3surfaceContainer
-
-            Media {
-                id: media
-
-                lock: root.lock
-            }
+            lock: root.lock
         }
     }
 

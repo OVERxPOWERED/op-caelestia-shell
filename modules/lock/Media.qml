@@ -1,5 +1,3 @@
-pragma ComponentBehavior: Bound
-
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -7,17 +5,16 @@ import Caelestia.Components
 import Caelestia.Config
 import qs.components
 import qs.components.controls
-import qs.components.effects
 import qs.services
 
-Item {
+StyledClippingRect {
     id: root
 
     required property var lock
 
-    anchors.left: parent.left
-    anchors.right: parent.right
-    implicitHeight: layout.implicitHeight
+    implicitHeight: layout.implicitHeight + layout.anchors.margins * 2
+    radius: Tokens.rounding.extraLarge
+    color: Colours.tPalette.m3surfaceContainer
 
     Image {
         anchors.fill: parent
@@ -31,11 +28,13 @@ Item {
         }
 
         layer.enabled: true
-        layer.effect: Mask {
-            maskSource: mask
-        }
-
         opacity: status === Image.Ready ? 1 : 0
+
+        StyledRect {
+            anchors.fill: parent
+            color: Colours.palette.m3surface
+            opacity: 0.7
+        }
 
         Behavior on opacity {
             Anim {
@@ -44,69 +43,36 @@ Item {
         }
     }
 
-    Rectangle {
-        id: mask
-
-        anchors.fill: parent
-        layer.enabled: true
-        visible: false
-
-        gradient: Gradient {
-            orientation: Gradient.Horizontal
-
-            GradientStop {
-                position: 0
-                color: Qt.rgba(0, 0, 0, 0.5)
-            }
-            GradientStop {
-                position: 0.4
-                color: Qt.rgba(0, 0, 0, 0.2)
-            }
-            GradientStop {
-                position: 0.8
-                color: Qt.rgba(0, 0, 0, 0)
-            }
-        }
-    }
-
     ColumnLayout {
         id: layout
 
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: Tokens.padding.medium
-
-        StyledText {
-            Layout.topMargin: Tokens.padding.medium
-            Layout.bottomMargin: Tokens.spacing.large
-            text: qsTr("Now playing")
-            color: Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.label.builders.medium.weight(Font.DemiBold).vaxis("slnt", -4).build()
-        }
+        anchors.fill: parent
+        anchors.margins: Tokens.padding.extraLarge
+        spacing: Tokens.spacing.extraSmall
 
         StyledText {
             Layout.fillWidth: true
             animate: true
-            text: Players.active?.trackArtist ?? qsTr("No media")
+            text: (Players.active?.trackTitle ?? qsTr("Nothing playing")) || qsTr("Unknown track")
             color: Colours.palette.m3primary
             horizontalAlignment: Text.AlignHCenter
-            font: Tokens.font.body.builders.large.weight(Font.DemiBold).build()
+            font: Tokens.font.title.medium
             elide: Text.ElideRight
         }
 
         StyledText {
             Layout.fillWidth: true
             animate: true
-            text: Players.active?.trackTitle ?? qsTr("No media")
+            text: (Players.active?.trackArtist ?? qsTr("Try playing some music!")) || qsTr("Unknown artist")
+            color: Colours.palette.m3onSurfaceVariant
             horizontalAlignment: Text.AlignHCenter
-            font: Tokens.font.title.medium
+            font: Tokens.font.body.small
             elide: Text.ElideRight
         }
 
         ButtonRow {
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Tokens.spacing.medium
-            Layout.bottomMargin: Tokens.padding.extraLarge
 
             spacing: Tokens.spacing.extraSmall
 
@@ -126,7 +92,7 @@ Item {
                 checked: Players.active?.isPlaying ?? false
                 disabled: !Players.active?.canTogglePlaying
                 onClicked: Players.active?.togglePlaying()
-                implicitWidth: implicitHeight + Tokens.padding.large * 2
+                implicitWidth: implicitHeight + Tokens.padding.largeIncreased * 2
             }
 
             IconButton {

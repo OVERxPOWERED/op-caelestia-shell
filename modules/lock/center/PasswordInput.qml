@@ -47,8 +47,8 @@ StyledRect {
         spacing: Tokens.spacing.medium
 
         Item {
-            implicitWidth: implicitHeight
-            implicitHeight: fprintIcon.implicitHeight + Tokens.padding.small
+            Layout.fillHeight: true
+            implicitWidth: height
 
             MaterialIcon {
                 id: fprintIcon
@@ -72,9 +72,20 @@ StyledRect {
                 }
             }
 
-            CircularIndicator {
+            Loader {
                 anchors.fill: parent
-                running: root.lock.pam.passwd.active
+                anchors.margins: Tokens.padding.small
+
+                active: opacity > 0
+                opacity: root.lock.pam.passwd.active ? 1 : 0
+
+                sourceComponent: LoadingIndicator {}
+
+                Behavior on opacity {
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
+                }
             }
         }
 

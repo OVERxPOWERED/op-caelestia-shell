@@ -15,19 +15,9 @@ RowLayout {
         Layout.fillWidth: true
         spacing: Tokens.spacing.medium
 
-        StyledRect {
+        WeatherInfo {
             Layout.fillWidth: true
-            implicitHeight: weather.implicitHeight
-
-            topLeftRadius: Tokens.rounding.extraLarge
-            radius: Tokens.rounding.medium
-            color: Colours.tPalette.m3surfaceContainer
-
-            WeatherInfo {
-                id: weather
-
-                rootHeight: root.height
-            }
+            rootHeight: root.height
         }
 
         StyledRect {

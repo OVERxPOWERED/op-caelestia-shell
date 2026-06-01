@@ -17,8 +17,8 @@ Item {
 
     implicitWidth: Math.round(centerWidth * 0.7)
     implicitHeight: {
-        const bounds = shape.pathBounds();
-        return bounds.height - bounds.y;
+        shape.height; // Force update when shape height changes
+        return shape.pathBounds().height;
     }
 
     MaterialShape {

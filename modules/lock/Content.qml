@@ -44,17 +44,8 @@ RowLayout {
         Layout.fillWidth: true
         spacing: Tokens.spacing.medium
 
-        StyledRect {
+        Resources {
             Layout.fillWidth: true
-            implicitHeight: resources.implicitHeight
-
-            topRightRadius: Tokens.rounding.extraLarge
-            radius: Tokens.rounding.medium
-            color: Colours.tPalette.m3surfaceContainer
-
-            Resources {
-                id: resources
-            }
         }
 
         StyledRect {

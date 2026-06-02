@@ -202,7 +202,6 @@ Item {
         anchors.verticalCenterOffset: Math.round(fontInfo.pointSize * 0.1)
 
         text: "up " + SysInfo.uptime.split(",").slice(0, 2).join(",") // Max 2 components
-        font: Tokens.font.label.medium
         width: Tokens.sizes.dashboard.userWidth - x - Tokens.padding.extraLarge
         elide: Text.ElideRight
     }

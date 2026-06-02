@@ -329,8 +329,9 @@ class NexusTokens : public ConfigObject {
 
     CONFIG_PROPERTY(qreal, heightMult, 0.7)
     CONFIG_PROPERTY(qreal, ratio, 16.0 / 9.0)
-    CONFIG_PROPERTY(qreal, minWidth, 800)
-    CONFIG_PROPERTY(qreal, minHeight, 500)
+    CONFIG_PROPERTY(int, minWidth, 800)
+    CONFIG_PROPERTY(int, minHeight, 500)
+    CONFIG_PROPERTY(int, maxNavWidth, 600)
 
 public:
     explicit NexusTokens(QObject* parent = nullptr)

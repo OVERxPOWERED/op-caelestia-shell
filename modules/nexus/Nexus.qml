@@ -60,7 +60,8 @@ Item {
             inactiveOnColour: hovered ? nState.isWindow ? Colours.palette.m3error : Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
             stateLayer.opacity: 0
             onClicked: {
-                if (!nState.isWindow); // TODO: open floating window via factory
+                if (!nState.isWindow)
+                    WindowFactory.create();
                 root.close();
             }
 
@@ -74,7 +75,7 @@ Item {
     }
 
     NavPane {
-        id: navPane // TODO
+        id: navPane
 
         anchors.top: parent.top
         anchors.bottom: parent.bottom
@@ -82,6 +83,6 @@ Item {
         anchors.margins: Tokens.padding.large
 
         nState: nState
-        width: Math.round(root.width / 3)
+        width: Math.min(Tokens.sizes.nexus.maxNavWidth, Math.round(root.width / 3))
     }
 }

@@ -34,8 +34,8 @@ ColumnLayout {
 
     ProfilePic {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Tokens.spacing.largeIncreased
-        Layout.bottomMargin: Tokens.spacing.medium
+        Layout.topMargin: Tokens.spacing.extraExtraLarge * root.centerScale
+        Layout.bottomMargin: Tokens.spacing.extraLarge * root.centerScale
         centerWidth: root.centerWidth
     }
 

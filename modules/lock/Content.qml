@@ -20,18 +20,14 @@ RowLayout {
             rootHeight: root.height
         }
 
-        StyledRect {
+        Fetch {
             Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            radius: Tokens.rounding.medium
-            color: Colours.tPalette.m3surfaceContainer
-
-            Fetch {}
+            rootHeight: root.height
         }
 
         Media {
             Layout.fillWidth: true
+            Layout.fillHeight: true
             lock: root.lock
         }
     }

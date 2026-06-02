@@ -47,7 +47,9 @@ StyledClippingRect {
     ColumnLayout {
         id: layout
 
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
         anchors.margins: Tokens.padding.extraLarge
         spacing: Tokens.spacing.extraSmall
 

@@ -37,7 +37,7 @@ DeviceDetails {
     sections: [
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 SectionHeader {
                     title: qsTr("Connection status")
@@ -91,12 +91,12 @@ DeviceDetails {
 
                     RowLayout {
                         Layout.fillWidth: true
-                        Layout.topMargin: Tokens.spacing.normal
-                        spacing: Tokens.spacing.normal
+                        Layout.topMargin: Tokens.spacing.medium
+                        spacing: Tokens.spacing.medium
 
                         TextButton {
                             Layout.fillWidth: true
-                            Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.normal * 2
+                            Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.medium * 2
                             visible: root.providerEnabled
                             enabled: !VPN.connecting
                             inactiveColour: Colours.palette.m3primaryContainer
@@ -147,7 +147,7 @@ DeviceDetails {
 
                     TextButton {
                         Layout.fillWidth: true
-                        Layout.topMargin: Tokens.spacing.normal
+                        Layout.topMargin: Tokens.spacing.medium
                         visible: root.providerEnabled && VPN.status.state === "needs-auth" && VPN.status.authUrl !== ""
                         text: qsTr("Open Login Page")
                         inactiveColour: Colours.palette.m3tertiaryContainer
@@ -160,10 +160,10 @@ DeviceDetails {
 
                     StyledText {
                         Layout.fillWidth: true
-                        Layout.topMargin: Tokens.spacing.normal
+                        Layout.topMargin: Tokens.spacing.medium
                         visible: root.providerEnabled && VPN.status.state === "needs-auth" && VPN.status.authUrl === ""
                         text: qsTr("Click 'Connect' to generate authentication URL")
-                        font.pointSize: Tokens.font.size.small
+                        font: Tokens.font.body.small
                         color: Colours.palette.m3onSurfaceVariant
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
@@ -173,7 +173,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 SectionHeader {
                     title: qsTr("Provider details")
@@ -181,7 +181,7 @@ DeviceDetails {
                 }
 
                 SectionContainer {
-                    contentSpacing: Tokens.spacing.small / 2
+                    contentSpacing: Tokens.spacing.extraSmall
 
                     PropertyRow {
                         label: qsTr("Provider")
@@ -260,7 +260,7 @@ DeviceDetails {
 
         parent: Overlay.overlay
         anchors.centerIn: parent
-        width: Math.min(400, parent.width - Tokens.padding.large * 2)
+        width: Math.min(400, parent.width - Tokens.padding.extraLargeIncreased)
         padding: Tokens.padding.large * 1.5
 
         modal: true
@@ -305,7 +305,7 @@ DeviceDetails {
 
         background: StyledRect {
             color: Colours.palette.m3surfaceContainerHigh
-            radius: Tokens.rounding.large
+            radius: Tokens.rounding.extraLarge
 
             Elevation {
                 anchors.fill: parent
@@ -316,21 +316,20 @@ DeviceDetails {
         }
 
         contentItem: ColumnLayout {
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             StyledText {
                 text: qsTr("Edit VPN Provider")
-                font.pointSize: Tokens.font.size.large
-                font.weight: 500
+                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
             }
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.smaller / 2
+                spacing: Tokens.spacing.medium / 2
 
                 StyledText {
                     text: qsTr("Display Name")
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -338,7 +337,7 @@ DeviceDetails {
                     Layout.fillWidth: true
                     implicitHeight: 40
                     color: displayNameField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                     border.width: 1
                     border.color: displayNameField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -353,7 +352,7 @@ DeviceDetails {
                         id: displayNameField
 
                         anchors.centerIn: parent
-                        width: parent.width - Tokens.padding.normal
+                        width: parent.width - Tokens.padding.medium
                         horizontalAlignment: TextInput.AlignLeft
                         text: editVpnDialog.displayName
                         onTextChanged: editVpnDialog.displayName = text
@@ -363,11 +362,11 @@ DeviceDetails {
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.smaller / 2
+                spacing: Tokens.spacing.medium / 2
 
                 StyledText {
                     text: qsTr("Interface (e.g., wg0, torguard)")
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -375,7 +374,7 @@ DeviceDetails {
                     Layout.fillWidth: true
                     implicitHeight: 40
                     color: interfaceNameField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                     border.width: 1
                     border.color: interfaceNameField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -390,7 +389,7 @@ DeviceDetails {
                         id: interfaceNameField
 
                         anchors.centerIn: parent
-                        width: parent.width - Tokens.padding.normal
+                        width: parent.width - Tokens.padding.medium
                         horizontalAlignment: TextInput.AlignLeft
                         text: editVpnDialog.interfaceName
                         onTextChanged: editVpnDialog.interfaceName = text
@@ -400,12 +399,12 @@ DeviceDetails {
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.smaller / 2
+                spacing: Tokens.spacing.medium / 2
                 visible: editVpnDialog.connectCmd.length > 0
 
                 StyledText {
                     text: qsTr("Connect Command")
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -413,7 +412,7 @@ DeviceDetails {
                     Layout.fillWidth: true
                     implicitHeight: 40
                     color: connectCmdFieldEdit.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                     border.width: 1
                     border.color: connectCmdFieldEdit.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -428,7 +427,7 @@ DeviceDetails {
                         id: connectCmdFieldEdit
 
                         anchors.centerIn: parent
-                        width: parent.width - Tokens.padding.normal
+                        width: parent.width - Tokens.padding.medium
                         horizontalAlignment: TextInput.AlignLeft
                         text: editVpnDialog.connectCmd
                         onTextChanged: editVpnDialog.connectCmd = text
@@ -438,12 +437,12 @@ DeviceDetails {
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.smaller / 2
+                spacing: Tokens.spacing.medium / 2
                 visible: editVpnDialog.disconnectCmd.length > 0
 
                 StyledText {
                     text: qsTr("Disconnect Command")
-                    font.pointSize: Tokens.font.size.small
+                    font: Tokens.font.body.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -451,7 +450,7 @@ DeviceDetails {
                     Layout.fillWidth: true
                     implicitHeight: 40
                     color: disconnectCmdFieldEdit.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                    radius: Tokens.rounding.small
+                    radius: Tokens.rounding.medium
                     border.width: 1
                     border.color: disconnectCmdFieldEdit.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -466,7 +465,7 @@ DeviceDetails {
                         id: disconnectCmdFieldEdit
 
                         anchors.centerIn: parent
-                        width: parent.width - Tokens.padding.normal
+                        width: parent.width - Tokens.padding.medium
                         horizontalAlignment: TextInput.AlignLeft
                         text: editVpnDialog.disconnectCmd
                         onTextChanged: editVpnDialog.disconnectCmd = text
@@ -475,9 +474,9 @@ DeviceDetails {
             }
 
             RowLayout {
-                Layout.topMargin: Tokens.spacing.normal
+                Layout.topMargin: Tokens.spacing.medium
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 TextButton {
                     Layout.fillWidth: true

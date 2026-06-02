@@ -17,7 +17,7 @@ ColumnLayout {
 
     required property Session session
 
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
 
     SettingsHeader {
         icon: "router"
@@ -25,13 +25,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         title: qsTr("Ethernet")
         description: qsTr("Ethernet device information")
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.small / 2
+        contentSpacing: Tokens.spacing.extraSmall
 
         PropertyRow {
             label: qsTr("Total devices")
@@ -46,7 +46,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         title: qsTr("Wireless")
         description: qsTr("WiFi network settings")
     }
@@ -62,7 +62,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         title: qsTr("VPN")
         description: qsTr("VPN provider settings")
         visible: GlobalConfig.utilities.vpn.enabled || GlobalConfig.utilities.vpn.provider.length > 0
@@ -87,8 +87,8 @@ ColumnLayout {
 
         TextButton {
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.normal
-            Layout.minimumHeight: Tokens.font.size.normal + Tokens.padding.normal * 2
+            Layout.topMargin: Tokens.spacing.medium
+            Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.medium * 2
             text: qsTr("⚙ Manage VPN Providers")
             inactiveColour: Colours.palette.m3secondaryContainer
             inactiveOnColour: Colours.palette.m3onSecondaryContainer
@@ -100,13 +100,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         title: qsTr("Current connection")
         description: qsTr("Active network connection information")
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.small / 2
+        contentSpacing: Tokens.spacing.extraSmall
 
         PropertyRow {
             label: qsTr("Network")
@@ -140,15 +140,15 @@ ColumnLayout {
 
         parent: Overlay.overlay
         anchors.centerIn: parent
-        width: Math.min(600, parent.width - Tokens.padding.large * 2)
-        height: Math.min(700, parent.height - Tokens.padding.large * 2)
+        width: Math.min(600, parent.width - Tokens.padding.extraLargeIncreased)
+        height: Math.min(700, parent.height - Tokens.padding.extraLargeIncreased)
 
         modal: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
         background: StyledRect {
             color: Colours.palette.m3surface
-            radius: Tokens.rounding.large
+            radius: Tokens.rounding.extraLarge
         }
 
         StyledFlickable {

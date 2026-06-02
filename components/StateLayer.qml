@@ -29,7 +29,7 @@ MouseArea {
         const d2 = distSq(width, 0);
         const d3 = distSq(0, height);
         const d4 = distSq(width, height);
-        return Math.sqrt(Math.max(d1, d2, d3, d4)) * (shapeMorph ? 1.16 : 1);
+        return Math.sqrt(Math.max(d1, d2, d3, d4)) + (shapeMorph ? 24 : 0);
     }
     property real endRadiusAtPress
 
@@ -85,8 +85,7 @@ MouseArea {
         target: circle
         property: "opacity"
         to: 0
-        easing: Tokens.anim.expressiveSlowEffects
-        duration: Tokens.anim.durations.expressiveSlowEffects
+        type: Anim.SlowEffects
     }
 
     StyledRect {
@@ -135,14 +134,14 @@ MouseArea {
             startY: 0
 
             PathLine {
-                x: root.width - root.clamp(base.topLeftRadius)
+                x: root.width - root.clamp(base.topRightRadius)
                 y: 0
             }
             PathArc {
-                relativeX: root.clamp(base.topLeftRadius)
-                relativeY: root.clamp(base.topLeftRadius)
-                radiusX: root.clamp(base.topLeftRadius)
-                radiusY: root.clamp(base.topLeftRadius)
+                relativeX: root.clamp(base.topRightRadius)
+                relativeY: root.clamp(base.topRightRadius)
+                radiusX: root.clamp(base.topRightRadius)
+                radiusY: root.clamp(base.topRightRadius)
             }
             PathLine {
                 x: root.width
@@ -179,8 +178,7 @@ MouseArea {
 
     Behavior on stateOpacity {
         Anim {
-            easing: Tokens.anim.expressiveDefaultEffects
-            duration: Tokens.anim.durations.expressiveDefaultEffects
+            type: Anim.DefaultEffects
         }
     }
 }

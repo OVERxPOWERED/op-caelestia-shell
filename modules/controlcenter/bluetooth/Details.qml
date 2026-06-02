@@ -54,13 +54,12 @@ StyledFlickable {
             sections: [
                 Component {
                     ColumnLayout {
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
-                            Layout.topMargin: Tokens.spacing.large
+                            Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Connection status")
-                            font.pointSize: Tokens.font.size.larger
-                            font.weight: 500
+                            font: Tokens.font.body.builders.large.weight(Font.Medium).build()
                         }
 
                         StyledText {
@@ -70,9 +69,9 @@ StyledFlickable {
 
                         StyledRect {
                             Layout.fillWidth: true
-                            implicitHeight: deviceStatus.implicitHeight + Tokens.padding.large * 2
+                            implicitHeight: deviceStatus.implicitHeight + Tokens.padding.extraLargeIncreased
 
-                            radius: Tokens.rounding.normal
+                            radius: Tokens.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
 
                             ColumnLayout {
@@ -83,7 +82,7 @@ StyledFlickable {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.margins: Tokens.padding.large
 
-                                spacing: Tokens.spacing.larger
+                                spacing: Tokens.spacing.large
 
                                 Toggle {
                                     label: qsTr("Connected")
@@ -113,13 +112,12 @@ StyledFlickable {
                 },
                 Component {
                     ColumnLayout {
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
-                            Layout.topMargin: Tokens.spacing.large
+                            Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Device properties")
-                            font.pointSize: Tokens.font.size.larger
-                            font.weight: 500
+                            font: Tokens.font.body.builders.large.weight(Font.Medium).build()
                         }
 
                         StyledText {
@@ -129,9 +127,9 @@ StyledFlickable {
 
                         StyledRect {
                             Layout.fillWidth: true
-                            implicitHeight: deviceProps.implicitHeight + Tokens.padding.large * 2
+                            implicitHeight: deviceProps.implicitHeight + Tokens.padding.extraLargeIncreased
 
-                            radius: Tokens.rounding.normal
+                            radius: Tokens.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
 
                             ColumnLayout {
@@ -142,7 +140,7 @@ StyledFlickable {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.margins: Tokens.padding.large
 
-                                spacing: Tokens.spacing.larger
+                                spacing: Tokens.spacing.large
 
                                 RowLayout {
                                     Layout.fillWidth: true
@@ -167,7 +165,7 @@ StyledFlickable {
                                             PropertyChanges {
                                                 renameDevice.implicitHeight: deviceNameEdit.implicitHeight
                                                 renameLabel.opacity: 0
-                                                deviceNameEdit.padding: root.Tokens.padding.normal
+                                                deviceNameEdit.padding: root.Tokens.padding.medium
                                             }
                                         }
 
@@ -187,7 +185,7 @@ StyledFlickable {
 
                                             text: qsTr("Device name")
                                             color: Colours.palette.m3outline
-                                            font.pointSize: Tokens.font.size.small
+                                            font: Tokens.font.label.small
                                         }
 
                                         StyledTextField {
@@ -196,7 +194,7 @@ StyledFlickable {
                                             anchors.left: parent.left
                                             anchors.right: parent.right
                                             anchors.top: renameLabel.bottom
-                                            anchors.leftMargin: root.session.bt.editingDeviceName ? 0 : -Tokens.padding.normal
+                                            anchors.leftMargin: root.session.bt.editingDeviceName ? 0 : -Tokens.padding.medium
 
                                             text: root.device?.name ?? ""
                                             readOnly: !root.session.bt.editingDeviceName
@@ -205,11 +203,11 @@ StyledFlickable {
                                                 root.device.name = text;
                                             }
 
-                                            leftPadding: Tokens.padding.normal
-                                            rightPadding: Tokens.padding.normal
+                                            leftPadding: Tokens.padding.medium
+                                            rightPadding: Tokens.padding.medium
 
                                             background: StyledRect {
-                                                radius: Tokens.rounding.small
+                                                radius: Tokens.rounding.medium
                                                 border.width: 2
                                                 border.color: Colours.palette.m3primary
                                                 opacity: root.session.bt.editingDeviceName ? 1 : 0
@@ -231,9 +229,9 @@ StyledFlickable {
 
                                     StyledRect {
                                         implicitWidth: implicitHeight
-                                        implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.smaller * 2
+                                        implicitHeight: cancelEditIcon.implicitHeight + Tokens.padding.large
 
-                                        radius: Tokens.rounding.small
+                                        radius: Tokens.rounding.medium
                                         color: Colours.palette.m3secondaryContainer
                                         opacity: root.session.bt.editingDeviceName ? 1 : 0
                                         scale: root.session.bt.editingDeviceName ? 1 : 0.5
@@ -270,9 +268,9 @@ StyledFlickable {
 
                                     StyledRect {
                                         implicitWidth: implicitHeight
-                                        implicitHeight: editIcon.implicitHeight + Tokens.padding.smaller * 2
+                                        implicitHeight: editIcon.implicitHeight + Tokens.padding.large
 
-                                        radius: root.session.bt.editingDeviceName ? Tokens.rounding.small : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
+                                        radius: root.session.bt.editingDeviceName ? Tokens.rounding.medium : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
                                         color: Qt.alpha(Colours.palette.m3primary, root.session.bt.editingDeviceName ? 1 : 0)
 
                                         StateLayer {
@@ -319,13 +317,12 @@ StyledFlickable {
                 },
                 Component {
                     ColumnLayout {
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         StyledText {
-                            Layout.topMargin: Tokens.spacing.large
+                            Layout.topMargin: Tokens.spacing.largeIncreased
                             text: qsTr("Device information")
-                            font.pointSize: Tokens.font.size.larger
-                            font.weight: 500
+                            font: Tokens.font.body.builders.large.weight(Font.Medium).build()
                         }
 
                         StyledText {
@@ -335,9 +332,9 @@ StyledFlickable {
 
                         StyledRect {
                             Layout.fillWidth: true
-                            implicitHeight: deviceInfo.implicitHeight + Tokens.padding.large * 2
+                            implicitHeight: deviceInfo.implicitHeight + Tokens.padding.extraLargeIncreased
 
-                            radius: Tokens.rounding.normal
+                            radius: Tokens.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
 
                             ColumnLayout {
@@ -348,7 +345,7 @@ StyledFlickable {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.margins: Tokens.padding.large
 
-                                spacing: Tokens.spacing.small / 2
+                                spacing: Tokens.spacing.extraSmall
 
                                 StyledText {
                                     text: root.device?.batteryAvailable ? qsTr("Device battery (%1%)").arg(root.device.battery * 100) : qsTr("Battery unavailable")
@@ -357,10 +354,10 @@ StyledFlickable {
                                 RowLayout {
                                     id: batteryPercent
 
-                                    Layout.topMargin: Tokens.spacing.small / 2
+                                    Layout.topMargin: Tokens.spacing.extraSmall
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: Tokens.padding.smaller
-                                    spacing: Tokens.spacing.small / 2
+                                    Layout.preferredHeight: Tokens.padding.small
+                                    spacing: Tokens.spacing.extraSmall
 
                                     StyledRect {
                                         Layout.fillWidth: true
@@ -382,47 +379,47 @@ StyledFlickable {
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Tokens.spacing.normal
+                                    Layout.topMargin: Tokens.spacing.medium
                                     text: qsTr("Dbus path")
                                 }
 
                                 StyledText {
                                     text: root.device?.dbusPath ?? ""
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Tokens.font.size.small
+                                    font: Tokens.font.body.small
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Tokens.spacing.normal
+                                    Layout.topMargin: Tokens.spacing.medium
                                     text: qsTr("MAC address")
                                 }
 
                                 StyledText {
                                     text: root.device?.address ?? ""
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Tokens.font.size.small
+                                    font: Tokens.font.body.small
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Tokens.spacing.normal
+                                    Layout.topMargin: Tokens.spacing.medium
                                     text: qsTr("Bonded")
                                 }
 
                                 StyledText {
                                     text: root.device?.bonded ? qsTr("Yes") : qsTr("No")
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Tokens.font.size.small
+                                    font: Tokens.font.body.small
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Tokens.spacing.normal
+                                    Layout.topMargin: Tokens.spacing.medium
                                     text: qsTr("System name")
                                 }
 
                                 StyledText {
                                     text: root.device?.deviceName ?? ""
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Tokens.font.size.small
+                                    font: Tokens.font.body.small
                                 }
                             }
                         }
@@ -435,7 +432,7 @@ StyledFlickable {
     ColumnLayout {
         anchors.right: fabRoot.right
         anchors.bottom: fabRoot.top
-        anchors.bottomMargin: Tokens.padding.normal
+        anchors.bottomMargin: Tokens.padding.medium
 
         Repeater {
             id: fabMenu
@@ -467,7 +464,7 @@ StyledFlickable {
 
                 Layout.alignment: Qt.AlignRight
 
-                implicitHeight: fabMenuItemInner.implicitHeight + Tokens.padding.larger * 2
+                implicitHeight: fabMenuItemInner.implicitHeight + Tokens.padding.medium * 2
 
                 radius: Tokens.rounding.full
                 color: Colours.palette.m3primaryContainer
@@ -479,7 +476,7 @@ StyledFlickable {
                     when: root.session.bt.fabMenuOpen
 
                     PropertyChanges {
-                        fabMenuItem.implicitWidth: fabMenuItemInner.implicitWidth + root.Tokens.padding.large * 2
+                        fabMenuItem.implicitWidth: fabMenuItemInner.implicitWidth + root.Tokens.padding.extraLargeIncreased
                         fabMenuItem.opacity: 1
                         fabMenuItemInner.opacity: 1
                     }
@@ -544,7 +541,7 @@ StyledFlickable {
                     id: fabMenuItemInner
 
                     anchors.centerIn: parent
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
                     opacity: 0
 
                     MaterialIcon {
@@ -557,7 +554,7 @@ StyledFlickable {
                         animate: true
                         text: (root.device && root.device[`${fabMenuItem.modelData.name}ed`] ? fabMenuItem.modelData.name === "connect" ? "dis" : "un" : "") + fabMenuItem.modelData.name
                         color: Colours.palette.m3onPrimaryContainer
-                        font.capitalization: Font.Capitalize
+                        font: Tokens.font.body.builders.small.capitalisation(Font.Capitalize).build()
                         Layout.preferredWidth: implicitWidth
 
                         Behavior on Layout.preferredWidth {
@@ -589,7 +586,7 @@ StyledFlickable {
             implicitWidth: 64
             implicitHeight: 64
 
-            radius: Tokens.rounding.normal
+            radius: Tokens.rounding.large
             color: root.session.bt.fabMenuOpen ? Colours.palette.m3primary : Colours.palette.m3primaryContainer
 
             states: State {
@@ -600,7 +597,7 @@ StyledFlickable {
                     fabBg.implicitWidth: 48
                     fabBg.implicitHeight: 48
                     fabBg.radius: 48 / 2
-                    fab.font.pointSize: Tokens.font.size.larger
+                    fab.fontStyle: Tokens.font.icon.large
                 }
             }
 
@@ -638,7 +635,7 @@ StyledFlickable {
                 animate: true
                 text: root.session.bt.fabMenuOpen ? "close" : "settings"
                 color: root.session.bt.fabMenuOpen ? Colours.palette.m3onPrimary : Colours.palette.m3onPrimaryContainer
-                font.pointSize: Tokens.font.size.large
+                fontStyle: Tokens.font.icon.large
                 fill: 1
             }
         }
@@ -650,7 +647,7 @@ StyledFlickable {
         property alias toggle: toggle
 
         Layout.fillWidth: true
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledText {
             Layout.fillWidth: true

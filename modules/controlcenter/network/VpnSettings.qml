@@ -18,7 +18,7 @@ ColumnLayout {
 
     required property Session session
 
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
 
     SettingsHeader {
         icon: "vpn_key"
@@ -26,7 +26,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         title: qsTr("General")
         description: qsTr("VPN configuration")
     }
@@ -42,20 +42,20 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         title: qsTr("Providers")
         description: qsTr("Manage VPN providers")
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.normal
+        contentSpacing: Tokens.spacing.medium
 
         ListView {
             Layout.fillWidth: true
             Layout.preferredHeight: contentHeight
 
             interactive: false
-            spacing: Tokens.spacing.smaller
+            spacing: Tokens.spacing.medium
 
             model: ScriptModel {
                 values: GlobalConfig.utilities.vpn.provider.map((provider, index) => {
@@ -83,18 +83,18 @@ ColumnLayout {
                     width: ListView.view ? ListView.view.width : undefined
                     implicitHeight: 60
                     color: Colours.tPalette.m3surfaceContainerHigh
-                    radius: Tokens.rounding.normal
+                    radius: Tokens.rounding.large
 
                     RowLayout {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Tokens.padding.normal
-                        spacing: Tokens.spacing.normal
+                        anchors.margins: Tokens.padding.medium
+                        spacing: Tokens.spacing.medium
 
                         MaterialIcon {
                             text: modelData.isActive ? "vpn_key" : "vpn_key_off"
-                            font.pointSize: Tokens.font.size.large
+                            fontStyle: Tokens.font.icon.large
                             color: modelData.isActive ? Colours.palette.m3primary : Colours.palette.m3outline
                         }
 
@@ -104,12 +104,12 @@ ColumnLayout {
 
                             StyledText {
                                 text: modelData.displayName
-                                font.weight: modelData.isActive ? 500 : 400
+                                font: Tokens.font.body.builders.medium.weight(modelData.isActive ? Font.Medium : Font.Normal).build()
                             }
 
                             StyledText {
                                 text: qsTr("%1 • %2").arg(modelData.name).arg(modelData.interface || qsTr("No interface"))
-                                font.pointSize: Tokens.font.size.small
+                                font: Tokens.font.body.small
                                 color: Colours.palette.m3outline
                             }
                         }
@@ -183,7 +183,7 @@ ColumnLayout {
 
         TextButton {
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.normal
+            Layout.topMargin: Tokens.spacing.medium
             text: qsTr("+ Add Provider")
             inactiveColour: Colours.palette.m3primaryContainer
             inactiveOnColour: Colours.palette.m3onPrimaryContainer
@@ -195,13 +195,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         title: qsTr("Quick Add")
         description: qsTr("Add common VPN providers")
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.smaller
+        contentSpacing: Tokens.spacing.medium
 
         TextButton {
             Layout.fillWidth: true

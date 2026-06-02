@@ -6,6 +6,8 @@ qml_module(caelestia-config
         configobject.cpp
         rootconfig.cpp
         appearanceconfig.cpp
+        font.cpp
+        fontbuilder.cpp
         tokens.cpp
         tokensattached.cpp
         anim.cpp

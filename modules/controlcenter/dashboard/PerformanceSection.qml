@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.UPower
 import Caelestia.Config
+import Caelestia.Services
 import qs.components
 import qs.components.controls
 import qs.services
@@ -12,8 +13,8 @@ SectionContainer {
     id: root
 
     required property var rootItem
-    // GPU toggle is hidden when gpuType is "NONE" (no GPU data available)
-    readonly property bool gpuAvailable: SystemUsage.gpuType !== "NONE"
+    // GPU toggle is hidden when type is Gpu.None (no GPU data available)
+    readonly property bool gpuAvailable: Gpu.type !== Gpu.None
     // Battery toggle is hidden when no laptop battery is present
     readonly property bool batteryAvailable: UPower.displayDevice.isLaptopBattery
 
@@ -22,7 +23,7 @@ SectionContainer {
 
     StyledText {
         text: qsTr("Performance Resources")
-        font.pointSize: Tokens.font.size.normal
+        font: Tokens.font.title.small
     }
 
     ConnectedButtonGroup {

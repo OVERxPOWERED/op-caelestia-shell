@@ -15,7 +15,7 @@ ColumnLayout {
 
     required property Session session
 
-    spacing: Tokens.spacing.normal
+    spacing: Tokens.spacing.medium
 
     SettingsHeader {
         icon: "cable"
@@ -23,10 +23,9 @@ ColumnLayout {
     }
 
     StyledText {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Tokens.spacing.largeIncreased
         text: qsTr("Ethernet devices")
-        font.pointSize: Tokens.font.size.larger
-        font.weight: 500
+        font: Tokens.font.body.builders.large.weight(Font.Medium).build()
     }
 
     StyledText {
@@ -36,9 +35,9 @@ ColumnLayout {
 
     StyledRect {
         Layout.fillWidth: true
-        implicitHeight: ethernetInfo.implicitHeight + Tokens.padding.large * 2
+        implicitHeight: ethernetInfo.implicitHeight + Tokens.padding.extraLargeIncreased
 
-        radius: Tokens.rounding.normal
+        radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
 
         ColumnLayout {
@@ -49,7 +48,7 @@ ColumnLayout {
             anchors.verticalCenter: parent.verticalCenter
             anchors.margins: Tokens.padding.large
 
-            spacing: Tokens.spacing.small / 2
+            spacing: Tokens.spacing.extraSmall
 
             StyledText {
                 text: qsTr("Total devices")
@@ -58,18 +57,18 @@ ColumnLayout {
             StyledText {
                 text: qsTr("%1").arg(Nmcli.ethernetDevices.length)
                 color: Colours.palette.m3outline
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
             }
 
             StyledText {
-                Layout.topMargin: Tokens.spacing.normal
+                Layout.topMargin: Tokens.spacing.medium
                 text: qsTr("Connected devices")
             }
 
             StyledText {
                 text: qsTr("%1").arg(Nmcli.ethernetDevices.filter(d => d.connected).length)
                 color: Colours.palette.m3outline
-                font.pointSize: Tokens.font.size.small
+                font: Tokens.font.body.small
             }
         }
     }

@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Bluetooth
+import Caelestia.Components
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -38,9 +39,9 @@ StyledRect {
     readonly property bool needExtraRow: quickToggles.length > 6
 
     Layout.fillWidth: true
-    implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
+    implicitHeight: layout.implicitHeight + Tokens.padding.extraLargeIncreased
 
-    radius: Tokens.rounding.normal
+    radius: Tokens.rounding.large
     color: Colours.tPalette.m3surfaceContainer
 
     ColumnLayout {
@@ -48,31 +49,31 @@ StyledRect {
 
         anchors.fill: parent
         anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledText {
             text: qsTr("Quick Toggles")
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.body.medium
         }
 
         QuickToggleRow {
-            rowModel: root.needExtraRow ? root.quickToggles.slice(0, root.splitIndex) : root.quickToggles
+            model: root.needExtraRow ? root.quickToggles.slice(0, root.splitIndex) : root.quickToggles
         }
 
         QuickToggleRow {
             visible: root.needExtraRow
-            rowModel: root.needExtraRow ? root.quickToggles.slice(root.splitIndex) : []
+            model: root.needExtraRow ? root.quickToggles.slice(root.splitIndex) : []
         }
     }
 
-    component QuickToggleRow: RowLayout {
-        property var rowModel: []
+    component QuickToggleRow: ButtonRow {
+        property alias model: repeater.model
 
         Layout.fillWidth: true
         spacing: Tokens.spacing.small
 
         Repeater {
-            model: parent.rowModel
+            id: repeater
 
             delegate: DelegateChooser {
                 role: "id"
@@ -114,7 +115,7 @@ StyledRect {
                     delegate: Toggle {
                         icon: "settings"
                         inactiveOnColour: Colours.palette.m3onSurfaceVariant
-                        toggle: false
+                        isToggle: false
                         onClicked: {
                             root.visibilities.utilities = false;
                             root.popouts.detach("network");
@@ -143,7 +144,7 @@ StyledRect {
                         icon: "vpn_key"
                         checked: VPN.connected && VPN.status.state !== "needs-auth" && VPN.status.state !== "error"
                         enabled: !VPN.connecting
-                        toggle: VPN.status.state !== "needs-auth" && VPN.status.state !== "error"
+                        isToggle: VPN.status.state !== "needs-auth" && VPN.status.state !== "error"
                         inactiveOnColour: Colours.palette.m3onSurfaceVariant
                         onClicked: VPN.toggle()
                     }
@@ -153,18 +154,10 @@ StyledRect {
     }
 
     component Toggle: IconButton {
-        Layout.fillWidth: true
-        Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.smaller : 0)
-        radius: stateLayer.pressed ? Tokens.rounding.small / 2 : internalChecked ? Tokens.rounding.small : Tokens.rounding.normal
         inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
-        toggle: true
-        radiusAnim.duration: Tokens.anim.durations.expressiveFastSpatial
-        radiusAnim.easing: Tokens.anim.expressiveFastSpatial
-
-        Behavior on Layout.preferredWidth {
-            Anim {
-                type: Anim.FastSpatial
-            }
-        }
+        fillWidth: true
+        isToggle: true
+        isRound: true
+        shapeMorph: true
     }
 }

@@ -21,12 +21,12 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledText {
             visible: root.label !== ""
             text: root.label
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.label.medium
             color: root.readonly ? Colours.palette.m3outline : Colours.palette.m3onSurface
         }
 
@@ -38,19 +38,19 @@ ColumnLayout {
             visible: root.readonly
             text: "lock"
             color: Colours.palette.m3outline
-            font.pointSize: Tokens.font.size.small
+            fontStyle: Tokens.font.icon.small
         }
 
         StyledText {
             text: Math.round(root.value) + (root.suffix !== "" ? " " + root.suffix : "")
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.body.medium
             color: root.readonly ? Colours.palette.m3outline : Colours.palette.m3onSurface
         }
     }
 
     StyledRect {
         Layout.fillWidth: true
-        implicitHeight: Tokens.padding.normal
+        implicitHeight: Tokens.padding.medium
         radius: Tokens.rounding.full
         color: Colours.layer(Colours.palette.m3surfaceContainerHighest, 1)
         opacity: root.readonly ? 0.5 : 1.0

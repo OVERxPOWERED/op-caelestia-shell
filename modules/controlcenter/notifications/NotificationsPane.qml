@@ -64,9 +64,9 @@ Item {
         id: notificationsClippingRect
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Tokens.padding.medium
         anchors.leftMargin: 0
-        anchors.rightMargin: Tokens.padding.normal
+        anchors.rightMargin: Tokens.padding.medium
 
         color: "transparent"
         radius: notificationsBorder.innerRadius
@@ -75,7 +75,7 @@ Item {
             id: notificationsLoader
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.large + Tokens.padding.normal
+            anchors.margins: Tokens.padding.large + Tokens.padding.medium
             anchors.leftMargin: Tokens.padding.large
             anchors.rightMargin: Tokens.padding.large
 
@@ -87,7 +87,7 @@ Item {
         id: notificationsBorder
 
         leftThickness: 0
-        rightThickness: Tokens.padding.normal
+        rightThickness: Tokens.padding.medium
     }
 
     Component {
@@ -109,13 +109,13 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 ColumnLayout {
                     Layout.fillWidth: true
                     Layout.maximumWidth: 500
                     Layout.alignment: Qt.AlignTop
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     SectionContainer {
                         Layout.fillWidth: true
@@ -123,7 +123,7 @@ Item {
 
                         StyledText {
                             text: qsTr("Notifications")
-                            font.pointSize: Tokens.font.size.normal
+                            font: Tokens.font.title.small
                         }
 
                         SplitButtonRow {
@@ -218,7 +218,7 @@ Item {
                 ColumnLayout {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignTop
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     SectionContainer {
                         Layout.fillWidth: true
@@ -226,7 +226,7 @@ Item {
 
                         StyledText {
                             text: qsTr("Toast settings")
-                            font.pointSize: Tokens.font.size.normal
+                            font: Tokens.font.title.small
                         }
 
                         SplitButtonRow {
@@ -314,8 +314,8 @@ Item {
                         GridLayout {
                             Layout.fillWidth: true
                             columns: 2
-                            columnSpacing: Tokens.spacing.normal
-                            rowSpacing: Tokens.spacing.normal
+                            columnSpacing: Tokens.spacing.medium
+                            rowSpacing: Tokens.spacing.medium
 
                             SwitchRow {
                                 Layout.fillWidth: true

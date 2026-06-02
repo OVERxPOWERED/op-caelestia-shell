@@ -47,8 +47,7 @@ ColumnLayout {
         StyledText {
             visible: root.title !== ""
             text: root.title
-            font.pointSize: Tokens.font.size.large
-            font.weight: 500
+            font: Tokens.font.title.builders.medium.weight(Font.Medium).build()
         }
 
         Loader {
@@ -78,7 +77,7 @@ ColumnLayout {
         model: root.model
         delegate: root.delegate
 
-        spacing: Tokens.spacing.small / 2
+        spacing: Tokens.spacing.extraSmall
         interactive: false
         clip: false
     }

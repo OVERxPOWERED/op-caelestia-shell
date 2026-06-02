@@ -15,11 +15,11 @@ GridView {
 
     required property Session session
 
-    readonly property int minCellWidth: 200 + Tokens.spacing.normal
+    readonly property int minCellWidth: 200 + Tokens.spacing.medium
     readonly property int columnsCount: Math.max(1, Math.floor(width / minCellWidth))
 
     cellWidth: width / columnsCount
-    cellHeight: 140 + Tokens.spacing.normal
+    cellHeight: 140 + Tokens.spacing.medium
 
     model: Wallpapers.list
 
@@ -33,8 +33,8 @@ GridView {
         required property var modelData
         required property int index
         readonly property bool isCurrent: modelData && modelData.path === Wallpapers.actualCurrent
-        readonly property real itemMargin: Tokens.spacing.normal / 2
-        readonly property real itemRadius: Tokens.rounding.normal
+        readonly property real itemMargin: Tokens.spacing.medium / 2
+        readonly property real itemRadius: Tokens.rounding.large
 
         width: root.cellWidth
         height: root.cellHeight
@@ -130,7 +130,7 @@ GridView {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
 
-                implicitHeight: filenameText.implicitHeight + Tokens.padding.normal * 1.5
+                implicitHeight: filenameText.implicitHeight + Tokens.padding.medium * 1.5
                 radius: 0
 
                 gradient: Gradient {
@@ -190,12 +190,12 @@ GridView {
             MaterialIcon {
                 anchors.right: parent.right
                 anchors.top: parent.top
-                anchors.margins: Tokens.padding.small
+                anchors.margins: Tokens.padding.extraSmall
 
                 visible: isCurrent
                 text: "check_circle"
                 color: Colours.palette.m3primary
-                font.pointSize: Tokens.font.size.large
+                fontStyle: Tokens.font.icon.large
             }
         }
 
@@ -205,13 +205,12 @@ GridView {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.leftMargin: Tokens.padding.normal + Tokens.spacing.normal / 2
-            anchors.rightMargin: Tokens.padding.normal + Tokens.spacing.normal / 2
-            anchors.bottomMargin: Tokens.padding.normal
+            anchors.leftMargin: Tokens.padding.medium + Tokens.spacing.medium / 2
+            anchors.rightMargin: Tokens.padding.medium + Tokens.spacing.medium / 2
+            anchors.bottomMargin: Tokens.padding.medium
 
             text: modelData.name
-            font.pointSize: Tokens.font.size.smaller
-            font.weight: 500
+            font: Tokens.font.body.builders.small.weight(Font.Medium).build()
             color: isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurface
             elide: Text.ElideMiddle
             maximumLineCount: 1

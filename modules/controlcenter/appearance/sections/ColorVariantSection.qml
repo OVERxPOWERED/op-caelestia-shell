@@ -18,7 +18,7 @@ CollapsibleSection {
 
     ColumnLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.small / 2
+        spacing: Tokens.spacing.extraSmall
 
         Repeater {
             model: M3Variants.list
@@ -29,10 +29,10 @@ CollapsibleSection {
                 Layout.fillWidth: true
 
                 color: Qt.alpha(Colours.tPalette.m3surfaceContainer, modelData.variant === Schemes.currentVariant ? Colours.tPalette.m3surfaceContainer.a : 0)
-                radius: Tokens.rounding.normal
+                radius: Tokens.rounding.large
                 border.width: modelData.variant === Schemes.currentVariant ? 1 : 0
                 border.color: Colours.palette.m3primary
-                implicitHeight: variantRow.implicitHeight + Tokens.padding.normal * 2
+                implicitHeight: variantRow.implicitHeight + Tokens.padding.medium * 2
 
                 StateLayer {
                     onClicked: {
@@ -62,27 +62,27 @@ CollapsibleSection {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Tokens.padding.normal
+                    anchors.margins: Tokens.padding.medium
 
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     MaterialIcon {
                         text: modelData.icon
-                        font.pointSize: Tokens.font.size.large
+                        fontStyle: Tokens.font.icon.large
                         fill: modelData.variant === Schemes.currentVariant ? 1 : 0
                     }
 
                     StyledText {
                         Layout.fillWidth: true
                         text: modelData.name
-                        font.weight: modelData.variant === Schemes.currentVariant ? 500 : 400
+                        font: modelData.variant === Schemes.currentVariant ? Tokens.font.body.builders.small.weight(Font.Medium).build() : Tokens.font.body.builders.small.weight(Font.Normal).build()
                     }
 
                     MaterialIcon {
                         visible: modelData.variant === Schemes.currentVariant
                         text: "check"
                         color: Colours.palette.m3primary
-                        font.pointSize: Tokens.font.size.large
+                        fontStyle: Tokens.font.icon.large
                     }
                 }
             }

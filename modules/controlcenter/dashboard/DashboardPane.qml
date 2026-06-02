@@ -65,9 +65,9 @@ Item {
         id: dashboardClippingRect
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Tokens.padding.medium
         anchors.leftMargin: 0
-        anchors.rightMargin: Tokens.padding.normal
+        anchors.rightMargin: Tokens.padding.medium
 
         radius: dashboardBorder.innerRadius
         color: "transparent"
@@ -76,7 +76,7 @@ Item {
             id: dashboardLoader
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.large + Tokens.padding.normal
+            anchors.margins: Tokens.padding.large + Tokens.padding.medium
             anchors.leftMargin: Tokens.padding.large
             anchors.rightMargin: Tokens.padding.large
 
@@ -89,7 +89,7 @@ Item {
         id: dashboardBorder
 
         leftThickness: 0
-        rightThickness: Tokens.padding.normal
+        rightThickness: Tokens.padding.medium
     }
 
     Component {
@@ -112,15 +112,14 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
 
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 RowLayout {
-                    spacing: Tokens.spacing.smaller
+                    spacing: Tokens.spacing.medium
 
                     StyledText {
                         text: qsTr("Dashboard")
-                        font.pointSize: Tokens.font.size.large
-                        font.weight: 500
+                        font: Tokens.font.title.builders.medium.weight(Font.Medium).build()
                     }
                 }
 

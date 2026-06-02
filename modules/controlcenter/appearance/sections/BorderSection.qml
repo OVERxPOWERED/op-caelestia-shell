@@ -19,7 +19,7 @@ CollapsibleSection {
     showBackground: true
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.normal
+        contentSpacing: Tokens.spacing.medium
 
         SliderInput {
             Layout.fillWidth: true
@@ -43,7 +43,7 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.normal
+        contentSpacing: Tokens.spacing.medium
 
         SliderInput {
             Layout.fillWidth: true

@@ -15,16 +15,16 @@ Item {
     required property Session session
     required property bool initialOpeningComplete
 
-    implicitWidth: layout.implicitWidth + Tokens.padding.larger * 4
-    implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
+    implicitWidth: layout.implicitWidth + Tokens.padding.extraExtraLarge
+    implicitHeight: layout.implicitHeight + Tokens.padding.extraLargeIncreased
 
     ColumnLayout {
         id: layout
 
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: Tokens.padding.larger * 2
-        spacing: Tokens.spacing.normal
+        anchors.leftMargin: Tokens.padding.medium * 2
+        spacing: Tokens.spacing.medium
 
         states: State {
             name: "expanded"
@@ -42,7 +42,7 @@ Item {
         }
 
         Loader {
-            Layout.topMargin: Tokens.spacing.large
+            Layout.topMargin: Tokens.spacing.largeIncreased
             asynchronous: true
             active: !root.session.floating
             visible: active
@@ -51,10 +51,10 @@ Item {
                 readonly property int nonAnimWidth: normalWinIcon.implicitWidth + (root.session.navExpanded ? normalWinLabel.anchors.leftMargin + normalWinLabel.implicitWidth : 0) + normalWinIcon.anchors.leftMargin * 2
 
                 implicitWidth: nonAnimWidth
-                implicitHeight: root.session.navExpanded ? normalWinIcon.implicitHeight + Tokens.padding.normal * 2 : nonAnimWidth
+                implicitHeight: root.session.navExpanded ? normalWinIcon.implicitHeight + Tokens.padding.medium * 2 : nonAnimWidth
 
                 color: Colours.palette.m3primaryContainer
-                radius: Tokens.rounding.small
+                radius: Tokens.rounding.medium
 
                 StateLayer {
                     id: normalWinState
@@ -79,7 +79,7 @@ Item {
 
                     text: "select_window"
                     color: Colours.palette.m3onPrimaryContainer
-                    font.pointSize: Tokens.font.size.large
+                    fontStyle: Tokens.font.icon.large
                     fill: 1
                 }
 
@@ -88,7 +88,7 @@ Item {
 
                     anchors.left: normalWinIcon.right
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.leftMargin: Tokens.spacing.normal
+                    anchors.leftMargin: Tokens.spacing.medium
 
                     text: qsTr("Float window")
                     color: Colours.palette.m3onPrimaryContainer
@@ -102,15 +102,11 @@ Item {
                 }
 
                 Behavior on implicitWidth {
-                    Anim {
-                        type: Anim.DefaultSpatial
-                    }
+                    Anim {}
                 }
 
                 Behavior on implicitHeight {
-                    Anim {
-                        type: Anim.DefaultSpatial
-                    }
+                    Anim {}
                 }
             }
         }
@@ -121,7 +117,7 @@ Item {
             NavItem {
                 required property int index
 
-                Layout.topMargin: index === 0 ? Tokens.spacing.large * 2 : 0
+                Layout.topMargin: index === 0 ? Tokens.spacing.largeIncreased * 2 : 0
                 icon: PaneRegistry.getByIndex(index).icon
                 label: PaneRegistry.getByIndex(index).label
             }
@@ -146,7 +142,7 @@ Item {
                 expandedLabel.opacity: 1
                 smallLabel.opacity: 0
                 background.implicitWidth: icon.implicitWidth + icon.anchors.leftMargin * 2 + expandedLabel.anchors.leftMargin + expandedLabel.implicitWidth
-                background.implicitHeight: icon.implicitHeight + root.Tokens.padding.normal * 2
+                background.implicitHeight: icon.implicitHeight + root.Tokens.padding.medium * 2
                 item.implicitHeight: background.implicitHeight
             }
         }
@@ -159,7 +155,6 @@ Item {
 
             Anim {
                 properties: "implicitWidth,implicitHeight"
-                type: Anim.DefaultSpatial
             }
         }
 
@@ -170,7 +165,7 @@ Item {
             color: Qt.alpha(Colours.palette.m3secondaryContainer, item.active ? 1 : 0)
 
             implicitWidth: icon.implicitWidth + icon.anchors.leftMargin * 2
-            implicitHeight: icon.implicitHeight + Tokens.padding.small
+            implicitHeight: icon.implicitHeight + Tokens.padding.extraSmall
 
             StateLayer {
                 onClicked: {
@@ -193,11 +188,13 @@ Item {
 
                 text: item.icon
                 color: item.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                font.pointSize: Tokens.font.size.large
+                fontStyle: Tokens.font.icon.large
                 fill: item.active ? 1 : 0
 
                 Behavior on fill {
-                    Anim {}
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
                 }
             }
 
@@ -206,12 +203,12 @@ Item {
 
                 anchors.left: icon.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: Tokens.spacing.normal
+                anchors.leftMargin: Tokens.spacing.medium
 
                 opacity: 0
                 text: item.label
                 color: item.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                font.capitalization: Font.Capitalize
+                font: Tokens.font.label.builders.medium.capitalisation(Font.Capitalize).build()
             }
 
             StyledText {
@@ -219,11 +216,10 @@ Item {
 
                 anchors.horizontalCenter: icon.horizontalCenter
                 anchors.top: icon.bottom
-                anchors.topMargin: Tokens.spacing.small / 2
+                anchors.topMargin: Tokens.spacing.extraSmall
 
                 text: item.label
-                font.pointSize: Tokens.font.size.small
-                font.capitalization: Font.Capitalize
+                font: Tokens.font.label.builders.small.capitalisation(Font.Capitalize).build()
             }
         }
     }

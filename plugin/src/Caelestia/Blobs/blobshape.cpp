@@ -288,10 +288,12 @@ void BlobShape::updatePolish() {
     // Pre-compute effective per-corner radii (moves O(N²) work from GPU to CPU)
     const float smoothFactor = pad;
     constexpr float minR = 2.0f;
+    const bool cornerFill = m_group->cornerFill();
     const auto rectCount = m_cachedRects.size();
     for (qsizetype i = 0; i < rectCount; ++i) {
         auto& ri = m_cachedRects[i];
         const int riExcludeMask = ri.excludeMask;
+        BlobShape* const si = rectShapes[i];
         float fTr = 1.0f, fBr = 1.0f, fBl = 1.0f, fTl = 1.0f;
 
         const float cTrX = ri.cx + ri.hw, cTrY = ri.cy - ri.hh;
@@ -299,19 +301,32 @@ void BlobShape::updatePolish() {
         const float cBlX = ri.cx - ri.hw, cBlY = ri.cy + ri.hh;
         const float cTlX = ri.cx - ri.hw, cTlY = ri.cy - ri.hh;
 
-        for (qsizetype j = 0; j < rectCount; ++j) {
+        for (qsizetype j = 0; cornerFill && j < rectCount; ++j) {
             if (j == i)
                 continue;
             if (riExcludeMask & (1 << j))
                 continue;
+            BlobShape* const sj = rectShapes[j];
+            if (si->isCornerExcluded(sj) || sj->isCornerExcluded(si))
+                continue;
             const auto& rj = m_cachedRects[j];
-            fTr = std::min(fTr, cpuSmoothstep(0.0f, smoothFactor, cpuSdBox(cTrX, cTrY, rj.cx, rj.cy, rj.hw, rj.hh)));
-            fBr = std::min(fBr, cpuSmoothstep(0.0f, smoothFactor, cpuSdBox(cBrX, cBrY, rj.cx, rj.cy, rj.hw, rj.hh)));
-            fBl = std::min(fBl, cpuSmoothstep(0.0f, smoothFactor, cpuSdBox(cBlX, cBlY, rj.cx, rj.cy, rj.hw, rj.hh)));
-            fTl = std::min(fTl, cpuSmoothstep(0.0f, smoothFactor, cpuSdBox(cTlX, cTlY, rj.cx, rj.cy, rj.hw, rj.hh)));
+            // Skip when the corner is inside rj: it's buried, not on a visible junction,
+            // so squaring it would only perturb interior SDF gradients.
+            const float sdTr = cpuSdBox(cTrX, cTrY, rj.cx, rj.cy, rj.hw, rj.hh);
+            const float sdBr = cpuSdBox(cBrX, cBrY, rj.cx, rj.cy, rj.hw, rj.hh);
+            const float sdBl = cpuSdBox(cBlX, cBlY, rj.cx, rj.cy, rj.hw, rj.hh);
+            const float sdTl = cpuSdBox(cTlX, cTlY, rj.cx, rj.cy, rj.hw, rj.hh);
+            if (sdTr >= 0.0f)
+                fTr = std::min(fTr, cpuSmoothstep(0.0f, smoothFactor, sdTr));
+            if (sdBr >= 0.0f)
+                fBr = std::min(fBr, cpuSmoothstep(0.0f, smoothFactor, sdBr));
+            if (sdBl >= 0.0f)
+                fBl = std::min(fBl, cpuSmoothstep(0.0f, smoothFactor, sdBl));
+            if (sdTl >= 0.0f)
+                fTl = std::min(fTl, cpuSmoothstep(0.0f, smoothFactor, sdTl));
         }
 
-        if (m_cachedHasInverted) {
+        if (cornerFill && m_cachedHasInverted) {
             const float icx = m_cachedInvertedInner[0];
             const float icy = m_cachedInvertedInner[1];
             const float ihw = m_cachedInvertedInner[2];

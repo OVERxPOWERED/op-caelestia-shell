@@ -43,7 +43,7 @@ DeviceDetails {
     sections: [
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 SectionHeader {
                     title: qsTr("Connection status")
@@ -69,7 +69,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 SectionHeader {
                     title: qsTr("Device properties")
@@ -77,7 +77,7 @@ DeviceDetails {
                 }
 
                 SectionContainer {
-                    contentSpacing: Tokens.spacing.small / 2
+                    contentSpacing: Tokens.spacing.extraSmall
 
                     PropertyRow {
                         label: qsTr("Interface")
@@ -100,7 +100,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 SectionHeader {
                     title: qsTr("Connection information")

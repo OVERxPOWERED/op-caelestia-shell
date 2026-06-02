@@ -152,12 +152,11 @@ Item {
                 spacing: Tokens.spacing.small
 
                 RowLayout {
-                    spacing: Tokens.spacing.smaller
+                    spacing: Tokens.spacing.medium
 
                     StyledText {
                         text: qsTr("Launcher")
-                        font.pointSize: Tokens.font.size.large
-                        font.weight: 500
+                        font: Tokens.font.title.builders.medium.weight(Font.Medium).build()
                     }
 
                     Item {
@@ -168,9 +167,9 @@ Item {
                         toggled: !root.session.launcher.active
                         icon: "settings"
                         accent: "Primary"
-                        iconSize: Tokens.font.size.normal
-                        horizontalPadding: Tokens.padding.normal
-                        verticalPadding: Tokens.padding.smaller
+                        iconSize: Tokens.font.body.medium.pointSize
+                        horizontalPadding: Tokens.padding.medium
+                        verticalPadding: Tokens.padding.small
                         tooltip: qsTr("Launcher settings")
 
                         onClicked: {
@@ -186,10 +185,9 @@ Item {
                 }
 
                 StyledText {
-                    Layout.topMargin: Tokens.spacing.large
+                    Layout.topMargin: Tokens.spacing.largeIncreased
                     text: qsTr("Applications (%1)").arg(root.searchText ? root.filteredApps.length : allAppsDb.apps.length)
-                    font.pointSize: Tokens.font.size.normal
-                    font.weight: 500
+                    font: Tokens.font.title.builders.small.weight(Font.Medium).build()
                 }
 
                 StyledText {
@@ -199,7 +197,7 @@ Item {
 
                 StyledRect {
                     Layout.fillWidth: true
-                    Layout.topMargin: Tokens.spacing.normal
+                    Layout.topMargin: Tokens.spacing.medium
                     Layout.bottomMargin: Tokens.spacing.small
 
                     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
@@ -212,7 +210,7 @@ Item {
 
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
-                        anchors.leftMargin: Tokens.padding.normal
+                        anchors.leftMargin: Tokens.padding.medium
 
                         text: "search"
                         color: Colours.palette.m3onSurfaceVariant
@@ -226,8 +224,8 @@ Item {
                         anchors.leftMargin: Tokens.spacing.small
                         anchors.rightMargin: Tokens.spacing.small
 
-                        topPadding: Tokens.padding.normal
-                        bottomPadding: Tokens.padding.normal
+                        topPadding: Tokens.padding.medium
+                        bottomPadding: Tokens.padding.medium
 
                         placeholderText: qsTr("Search applications...")
 
@@ -241,7 +239,7 @@ Item {
 
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: parent.right
-                        anchors.rightMargin: Tokens.padding.normal
+                        anchors.rightMargin: Tokens.padding.medium
 
                         width: searchField.text ? implicitWidth : implicitWidth / 2
                         opacity: {
@@ -296,7 +294,7 @@ Item {
                         Layout.fillHeight: true
 
                         model: root.filteredApps
-                        spacing: Tokens.spacing.small / 2
+                        spacing: Tokens.spacing.extraSmall
                         clip: true
 
                         StyledScrollBar.vertical: StyledScrollBar {
@@ -312,7 +310,7 @@ Item {
                             implicitHeight: 40
 
                             color: isSelected ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
-                            radius: Tokens.rounding.normal
+                            radius: Tokens.rounding.large
 
                             opacity: 0
 
@@ -337,9 +335,9 @@ Item {
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Tokens.padding.normal
+                                anchors.margins: Tokens.padding.medium
 
-                                spacing: Tokens.spacing.normal
+                                spacing: Tokens.spacing.medium
 
                                 IconImage {
                                     asynchronous: true
@@ -354,7 +352,7 @@ Item {
                                 StyledText {
                                     Layout.fillWidth: true
                                     text: modelData.name || modelData.entry?.name || qsTr("Unknown")
-                                    font.pointSize: Tokens.font.size.normal
+                                    font: Tokens.font.body.medium
                                 }
 
                                 Loader {
@@ -517,12 +515,12 @@ Item {
             readonly property var displayedApp: parent && parent.displayedApp !== undefined ? parent.displayedApp : null
 
             anchors.fill: parent
-            spacing: Tokens.spacing.normal
+            spacing: Tokens.spacing.medium
 
             SettingsHeader {
-                Layout.leftMargin: Tokens.padding.large * 2
-                Layout.rightMargin: Tokens.padding.large * 2
-                Layout.topMargin: Tokens.padding.large * 2
+                Layout.leftMargin: Tokens.padding.extraLargeIncreased
+                Layout.rightMargin: Tokens.padding.extraLargeIncreased
+                Layout.topMargin: Tokens.padding.extraLargeIncreased
                 visible: displayedApp === null
                 icon: "apps"
                 title: qsTr("Launcher Applications")
@@ -530,23 +528,23 @@ Item {
 
             Item {
                 Layout.alignment: Qt.AlignHCenter
-                Layout.leftMargin: Tokens.padding.large * 2
-                Layout.rightMargin: Tokens.padding.large * 2
-                Layout.topMargin: Tokens.padding.large * 2
+                Layout.leftMargin: Tokens.padding.extraLargeIncreased
+                Layout.rightMargin: Tokens.padding.extraLargeIncreased
+                Layout.topMargin: Tokens.padding.extraLargeIncreased
                 visible: displayedApp !== null
                 implicitWidth: Math.max(appIconImage.implicitWidth, appTitleText.implicitWidth)
-                implicitHeight: appIconImage.implicitHeight + Tokens.spacing.normal + appTitleText.implicitHeight
+                implicitHeight: appIconImage.implicitHeight + Tokens.spacing.medium + appTitleText.implicitHeight
 
                 ColumnLayout {
                     anchors.centerIn: parent
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     IconImage {
                         id: appIconImage
 
                         asynchronous: true
                         Layout.alignment: Qt.AlignHCenter
-                        implicitSize: Tokens.font.size.extraLarge * 3 * 2
+                        implicitSize: Tokens.font.body.large.pointSize * 3 * 2
                         source: {
                             const app = appDetailsLayout.displayedApp;
                             if (!app)
@@ -564,8 +562,7 @@ Item {
 
                         Layout.alignment: Qt.AlignHCenter
                         text: displayedApp ? (displayedApp.name || displayedApp.entry?.name || qsTr("Application Details")) : ""
-                        font.pointSize: Tokens.font.size.large
-                        font.bold: true
+                        font: Tokens.font.title.builders.medium.weight(Font.Bold).build()
                     }
                 }
             }
@@ -573,9 +570,9 @@ Item {
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.topMargin: Tokens.spacing.large
-                Layout.leftMargin: Tokens.padding.large * 2
-                Layout.rightMargin: Tokens.padding.large * 2
+                Layout.topMargin: Tokens.spacing.largeIncreased
+                Layout.leftMargin: Tokens.padding.extraLargeIncreased
+                Layout.rightMargin: Tokens.padding.extraLargeIncreased
 
                 StyledFlickable {
                     id: detailsFlickable
@@ -594,10 +591,10 @@ Item {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         SwitchRow {
-                            Layout.topMargin: Tokens.spacing.normal
+                            Layout.topMargin: Tokens.spacing.medium
                             visible: appDetailsLayout.displayedApp !== null
                             label: qsTr("Mark as favourite")
                             checked: root.favouriteChecked
@@ -629,7 +626,7 @@ Item {
                             }
                         }
                         SwitchRow {
-                            Layout.topMargin: Tokens.spacing.normal
+                            Layout.topMargin: Tokens.spacing.medium
                             visible: appDetailsLayout.displayedApp !== null
                             label: qsTr("Hide from launcher")
                             checked: root.hideFromLauncherChecked

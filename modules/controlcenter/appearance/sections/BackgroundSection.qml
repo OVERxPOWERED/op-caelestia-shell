@@ -37,10 +37,9 @@ CollapsibleSection {
     }
 
     StyledText {
-        Layout.topMargin: Tokens.spacing.normal
+        Layout.topMargin: Tokens.spacing.medium
         text: qsTr("Desktop Clock")
-        font.pointSize: Tokens.font.size.larger
-        font.weight: 500
+        font: Tokens.font.body.builders.large.weight(Font.Medium).build()
     }
 
     SwitchRow {
@@ -69,8 +68,7 @@ CollapsibleSection {
 
         StyledText {
             text: qsTr("Positioning")
-            font.pointSize: Tokens.font.size.larger
-            font.weight: 500
+            font: Tokens.font.body.builders.large.weight(Font.Medium).build()
         }
 
         SplitButtonRow {
@@ -160,8 +158,7 @@ CollapsibleSection {
 
         StyledText {
             text: qsTr("Shadow")
-            font.pointSize: Tokens.font.size.larger
-            font.weight: 500
+            font: Tokens.font.body.builders.large.weight(Font.Medium).build()
         }
 
         SwitchRow {
@@ -174,7 +171,7 @@ CollapsibleSection {
         }
 
         SectionContainer {
-            contentSpacing: Tokens.spacing.normal
+            contentSpacing: Tokens.spacing.medium
 
             SliderInput {
                 Layout.fillWidth: true
@@ -199,7 +196,7 @@ CollapsibleSection {
         }
 
         SectionContainer {
-            contentSpacing: Tokens.spacing.normal
+            contentSpacing: Tokens.spacing.medium
 
             SliderInput {
                 Layout.fillWidth: true
@@ -229,8 +226,7 @@ CollapsibleSection {
 
         StyledText {
             text: qsTr("Background")
-            font.pointSize: Tokens.font.size.larger
-            font.weight: 500
+            font: Tokens.font.body.builders.large.weight(Font.Medium).build()
         }
 
         SwitchRow {
@@ -252,7 +248,7 @@ CollapsibleSection {
         }
 
         SectionContainer {
-            contentSpacing: Tokens.spacing.normal
+            contentSpacing: Tokens.spacing.medium
 
             SliderInput {
                 Layout.fillWidth: true
@@ -278,10 +274,9 @@ CollapsibleSection {
     }
 
     StyledText {
-        Layout.topMargin: Tokens.spacing.normal
+        Layout.topMargin: Tokens.spacing.medium
         text: qsTr("Visualiser")
-        font.pointSize: Tokens.font.size.larger
-        font.weight: 500
+        font: Tokens.font.body.builders.large.weight(Font.Medium).build()
     }
 
     SwitchRow {
@@ -303,7 +298,7 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.normal
+        contentSpacing: Tokens.spacing.medium
 
         SliderInput {
             Layout.fillWidth: true
@@ -328,7 +323,7 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.normal
+        contentSpacing: Tokens.spacing.medium
 
         SliderInput {
             Layout.fillWidth: true

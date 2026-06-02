@@ -125,9 +125,9 @@ Item {
         id: taskbarClippingRect
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Tokens.padding.medium
         anchors.leftMargin: 0
-        anchors.rightMargin: Tokens.padding.normal
+        anchors.rightMargin: Tokens.padding.medium
 
         radius: taskbarBorder.innerRadius
         color: "transparent"
@@ -136,7 +136,7 @@ Item {
             id: taskbarLoader
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.large + Tokens.padding.normal
+            anchors.margins: Tokens.padding.large + Tokens.padding.medium
             anchors.leftMargin: Tokens.padding.large
             anchors.rightMargin: Tokens.padding.large
 
@@ -149,7 +149,7 @@ Item {
         id: taskbarBorder
 
         leftThickness: 0
-        rightThickness: Tokens.padding.normal
+        rightThickness: Tokens.padding.medium
     }
 
     Component {
@@ -172,15 +172,14 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
 
-                spacing: Tokens.spacing.normal
+                spacing: Tokens.spacing.medium
 
                 RowLayout {
-                    spacing: Tokens.spacing.smaller
+                    spacing: Tokens.spacing.medium
 
                     StyledText {
                         text: qsTr("Taskbar")
-                        font.pointSize: Tokens.font.size.large
-                        font.weight: 500
+                        font: Tokens.font.title.builders.medium.weight(Font.Medium).build()
                     }
                 }
 
@@ -190,7 +189,7 @@ Item {
 
                     StyledText {
                         text: qsTr("Status Icons")
-                        font.pointSize: Tokens.font.size.normal
+                        font: Tokens.font.title.small
                     }
 
                     ConnectedButtonGroup {
@@ -269,14 +268,14 @@ Item {
                     id: mainRowLayout
 
                     Layout.fillWidth: true
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     ColumnLayout {
                         id: leftColumnLayout
 
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         SectionContainer {
                             Layout.fillWidth: true
@@ -284,13 +283,13 @@ Item {
 
                             StyledText {
                                 text: qsTr("Workspaces")
-                                font.pointSize: Tokens.font.size.normal
+                                font: Tokens.font.title.small
                             }
 
                             StyledRect {
                                 Layout.fillWidth: true
-                                implicitHeight: workspacesShownRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                implicitHeight: workspacesShownRow.implicitHeight + Tokens.padding.extraLargeIncreased
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {
@@ -304,7 +303,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -325,8 +324,8 @@ Item {
 
                             StyledRect {
                                 Layout.fillWidth: true
-                                implicitHeight: workspacesActiveIndicatorRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                implicitHeight: workspacesActiveIndicatorRow.implicitHeight + Tokens.padding.extraLargeIncreased
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {
@@ -340,7 +339,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -359,8 +358,8 @@ Item {
 
                             StyledRect {
                                 Layout.fillWidth: true
-                                implicitHeight: workspacesOccupiedBgRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                implicitHeight: workspacesOccupiedBgRow.implicitHeight + Tokens.padding.extraLargeIncreased
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {
@@ -374,7 +373,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -393,8 +392,8 @@ Item {
 
                             StyledRect {
                                 Layout.fillWidth: true
-                                implicitHeight: workspacesShowWindowsRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                implicitHeight: workspacesShowWindowsRow.implicitHeight + Tokens.padding.extraLargeIncreased
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {
@@ -408,7 +407,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -427,8 +426,8 @@ Item {
 
                             StyledRect {
                                 Layout.fillWidth: true
-                                implicitHeight: workspacesMaxWindowIconsRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                implicitHeight: workspacesMaxWindowIconsRow.implicitHeight + Tokens.padding.extraLargeIncreased
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {
@@ -442,7 +441,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -463,8 +462,8 @@ Item {
 
                             StyledRect {
                                 Layout.fillWidth: true
-                                implicitHeight: workspacesPerMonitorRow.implicitHeight + Tokens.padding.large * 2
-                                radius: Tokens.rounding.normal
+                                implicitHeight: workspacesPerMonitorRow.implicitHeight + Tokens.padding.extraLargeIncreased
+                                radius: Tokens.rounding.large
                                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
                                 Behavior on implicitHeight {
@@ -478,7 +477,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     anchors.margins: Tokens.padding.large
-                                    spacing: Tokens.spacing.normal
+                                    spacing: Tokens.spacing.medium
 
                                     StyledText {
                                         Layout.fillWidth: true
@@ -502,7 +501,7 @@ Item {
 
                             StyledText {
                                 text: qsTr("Scroll Actions")
-                                font.pointSize: Tokens.font.size.normal
+                                font: Tokens.font.title.small
                             }
 
                             ConnectedButtonGroup {
@@ -543,7 +542,7 @@ Item {
 
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         SectionContainer {
                             Layout.fillWidth: true
@@ -551,7 +550,7 @@ Item {
 
                             StyledText {
                                 text: qsTr("Clock")
-                                font.pointSize: Tokens.font.size.normal
+                                font: Tokens.font.title.small
                             }
 
                             SwitchRow {
@@ -588,7 +587,7 @@ Item {
 
                             StyledText {
                                 text: qsTr("Bar Behavior")
-                                font.pointSize: Tokens.font.size.normal
+                                font: Tokens.font.title.small
                             }
 
                             SwitchRow {
@@ -610,7 +609,7 @@ Item {
                             }
 
                             SectionContainer {
-                                contentSpacing: Tokens.spacing.normal
+                                contentSpacing: Tokens.spacing.medium
 
                                 SliderInput {
                                     Layout.fillWidth: true
@@ -641,7 +640,7 @@ Item {
 
                             StyledText {
                                 text: qsTr("Active window")
-                                font.pointSize: Tokens.font.size.normal
+                                font: Tokens.font.title.small
                             }
 
                             SwitchRow {
@@ -669,7 +668,7 @@ Item {
 
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignTop
-                        spacing: Tokens.spacing.normal
+                        spacing: Tokens.spacing.medium
 
                         SectionContainer {
                             Layout.fillWidth: true
@@ -677,7 +676,7 @@ Item {
 
                             StyledText {
                                 text: qsTr("Popouts")
-                                font.pointSize: Tokens.font.size.normal
+                                font: Tokens.font.title.small
                             }
 
                             SwitchRow {
@@ -714,7 +713,7 @@ Item {
 
                             StyledText {
                                 text: qsTr("Tray Settings")
-                                font.pointSize: Tokens.font.size.normal
+                                font: Tokens.font.title.small
                             }
 
                             ConnectedButtonGroup {
@@ -755,7 +754,7 @@ Item {
 
                             StyledText {
                                 text: qsTr("Monitors")
-                                font.pointSize: Tokens.font.size.normal
+                                font: Tokens.font.title.small
                             }
 
                             ConnectedButtonGroup {

@@ -63,7 +63,7 @@ StyledWindow {
     name: "drawers"
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen ? WlrLayer.Overlay : WlrLayer.Top
-    WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || panels.dashboard.needsKeyboard ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
     mask: hasFullscreen ? emptyRegion : regions
 
@@ -121,7 +121,9 @@ StyledWindow {
         color: Colours.palette.m3scrim
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.SlowEffects
+            }
         }
     }
 
@@ -226,9 +228,7 @@ StyledWindow {
             implicitWidth: panels.popouts.width * (1 + extraWidth)
 
             Behavior on extraWidth {
-                Anim {
-                    type: Anim.DefaultSpatial
-                }
+                Anim {}
             }
         }
     }
@@ -312,7 +312,7 @@ StyledWindow {
         y: panel.y + root.borderThickness
         implicitWidth: panel.width
         implicitHeight: panel.height
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.extraLarge
         deformScale: (deformAmount * Config.appearance.deformScale) / 10000
     }
 }

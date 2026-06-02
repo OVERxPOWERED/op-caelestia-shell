@@ -18,7 +18,7 @@ CollapsibleSection {
 
     ColumnLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.small / 2
+        spacing: Tokens.spacing.extraSmall
 
         Repeater {
             model: Schemes.list
@@ -32,10 +32,10 @@ CollapsibleSection {
                 readonly property bool isCurrent: schemeKey === Schemes.currentScheme
 
                 color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                radius: Tokens.rounding.normal
+                radius: Tokens.rounding.large
                 border.width: isCurrent ? 1 : 0
                 border.color: Colours.palette.m3primary
-                implicitHeight: schemeRow.implicitHeight + Tokens.padding.normal * 2
+                implicitHeight: schemeRow.implicitHeight + Tokens.padding.medium * 2
 
                 StateLayer {
                     onClicked: {
@@ -65,9 +65,9 @@ CollapsibleSection {
                     id: schemeRow
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.normal
+                    anchors.margins: Tokens.padding.medium
 
-                    spacing: Tokens.spacing.normal
+                    spacing: Tokens.spacing.medium
 
                     StyledRect {
                         id: preview
@@ -87,7 +87,7 @@ CollapsibleSection {
 
                             visible: false
                             text: "circle"
-                            font.pointSize: Tokens.font.size.large
+                            fontStyle: Tokens.font.icon.large
                         }
 
                         Item {
@@ -116,12 +116,12 @@ CollapsibleSection {
 
                         StyledText {
                             text: modelData.flavour ?? ""
-                            font.pointSize: Tokens.font.size.normal
+                            font: Tokens.font.body.medium
                         }
 
                         StyledText {
                             text: modelData.name ?? ""
-                            font.pointSize: Tokens.font.size.small
+                            font: Tokens.font.body.small
                             color: Colours.palette.m3outline
 
                             elide: Text.ElideRight
@@ -137,7 +137,7 @@ CollapsibleSection {
                         sourceComponent: MaterialIcon {
                             text: "check"
                             color: Colours.palette.m3onSurfaceVariant
-                            font.pointSize: Tokens.font.size.large
+                            fontStyle: Tokens.font.icon.large
                         }
                     }
                 }

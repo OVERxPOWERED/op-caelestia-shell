@@ -103,7 +103,6 @@ void GlobalConfig::bindAppearanceTokens() {
     m_appearance->rounding()->bindTokens(tokenAppearance->rounding());
     m_appearance->spacing()->bindTokens(tokenAppearance->spacing());
     m_appearance->padding()->bindTokens(tokenAppearance->padding());
-    m_appearance->font()->size()->bindTokens(tokenAppearance->fontSize());
     m_appearance->anim()->durations()->bindTokens(tokenAppearance->animDurations());
     m_tokensBound = true;
 }

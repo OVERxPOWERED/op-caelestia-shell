@@ -71,12 +71,12 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.normal
+        spacing: Tokens.spacing.medium
 
         StyledText {
             visible: root.label !== ""
             text: root.label
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.label.medium
         }
 
         Item {
@@ -138,7 +138,7 @@ ColumnLayout {
             visible: root.suffix !== ""
             text: root.suffix
             color: Colours.palette.m3outline
-            font.pointSize: Tokens.font.size.normal
+            font: Tokens.font.body.medium
         }
     }
 
@@ -146,7 +146,7 @@ ColumnLayout {
         id: slider
 
         Layout.fillWidth: true
-        implicitHeight: Tokens.padding.normal * 3
+        implicitHeight: Tokens.padding.medium * 3
 
         from: root.from
         to: root.to

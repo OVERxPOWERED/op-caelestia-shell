@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import qs.components
 import qs.services
+import qs.modules.nexus
 
 Singleton {
     id: root
@@ -37,7 +38,7 @@ Singleton {
             maximumSize.width: implicitWidth
             maximumSize.height: implicitHeight
 
-            title: qsTr("Nexus — %1").arg(nexus.nState.currentPageName)
+            title: qsTr("Nexus — %1").arg(PageRegistry.pages[nexus.nState.currentPageIdx].label)
 
             Nexus {
                 id: nexus

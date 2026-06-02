@@ -33,6 +33,8 @@ StyledRect {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: Tokens.padding.extraLarge
+
+        rootHeight: root.rootHeight
     }
 
     Loader {

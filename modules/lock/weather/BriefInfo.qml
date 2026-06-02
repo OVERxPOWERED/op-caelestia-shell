@@ -7,6 +7,8 @@ import qs.services
 ColumnLayout {
     id: root
 
+    required property int rootHeight
+
     spacing: Tokens.spacing.extraSmall
 
     StyledText {
@@ -39,6 +41,7 @@ ColumnLayout {
     }
 
     StyledText {
+        visible: root.rootHeight > Tokens.sizes.lock.showWeatherDetailsHeight
         Layout.alignment: Qt.AlignHCenter
         animate: true
         text: qsTr("Feels like %1").arg(Weather.temp)
@@ -47,6 +50,7 @@ ColumnLayout {
     }
 
     StyledText {
+        visible: root.rootHeight > Tokens.sizes.lock.showWeatherDetailsHeight
         Layout.alignment: Qt.AlignHCenter
         animate: true
         text: {

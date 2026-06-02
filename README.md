@@ -245,7 +245,7 @@ For example, to disable the bar on DP-1:
 > - `utilities` (`toasts`, `vpn`)
 > - `services` (`weatherLocation`, `useFahrenheit`, `useFahrenheitPerformance`, `useTwelveHourClock`,
 >   `gpuType`, `visualiserBars`, `audioIncrement`, `brightnessIncrement`, `maxVolume`, `smartScheme`,
->   `defaultPlayer`, `playerAliases`, `showLyrics`, `lyricsBackend`)
+>   `defaultPlayer`, `playerAliases`, `lyricsBackend`)
 > - `paths` (`wallpaperDir`, `lyricsDir`)
 >
 > </details>

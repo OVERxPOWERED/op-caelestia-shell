@@ -68,8 +68,6 @@ StyledRect {
         }
 
         RowLayout {
-            Layout.topMargin: -Tokens.spacing.extraSmall
-            Layout.bottomMargin: Tokens.spacing.small
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: Tokens.spacing.extraLarge
@@ -78,7 +76,7 @@ StyledRect {
                 id: iconLoader
 
                 Layout.fillHeight: true
-                active: root.width > 320
+                active: root.width > Tokens.sizes.lock.largeLogoWidth
 
                 sourceComponent: SysInfo.isDefaultLogo ? caelestiaLogo : distroIcon
             }
@@ -86,7 +84,7 @@ StyledRect {
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.topMargin: Tokens.padding.medium
-                Layout.bottomMargin: Tokens.padding.medium
+                Layout.bottomMargin: iconLoader.active || colourRowLoader.active ? Tokens.padding.medium : 0
                 spacing: Tokens.spacing.medium
 
                 Repeater {
@@ -95,13 +93,13 @@ StyledRect {
                         const hasBatt = UPower.displayDevice.isLaptopBattery;
                         const rHeight = root.rootHeight;
 
-                        if (!hasBatt && rHeight > 200)
+                        if (!hasBatt && rHeight > Tokens.sizes.lock.fetch4LinesHeight)
                             items.push(`OS  : ${SysInfo.osPrettyName || SysInfo.osName}`);
 
-                        if (rHeight > (hasBatt ? 200 : 110))
+                        if (rHeight > (hasBatt ? Tokens.sizes.lock.fetch4LinesHeight : Tokens.sizes.lock.fetch3LinesHeight))
                             items.push(`WM  : ${SysInfo.wm}`);
 
-                        if (!hasBatt || rHeight > 110)
+                        if (!hasBatt || rHeight > Tokens.sizes.lock.fetch3LinesHeight)
                             items.push(`USER: ${SysInfo.user}`);
 
                         items.push(`UP  : ${SysInfo.uptime}`);
@@ -124,8 +122,11 @@ StyledRect {
         }
 
         WrappedLoader {
+            id: colourRowLoader
+
+            Layout.topMargin: iconLoader.active ? Tokens.spacing.small : 0
             Layout.alignment: Qt.AlignHCenter
-            active: root.rootHeight > 180
+            active: root.rootHeight > Tokens.sizes.lock.showColourBoxRowHeight
 
             sourceComponent: RowLayout {
                 id: coloursRow
@@ -173,6 +174,6 @@ StyledRect {
     }
 
     component MonoText: StyledText {
-        font: root.width > 400 ? Tokens.font.mono.medium : Tokens.font.mono.small
+        font: root.width > Tokens.sizes.lock.largeFontWidth ? Tokens.font.mono.medium : Tokens.font.mono.small
     }
 }

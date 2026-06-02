@@ -287,6 +287,11 @@ class LockTokens : public ConfigObject {
     CONFIG_PROPERTY(int, centerWidth, 600)
     CONFIG_PROPERTY(int, showForecastHeight, 975)
     CONFIG_PROPERTY(int, forecastItemWidth, 51)
+    CONFIG_PROPERTY(int, largeLogoWidth, 320)
+    CONFIG_PROPERTY(int, largeFontWidth, 400)
+    CONFIG_PROPERTY(int, fetch4LinesHeight, 600)
+    CONFIG_PROPERTY(int, fetch3LinesHeight, 500)
+    CONFIG_PROPERTY(int, showColourBoxRowHeight, 570)
 
 public:
     explicit LockTokens(QObject* parent = nullptr)

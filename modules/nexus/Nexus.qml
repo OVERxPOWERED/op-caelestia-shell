@@ -6,6 +6,7 @@ import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.services
+import qs.modules.nexus
 
 Item {
     id: root
@@ -25,7 +26,7 @@ Item {
         id: blobGroup
 
         smoothing: root.Tokens.rounding.largeIncreased
-        color: Colours.palette.m3surfaceContainer
+        color: Colours.palette.m3surfaceContainerLow
     }
 
     BlobInvertedRect {
@@ -33,7 +34,7 @@ Item {
         group: blobGroup
         radius: Tokens.rounding.large
 
-        borderLeft: navPane.implicitWidth + Tokens.padding.medium
+        borderLeft: navPane.width + navPane.anchors.margins * 2
         borderRight: Tokens.padding.medium
         borderTop: Tokens.padding.medium
         borderBottom: Tokens.padding.medium
@@ -72,9 +73,15 @@ Item {
         }
     }
 
-    Item {
+    NavPane {
         id: navPane // TODO
 
-        implicitWidth: 400
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.margins: Tokens.padding.large
+
+        nState: nState
+        width: Math.round(root.width / 3)
     }
 }

@@ -5,6 +5,7 @@ import Caelestia.Components
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.components.images
 import qs.services
 
 StyledClippingRect {
@@ -16,7 +17,7 @@ StyledClippingRect {
     radius: Tokens.rounding.extraLarge
     color: Colours.tPalette.m3surfaceContainer
 
-    Image {
+    FadeImage {
         anchors.fill: parent
         source: Players.getArtUrl(Players.active)
 

@@ -8,6 +8,7 @@ import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.components.effects
+import qs.components.images
 import qs.services
 
 Item {
@@ -92,66 +93,16 @@ Item {
         }
     }
 
-    Image {
+    FadeImage {
         id: image
 
         anchors.fill: parent
 
         source: Players.getArtUrl(Players.active)
-        asynchronous: true
-        fillMode: Image.PreserveAspectCrop
-
-        sourceSize: {
-            const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
-            return Qt.size(width * dpr, height * dpr);
-        }
 
         layer.enabled: true
         layer.effect: Mask {
             maskSource: shapeWrapper
-        }
-
-        retainWhileLoading: true
-        opacity: 0
-
-        onStatusChanged: {
-            if (!opacityInAnim.running && image.status === Image.Ready) {
-                opacityInAnim.type = root.hadPrevious ? Anim.DefaultEffects : Anim.StandardLarge;
-                opacityInAnim.start();
-            }
-        }
-
-        Anim on opacity {
-            id: opacityInAnim
-
-            running: false
-            to: 1
-            type: Anim.DefaultEffects
-        }
-
-        Behavior on source {
-            SequentialAnimation {
-                Anim {
-                    target: image
-                    property: "opacity"
-                    to: 0
-                    type: Anim.FastEffects
-                }
-                PropertyAction {
-                    target: root
-                    property: "hadPrevious"
-                    value: image.source
-                }
-                PropertyAction {}
-                ScriptAction {
-                    script: {
-                        if (!opacityInAnim.running && image.status === Image.Ready) {
-                            opacityInAnim.type = root.hadPrevious ? Anim.DefaultEffects : Anim.StandardLarge;
-                            opacityInAnim.start();
-                        }
-                    }
-                }
-            }
         }
     }
 }

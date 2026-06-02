@@ -7,9 +7,15 @@ import qs.services
 StyledRect {
     id: root
 
-    required property int rootHeight // TODO: add forecast when large height
+    required property int rootHeight
+    readonly property bool showForecast: rootHeight >= Tokens.sizes.lock.showForecastHeight
 
-    implicitHeight: layout.implicitHeight + Tokens.padding.extraLarge * 2
+    implicitHeight: {
+        const base = brief.implicitHeight + brief.anchors.topMargin;
+        if (showForecast)
+            return base + Tokens.spacing.largeIncreased + forecast.implicitHeight + forecast.anchors.margins;
+        return base + brief.anchors.topMargin;
+    }
     radius: Tokens.rounding.extraExtraLarge
     color: Colours.tPalette.m3surfaceContainer
 
@@ -22,8 +28,24 @@ StyledRect {
     }
 
     BriefInfo {
-        id: layout
+        id: brief
 
-        anchors.centerIn: parent
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: Tokens.padding.extraLarge
+    }
+
+    Loader {
+        id: forecast
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: Tokens.padding.large
+
+        active: root.showForecast
+        asynchronous: true
+
+        sourceComponent: Forecast {}
     }
 }

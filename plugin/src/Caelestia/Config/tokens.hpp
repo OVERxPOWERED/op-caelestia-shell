@@ -285,6 +285,8 @@ class LockTokens : public ConfigObject {
     CONFIG_PROPERTY(qreal, heightMult, 0.7)
     CONFIG_PROPERTY(qreal, ratio, 16.0 / 9.0)
     CONFIG_PROPERTY(int, centerWidth, 600)
+    CONFIG_PROPERTY(int, showForecastHeight, 975)
+    CONFIG_PROPERTY(int, forecastItemWidth, 51)
 
 public:
     explicit LockTokens(QObject* parent = nullptr)

@@ -150,7 +150,7 @@ Singleton {
                     timestamp: json.hourly.time[i],
                     hour: time.getHours(),
                     tempC: Math.round(json.hourly.temperature_2m[i]),
-                    tempF: Math.round(toFahrenheit(json.hourly.temperature_2m[i])),
+                    precipChance: json.hourly.precipitation_probability[i],
                     weatherCode: json.hourly.weather_code[i],
                     icon: Icons.getWeatherIcon(json.hourly.weather_code[i])
                 });
@@ -169,7 +169,7 @@ Singleton {
 
         const [lat, lon] = loc.split(",").map(s => s.trim());
         const baseUrl = "https://api.open-meteo.com/v1/forecast";
-        const params = ["latitude=" + lat, "longitude=" + lon, "hourly=weather_code,temperature_2m", "daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset", "current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m", "timezone=auto", "forecast_days=7"];
+        const params = ["latitude=" + lat, "longitude=" + lon, "hourly=weather_code,temperature_2m,precipitation_probability", "daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset", "current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m", "timezone=auto", "forecast_days=7"];
 
         return baseUrl + "?" + params.join("&");
     }

@@ -97,7 +97,7 @@ StyledFlickable {
 
                     ColumnLayout {
                         Layout.fillWidth: true
-                        spacing: 0 //Tokens.spacing.extraSmall
+                        spacing: 0
 
                         StyledText {
                             Layout.fillWidth: true

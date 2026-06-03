@@ -4,8 +4,8 @@ import Quickshell
 QtObject {
     property ShellScreen screen
     property bool isWindow
-    property bool navExpanded
     property int currentPageIdx
+    property bool searchOpen
 
     signal close
 }

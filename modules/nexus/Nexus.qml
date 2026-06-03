@@ -27,6 +27,10 @@ Item {
 
         smoothing: root.Tokens.rounding.largeIncreased
         color: Colours.palette.m3surfaceContainerLow
+
+        Behavior on color {
+            CAnim {}
+        }
     }
 
     BlobInvertedRect {

@@ -197,8 +197,13 @@ void main() {
             // Screen-space center (with offset) and pre-computed AABB half-extents
             vec2 ctr = rect.xy + sinkProps.yz;
 
-            // Delay sink to absorb smin blend depth (circular smin max = (sqrt(2)-1)*k)
-            float preOff = smoothFactor * (sqrt(2.0) - 1.0);
+            // Sink onset / residual overlap: how far a rect must penetrate the border before
+            // the inner wall recedes to form its pocket. Too low and the wall recedes faster
+            // than the junction can stay convex, denting the inner edge inward near the rect's
+            // (squared) corners; too high and the rect nestles too deep before the wall yields.
+            // Tuned between the old cubic blend depth (k/6, too shallow) and the circular blend
+            // depth ((sqrt2-1)k): half the circular smin gap-closing distance, (2-sqrt2)k/2.
+            float preOff = smoothFactor * (2.0 - sqrt(2.0)) * 0.5;
 
             // Top border: track rect's BOTTOM edge, only within border thickness
             float topPen = clamp(innerTop - (ctr.y + sinkSh.y) - preOff, 0.0, innerTop - outerTop);

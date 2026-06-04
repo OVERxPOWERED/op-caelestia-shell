@@ -25,7 +25,7 @@ Item {
     BlobGroup {
         id: blobGroup
 
-        smoothing: root.Tokens.rounding.largeIncreased
+        smoothing: root.Tokens.rounding.medium
         color: Colours.palette.m3surfaceContainerLow
 
         Behavior on color {

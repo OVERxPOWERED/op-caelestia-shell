@@ -44,61 +44,102 @@ ColumnLayout {
         radius: Tokens.rounding.large
 
         Loader {
-            id: wallIndicatorLoader
-
             anchors.centerIn: parent
-
-            opacity: 0
+            opacity: Config.background.wallpaperEnabled ? 0 : 1
             active: opacity > 0
 
-            sourceComponent: StyledRect {
-                implicitWidth: wallLoadingIndicator.implicitSize + Tokens.padding.largeIncreased * 2
-                implicitHeight: wallLoadingIndicator.implicitSize + Tokens.padding.largeIncreased * 2
+            sourceComponent: ColumnLayout {
+                spacing: Tokens.spacing.extraSmall
 
-                color: Colours.palette.m3primaryContainer
-                radius: Tokens.rounding.full
+                MaterialIcon {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "hide_image"
+                    color: Colours.palette.m3onSurfaceVariant
+                    font: Tokens.font.icon.extraLarge
+                }
 
-                LoadingIndicator {
-                    id: wallLoadingIndicator
-
-                    anchors.centerIn: parent
-                    containsIcon: true
-                    implicitSize: Math.min(wallWrapper.implicitWidth, wallWrapper.implicitHeight) * 0.4
+                StyledText {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: qsTr("Wallpaper disabled")
+                    color: Colours.palette.m3onSurfaceVariant
+                    font: Tokens.font.body.large
                 }
             }
 
             Behavior on opacity {
                 Anim {
-                    type: Anim.DefaultEffects
+                    type: Anim.SlowEffects
                 }
             }
         }
 
-        Timer {
-            id: wallLoadDebounceTimer
-
-            interval: 100
-            onTriggered: {
-                if (wallImg.status !== Image.Ready)
-                    wallIndicatorLoader.opacity = 1;
-            }
-        }
-
-        FadeImage {
-            id: wallImg
-
+        Item {
             anchors.fill: parent
-            source: Wallpapers.current
-            preventInit: wallIndicatorLoader.opacity > 0
-            fadeOutAnim: Anim.DefaultEffects
-            fadeInAnim: Anim.SlowEffects
+            opacity: Config.background.wallpaperEnabled ? 1 : 0
 
-            onSourceChanged: wallLoadDebounceTimer.restart()
+            Behavior on opacity {
+                Anim {
+                    type: Anim.SlowEffects
+                }
+            }
 
-            onStatusChanged: {
-                if (status === Image.Ready) {
-                    wallLoadDebounceTimer.stop();
-                    wallIndicatorLoader.opacity = 0;
+            Loader {
+                id: wallIndicatorLoader
+
+                anchors.centerIn: parent
+
+                opacity: 0
+                active: opacity > 0
+
+                sourceComponent: StyledRect {
+                    implicitWidth: wallLoadingIndicator.implicitSize + Tokens.padding.largeIncreased * 2
+                    implicitHeight: wallLoadingIndicator.implicitSize + Tokens.padding.largeIncreased * 2
+
+                    color: Colours.palette.m3primaryContainer
+                    radius: Tokens.rounding.full
+
+                    LoadingIndicator {
+                        id: wallLoadingIndicator
+
+                        anchors.centerIn: parent
+                        containsIcon: true
+                        implicitSize: Math.min(wallWrapper.implicitWidth, wallWrapper.implicitHeight) * 0.4
+                    }
+                }
+
+                Behavior on opacity {
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
+                }
+            }
+
+            Timer {
+                id: wallLoadDebounceTimer
+
+                interval: 100
+                onTriggered: {
+                    if (wallImg.status !== Image.Ready)
+                        wallIndicatorLoader.opacity = 1;
+                }
+            }
+
+            FadeImage {
+                id: wallImg
+
+                anchors.fill: parent
+                source: Wallpapers.current
+                preventInit: wallIndicatorLoader.opacity > 0
+                fadeOutAnim: Anim.DefaultEffects
+                fadeInAnim: Anim.SlowEffects
+
+                onSourceChanged: wallLoadDebounceTimer.restart()
+
+                onStatusChanged: {
+                    if (status === Image.Ready) {
+                        wallLoadDebounceTimer.stop();
+                        wallIndicatorLoader.opacity = 0;
+                    }
                 }
             }
         }

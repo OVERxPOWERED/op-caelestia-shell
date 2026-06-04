@@ -165,7 +165,7 @@ StyledFlickable {
                         StyledText {
                             Layout.fillWidth: true
                             text: item.modelData.label
-                            font: Tokens.font.title.small
+                            font: Tokens.font.body.medium
                             elide: Text.ElideRight
                         }
 

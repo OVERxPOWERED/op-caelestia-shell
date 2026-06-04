@@ -6,10 +6,15 @@ Image {
     id: root
 
     property bool hadPrevious
+    property bool fadingOut
+    property bool preventInit
+    property int fadeOutAnim: Anim.FastEffects
+    property int fadeInAnim: Anim.DefaultEffects
+    property int fadeInLargeAnim: Anim.StandardLarge
 
     function maybeStartInAnim(): void {
-        if (!opacityInAnim.running && status === Image.Ready) {
-            opacityInAnim.type = hadPrevious ? Anim.DefaultEffects : Anim.StandardLarge;
+        if (!preventInit && !opacityInAnim.running && status === Image.Ready) {
+            opacityInAnim.type = hadPrevious ? fadeInAnim : fadeInLargeAnim;
             opacityInAnim.start();
         }
     }
@@ -26,6 +31,7 @@ Image {
     opacity: 0
 
     onStatusChanged: maybeStartInAnim()
+    onPreventInitChanged: maybeStartInAnim()
 
     Anim on opacity {
         id: opacityInAnim
@@ -36,11 +42,24 @@ Image {
 
     Behavior on source {
         SequentialAnimation {
+            ScriptAction {
+                script: opacityInAnim.stop()
+            }
+            PropertyAction {
+                target: root
+                property: "fadingOut"
+                value: true
+            }
             Anim {
                 target: root
                 property: "opacity"
                 to: 0
-                type: Anim.FastEffects
+                type: root.fadeOutAnim
+            }
+            PropertyAction {
+                target: root
+                property: "fadingOut"
+                value: false
             }
             PropertyAction {
                 target: root

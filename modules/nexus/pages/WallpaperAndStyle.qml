@@ -7,6 +7,7 @@ import Caelestia.Components
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.components.images
 import qs.services
 import qs.modules.nexus
 import qs.modules.nexus.common
@@ -43,9 +44,11 @@ ColumnLayout {
         radius: Tokens.rounding.large
 
         Loader {
+            id: wallIndicatorLoader
+
             anchors.centerIn: parent
 
-            opacity: wallImg.status === Image.Ready ? 0 : 1
+            opacity: 0
             active: opacity > 0
 
             sourceComponent: StyledRect {
@@ -60,7 +63,7 @@ ColumnLayout {
 
                     anchors.centerIn: parent
                     containsIcon: true
-                    implicitSize: wallWrapper.implicitHeight * 0.4
+                    implicitSize: Math.min(wallWrapper.implicitWidth, wallWrapper.implicitHeight) * 0.4
                 }
             }
 
@@ -71,24 +74,31 @@ ColumnLayout {
             }
         }
 
-        Image {
+        Timer {
+            id: wallLoadDebounceTimer
+
+            interval: 100
+            onTriggered: {
+                if (wallImg.status !== Image.Ready)
+                    wallIndicatorLoader.opacity = 1;
+            }
+        }
+
+        FadeImage {
             id: wallImg
 
             anchors.fill: parent
             source: Wallpapers.current
-            asynchronous: true
-            fillMode: Image.PreserveAspectCrop
-            sourceSize: {
-                const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
-                return Qt.size(width * dpr, height * dpr);
-            }
+            preventInit: wallIndicatorLoader.opacity > 0
+            fadeOutAnim: Anim.DefaultEffects
+            fadeInAnim: Anim.SlowEffects
 
-            retainWhileLoading: true
-            opacity: status === Image.Ready ? 1 : 0
+            onSourceChanged: wallLoadDebounceTimer.restart()
 
-            Behavior on opacity {
-                Anim {
-                    type: Anim.SlowEffects
+            onStatusChanged: {
+                if (status === Image.Ready) {
+                    wallLoadDebounceTimer.stop();
+                    wallIndicatorLoader.opacity = 0;
                 }
             }
         }

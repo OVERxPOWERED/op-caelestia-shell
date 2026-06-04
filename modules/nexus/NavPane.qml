@@ -19,6 +19,8 @@ ColumnLayout {
     NavLocations {
         Layout.fillWidth: true
         Layout.fillHeight: true
+        Layout.topMargin: -topMargin
+        Layout.bottomMargin: -bottomMargin
         nState: root.nState
     }
 }

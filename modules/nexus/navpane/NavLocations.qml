@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Caelestia.Config
 import qs.components
 import qs.components.containers
+import qs.components.effects
 import qs.services
 import qs.modules.nexus
 
@@ -13,7 +14,58 @@ StyledFlickable {
 
     required property NexusState nState
 
+    property real topFadeOpacity: visibleArea.yPosition > 0 ? 0 : 1
+    property real bottomFadeOpacity: visibleArea.yPosition + visibleArea.heightRatio < 1 ? 0 : 1
+
+    topMargin: Tokens.padding.large
+    bottomMargin: Tokens.padding.large
     contentHeight: content.implicitHeight
+
+    layer.enabled: true
+    layer.effect: Mask {
+        maskSource: mask
+
+        Rectangle {
+            id: mask
+
+            anchors.fill: parent
+            visible: false
+            layer.enabled: true
+
+            gradient: Gradient {
+                orientation: Gradient.Vertical
+
+                GradientStop {
+                    position: 0
+                    color: Qt.rgba(0, 0, 0, root.topFadeOpacity)
+                }
+                GradientStop {
+                    position: 0.3
+                    color: Qt.rgba(0, 0, 0, 1)
+                }
+                GradientStop {
+                    position: 0.7
+                    color: Qt.rgba(0, 0, 0, 1)
+                }
+                GradientStop {
+                    position: 1
+                    color: Qt.rgba(0, 0, 0, root.bottomFadeOpacity)
+                }
+            }
+        }
+    }
+
+    Behavior on topFadeOpacity {
+        Anim {
+            type: Anim.SlowEffects
+        }
+    }
+
+    Behavior on bottomFadeOpacity {
+        Anim {
+            type: Anim.SlowEffects
+        }
+    }
 
     ColumnLayout {
         id: content

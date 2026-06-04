@@ -51,8 +51,8 @@ Item {
         group: blobGroup
         radius: Tokens.rounding.medium
 
-        implicitWidth: windowBtn.implicitWidth + Tokens.padding.small * 2
-        implicitHeight: windowBtn.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitWidth: windowBtn.implicitWidth + Tokens.padding.extraSmall * 2
+        implicitHeight: windowBtn.implicitHeight + Tokens.padding.extraSmall
 
         IconButton {
             id: windowBtn

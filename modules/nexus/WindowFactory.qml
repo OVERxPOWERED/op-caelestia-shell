@@ -25,6 +25,7 @@ Singleton {
             id: win
 
             color: Colours.tPalette.m3surface
+            surfaceFormat.opaque: false
 
             onVisibleChanged: {
                 if (!visible)

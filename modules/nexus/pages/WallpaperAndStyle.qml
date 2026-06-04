@@ -40,7 +40,7 @@ ColumnLayout {
             return Math.min(Math.round(cWidth * 0.4), cWidth / screen.width * screen.height);
         }
 
-        color: Colours.palette.m3surfaceContainer
+        color: Colours.tPalette.m3surfaceContainer
         radius: Tokens.rounding.large
 
         Loader {

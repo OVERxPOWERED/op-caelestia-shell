@@ -14,7 +14,7 @@ StyledRect {
     implicitHeight: searchLayout.implicitHeight + Tokens.padding.medium * 2
 
     radius: Tokens.rounding.full
-    color: Colours.palette.m3surfaceContainerLowest
+    color: Colours.tPalette.m3surfaceContainerLowest
     border.color: Colours.palette.m3outlineVariant
 
     Behavior on border.color {

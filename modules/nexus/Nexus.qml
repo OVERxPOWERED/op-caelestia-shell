@@ -16,26 +16,28 @@ Item {
 
         onClose: root.close()
     }
+    property color blobColour: Colours.tPalette.m3surfaceContainerLow
 
     signal close
 
     implicitWidth: implicitHeight * Tokens.sizes.nexus.ratio
     implicitHeight: nState.screen.height * Tokens.sizes.nexus.heightMult
 
+    Behavior on blobColour {
+        CAnim {}
+    }
+
     BlobGroup {
         id: blobGroup
 
         smoothing: root.Tokens.rounding.medium
-        color: Colours.palette.m3surfaceContainerLow
-
-        Behavior on color {
-            CAnim {}
-        }
+        color: root.blobColour
     }
 
     BlobInvertedRect {
         anchors.fill: parent
         group: blobGroup
+        opacity: root.blobColour.a
         radius: Tokens.rounding.large
 
         borderLeft: navPane.width + navPane.anchors.margins * 2
@@ -45,36 +47,39 @@ Item {
     }
 
     BlobRect {
+        id: windowBtnRect
+
         anchors.right: parent.right
         anchors.top: parent.top
 
         group: blobGroup
+        opacity: root.blobColour.a
         radius: Tokens.rounding.medium
 
         implicitWidth: windowBtn.implicitWidth + Tokens.padding.extraSmall * 2
         implicitHeight: windowBtn.implicitHeight + Tokens.padding.extraSmall
+    }
 
-        IconButton {
-            id: windowBtn
+    IconButton {
+        id: windowBtn
 
-            anchors.centerIn: parent
-            icon: nState.isWindow ? "close" : "pip"
-            type: IconButton.Text
-            label.fill: 0
-            inactiveOnColour: hovered ? nState.isWindow ? Colours.palette.m3error : Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
-            stateLayer.opacity: 0
-            onClicked: {
-                if (!nState.isWindow)
-                    WindowFactory.create();
-                root.close();
-            }
+        anchors.centerIn: windowBtnRect
+        icon: nState.isWindow ? "close" : "pip"
+        type: IconButton.Text
+        label.fill: 0
+        inactiveOnColour: hovered ? nState.isWindow ? Colours.palette.m3error : Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+        stateLayer.opacity: 0
+        onClicked: {
+            if (!nState.isWindow)
+                WindowFactory.create();
+            root.close();
+        }
 
-            label.scale: pressed ? 0.8 : 1
-            label.renderType: Text.QtRendering
+        label.scale: pressed ? 0.8 : 1
+        label.renderType: Text.QtRendering
 
-            Behavior on label.scale {
-                Anim {}
-            }
+        Behavior on label.scale {
+            Anim {}
         }
     }
 

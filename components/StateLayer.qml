@@ -9,6 +9,7 @@ MouseArea {
 
     property bool disabled
     property bool showHoverBackground: true
+    property bool manualPressOverride
     readonly property alias rect: base
 
     property bool shapeMorph
@@ -60,12 +61,17 @@ MouseArea {
     onPressed: e => press(e.x, e.y)
 
     onPressedChanged: {
-        if (!pressed && !rippleAnim.running && circle.opacity > 0)
+        if (!(pressed || manualPressOverride) && !rippleAnim.running && circle.opacity > 0)
+            fadeAnim.start();
+    }
+
+    onManualPressOverrideChanged: {
+        if (!(pressed || manualPressOverride) && circleRadius > endRadiusAtPress * 0.99 && !fadeAnim.running)
             fadeAnim.start();
     }
 
     onCircleRadiusChanged: {
-        if (!pressed && circleRadius > endRadiusAtPress * 0.99 && !fadeAnim.running)
+        if (!(pressed || manualPressOverride) && circleRadius > endRadiusAtPress * 0.99 && !fadeAnim.running)
             fadeAnim.start();
     }
 

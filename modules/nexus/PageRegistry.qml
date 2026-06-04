@@ -8,15 +8,9 @@ QtObject {
     readonly property list<var> pages: [
         // Appearance
         {
-            label: qsTr("Look & feel"),
+            label: qsTr("Wallpaper & style"),
             icon: "palette",
-            description: qsTr("Fonts, colours, transparency"),
-            category: "appearance"
-        },
-        {
-            label: qsTr("Wallpaper & widgets"),
-            icon: "wallpaper",
-            description: qsTr("Wallpaper, desktop widgets"),
+            description: qsTr("Wallpaper, fonts, colours"),
             category: "appearance"
         },
 

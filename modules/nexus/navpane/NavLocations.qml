@@ -14,12 +14,23 @@ StyledFlickable {
 
     required property NexusState nState
 
-    property real topFadeOpacity: visibleArea.yPosition > 0 ? 0 : 1
-    property real bottomFadeOpacity: visibleArea.yPosition + visibleArea.heightRatio < 1 ? 0 : 1
+    property real topFadeOpacity: fadeShouldBeActive(true) ? 0 : 1
+    property real bottomFadeOpacity: fadeShouldBeActive(false) ? 0 : 1
+
+    function fadeShouldBeActive(isStart: bool): bool {
+        // When content is smaller than flickable size, hide fade when rebound starts
+        if (contentHeight + topMargin + bottomMargin < height && rebound.running && ((isStart ? verticalOvershoot > 0 : verticalOvershoot < 0)))
+            return false;
+
+        if (isStart)
+            return visibleArea.yPosition > 0;
+        return visibleArea.yPosition + visibleArea.heightRatio < 1;
+    }
 
     topMargin: Tokens.padding.large
     bottomMargin: Tokens.padding.large
     contentHeight: content.implicitHeight
+    flickableDirection: Flickable.VerticalFlick
 
     layer.enabled: true
     layer.effect: Mask {

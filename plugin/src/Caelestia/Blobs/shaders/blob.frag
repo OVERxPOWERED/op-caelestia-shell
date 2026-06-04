@@ -42,9 +42,12 @@ float sdBox(vec2 p, vec2 center, vec2 halfSize) {
 
 float smin(float a, float b, float k) {
     // Circular smooth min — the blend fillet is a true circular arc of radius k,
-    // tangent to both surfaces (not a polynomial/squircle curve). Deviation region
-    // width = k (deviates only where both a < k and b < k), matching the cubic it
-    // replaces. Always <= min(a, b); max blend depth at a == b is (sqrt(2) - 1) * k.
+    // tangent to both surfaces (not a polynomial/squircle curve). Deviates from
+    // min(a, b) only in the corner region where BOTH a < k and b < k (unlike the
+    // cubic it replaced, which deviated over the whole band |a - b| < k). Always
+    // <= min(a, b); max blend depth at a == b is (sqrt(2) - 1) * k. It is C1 but
+    // not C2 at the support boundary, so a circular-arc fillet shows the usual
+    // line-meets-arc curvature step — by design, that is the "circular" look.
     return max(k, min(a, b)) - length(max(vec2(k) - vec2(a, b), vec2(0.0)));
 }
 
@@ -164,8 +167,8 @@ void main() {
                 continue;
             if ((excludeMask & (1 << j)) != 0)
                 continue;
-            // smin only deviates from min within smoothFactor
-            if (abs(dArr[i] - dArr[j]) >= smoothFactor)
+            // Circular smin deviates from min only where BOTH dArr are < smoothFactor.
+            if (max(dArr[i], dArr[j]) >= smoothFactor)
                 continue;
             mergedSdf = min(mergedSdf, smin(dArr[i], dArr[j], smoothFactor));
         }
@@ -194,8 +197,13 @@ void main() {
             // Screen-space center (with offset) and pre-computed AABB half-extents
             vec2 ctr = rect.xy + sinkProps.yz;
 
-            // Delay sink to absorb smin blend depth (circular smin max = (sqrt(2)-1)*k)
-            float preOff = smoothFactor * (sqrt(2.0) - 1.0);
+            // Sink onset / residual overlap: how far a rect must penetrate the border before
+            // the inner wall recedes to form its pocket. Too low and the wall recedes faster
+            // than the junction can stay convex, denting the inner edge inward near the rect's
+            // (squared) corners; too high and the rect nestles too deep before the wall yields.
+            // Tuned between the old cubic blend depth (k/6, too shallow) and the circular blend
+            // depth ((sqrt2-1)k): half the circular smin gap-closing distance, (2-sqrt2)k/2.
+            float preOff = smoothFactor * (2.0 - sqrt(2.0)) * 0.5;
 
             // Top border: track rect's BOTTOM edge, only within border thickness
             float topPen = clamp(innerTop - (ctr.y + sinkSh.y) - preOff, 0.0, innerTop - outerTop);
@@ -231,7 +239,16 @@ void main() {
 
         dInner -= sinkValue;
 
-        float dFrame = smaxSharpA(dOuter, -dInner, smoothFactor);
+        // The circular smax fillet has radius kFrame; when it exceeds the border thickness
+        // it can't complete inside the border, so the sharp outer-box term bleeds onto the
+        // inner edge and bulges the inner corners (worst when thickness < smoothFactor — the
+        // default border is thinner than the blend radius). Clamp kFrame to the thinnest side
+        // so the inner edge stays a clean constant-radius arc. Each inner corner is bounded by
+        // its thinner adjacent side, so the global min is correct for every corner.
+        float minThick = min(min(innerTop - outerTop, outerBot - innerBot),
+                             min(innerLeft - outerLeft, outerRight - innerRight));
+        float kFrame = clamp(min(smoothFactor, minThick - 1.0), 1.0, smoothFactor);
+        float dFrame = smaxSharpA(dOuter, -dInner, kFrame);
 
         mergedSdf = smin(mergedSdf, dFrame, smoothFactor);
         if (dFrame < minDist) {

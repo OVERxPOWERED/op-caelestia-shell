@@ -19,7 +19,7 @@ Item {
         id: blobGroup
 
         color: Colours.palette.m3surfaceContainerHighest
-        smoothing: 16
+        smoothing: Tokens.rounding.medium
         cornerFill: false
 
         Behavior on color {

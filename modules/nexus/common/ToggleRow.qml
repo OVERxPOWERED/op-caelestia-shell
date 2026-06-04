@@ -7,6 +7,7 @@ import qs.services
 StyledSwitch {
     id: root
 
+    property string subtext
     property bool first
     property bool last
 
@@ -39,17 +40,42 @@ StyledSwitch {
         }
     }
 
-    contentItem: StyledText {
-        id: label
-
+    contentItem: Item {
         anchors.left: parent.left
         anchors.right: root.indicator.left
         anchors.leftMargin: Tokens.padding.large
         anchors.rightMargin: Tokens.spacing.medium
 
-        text: root.text
-        font: Tokens.font.body.small
-        elide: Text.ElideRight
-        verticalAlignment: Text.AlignVCenter
+        implicitWidth: column.implicitWidth
+        implicitHeight: column.implicitHeight
+
+        Column {
+            id: column
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 0
+
+            StyledText {
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                text: root.text
+                font: Tokens.font.body.small
+                elide: Text.ElideRight
+            }
+
+            StyledText {
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                visible: root.subtext
+                text: root.subtext
+                color: Colours.palette.m3onSurfaceVariant
+                font: Tokens.font.label.small
+                elide: Text.ElideRight
+            }
+        }
     }
 }

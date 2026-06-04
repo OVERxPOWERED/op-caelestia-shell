@@ -138,9 +138,10 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         implicitWidth: root.cappedWidth
 
-        text: qsTr("Dark theme")
-        checked: !Colours.light
-        onToggled: Colours.setMode(checked ? "dark" : "light")
+        text: qsTr("Transparency")
+        subtext: qsTr("Base %1, layers %2").arg(Colours.transparency.base).arg(Colours.transparency.layers)
+        checked: Colours.transparency.enabled
+        onToggled: GlobalConfig.appearance.transparency.enabled = checked
     }
 
     ToggleRow {
@@ -149,9 +150,9 @@ ColumnLayout {
         implicitWidth: root.cappedWidth
 
         last: true
-        text: qsTr("Transparency")
-        checked: Colours.transparency.enabled
-        onToggled: GlobalConfig.appearance.transparency.enabled = checked
+        text: qsTr("Dark theme")
+        checked: !Colours.light
+        onToggled: Colours.setMode(checked ? "dark" : "light")
     }
 
     Item {

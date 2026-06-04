@@ -41,22 +41,23 @@ float sdBox(vec2 p, vec2 center, vec2 halfSize) {
 }
 
 float smin(float a, float b, float k) {
-    // Cubic smooth min (C2 continuous — no curvature kinks at blend boundary)
-    float h = max(k - abs(a - b), 0.0) / k;
-    return min(a, b) - h * h * h * k * (1.0/6.0);
+    // Circular smooth min — the blend fillet is a true circular arc of radius k,
+    // tangent to both surfaces (not a polynomial/squircle curve). Deviation region
+    // width = k (deviates only where both a < k and b < k), matching the cubic it
+    // replaces. Always <= min(a, b); max blend depth at a == b is (sqrt(2) - 1) * k.
+    return max(k, min(a, b)) - length(max(vec2(k) - vec2(a, b), vec2(0.0)));
 }
 
 float smax(float a, float b, float k) {
-    float h = max(k - abs(a - b), 0.0) / k;
-    return max(a, b) + h * h * h * k * (1.0/6.0);
+    // Circular smooth max — dual of smin: -smin(-a, -b, k). Always >= max(a, b).
+    return min(-k, max(a, b)) + length(max(vec2(a, b) + vec2(k), vec2(0.0)));
 }
 
 float smaxSharpA(float a, float b, float k) {
-    // smax variant that keeps a's boundary sharp (no inward rounding at a = 0).
-    // Used for the frame outer edge so it always fills to the edges.
-    float h = max(k - abs(a - b), 0.0) / k;
-    float blend = h * h * h * k * (1.0/6.0);
-    blend *= smoothstep(0.0, k * 0.5, -a);
+    // Circular smax variant that keeps a's boundary sharp (no inward rounding at
+    // a = 0). Used for the frame outer edge so it always fills to the edges.
+    float sm = min(-k, max(a, b)) + length(max(vec2(a, b) + vec2(k), vec2(0.0)));
+    float blend = (sm - max(a, b)) * smoothstep(0.0, k * 0.5, -a);
     return max(a, b) + blend;
 }
 
@@ -193,8 +194,8 @@ void main() {
             // Screen-space center (with offset) and pre-computed AABB half-extents
             vec2 ctr = rect.xy + sinkProps.yz;
 
-            // Delay sink to absorb smin blend depth (cubic smin max = k/6)
-            float preOff = smoothFactor * (1.0/6.0);
+            // Delay sink to absorb smin blend depth (circular smin max = (sqrt(2)-1)*k)
+            float preOff = smoothFactor * (sqrt(2.0) - 1.0);
 
             // Top border: track rect's BOTTOM edge, only within border thickness
             float topPen = clamp(innerTop - (ctr.y + sinkSh.y) - preOff, 0.0, innerTop - outerTop);

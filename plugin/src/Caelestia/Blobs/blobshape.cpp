@@ -32,6 +32,18 @@ static float cpuSmoothstep(float edge0, float edge1, float x) {
     return t * t * (3.0f - 2.0f * t);
 }
 
+static float cornerFillFactor(float sd, float smoothFactor) {
+    // Continuous two-sided window. The corner is squared (factor -> 0) only within
+    // ±smoothFactor of the neighbour's edge (the visible junction); it keeps its full
+    // radius both far outside the neighbour and deep inside it (where it is buried and
+    // squaring would only crease the interior). C0-continuous across sd = 0 — unlike the
+    // old `if (sd >= 0)` branch, which snapped the radius full<->square (factor 1<->0) on
+    // sub-pixel motion as a corner crossed the edge, flickering the fill bridge in/out.
+    const float outside = cpuSmoothstep(0.0f, smoothFactor, sd);  // 0 at edge, ->1 far outside
+    const float inside = cpuSmoothstep(0.0f, -smoothFactor, sd);  // 0 at edge, ->1 deep inside
+    return std::max(outside, inside);
+}
+
 BlobShape::BlobShape(QQuickItem* parent)
     : QQuickItem(parent) {
     setFlag(ItemHasContents);
@@ -310,20 +322,16 @@ void BlobShape::updatePolish() {
             if (si->isCornerExcluded(sj) || sj->isCornerExcluded(si))
                 continue;
             const auto& rj = m_cachedRects[j];
-            // Skip when the corner is inside rj: it's buried, not on a visible junction,
-            // so squaring it would only perturb interior SDF gradients.
+            // Square each corner only near rj's edge; keep full radius far outside AND
+            // deep inside rj (buried, so it can't crease the visible junction).
             const float sdTr = cpuSdBox(cTrX, cTrY, rj.cx, rj.cy, rj.hw, rj.hh);
             const float sdBr = cpuSdBox(cBrX, cBrY, rj.cx, rj.cy, rj.hw, rj.hh);
             const float sdBl = cpuSdBox(cBlX, cBlY, rj.cx, rj.cy, rj.hw, rj.hh);
             const float sdTl = cpuSdBox(cTlX, cTlY, rj.cx, rj.cy, rj.hw, rj.hh);
-            if (sdTr >= 0.0f)
-                fTr = std::min(fTr, cpuSmoothstep(0.0f, smoothFactor, sdTr));
-            if (sdBr >= 0.0f)
-                fBr = std::min(fBr, cpuSmoothstep(0.0f, smoothFactor, sdBr));
-            if (sdBl >= 0.0f)
-                fBl = std::min(fBl, cpuSmoothstep(0.0f, smoothFactor, sdBl));
-            if (sdTl >= 0.0f)
-                fTl = std::min(fTl, cpuSmoothstep(0.0f, smoothFactor, sdTl));
+            fTr = std::min(fTr, cornerFillFactor(sdTr, smoothFactor));
+            fBr = std::min(fBr, cornerFillFactor(sdBr, smoothFactor));
+            fBl = std::min(fBl, cornerFillFactor(sdBl, smoothFactor));
+            fTl = std::min(fTl, cornerFillFactor(sdTl, smoothFactor));
         }
 
         if (cornerFill && m_cachedHasInverted) {

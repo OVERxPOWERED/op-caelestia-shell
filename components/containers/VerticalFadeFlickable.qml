@@ -7,7 +7,7 @@ import qs.components.effects
 StyledFlickable {
     id: root
 
-    property real fadeAmount: 0.3
+    property real fadeAmount: 0.2
 
     property real topFadeOpacity: fadeShouldBeActive(true) ? 0 : 1
     property real bottomFadeOpacity: fadeShouldBeActive(false) ? 0 : 1

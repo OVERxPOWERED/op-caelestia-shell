@@ -21,6 +21,9 @@ QtObject {
                 Component {
                     WallpaperCategory {}
                 }
+                Component {
+                    ColourSelect {}
+                }
             }
         }
     ]

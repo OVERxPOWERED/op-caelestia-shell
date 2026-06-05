@@ -166,7 +166,7 @@ PageBase {
                 type: IconTextButton.Tonal
                 horizontalPadding: Tokens.padding.extraLarge
                 verticalPadding: Tokens.padding.medium
-                onClicked: ; // TODO
+                onClicked: root.nState.openSubPage(3) // Colours page
             }
         }
 

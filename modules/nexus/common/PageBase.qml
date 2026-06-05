@@ -19,7 +19,7 @@ ColumnLayout {
 
     default property Item contentChild
 
-    spacing: Tokens.spacing.extraExtraLarge
+    spacing: Tokens.spacing.extraLargeIncreased
 
     RowLayout {
         spacing: Tokens.spacing.largeIncreased
@@ -52,9 +52,8 @@ ColumnLayout {
         Layout.fillHeight: true
 
         Layout.topMargin: -topMargin
-        Layout.bottomMargin: -bottomMargin
         topMargin: Tokens.padding.large
-        bottomMargin: Tokens.padding.large
+        bottomMargin: Tokens.padding.extraLarge
 
         contentHeight: root.contentChild?.implicitHeight ?? 0
         contentItem.children: [root.contentChild]

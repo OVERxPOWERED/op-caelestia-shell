@@ -19,8 +19,6 @@ ColumnLayout {
 
     default property Item contentChild
 
-    signal close
-
     spacing: Tokens.spacing.extraExtraLarge
 
     RowLayout {
@@ -37,7 +35,7 @@ ColumnLayout {
                 isRound: true
                 inactiveColour: Colours.tPalette.m3surfaceContainerHigh
                 inactiveOnColour: Colours.palette.m3onSurface
-                onClicked: root.close()
+                onClicked: root.nState.closeSubPage()
             }
         }
 

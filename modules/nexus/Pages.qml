@@ -1,6 +1,5 @@
 pragma ComponentBehavior: Bound
 
-import "pages"
 import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
@@ -13,23 +12,39 @@ Item {
 
     required property NexusState nState
 
-    readonly property list<Component> pageComps: [
-        Component {
-            WallpaperAndStyle {
-                nState: root.nState
-            }
-        }
-    ]
-
     property int lastPageIdx
     property int animOff
+    property Item currentItem
 
-    Loader {
-        id: loader
+    function loadPage(idx: int): void {
+        if (currentItem)
+            currentItem.destroy();
+
+        const comp = PageCompRegistry.pageComps[idx] ?? placeholderComp;
+        const incubator = comp.incubateObject(container, {
+            nState
+        });
+
+        const attach = () => {
+            incubator.object.anchors.fill = container;
+            currentItem = incubator.object;
+        };
+
+        if (incubator.status === Component.Ready)
+            attach();
+        else
+            incubator.onStatusChanged = status => {
+                if (status === Component.Ready)
+                    attach();
+            };
+    }
+
+    Item {
+        id: container
 
         anchors.fill: parent
         layer.enabled: opacity < 1
-        Component.onCompleted: sourceComponent = root.pageComps[root.nState.currentPageIdx] ?? placeholderComp
+        Component.onCompleted: root.loadPage(root.nState.currentPageIdx)
     }
 
     Connections {
@@ -47,36 +62,34 @@ Item {
         id: switchAnim
 
         Anim {
-            target: loader
+            target: container
             property: "opacity"
             to: 0
             type: Anim.DefaultEffects
         }
-        PropertyAction {
-            target: loader
-            property: "sourceComponent"
-            value: root.pageComps[root.nState.currentPageIdx] ?? placeholderComp
+        ScriptAction {
+            script: root.loadPage(root.nState.currentPageIdx)
         }
         PropertyAction {
-            target: loader.anchors
+            target: container.anchors
             property: "topMargin"
             value: root.animOff
         }
         PropertyAction {
-            target: loader.anchors
+            target: container.anchors
             property: "bottomMargin"
             value: -root.animOff
         }
         ParallelAnimation {
             Anim {
-                target: loader
+                target: container
                 property: "opacity"
                 from: 0
                 to: 1
                 type: Anim.SlowEffects
             }
             Anim {
-                target: loader.anchors
+                target: container.anchors
                 properties: "topMargin,bottomMargin"
                 to: 0
                 type: Anim.SlowEffects
@@ -88,6 +101,8 @@ Item {
         id: placeholderComp
 
         Item {
+            property NexusState nState // To avoid the warning from non-existent property
+
             ColumnLayout {
                 anchors.centerIn: parent
                 spacing: Tokens.padding.extraSmall

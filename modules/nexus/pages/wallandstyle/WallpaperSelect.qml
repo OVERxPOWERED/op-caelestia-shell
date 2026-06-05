@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Caelestia.Components
 import Caelestia.Config
 import Caelestia.Models
@@ -71,10 +72,13 @@ PageBase {
         WallItem {
             imgHeight: Math.round(width * 0.3)
             radius: Tokens.rounding.extraLarge
-            source: Wallpapers.current
+            source: Quickshell.shellPath("assets/wallpaper.webp")
             text: qsTr("Featured wallpaper")
             fillLabel: false
-            onClicked: ; // TODO
+            onClicked: {
+                Wallpapers.setWallpaper(Quickshell.shellPath("assets/wallpaper.webp"));
+                root.nState.closeSubPage();
+            }
         }
 
         StyledText {

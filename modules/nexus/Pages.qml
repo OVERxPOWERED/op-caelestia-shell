@@ -35,7 +35,7 @@ Item {
     Connections {
         function onCurrentPageIdxChanged(): void {
             switchAnim.complete();
-            root.animOff = root.Tokens.padding.extraLarge * (root.nState.currentPageIdx > root.lastPageIdx ? -1 : 1);
+            root.animOff = root.Tokens.padding.extraLarge * (root.nState.currentPageIdx > root.lastPageIdx ? 1 : -1);
             switchAnim.start();
             root.lastPageIdx = root.nState.currentPageIdx;
         }

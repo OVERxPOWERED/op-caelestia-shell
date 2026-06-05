@@ -15,6 +15,7 @@ class DashboardConfig;
 class GeneralConfig;
 class LauncherConfig;
 class LockConfig;
+class NexusConfig;
 class NotifsConfig;
 class OsdConfig;
 class ServiceConfig;
@@ -37,6 +38,7 @@ class GlobalConfig : public RootConfig {
     Q_MOC_INCLUDE("generalconfig.hpp")
     Q_MOC_INCLUDE("launcherconfig.hpp")
     Q_MOC_INCLUDE("lockconfig.hpp")
+    Q_MOC_INCLUDE("nexusconfig.hpp")
     Q_MOC_INCLUDE("notifsconfig.hpp")
     Q_MOC_INCLUDE("osdconfig.hpp")
     Q_MOC_INCLUDE("serviceconfig.hpp")
@@ -55,14 +57,15 @@ class GlobalConfig : public RootConfig {
     CONFIG_SUBOBJECT(DashboardConfig, dashboard)
     CONFIG_SUBOBJECT(ControlCenterConfig, controlCenter)
     CONFIG_SUBOBJECT(LauncherConfig, launcher)
+    CONFIG_SUBOBJECT(LockConfig, lock)
+    CONFIG_SUBOBJECT(NexusConfig, nexus)
     CONFIG_SUBOBJECT(NotifsConfig, notifs)
     CONFIG_SUBOBJECT(OsdConfig, osd)
-    CONFIG_SUBOBJECT(SessionConfig, session)
-    CONFIG_SUBOBJECT(WInfoConfig, winfo)
-    CONFIG_SUBOBJECT(LockConfig, lock)
-    CONFIG_SUBOBJECT(UtilitiesConfig, utilities)
-    CONFIG_SUBOBJECT(SidebarConfig, sidebar)
     CONFIG_SUBOBJECT(ServiceConfig, services)
+    CONFIG_SUBOBJECT(SessionConfig, session)
+    CONFIG_SUBOBJECT(SidebarConfig, sidebar)
+    CONFIG_SUBOBJECT(UtilitiesConfig, utilities)
+    CONFIG_SUBOBJECT(WInfoConfig, winfo)
     CONFIG_SUBOBJECT(UserPaths, paths)
 
 public:

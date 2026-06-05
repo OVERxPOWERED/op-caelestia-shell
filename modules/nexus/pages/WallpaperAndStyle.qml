@@ -153,7 +153,8 @@ PageBase {
                 type: IconTextButton.Tonal
                 horizontalPadding: Tokens.padding.extraLarge
                 verticalPadding: Tokens.padding.medium
-                onClicked: ; // TODO
+                disabled: !Config.background.wallpaperEnabled
+                onClicked: root.nState.openSubPage(1) // Wallpaper page
             }
 
             IconTextButton {

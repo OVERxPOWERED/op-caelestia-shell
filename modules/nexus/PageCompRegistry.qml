@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import qs.modules.nexus.common
 import qs.modules.nexus.pages
+import qs.modules.nexus.pages.wallandstyle
 
 QtObject {
     id: root
@@ -13,6 +14,9 @@ QtObject {
             StackPage {
                 Component {
                     WallpaperAndStyle {}
+                }
+                Component {
+                    WallpaperSelect {}
                 }
             }
         }

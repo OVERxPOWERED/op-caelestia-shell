@@ -45,7 +45,10 @@ PageBase {
                     title: qsTr("Select an image")
                     filterLabel: qsTr("Image files")
                     filters: Images.validImageExtensions
-                    onAccepted: path => Wallpapers.setWallpaper(path)
+                    onAccepted: path => {
+                        Wallpapers.setWallpaper(path);
+                        root.nState.closeSubPage();
+                    }
                 }
             }
 
@@ -58,7 +61,10 @@ PageBase {
                 horizontalPadding: Tokens.padding.extraLarge
                 verticalPadding: Tokens.padding.medium
                 type: IconTextButton.Tonal
-                onClicked: Wallpapers.setRandom()
+                onClicked: {
+                    Wallpapers.setRandom();
+                    root.nState.closeSubPage();
+                }
             }
         }
 
@@ -113,9 +119,10 @@ PageBase {
                     onClicked: {
                         if (modelData.parentDir !== Paths.wallsdir) {
                             root.nState.selectedWallpaperCategory = Wallpapers.getCategoryFor(modelData);
-                            root.nState.openSubPage(2);
+                            root.nState.openSubPage(2); // Category page
                         } else {
                             Wallpapers.setWallpaper(modelData.path);
+                            root.nState.closeSubPage();
                         }
                     }
                 }

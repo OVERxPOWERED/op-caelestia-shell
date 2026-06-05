@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
@@ -31,7 +33,11 @@ PageBase {
 
                 source: modelData.path
                 text: modelData.name
-                onClicked: Wallpapers.setWallpaper(modelData.path)
+                onClicked: {
+                    Wallpapers.setWallpaper(modelData.path);
+                    root.nState.closeSubPage();
+                    root.nState.closeSubPage();
+                }
             }
         }
     }

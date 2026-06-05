@@ -1,0 +1,38 @@
+import QtQuick
+import QtQuick.Layouts
+import Caelestia.Config
+import Caelestia.Models
+import qs.services
+import qs.modules.nexus.common
+
+PageBase {
+    id: root
+
+    title: {
+        const c = nState.selectedWallpaperCategory;
+        return c.slice(0, 1).toUpperCase() + c.slice(1);
+    }
+    isSubPage: true
+
+    GridLayout {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        width: root.cappedWidth
+
+        columns: Config.nexus.wallpapersPerRow
+        rowSpacing: Tokens.spacing.medium
+        columnSpacing: Tokens.spacing.large
+
+        Repeater {
+            model: Wallpapers.list.filter(w => Wallpapers.getCategoryFor(w) === root.nState.selectedWallpaperCategory)
+
+            WallItem {
+                required property FileSystemEntry modelData
+
+                source: modelData.path
+                text: modelData.name
+                onClicked: Wallpapers.setWallpaper(modelData.path)
+            }
+        }
+    }
+}

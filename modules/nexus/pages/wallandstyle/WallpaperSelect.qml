@@ -2,12 +2,11 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import Caelestia.Config
 import Caelestia.Models
 import qs.components
-import qs.components.controls
 import qs.services
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
@@ -22,17 +21,13 @@ PageBase {
         width: root.cappedWidth
         spacing: Tokens.spacing.small
 
-        Wallpaper {
-            Layout.fillWidth: true
-            implicitHeight: Math.round(width * 0.3)
+        WallItem {
+            imgHeight: Math.round(width * 0.3)
             radius: Tokens.rounding.extraLarge
             source: Wallpapers.current
-        }
-
-        StyledText {
-            Layout.alignment: Qt.AlignHCenter
             text: qsTr("Featured wallpaper")
-            font: Tokens.font.label.medium
+            fillLabel: false
+            onClicked: ; // TODO
         }
 
         StyledText {
@@ -45,93 +40,43 @@ PageBase {
             Layout.fillWidth: true
 
             columns: Config.nexus.wallpapersPerRow
-            rowSpacing: Tokens.spacing.large
+            rowSpacing: Tokens.spacing.medium
             columnSpacing: Tokens.spacing.large
 
             Repeater {
-                model: Wallpapers.list
+                model: {
+                    const walls = Wallpapers.list;
+                    const baseDir = Paths.wallsdir;
+                    const categories = {};
+                    for (const w of walls) {
+                        if (w.parentDir !== baseDir) {
+                            const category = Wallpapers.getCategoryFor(w);
+                            if (category && !(category in categories))
+                                categories[category] = w;
+                        }
+                    }
+                    return Object.values(categories);
+                }
 
-                ColumnLayout {
-                    id: wallDelegate
-
+                WallItem {
                     required property FileSystemEntry modelData
 
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: 0 // Force uniform size
-                    spacing: Tokens.spacing.small
-
-                    Wallpaper {
-                        Layout.fillWidth: true
-                        implicitHeight: width
-                        radius: Tokens.rounding.largeIncreased
-                        source: wallDelegate.modelData.path
+                    source: modelData.path
+                    text: {
+                        if (modelData.parentDir !== Paths.wallsdir) {
+                            const category = Wallpapers.getCategoryFor(modelData);
+                            return category.slice(0, 1).toUpperCase() + category.slice(1);
+                        }
+                        return modelData.name;
                     }
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: wallDelegate.modelData.name
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.label.builders.small.weight(Font.Medium).build()
-                        horizontalAlignment: Text.AlignHCenter
-                        elide: Text.ElideRight
+                    onClicked: {
+                        if (modelData.parentDir !== Paths.wallsdir) {
+                            root.nState.selectedWallpaperCategory = Wallpapers.getCategoryFor(modelData);
+                            root.nState.openSubPage(2);
+                        } else {
+                            Wallpapers.setWallpaper(modelData.path);
+                        }
                     }
-                }
-            }
-        }
-    }
-
-    component Wallpaper: StyledClippingRect {
-        id: wallpaper
-
-        property alias source: img.source
-
-        color: Colours.tPalette.m3surfaceContainer
-
-        Loader {
-            anchors.centerIn: parent
-
-            opacity: img.status === Image.Ready ? 0 : 1
-            active: opacity > 0
-
-            sourceComponent: StyledRect {
-                implicitWidth: loadingIndicator.implicitSize + Tokens.padding.large * 2
-                implicitHeight: loadingIndicator.implicitSize + Tokens.padding.large * 2
-
-                color: Colours.palette.m3primaryContainer
-                radius: Tokens.rounding.full
-
-                LoadingIndicator {
-                    id: loadingIndicator
-
-                    anchors.centerIn: parent
-                    containsIcon: true
-                    implicitSize: Math.min(wallpaper.width, wallpaper.height) * 0.3
-                }
-            }
-
-            Behavior on opacity {
-                Anim {
-                    type: Anim.DefaultEffects
-                }
-            }
-        }
-
-        Image {
-            id: img
-
-            anchors.fill: parent
-            asynchronous: true
-            fillMode: Image.PreserveAspectCrop
-            sourceSize: {
-                const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
-                return Qt.size(width * dpr, height * dpr);
-            }
-            retainWhileLoading: true
-            opacity: status === Image.Ready ? 1 : 0
-
-            Behavior on opacity {
-                Anim {
-                    type: Anim.SlowEffects
                 }
             }
         }

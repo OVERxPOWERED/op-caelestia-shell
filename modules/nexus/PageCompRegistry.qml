@@ -18,6 +18,9 @@ QtObject {
                 Component {
                     WallpaperSelect {}
                 }
+                Component {
+                    WallpaperCategory {}
+                }
             }
         }
     ]

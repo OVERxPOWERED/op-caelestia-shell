@@ -8,6 +8,8 @@ QtObject {
     property list<int> subPageIdxStack
     property bool searchOpen
 
+    property string selectedWallpaperCategory
+
     signal close
     signal subPageOpened(idx: int)
     signal subPageClosed

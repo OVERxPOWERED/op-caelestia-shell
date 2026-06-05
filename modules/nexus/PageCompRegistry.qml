@@ -11,6 +11,7 @@ QtObject {
     readonly property list<Component> pageComps: [
         // Appearance
         Component {
+            // Wallpaper & style
             StackPage {
                 Component {
                     WallpaperAndStyle {}
@@ -23,6 +24,16 @@ QtObject {
                 }
                 Component {
                     ColourSelect {}
+                }
+            }
+        },
+
+        // Connectivity
+        Component {
+            // Network
+            StackPage {
+                Component {
+                    NetworkPage {}
                 }
             }
         }

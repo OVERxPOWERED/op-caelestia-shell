@@ -10,18 +10,25 @@ StyledSwitch {
     property string subtext
     property bool first
     property bool last
+    readonly property alias bg: bg
 
-    implicitWidth: implicitContentWidth + implicitIndicatorWidth + Tokens.padding.largeIncreased * 2
-    implicitHeight: Math.max(implicitContentHeight, implicitIndicatorHeight) + Tokens.padding.medium * 2
+    horizontalPadding: Tokens.padding.largeIncreased
+    verticalPadding: Tokens.padding.medium
+    font: Tokens.font.body.small
+
+    implicitWidth: implicitContentWidth + implicitIndicatorWidth + horizontalPadding * 2
+    implicitHeight: Math.max(implicitContentHeight, implicitIndicatorHeight) + verticalPadding * 2
     cLayer: 2
 
     indicator.anchors.verticalCenter: verticalCenter
     indicator.anchors.right: right
-    indicator.anchors.rightMargin: Tokens.padding.large
+    indicator.anchors.rightMargin: root.horizontalPadding
 
     onPressed: stateLayer.press(stateLayer.mouseX, stateLayer.mouseY)
 
     background: StyledRect {
+        id: bg
+
         color: Colours.tPalette.m3surfaceContainer
         topLeftRadius: root.first ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
         topRightRadius: root.first ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
@@ -43,7 +50,7 @@ StyledSwitch {
     contentItem: Item {
         anchors.left: parent.left
         anchors.right: root.indicator.left
-        anchors.leftMargin: Tokens.padding.large
+        anchors.leftMargin: root.horizontalPadding
         anchors.rightMargin: Tokens.spacing.medium
 
         implicitWidth: column.implicitWidth
@@ -58,11 +65,13 @@ StyledSwitch {
             spacing: 0
 
             StyledText {
+                id: label
+
                 anchors.left: parent.left
                 anchors.right: parent.right
 
                 text: root.text
-                font: Tokens.font.body.small
+                font: root.font
                 elide: Text.ElideRight
             }
 

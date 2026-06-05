@@ -2,9 +2,12 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import Caelestia.Components
 import Caelestia.Config
 import Caelestia.Models
 import qs.components
+import qs.components.controls
+import qs.components.filedialog
 import qs.services
 import qs.utils
 import qs.modules.nexus.common
@@ -20,6 +23,44 @@ PageBase {
         anchors.top: parent.top
         width: root.cappedWidth
         spacing: Tokens.spacing.small
+
+        ButtonRow {
+            Layout.bottomMargin: Tokens.spacing.medium
+            Layout.alignment: Qt.AlignHCenter
+            spacing: Tokens.spacing.small
+
+            IconTextButton {
+                icon: "photo_library"
+                text: qsTr("Browse")
+                font: Tokens.font.body.large
+                isRound: true
+                shapeMorph: true
+                horizontalPadding: Tokens.padding.extraLarge
+                verticalPadding: Tokens.padding.medium
+                onClicked: browseDialog.open()
+
+                FileDialog {
+                    id: browseDialog
+
+                    title: qsTr("Select an image")
+                    filterLabel: qsTr("Image files")
+                    filters: Images.validImageExtensions
+                    onAccepted: path => Wallpapers.setWallpaper(path)
+                }
+            }
+
+            IconTextButton {
+                icon: "shuffle"
+                text: qsTr("Random")
+                font: Tokens.font.body.large
+                isRound: true
+                shapeMorph: true
+                horizontalPadding: Tokens.padding.extraLarge
+                verticalPadding: Tokens.padding.medium
+                type: IconTextButton.Tonal
+                onClicked: Wallpapers.setRandom()
+            }
+        }
 
         WallItem {
             imgHeight: Math.round(width * 0.3)

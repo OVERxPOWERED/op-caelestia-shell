@@ -27,6 +27,10 @@ Searcher {
         return category;
     }
 
+    function setRandom(): void {
+        Quickshell.execDetached(["caelestia", "wallpaper", "-r", ...smartArg]);
+    }
+
     function setWallpaper(path: string): void {
         actualCurrent = path;
         Quickshell.execDetached(["caelestia", "wallpaper", "-f", path, ...smartArg]);

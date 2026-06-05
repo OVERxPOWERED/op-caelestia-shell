@@ -13,6 +13,8 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
+    signal networkSelected(ap: Nmcli.AccessPoint)
+
     title: qsTr("Network")
 
     ColumnLayout {
@@ -106,12 +108,75 @@ PageBase {
                     id: network
 
                     required property Nmcli.AccessPoint modelData
+                    readonly property Component rightComp: Nmcli.connectingSsid() === modelData.ssid ? loadingComp : iconComp
+                    property bool isComplete
+                    property real textOpacity: disabled ? 0.5 : 1
 
                     anchors.left: networkList.contentItem.left
                     anchors.right: networkList.contentItem.right
                     implicitHeight: networkLayout.implicitHeight + networkLayout.anchors.margins * 2
                     radius: Tokens.rounding.extraSmall
                     anchors.fill: undefined
+
+                    onClicked: {
+                        if (!modelData.active) {
+                            NetworkConnection.handleConnect(modelData);
+                            disabled = true;
+                            root.networkSelected(modelData);
+                        }
+                    }
+
+                    Component.onCompleted: isComplete = true
+                    onRightCompChanged: {
+                        if (isComplete)
+                            rightCompAnim.restart();
+                    }
+
+                    Behavior on textOpacity {
+                        Anim {
+                            type: Anim.DefaultEffects
+                        }
+                    }
+
+                    Connections {
+                        function onActiveChanged(): void {
+                            if (network.modelData.active)
+                                network.disabled = false;
+                        }
+
+                        target: network.modelData
+                    }
+
+                    Connections {
+                        function onNetworkSelected(ap: Nmcli.AccessPoint): void {
+                            if (ap !== network.modelData)
+                                network.disabled = false;
+                        }
+
+                        target: root
+                    }
+
+                    SequentialAnimation {
+                        id: rightCompAnim
+
+                        running: false
+
+                        Anim {
+                            target: rightLoader
+                            property: "opacity"
+                            to: 0
+                            type: Anim.FastEffects
+                        }
+                        ScriptAction {
+                            script: rightLoader.sourceComponent = network.rightComp
+                        }
+                        Anim {
+                            target: rightLoader
+                            property: "opacity"
+                            to: 1
+                            type: Anim.DefaultEffects
+                        }
+                    }
 
                     RowLayout {
                         id: networkLayout
@@ -126,11 +191,13 @@ PageBase {
                             text: Icons.getNetworkIcon(network.modelData.strength)
                             color: network.modelData.active ? Colours.palette.m3primary : Colours.tPalette.m3onSurfaceVariant
                             font: Tokens.font.icon.medium
+                            opacity: network.textOpacity
                         }
 
                         ColumnLayout {
                             Layout.fillWidth: true
                             spacing: 0
+                            opacity: network.textOpacity
 
                             StyledText {
                                 Layout.fillWidth: true
@@ -148,11 +215,30 @@ PageBase {
                             }
                         }
 
-                        MaterialIcon {
-                            visible: network.modelData.isSecure
-                            text: network.modelData.active ? "settings" : "lock"
-                            color: network.modelData.active ? Colours.palette.m3primary : Colours.tPalette.m3onSurfaceVariant
-                            font: Tokens.font.icon.medium
+                        Loader {
+                            id: rightLoader
+
+                            asynchronous: true
+                            sourceComponent: iconComp
+
+                            Component {
+                                id: iconComp
+
+                                MaterialIcon {
+                                    text: network.modelData.active ? "settings" : "lock"
+                                    color: network.modelData.active ? Colours.palette.m3primary : Colours.tPalette.m3onSurfaceVariant
+                                    font: Tokens.font.icon.medium
+                                    opacity: network.textOpacity
+                                }
+                            }
+
+                            Component {
+                                id: loadingComp
+
+                                LoadingIndicator {
+                                    implicitSize: Math.round(Tokens.font.icon.medium.pointSize * 1.3)
+                                }
+                            }
                         }
                     }
                 }

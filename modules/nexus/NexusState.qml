@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Bluetooth
 
 QtObject {
     property ShellScreen screen
@@ -9,6 +10,7 @@ QtObject {
     property bool searchOpen
 
     property string selectedWallpaperCategory
+    property BluetoothDevice selectedBtDevice
 
     signal close
     signal subPageOpened(idx: int)

@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import qs.modules.nexus.common
 import qs.modules.nexus.pages
+import qs.modules.nexus.pages.bluetooth
 import qs.modules.nexus.pages.wallandstyle
 
 QtObject {
@@ -42,6 +43,9 @@ QtObject {
             StackPage {
                 Component {
                     BluetoothPage {}
+                }
+                Component {
+                    BtDeviceInfo {}
                 }
             }
         }

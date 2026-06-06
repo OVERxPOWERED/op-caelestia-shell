@@ -155,7 +155,10 @@ PageBase {
                                     inactiveOnColour: device.connected ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
                                     label.fill: 0
 
-                                    onClicked: ; // TODO
+                                    onClicked: {
+                                        root.nState.selectedBtDevice = device.modelData;
+                                        root.nState.openSubPage(1); // Per device info page
+                                    }
                                 }
                             }
 

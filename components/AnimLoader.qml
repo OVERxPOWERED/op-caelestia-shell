@@ -5,6 +5,8 @@ Loader {
 
     property Component sourceComp
     property bool isComplete
+    property int outAnimType: Anim.FastEffects
+    property int inAnimType: Anim.DefaultEffects
 
     asynchronous: true
     Component.onCompleted: {
@@ -25,7 +27,7 @@ Loader {
             target: root
             property: "opacity"
             to: 0
-            type: Anim.FastEffects
+            type: root.outAnimType
         }
         ScriptAction {
             script: root.sourceComponent = root.sourceComp
@@ -34,7 +36,7 @@ Loader {
             target: root
             property: "opacity"
             to: 1
-            type: Anim.DefaultEffects
+            type: root.inAnimType
         }
     }
 }

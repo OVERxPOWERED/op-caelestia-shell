@@ -36,6 +36,14 @@ QtObject {
                     NetworkPage {}
                 }
             }
+        },
+        Component {
+            // Bluetooth
+            StackPage {
+                Component {
+                    BluetoothPage {}
+                }
+            }
         }
     ]
 }

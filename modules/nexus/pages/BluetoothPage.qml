@@ -123,18 +123,12 @@ PageBase {
 
                         StyledText {
                             Layout.fillWidth: true
-                            text: device.connected ? qsTr("Connected") : qsTr("Saved")
+                            text: device.connected ? qsTr("Connected%1").arg(device.modelData?.batteryAvailable ? " • " + Math.round(device.modelData.battery * 100) + "%" : "") : qsTr("Saved")
                             color: Colours.tPalette.m3outline
                             font: Tokens.font.label.small
                             elide: Text.ElideRight
+                            animate: true
                         }
-                    }
-
-                    MaterialIcon {
-                        visible: device.connected && (device.modelData?.batteryAvailable ?? false)
-                        text: Icons.getBatteryIcon(device.modelData?.battery ?? 0)
-                        color: (device.modelData?.battery ?? 1) < 0.2 ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.icon.medium
                     }
 
                     Item {

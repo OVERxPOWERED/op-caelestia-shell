@@ -226,14 +226,12 @@ PageBase {
 
                 MaterialIcon {
                     text: "add"
-                    color: Colours.tPalette.m3onSurfaceVariant
                     font: Tokens.font.icon.medium
                 }
 
                 StyledText {
                     Layout.fillWidth: true
                     text: qsTr("Add network")
-                    color: Colours.tPalette.m3onSurfaceVariant
                     font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }

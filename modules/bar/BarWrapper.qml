@@ -37,7 +37,7 @@ Item {
     }
 
     clip: true
-    visible: width > 0
+    visible: width > Config.border.thickness
     implicitWidth: fullscreen ? 0 : Config.border.thickness
 
     states: State {
@@ -78,7 +78,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
 
-        active: root.shouldBeVisible || root.visible
+        active: root.shouldBeVisible
 
         sourceComponent: Bar {
             width: root.contentWidth

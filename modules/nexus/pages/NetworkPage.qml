@@ -169,8 +169,6 @@ PageBase {
                     id: network
 
                     required property Nmcli.AccessPoint modelData
-                    readonly property Component rightComp: Nmcli.connectingSsid() === modelData.ssid ? loadingComp : iconComp
-                    property bool isComplete
                     property bool currentSelected
                     property real textOpacity: disabled ? 0.5 : 1
 
@@ -188,12 +186,6 @@ PageBase {
                             currentSelected = true;
                             root.networkSelected(modelData);
                         }
-                    }
-
-                    Component.onCompleted: isComplete = true
-                    onRightCompChanged: {
-                        if (isComplete)
-                            rightCompAnim.restart();
                     }
 
                     Behavior on textOpacity {
@@ -218,28 +210,6 @@ PageBase {
                         }
 
                         target: root
-                    }
-
-                    SequentialAnimation {
-                        id: rightCompAnim
-
-                        running: false
-
-                        Anim {
-                            target: rightLoader
-                            property: "opacity"
-                            to: 0
-                            type: Anim.FastEffects
-                        }
-                        ScriptAction {
-                            script: rightLoader.sourceComponent = network.rightComp
-                        }
-                        Anim {
-                            target: rightLoader
-                            property: "opacity"
-                            to: 1
-                            type: Anim.DefaultEffects
-                        }
                     }
 
                     RowLayout {
@@ -279,11 +249,8 @@ PageBase {
                             }
                         }
 
-                        Loader {
-                            id: rightLoader
-
-                            asynchronous: true
-                            sourceComponent: iconComp
+                        AnimLoader {
+                            sourceComp: Nmcli.connectingSsid() === network.modelData.ssid ? loadingComp : iconComp
 
                             Component {
                                 id: iconComp

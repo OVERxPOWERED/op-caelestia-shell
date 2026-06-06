@@ -51,12 +51,10 @@ PageBase {
             Layout.fillWidth: true
             first: true
             text: qsTr("Wi-Fi")
-            font: Tokens.font.title.medium
+            font: Tokens.font.body.medium
+            horizontalPadding: Tokens.padding.largeIncreased
             checked: Nmcli.wifiEnabled
             onToggled: Nmcli.enableWifi(checked)
-
-            horizontalPadding: Tokens.padding.largeIncreased
-            verticalPadding: Tokens.padding.large
         }
 
         ItemList {

@@ -69,13 +69,12 @@ PageBase {
             list.anchors.top: scanningIndicator.bottom
 
             model: ScriptModel {
-                values: [...Nmcli.networks].sort((a, b) => {
-                    if (a.active)
-                        return -1;
-                    if (b.active)
-                        return 1;
-                    return b.strength - a.strength;
-                })
+                values: {
+                    const connecting = Nmcli.connectingSsid();
+                    // Lower rank sorts higher in the list
+                    const rank = n => n.active ? 0 : n.ssid === connecting ? 1 : Nmcli.hasSavedProfile(n.ssid) ? 2 : 3;
+                    return [...Nmcli.networks].sort((a, b) => rank(a) - rank(b) || b.strength - a.strength);
+                }
             }
 
             delegate: StateLayer {
@@ -155,7 +154,7 @@ PageBase {
 
                         StyledText {
                             Layout.fillWidth: true
-                            text: qsTr("Security: %1").arg(network.modelData.security)
+                            text: qsTr("Security: %1%2").arg(network.modelData.security).arg(Nmcli.hasSavedProfile(network.modelData.ssid) ? qsTr(" • Saved") : "")
                             color: Colours.tPalette.m3outline
                             font: Tokens.font.label.small
                             elide: Text.ElideRight

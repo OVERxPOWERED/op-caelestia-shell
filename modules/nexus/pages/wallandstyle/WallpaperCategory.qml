@@ -26,13 +26,22 @@ PageBase {
         columnSpacing: Tokens.spacing.large
 
         Repeater {
-            model: Wallpapers.list.filter(w => Wallpapers.getCategoryFor(w) === root.nState.selectedWallpaperCategory).sort((a, b) => a.name.localeCompare(b.name))
+            model: {
+                const walls = Wallpapers.list.filter(w => Wallpapers.getCategoryFor(w) === root.nState.selectedWallpaperCategory).sort((a, b) => a.name.localeCompare(b.name));
+                while (walls.length < Config.nexus.wallpapersPerRow)
+                    walls.push(null);
+                return walls;
+            }
 
             WallItem {
                 required property FileSystemEntry modelData
 
-                source: modelData.path
-                text: modelData.name
+                // Empty placeholders for sizing
+                opacity: modelData ? 1 : 0
+                enabled: modelData
+
+                source: String(modelData?.path ?? "")
+                text: modelData?.name ?? ""
                 onClicked: {
                     Wallpapers.setWallpaper(modelData.path);
                     root.nState.closeSubPage();

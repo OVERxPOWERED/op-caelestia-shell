@@ -109,14 +109,24 @@ PageBase {
                                 categories[category] = w;
                         }
                     }
-                    return Object.values(categories);
+                    const cats = Object.values(categories);
+                    while (cats.length < Config.nexus.wallpapersPerRow)
+                        cats.push(null);
+                    return cats;
                 }
 
                 WallItem {
                     required property FileSystemEntry modelData
 
-                    source: modelData.path
+                    // Empty placeholders for sizing
+                    opacity: modelData ? 1 : 0
+                    enabled: modelData
+
+                    source: String(modelData?.path ?? "")
                     text: {
+                        if (!modelData)
+                            return "";
+
                         if (modelData.parentDir !== Paths.wallsdir) {
                             const category = Wallpapers.getCategoryFor(modelData);
                             return category.slice(0, 1).toUpperCase() + category.slice(1);

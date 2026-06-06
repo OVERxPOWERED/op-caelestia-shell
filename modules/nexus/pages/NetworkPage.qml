@@ -24,11 +24,27 @@ PageBase {
         spacing: Tokens.spacing.extraSmall / 2
 
         Timer {
-            running: root.visible
+            running: root.visible && Nmcli.wifiEnabled
             repeat: true
             triggeredOnStart: true
             interval: GlobalConfig.nexus.networkRescanInterval
             onTriggered: Nmcli.rescanWifi()
+        }
+
+        Timer {
+            id: wifiScanDelay
+
+            interval: 100
+            onTriggered: Nmcli.rescanWifi()
+        }
+
+        Connections {
+            function onWifiEnabledChanged(): void {
+                if (Nmcli.wifiEnabled)
+                    wifiScanDelay.start();
+            }
+
+            target: Nmcli
         }
 
         ToggleRow {
@@ -45,13 +61,48 @@ PageBase {
 
         StyledRect {
             Layout.fillWidth: true
-            implicitHeight: networkList.contentHeight + (Nmcli.scanning ? Tokens.rounding.extraSmall : 0) // Inline so it isn't affected by anim
+            implicitHeight: (Nmcli.wifiEnabled && networkList.count > 0 ? networkList.contentHeight : noNetworksPlaceholder.implicitHeight + Tokens.padding.extraLarge * 2) + (Nmcli.scanning ? Tokens.rounding.extraSmall : 0) // Inline so it isn't affected by anim
             radius: Tokens.rounding.extraSmall
             color: Colours.tPalette.m3surfaceContainer
             clip: true
 
             Behavior on implicitHeight {
                 Anim {}
+            }
+
+            Loader {
+                id: noNetworksPlaceholder
+
+                anchors.centerIn: parent
+                active: opacity > 0
+                asynchronous: true
+                opacity: Nmcli.wifiEnabled && networkList.count > 0 ? 0 : 1
+
+                sourceComponent: ColumnLayout {
+                    spacing: Tokens.spacing.extraSmall
+
+                    MaterialIcon {
+                        Layout.alignment: Qt.AlignHCenter
+                        text: Nmcli.wifiEnabled ? "wifi_find" : "signal_wifi_off"
+                        color: Colours.palette.m3outline
+                        font: Tokens.font.icon.large
+                        animate: true
+                    }
+
+                    StyledText {
+                        Layout.alignment: Qt.AlignHCenter
+                        text: Nmcli.wifiEnabled ? qsTr("No networks found") : qsTr("Wi-Fi disabled")
+                        color: Colours.palette.m3outline
+                        font: Tokens.font.body.large
+                        animate: true
+                    }
+                }
+
+                Behavior on opacity {
+                    Anim {
+                        type: Anim.DefaultEffects
+                    }
+                }
             }
 
             ListView {
@@ -120,7 +171,10 @@ PageBase {
                     required property Nmcli.AccessPoint modelData
                     readonly property Component rightComp: Nmcli.connectingSsid() === modelData.ssid ? loadingComp : iconComp
                     property bool isComplete
+                    property bool currentSelected
                     property real textOpacity: disabled ? 0.5 : 1
+
+                    disabled: currentSelected || Nmcli.connectingSsid() === modelData.ssid
 
                     anchors.left: networkList.contentItem.left
                     anchors.right: networkList.contentItem.right
@@ -131,7 +185,7 @@ PageBase {
                     onClicked: {
                         if (!modelData.active) {
                             NetworkConnection.handleConnect(modelData);
-                            disabled = true;
+                            currentSelected = true;
                             root.networkSelected(modelData);
                         }
                     }
@@ -151,7 +205,7 @@ PageBase {
                     Connections {
                         function onActiveChanged(): void {
                             if (network.modelData.active)
-                                network.disabled = false;
+                                network.currentSelected = false;
                         }
 
                         target: network.modelData
@@ -160,7 +214,7 @@ PageBase {
                     Connections {
                         function onNetworkSelected(ap: Nmcli.AccessPoint): void {
                             if (ap !== network.modelData)
-                                network.disabled = false;
+                                network.currentSelected = false;
                         }
 
                         target: root
@@ -250,6 +304,14 @@ PageBase {
                                 }
                             }
                         }
+                    }
+                }
+
+                opacity: Nmcli.wifiEnabled ? 1 : 0
+
+                Behavior on opacity {
+                    Anim {
+                        type: Anim.DefaultEffects
                     }
                 }
             }

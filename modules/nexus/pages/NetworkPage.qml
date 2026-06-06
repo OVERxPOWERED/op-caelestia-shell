@@ -128,9 +128,9 @@ PageBase {
                     id: networkLayout
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.medium
-                    anchors.leftMargin: Tokens.padding.largeIncreased
-                    anchors.rightMargin: Tokens.padding.largeIncreased
+                    anchors.margins: Tokens.padding.large
+                    anchors.leftMargin: Tokens.padding.extraLarge
+                    anchors.rightMargin: Tokens.padding.extraLarge
                     spacing: Tokens.spacing.medium
 
                     MaterialIcon {

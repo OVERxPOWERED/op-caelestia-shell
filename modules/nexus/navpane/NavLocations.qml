@@ -92,8 +92,9 @@ VerticalFadeFlickable {
 
                             text: item.modelData.icon
                             color: item.isCurrentPage ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondaryContainer
-                            fontStyle: Tokens.font.icon.medium
-                            fill: 1
+                            fontStyle: Tokens.font.icon.builders.medium.weight(Font.Medium).build()
+                            grade: 25
+                            fill: item.modelData.noFill ? 0 : 1
                         }
                     }
 

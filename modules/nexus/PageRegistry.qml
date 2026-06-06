@@ -29,10 +29,11 @@ QtObject {
             category: "connectivity"
         },
         {
-            label: qsTr("Bluetooth"),
-            icon: "bluetooth",
-            description: qsTr("Bluetooth pairing"),
-            category: "connectivity"
+            label: qsTr("Connected devices"),
+            icon: "devices_other",
+            description: qsTr("Bluetooth, pairing"),
+            category: "connectivity",
+            noFill: true
         },
         {
             label: qsTr("Audio"),
@@ -70,7 +71,7 @@ QtObject {
         },
         {
             label: qsTr("Language & region"),
-            icon: "build",
+            icon: "globe",
             description: qsTr("UI language, weather location, display units"),
             category: "shell"
         },

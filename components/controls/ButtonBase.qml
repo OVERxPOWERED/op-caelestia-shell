@@ -1,5 +1,3 @@
-//@ pragma Internal
-
 import QtQuick
 import Caelestia.Config
 import qs.components
@@ -35,10 +33,10 @@ StyledRect {
     readonly property alias stateLayer: stateLayer
     readonly property alias radiusAnim: radiusAnim
 
-    required property color activeColour
-    required property color inactiveColour
-    required property color activeOnColour
-    required property color inactiveOnColour
+    property color activeColour
+    property color inactiveColour
+    property color activeOnColour
+    property color inactiveOnColour
     property color disabledColour: Qt.alpha(Colours.palette.m3onSurface, 0.1)
     property color disabledOnColour: Qt.alpha(Colours.palette.m3onSurface, 0.38)
 
@@ -60,7 +58,7 @@ StyledRect {
         if (internalChecked)
             return checkedRadius;
         if (isRound)
-            return implicitHeight / 2 * Math.min(1, Tokens.rounding.scale);
+            return (height || implicitHeight) / 2 * Math.min(1, Tokens.rounding.scale);
         return defaultRadius;
     }
     color: type === ButtonBase.Text ? "transparent" : disabled ? disabledColour : internalChecked ? activeColour : inactiveColour

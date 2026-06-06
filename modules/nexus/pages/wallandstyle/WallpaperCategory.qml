@@ -26,7 +26,7 @@ PageBase {
         columnSpacing: Tokens.spacing.large
 
         Repeater {
-            model: Wallpapers.list.filter(w => Wallpapers.getCategoryFor(w) === root.nState.selectedWallpaperCategory)
+            model: Wallpapers.list.filter(w => Wallpapers.getCategoryFor(w) === root.nState.selectedWallpaperCategory).sort((a, b) => a.name.localeCompare(b.name))
 
             WallItem {
                 required property FileSystemEntry modelData

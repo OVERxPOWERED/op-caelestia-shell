@@ -105,7 +105,7 @@ PageBase {
                     for (const w of walls) {
                         if (w.parentDir !== baseDir) {
                             const category = Wallpapers.getCategoryFor(w);
-                            if (category && !(category in categories))
+                            if (category && (!(category in categories) || categories[category].name.localeCompare(w.name) > 0))
                                 categories[category] = w;
                         }
                     }

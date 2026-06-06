@@ -89,12 +89,15 @@ PageBase {
 
         GridLayout {
             Layout.fillWidth: true
+            visible: localWalls.count > 0
 
             columns: Config.nexus.wallpapersPerRow
             rowSpacing: Tokens.spacing.medium
             columnSpacing: Tokens.spacing.large
 
             Repeater {
+                id: localWalls
+
                 model: {
                     const walls = Wallpapers.list;
                     const baseDir = Paths.wallsdir;
@@ -128,6 +131,41 @@ PageBase {
                             Wallpapers.setWallpaper(modelData.path);
                             root.nState.closeSubPage();
                         }
+                    }
+                }
+            }
+        }
+
+        Loader {
+            Layout.fillWidth: true
+
+            asynchronous: true
+            active: localWalls.count === 0
+            visible: active
+
+            sourceComponent: StyledRect {
+                color: Colours.tPalette.m3surfaceContainer
+                radius: Tokens.rounding.extraLarge
+                implicitHeight: noWallsLayout.implicitHeight + Tokens.padding.extraExtraLarge * 2
+
+                ColumnLayout {
+                    id: noWallsLayout
+
+                    anchors.centerIn: parent
+                    spacing: Tokens.spacing.extraSmall
+
+                    MaterialIcon {
+                        Layout.alignment: Qt.AlignHCenter
+                        text: "hide_image"
+                        color: Colours.palette.m3outline
+                        fontStyle: Tokens.font.icon.extraLarge
+                    }
+
+                    StyledText {
+                        Layout.alignment: Qt.AlignHCenter
+                        text: qsTr("No local wallpapers found")
+                        color: Colours.palette.m3outline
+                        font: Tokens.font.title.small
                     }
                 }
             }

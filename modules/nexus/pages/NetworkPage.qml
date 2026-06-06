@@ -94,11 +94,21 @@ PageBase {
 
                 move: Transition {
                     Anim {
+                        property: "opacity"
+                        to: 1
+                        type: Anim.DefaultEffects
+                    }
+                    Anim {
                         property: "y"
                     }
                 }
 
                 displaced: Transition {
+                    Anim {
+                        property: "opacity"
+                        to: 1
+                        type: Anim.DefaultEffects
+                    }
                     Anim {
                         property: "y"
                     }

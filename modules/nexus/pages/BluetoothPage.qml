@@ -172,13 +172,10 @@ PageBase {
             }
         }
 
-        StyledRect {
+        ConnectedRect {
             Layout.fillWidth: true
-            bottomLeftRadius: Tokens.rounding.extraLarge
-            bottomRightRadius: Tokens.rounding.extraLarge
-            radius: Tokens.rounding.extraSmall
             implicitHeight: pairLayout.implicitHeight + pairLayout.anchors.margins * 2
-            color: Colours.tPalette.m3surfaceContainer
+            last: true
 
             StateLayer {
                 disabled: !root.btEnabled

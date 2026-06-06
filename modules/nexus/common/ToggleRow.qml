@@ -8,8 +8,8 @@ StyledSwitch {
     id: root
 
     property string subtext
-    property bool first
-    property bool last
+    property alias first: bg.first
+    property alias last: bg.last
     readonly property alias bg: bg
 
     horizontalPadding: Tokens.padding.largeIncreased
@@ -26,24 +26,13 @@ StyledSwitch {
 
     onPressed: stateLayer.press(stateLayer.mouseX, stateLayer.mouseY)
 
-    background: StyledRect {
+    background: ConnectedRect {
         id: bg
-
-        color: Colours.tPalette.m3surfaceContainer
-        topLeftRadius: root.first ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
-        topRightRadius: root.first ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
-        bottomLeftRadius: root.last ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
-        bottomRightRadius: root.last ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
 
         StateLayer {
             id: stateLayer
 
             manualPressOverride: root.pressed
-
-            topLeftRadius: parent.topLeftRadius
-            topRightRadius: parent.topRightRadius
-            bottomLeftRadius: parent.bottomLeftRadius
-            bottomRightRadius: parent.bottomRightRadius
         }
     }
 

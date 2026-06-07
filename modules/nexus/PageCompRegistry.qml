@@ -116,6 +116,14 @@ QtObject {
                     BarClock {}
                 }
             }
+        },
+        Component {
+            // Services
+            StackPage {
+                Component {
+                    ServicesPage {}
+                }
+            }
         }
     ]
 

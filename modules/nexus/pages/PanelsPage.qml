@@ -24,7 +24,7 @@ PageBase {
         NavRow {
             icon: "dock_to_bottom"
             label: qsTr("Taskbar")
-            status: Config.bar.persistent ? qsTr("Always visible") : qsTr("Reveal on hover")
+            status: Config.bar.persistent ? qsTr("Always visible") : Config.bar.showOnHover ? qsTr("Reveal on hover") : qsTr("Reveal on drag")
             onClicked: root.nState.openSubPage(2)
         }
 

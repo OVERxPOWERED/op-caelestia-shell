@@ -11,6 +11,7 @@ import qs.modules.nexus.pages.audio
 import qs.modules.nexus.pages.bluetooth
 import qs.modules.nexus.pages.panels
 import qs.modules.nexus.pages.wallandstyle
+import qs.modules.nexus.pages.panels.taskbar
 
 QtObject {
     id: root
@@ -96,6 +97,23 @@ QtObject {
                 }
                 Component {
                     SidebarPanel {}
+                }
+
+                // Taskbar component sub-pages
+                Component {
+                    BarWorkspaces {}
+                }
+                Component {
+                    BarActiveWindow {}
+                }
+                Component {
+                    BarTray {}
+                }
+                Component {
+                    BarStatusIcons {}
+                }
+                Component {
+                    BarClock {}
                 }
             }
         }

@@ -8,6 +8,7 @@ import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.services
+import qs.modules.nexus
 import qs.modules.bar.popouts as BarPopouts
 
 StyledRect {
@@ -118,7 +119,7 @@ StyledRect {
                         isToggle: false
                         onClicked: {
                             root.visibilities.utilities = false;
-                            root.popouts.detach("network");
+                            WindowFactory.create();
                         }
                     }
                 }

@@ -51,13 +51,14 @@ Item {
 
         anchors.right: parent.right
         anchors.top: parent.top
+        anchors.margins: root.nState.isWindow ? 0 : Tokens.padding.extraSmall
 
         group: blobGroup
         opacity: root.blobColour.a
         radius: Tokens.rounding.medium
 
-        implicitWidth: windowBtn.implicitWidth + Tokens.padding.extraSmall * 2
-        implicitHeight: windowBtn.implicitHeight + Tokens.padding.extraSmall
+        implicitWidth: windowBtn.implicitWidth + (root.nState.isWindow ? Tokens.padding.extraSmall : Tokens.padding.small) * 2
+        implicitHeight: windowBtn.implicitHeight + (root.nState.isWindow ? Tokens.padding.extraSmall : Tokens.padding.small)
     }
 
     IconButton {

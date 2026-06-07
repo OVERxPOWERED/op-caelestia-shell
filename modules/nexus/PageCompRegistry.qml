@@ -47,6 +47,9 @@ QtObject {
                 Component {
                     BtDeviceInfo {}
                 }
+                Component {
+                    BluetoothPairing {}
+                }
             }
         }
     ]

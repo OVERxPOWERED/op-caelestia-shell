@@ -6,7 +6,7 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-StyledRect {
+ConnectedRect {
     id: root
 
     property bool showList
@@ -20,7 +20,6 @@ StyledRect {
 
     Layout.fillWidth: true
     implicitHeight: (showList && list.count > 0 ? list.contentHeight : placeholder.implicitHeight + Tokens.padding.extraLarge * 2) + extraHeight
-    radius: Tokens.rounding.extraSmall
     color: Colours.tPalette.m3surfaceContainer
     clip: true
 

@@ -176,7 +176,7 @@ PageBase {
 
             StateLayer {
                 disabled: !root.btEnabled
-                onClicked: ; // TODO
+                onClicked: root.nState.openSubPage(2)
             }
 
             RowLayout {

@@ -142,4 +142,16 @@ qreal CUtils::clamp(qreal value, qreal min, qreal max) {
     return qBound(min, value, max);
 }
 
+#ifndef CAELESTIA_VERSION
+#define CAELESTIA_VERSION ""
+#endif
+
+QString CUtils::version() const {
+    return QStringLiteral(CAELESTIA_VERSION);
+}
+
+QString CUtils::qtVersion() const {
+    return QStringLiteral(QT_VERSION_STR);
+}
+
 } // namespace caelestia

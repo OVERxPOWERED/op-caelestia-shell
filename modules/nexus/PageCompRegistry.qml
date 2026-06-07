@@ -132,6 +132,15 @@ QtObject {
                     LanguageAndRegion {}
                 }
             }
+        },
+
+        // About
+        Component {
+            StackPage {
+                Component {
+                    AboutPage {}
+                }
+            }
         }
     ]
 

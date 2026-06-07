@@ -106,8 +106,8 @@ PageBase {
 
                 StateLayer {
                     radius: Tokens.rounding.extraSmall
-                    bottomLeftRadius: newDevice.index === deviceList.list.count - 1 ? Tokens.rounding.extraLarge : radius
-                    bottomRightRadius: newDevice.index === deviceList.list.count - 1 ? Tokens.rounding.extraLarge : radius
+                    bottomLeftRadius: newDevice.index === deviceList?.list.count - 1 ? Tokens.rounding.extraLarge : radius
+                    bottomRightRadius: newDevice.index === deviceList?.list.count - 1 ? Tokens.rounding.extraLarge : radius
                     disabled: newDevice.modelData?.pairing ?? false
 
                     onClicked: {

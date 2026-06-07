@@ -38,8 +38,8 @@ ItemList {
 
         StateLayer {
             radius: Tokens.rounding.extraSmall
-            bottomLeftRadius: device.index === root.list.count - 1 ? Tokens.rounding.extraLarge : radius
-            bottomRightRadius: device.index === root.list.count - 1 ? Tokens.rounding.extraLarge : radius
+            bottomLeftRadius: device.index === root?.list.count - 1 ? Tokens.rounding.extraLarge : radius
+            bottomRightRadius: device.index === root?.list.count - 1 ? Tokens.rounding.extraLarge : radius
             onClicked: root.selected(device.modelData)
         }
 

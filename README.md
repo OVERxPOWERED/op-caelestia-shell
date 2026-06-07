@@ -240,9 +240,11 @@ For example, to disable the bar on DP-1:
 > - `launcher` (`specialPrefix`, `actionPrefix`, `enableDangerousActions`, `vimKeybinds`,
 >   `favouriteApps`, `hiddenApps`, `actions`)
 > - `launcher.useFuzzy` (`apps`, `actions`, `schemes`, `variants`, `wallpapers`)
-> - `notifs` (`expire`, `fullscreen`, `defaultExpireTimeout`, `actionOnClick`)
+> - `notifs` (`expire`, `fullscreen`, `defaultExpireTimeout`, `fullscreenExpireTimeout`, `actionOnClick`)
 > - `lock` (`enableFprint`, `maxFprintTries`)
-> - `utilities` (`toasts`, `vpn`)
+> - `nexus` (`networkRescanInterval`)
+> - `utilities.toasts` (all except `fullscreen`)
+> - `utilities.vpn` (`enabled`, `provider`)
 > - `services` (`weatherLocation`, `useFahrenheit`, `useFahrenheitPerformance`, `useTwelveHourClock`,
 >   `gpuType`, `visualiserBars`, `audioIncrement`, `brightnessIncrement`, `maxVolume`, `smartScheme`,
 >   `defaultPlayer`, `playerAliases`, `lyricsBackend`)

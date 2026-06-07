@@ -9,6 +9,7 @@ import qs.modules.nexus.common
 import qs.modules.nexus.pages
 import qs.modules.nexus.pages.audio
 import qs.modules.nexus.pages.bluetooth
+import qs.modules.nexus.pages.panels
 import qs.modules.nexus.pages.wallandstyle
 
 QtObject {
@@ -65,6 +66,36 @@ QtObject {
                 }
                 Component {
                     AppVolumes {}
+                }
+            }
+        },
+
+        // System
+        Component {
+            PlaceholderComp {}
+        },
+        Component {
+            PlaceholderComp {}
+        },
+
+        // Shell
+        Component {
+            // Panels
+            StackPage {
+                Component {
+                    PanelsPage {}
+                }
+                Component {
+                    DashboardPanel {}
+                }
+                Component {
+                    TaskbarPanel {}
+                }
+                Component {
+                    LauncherPanel {}
+                }
+                Component {
+                    SidebarPanel {}
                 }
             }
         }

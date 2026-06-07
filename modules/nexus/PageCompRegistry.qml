@@ -51,6 +51,14 @@ QtObject {
                     BluetoothPairing {}
                 }
             }
+        },
+        Component {
+            // Audio
+            StackPage {
+                Component {
+                    AudioPage {}
+                }
+            }
         }
     ]
 }

@@ -78,7 +78,7 @@ if("m3shapes" IN_LIST ENABLE_MODULES)
     FetchContent_Declare(
         m3shapes_external
         GIT_REPOSITORY https://github.com/soramanew/m3shapes.git
-        GIT_TAG        main
+        GIT_TAG        356825d31f16052a782735cce264331cba0cb71b
     )
     FetchContent_MakeAvailable(m3shapes_external)
     message(STATUS "Done fetching M3Shapes module")

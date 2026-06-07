@@ -609,7 +609,7 @@ For example, to disable the bar on DP-1:
                 "name": "Settings",
                 "icon": "settings",
                 "description": "Configure the shell",
-                "command": ["caelestia", "shell", "controlCenter", "open"],
+                "command": ["caelestia", "shell", "nexus", "open"],
                 "enabled": true,
                 "dangerous": false
             }

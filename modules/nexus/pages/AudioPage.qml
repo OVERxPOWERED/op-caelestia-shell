@@ -7,7 +7,6 @@ import qs.components
 import qs.services
 import qs.utils
 import qs.modules.nexus.common
-import qs.modules.nexus.pages.audio
 
 PageBase {
     id: root

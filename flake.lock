@@ -21,6 +21,22 @@
         "type": "github"
       }
     },
+    "m3shapes": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1777812556,
+        "narHash": "sha256-E5nqOucRQBWKuT31AMekmfgMywRdHgSbU86R7t4BKKA=",
+        "owner": "soramanew",
+        "repo": "m3shapes",
+        "rev": "356825d31f16052a782735cce264331cba0cb71b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "soramanew",
+        "repo": "m3shapes",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1780243769,
@@ -60,6 +76,7 @@
     "root": {
       "inputs": {
         "caelestia-cli": "caelestia-cli",
+        "m3shapes": "m3shapes",
         "nixpkgs": "nixpkgs",
         "quickshell": "quickshell"
       }

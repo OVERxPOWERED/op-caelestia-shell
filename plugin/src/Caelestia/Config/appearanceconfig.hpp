@@ -221,7 +221,7 @@ public:
         m_label->setDefaultFamily(sans);
         m_label->large()->setDefaults(14, QFont::Medium, vaxes);
         m_label->medium()->setDefaults(12, QFont::Medium, vaxes);
-        m_label->small()->setDefaults(11, QFont::Medium, vaxes);
+        m_label->small()->setDefaults(11, QFont::Normal, vaxes);
 
         m_mono->setDefaultFamily(mono);
         m_mono->large()->setDefaults(16, QFont::Normal);

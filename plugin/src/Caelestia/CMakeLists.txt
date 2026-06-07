@@ -15,6 +15,9 @@ qml_module(caelestia
         PkgConfig::Qalculate
 )
 
+# Bake the shell version in so CUtils can expose it without spawning a process
+target_compile_definitions(caelestia PRIVATE CAELESTIA_VERSION="${VERSION}")
+
 add_subdirectory(Components)
 add_subdirectory(Config)
 add_subdirectory(Internal)

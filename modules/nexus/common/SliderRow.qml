@@ -18,15 +18,14 @@ ConnectedRect {
 
     signal moved(value: real)
 
-    implicitHeight: rowLayout.implicitHeight + rowLayout.anchors.margins * 2
+    implicitHeight: rowLayout.implicitHeight + rowLayout.anchors.margins + rowLayout.anchors.topMargin
 
     RowLayout {
         id: rowLayout
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.large
-        anchors.leftMargin: Tokens.padding.largeIncreased
-        anchors.rightMargin: Tokens.padding.largeIncreased
+        anchors.margins: Tokens.padding.largeIncreased
+        anchors.topMargin: Tokens.padding.large
         spacing: Tokens.spacing.medium
 
         MaterialIcon {

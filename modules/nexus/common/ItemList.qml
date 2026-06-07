@@ -32,7 +32,6 @@ ConnectedRect {
 
         anchors.centerIn: parent
         active: opacity > 0
-        asynchronous: true
         opacity: root.showList && list.count > 0 ? 0 : 1
 
         sourceComponent: ColumnLayout {

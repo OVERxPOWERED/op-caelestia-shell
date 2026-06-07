@@ -1,10 +1,6 @@
-pragma ComponentBehavior: Bound
-
 import QtQuick
-import QtQuick.Layouts
 import Caelestia.Config
 import qs.components
-import qs.services
 import qs.modules.nexus
 
 Item {
@@ -20,7 +16,7 @@ Item {
         if (currentItem)
             currentItem.destroy();
 
-        const comp = PageCompRegistry.pageComps[idx] ?? placeholderComp;
+        const comp = PageCompRegistry.pageComps[idx] ?? PageCompRegistry.placeholderComp;
         const incubator = comp.incubateObject(container, {
             nState
         });
@@ -93,40 +89,6 @@ Item {
                 properties: "topMargin,bottomMargin"
                 to: 0
                 type: Anim.SlowEffects
-            }
-        }
-    }
-
-    Component {
-        id: placeholderComp
-
-        Item {
-            property NexusState nState // To avoid the warning from non-existent property
-
-            ColumnLayout {
-                anchors.centerIn: parent
-                spacing: Tokens.padding.extraSmall
-
-                MaterialIcon {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: "handyman"
-                    color: Colours.palette.m3outlineVariant
-                    font: Tokens.font.icon.extraLarge
-                }
-
-                StyledText {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("Page under construction")
-                    color: Colours.palette.m3outlineVariant
-                    font: Tokens.font.title.large
-                }
-
-                StyledText {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("This page will be available in a future update.")
-                    color: Colours.palette.m3outlineVariant
-                    font: Tokens.font.body.large
-                }
             }
         }
     }

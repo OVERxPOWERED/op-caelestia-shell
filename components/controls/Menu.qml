@@ -116,7 +116,7 @@ MouseArea {
 
                         required property int index
                         required property MenuItem modelData
-                        readonly property bool active: modelData === root.active
+                        readonly property bool active: modelData === root?.active
 
                         Layout.fillWidth: true
                         implicitWidth: menuOptionRow.implicitWidth + Tokens.padding.medium * 2
@@ -125,8 +125,8 @@ MouseArea {
                         radius: active ? Tokens.rounding.medium : Tokens.rounding.extraSmall
                         topLeftRadius: index === 0 ? Tokens.rounding.medium : radius
                         topRightRadius: index === 0 ? Tokens.rounding.medium : radius
-                        bottomLeftRadius: index === repeater.count - 1 ? Tokens.rounding.medium : radius
-                        bottomRightRadius: index === repeater.count - 1 ? Tokens.rounding.medium : radius
+                        bottomLeftRadius: index === repeater?.count - 1 ? Tokens.rounding.medium : radius
+                        bottomRightRadius: index === repeater?.count - 1 ? Tokens.rounding.medium : radius
 
                         color: Qt.alpha(Colours.palette.m3tertiaryContainer, active ? 1 : 0)
 
@@ -159,21 +159,21 @@ MouseArea {
 
                             MaterialIcon {
                                 Layout.alignment: Qt.AlignVCenter
-                                text: item.modelData.icon
+                                text: item.modelData?.icon ?? ""
                                 color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurfaceVariant
                             }
 
                             StyledText {
                                 Layout.alignment: Qt.AlignVCenter
                                 Layout.fillWidth: true
-                                text: item.modelData.text
+                                text: item.modelData?.text ?? ""
                                 color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurface
                             }
 
                             Loader {
                                 asynchronous: true
                                 Layout.alignment: Qt.AlignVCenter
-                                active: item.modelData.trailingIcon.length > 0
+                                active: item.modelData?.trailingIcon.length > 0
                                 visible: active
 
                                 sourceComponent: MaterialIcon {

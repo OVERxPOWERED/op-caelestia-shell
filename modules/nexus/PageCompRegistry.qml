@@ -124,6 +124,14 @@ QtObject {
                     ServicesPage {}
                 }
             }
+        },
+        Component {
+            // Language & region
+            StackPage {
+                Component {
+                    LanguageAndRegion {}
+                }
+            }
         }
     ]
 

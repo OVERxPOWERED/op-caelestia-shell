@@ -2,6 +2,8 @@
 
 #include "tickingservice.hpp"
 
+#include <qelapsedtimer.h>
+#include <qhash.h>
 #include <qprocess.h>
 #include <qqmlintegration.h>
 #include <qstringlist.h>
@@ -18,6 +20,7 @@ public:
         Auto,    // user override is empty (config "") — defer to detected autoType
         None,    // no usable GPU
         Nvidia,  // queried via nvidia-smi
+        Intel,   // queried via Intel i915/sysfs counters
         Generic, // queried via /sys/class/drm/card*/device/gpu_busy_percent
     };
     Q_ENUM(Type)
@@ -56,6 +59,8 @@ private:
     void tryNameSource(int index);
     void finishNameSource(int index, QString name);
     void readGenericUsage();
+    void readIntelUsage();
+    qreal readIntelFrequencyUsage() const;
     void startNvidiaUsage();
     void readGpuTemperature();
 
@@ -74,6 +79,8 @@ private:
     QString m_name;
     qreal m_percentage = 0.0;
     qreal m_temperature = 0.0;
+    QElapsedTimer m_intelUsageTimer;
+    QHash<QString, qint64> m_lastIntelRc6Residency;
 
     // /sys/class/drm card busy files, enumerated once at construction (the card
     // set is static at runtime) and reused by detection and the tick path.

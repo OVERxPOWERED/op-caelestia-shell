@@ -4,14 +4,26 @@
 #include "../Config/serviceconfig.hpp"
 #include "sensorslib.hpp"
 
+#include <algorithm>
+#include <cmath>
+#include <optional>
 #include <qdir.h>
 #include <qdiriterator.h>
 #include <qfile.h>
 #include <qregularexpression.h>
+#include <qset.h>
 
 namespace caelestia::services {
 
 namespace {
+
+constexpr const char* kTypeDetectScript =
+    "if command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi -L >/dev/null 2>&1; then echo NVIDIA;"
+    " else for f in /sys/class/drm/card*/gt/gt*/rc6_residency_ms /sys/class/drm/card*/gt/gt*/rps_cur_freq_mhz;"
+    " do [ -r \"$f\" ] && echo INTEL && exit; done;"
+    " for f in /sys/class/drm/card*/device/vendor; do [ -r \"$f\" ] && [ \"$(cat \"$f\")\" = \"0x8086\" ] && echo INTEL && exit; done;"
+    " if ls /sys/class/drm/card*/device/gpu_busy_percent 2>/dev/null | grep -q .; then echo GENERIC; exit; fi;"
+    " echo NONE; fi";
 
 QStringList gpuBusyFiles() {
     static const QRegularExpression cardRe(QStringLiteral("^card\\d+$"));
@@ -123,6 +135,49 @@ const std::array<NameSource, 3>& nameSources() {
 // Index of the NVIDIA source within nameSources(); its result also drives type.
 constexpr int kNvidiaSource = 0;
 
+std::optional<qreal> readRealFile(const QString& path) {
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return std::nullopt;
+    }
+
+    bool ok = false;
+    const qreal value = f.readAll().trimmed().toDouble(&ok);
+    return ok ? std::optional<qreal>(value) : std::nullopt;
+}
+
+std::optional<qint64> readIntFile(const QString& path) {
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return std::nullopt;
+    }
+
+    bool ok = false;
+    const qint64 value = f.readAll().trimmed().toLongLong(&ok);
+    return ok ? std::optional<qint64>(value) : std::nullopt;
+}
+
+QStringList intelGtDirs() {
+    QStringList dirs;
+    const QStringList cards =
+        QDir(QStringLiteral("/sys/class/drm"))
+            .entryList(QStringList() << QStringLiteral("card*"), QDir::Dirs | QDir::NoDotAndDotDot);
+
+    for (const QString& card : cards) {
+        const QDir gtRoot(QStringLiteral("/sys/class/drm/%1/gt").arg(card));
+        if (!gtRoot.exists()) {
+            continue;
+        }
+
+        const QStringList gts = gtRoot.entryList(QStringList() << QStringLiteral("gt*"), QDir::Dirs | QDir::NoDotAndDotDot);
+        for (const QString& gt : gts) {
+            dirs.append(gtRoot.absoluteFilePath(gt));
+        }
+    }
+
+    return dirs;
+}
+
 } // namespace
 
 Gpu::Gpu(QObject* parent)
@@ -203,6 +258,9 @@ void Gpu::tick() {
     const Type t = type();
     if (t == Generic) {
         readGenericUsage();
+        readGpuTemperature();
+    } else if (t == Intel) {
+        readIntelUsage();
         readGpuTemperature();
     } else if (t == Nvidia) {
         startNvidiaUsage();
@@ -304,6 +362,78 @@ void Gpu::readGenericUsage() {
     }
 }
 
+void Gpu::readIntelUsage() {
+    const QStringList gtDirs = intelGtDirs();
+    const qint64 elapsedMs = m_intelUsageTimer.isValid() ? m_intelUsageTimer.elapsed() : 0;
+    qreal sum = 0.0;
+    int count = 0;
+    QSet<QString> seen;
+
+    for (const QString& gtDir : gtDirs) {
+        const QString path = gtDir + QStringLiteral("/rc6_residency_ms");
+        const auto current = readIntFile(path);
+        if (!current) {
+            continue;
+        }
+
+        seen.insert(path);
+        const auto lastIt = m_lastIntelRc6Residency.constFind(path);
+        if (lastIt != m_lastIntelRc6Residency.constEnd() && elapsedMs > 0) {
+            const qint64 delta = std::max<qint64>(0, *current - *lastIt);
+            const qreal idle = std::clamp(static_cast<qreal>(delta) / static_cast<qreal>(elapsedMs), 0.0, 1.0);
+            sum += 1.0 - idle;
+            ++count;
+        }
+        m_lastIntelRc6Residency.insert(path, *current);
+    }
+
+    const auto keys = m_lastIntelRc6Residency.keys();
+    for (const QString& key : keys) {
+        if (!seen.contains(key)) {
+            m_lastIntelRc6Residency.remove(key);
+        }
+    }
+
+    m_intelUsageTimer.restart();
+
+    const qreal newPerc = count > 0 ? sum / static_cast<qreal>(count) : readIntelFrequencyUsage();
+    if (std::abs(newPerc - m_percentage) > 0.0001) {
+        m_percentage = newPerc;
+        Q_EMIT percentageChanged();
+    }
+}
+
+qreal Gpu::readIntelFrequencyUsage() const {
+    qreal sum = 0.0;
+    int count = 0;
+
+    for (const QString& gtDir : intelGtDirs()) {
+        auto cur = readRealFile(gtDir + QStringLiteral("/rps_act_freq_mhz"));
+        if (!cur) {
+            cur = readRealFile(gtDir + QStringLiteral("/rps_cur_freq_mhz"));
+        }
+
+        auto min = readRealFile(gtDir + QStringLiteral("/rps_min_freq_mhz"));
+        if (!min) {
+            min = readRealFile(gtDir + QStringLiteral("/rps_RPn_freq_mhz"));
+        }
+
+        auto max = readRealFile(gtDir + QStringLiteral("/rps_max_freq_mhz"));
+        if (!max) {
+            max = readRealFile(gtDir + QStringLiteral("/rps_RP0_freq_mhz"));
+        }
+
+        if (!cur || !min || !max || *max <= *min) {
+            continue;
+        }
+
+        sum += std::clamp((*cur - *min) / (*max - *min), 0.0, 1.0);
+        ++count;
+    }
+
+    return count > 0 ? sum / static_cast<qreal>(count) : 0.0;
+}
+
 void Gpu::startNvidiaUsage() {
     if (m_nvidiaQuerying) {
         return;
@@ -335,7 +465,12 @@ void Gpu::startNvidiaUsage() {
 }
 
 void Gpu::readGpuTemperature() {
-    const auto t = sensorslib::gpuPciAverageTemp();
+    auto t = sensorslib::gpuPciAverageTemp();
+    if (!t && type() == Intel) {
+        // Intel integrated GPUs usually share the CPU package thermal zone and
+        // often do not expose a separate GPU hwmon sensor.
+        t = sensorslib::cpuPackageTemp();
+    }
     const qreal newTemp = t.value_or(0.0);
     if (std::abs(newTemp - m_temperature) > 0.05) {
         m_temperature = newTemp;
@@ -350,6 +485,9 @@ Gpu::Type Gpu::parseType(const QString& s) {
     }
     if (u == QStringLiteral("NVIDIA")) {
         return Nvidia;
+    }
+    if (u == QStringLiteral("INTEL")) {
+        return Intel;
     }
     if (u == QStringLiteral("GENERIC")) {
         return Generic;

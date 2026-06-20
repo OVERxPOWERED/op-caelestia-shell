@@ -11,6 +11,17 @@ import qs.utils
 Searcher {
     id: root
 
+    readonly property var themeAction: ({
+            name: qsTr("Theme"),
+            description: qsTr("Change the current theme"),
+            icon: "palette",
+            command: ["autocomplete", "theme"]
+        })
+
+    function hasAutocomplete(actions: var, name: string): bool {
+        return actions.some(a => a.command?.[0] === "autocomplete" && a.command?.[1] === name);
+    }
+
     function transformSearch(search: string): string {
         return search.slice(GlobalConfig.launcher.actionPrefix.length);
     }
@@ -21,7 +32,11 @@ Searcher {
     Variants {
         id: variants
 
-        model: GlobalConfig.launcher.actions.filter(a => (a.enabled ?? true) && (GlobalConfig.launcher.enableDangerousActions || !(a.dangerous ?? false)))
+        model: {
+            const actions = GlobalConfig.launcher.actions;
+            const allActions = root.hasAutocomplete(actions, "theme") ? actions : [...actions, root.themeAction];
+            return allActions.filter(a => (a.enabled ?? true) && (GlobalConfig.launcher.enableDangerousActions || !(a.dangerous ?? false)));
+        }
 
         Action {}
     }

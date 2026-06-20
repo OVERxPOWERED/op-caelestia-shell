@@ -14,6 +14,11 @@ WlSessionLockSurface {
     required property Pam pam
 
     readonly property alias unlocking: unlockAnim.running
+    property bool powerConfirmActive
+
+    function requestPowerConfirm(): void {
+        powerConfirmActive = true;
+    }
 
     contentItem.Config.screen: screen.name
     contentItem.Tokens.screen: screen.name
@@ -221,5 +226,12 @@ WlSessionLockSurface {
             opacity: 0
             scale: 0
         }
+    }
+
+    PowerConfirm {
+        blurSource: lockContent
+        active: root.powerConfirmActive
+        onCancelled: root.powerConfirmActive = false
+        onAccepted: root.powerConfirmActive = false
     }
 }

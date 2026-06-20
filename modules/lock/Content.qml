@@ -22,12 +22,15 @@ RowLayout {
 
         Fetch {
             Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.minimumHeight: 190
+            Layout.preferredHeight: root.height * 0.42
             rootHeight: root.height
         }
 
         Media {
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredHeight: implicitHeight
             lock: root.lock
         }
     }

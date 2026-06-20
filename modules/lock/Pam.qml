@@ -30,6 +30,12 @@ Scope {
 
     signal flashMsg
 
+    function rejectPattern(): void {
+        state = "fail";
+        flashMsg();
+        stateReset.restart();
+    }
+
     function handleKey(event: KeyEvent): void {
         if (passwd.active)
             return;

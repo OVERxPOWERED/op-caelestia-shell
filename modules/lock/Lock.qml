@@ -7,7 +7,20 @@ import Quickshell.Wayland
 import qs.components.misc
 
 Scope {
+    id: root
+
+    readonly property string bootLockFlagPath: "/tmp/caelestia_boot_lock"
+    property bool bootLockConsumed: false
+
     property alias lock: lock
+
+    function consumeBootLockFlag(): void {
+        if (bootLockConsumed)
+            return;
+
+        bootLockConsumed = true;
+        bootLockDelay.start();
+    }
 
     WlSessionLock {
         id: lock
@@ -18,6 +31,33 @@ Scope {
             lock: lock
             pam: pam
         }
+    }
+
+    FileView {
+        id: bootLockFlag
+
+        path: root.bootLockFlagPath
+        printErrors: false
+        watchChanges: true
+
+        onFileChanged: reload()
+        onLoaded: root.consumeBootLockFlag()
+    }
+
+    Timer {
+        id: bootLockDelay
+
+        interval: 900
+        onTriggered: {
+            lock.locked = true;
+            clearBootLockFlag.running = true;
+        }
+    }
+
+    Process {
+        id: clearBootLockFlag
+
+        command: ["rm", "-f", root.bootLockFlagPath]
     }
 
     Pam {

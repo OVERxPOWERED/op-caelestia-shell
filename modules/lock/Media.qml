@@ -50,7 +50,7 @@ StyledClippingRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Tokens.padding.extraLarge
+        anchors.margins: Tokens.padding.large
         spacing: Tokens.spacing.extraSmall
 
         StyledText {
@@ -75,7 +75,7 @@ StyledClippingRect {
 
         ButtonRow {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Tokens.spacing.medium
+            Layout.topMargin: Tokens.spacing.small
 
             spacing: Tokens.spacing.extraSmall
 

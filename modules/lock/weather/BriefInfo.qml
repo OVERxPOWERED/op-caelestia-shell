@@ -29,14 +29,14 @@ ColumnLayout {
             animate: true
             text: Weather.temp
             color: Colours.palette.m3primary
-            font: Tokens.font.headline.builders.large.scale(1.5).weight(Font.DemiBold).width(80).build()
+            font: Tokens.font.headline.builders.large.scale(1.25).weight(Font.DemiBold).width(80).build()
         }
 
         MaterialIcon {
             animate: true
             text: Weather.icon
             color: Colours.palette.m3secondary
-            fontStyle: Tokens.font.headline.builders.large.scale(1.5).build()
+            fontStyle: Tokens.font.headline.builders.large.scale(1.25).build()
         }
     }
 

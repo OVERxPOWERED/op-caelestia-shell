@@ -14,15 +14,28 @@ StyledRect {
     required property real centerScale
     required property int centerWidth
     required property var lock
+    property bool patternMode
+
+    readonly property int patternSize: Math.max(180, Math.min(240, Math.round(centerWidth * 0.42)))
+    readonly property string patternCode: GlobalConfig.lock.pattern ?? "74159"
+    readonly property bool patternAvailable: true
+
+    onPatternAvailableChanged: {
+        if (!patternAvailable)
+            patternMode = false;
+    }
 
     implicitWidth: {
         const w = centerWidth * 0.8;
-        return lock.pam.buffer ? w : Math.min(w, inputField.placeholderWidth + iconWrapper.implicitWidth + enterButton.implicitWidth + input.spacing * 2 + Tokens.padding.medium * 2);
+        if (patternMode)
+            return w;
+        const patternToggleWidth = patternAvailable ? patternToggle.implicitWidth + inputRow.spacing : 0;
+        return lock.pam.buffer ? w : Math.min(w, inputField.placeholderWidth + iconWrapper.implicitWidth + patternToggleWidth + enterButton.implicitWidth + inputRow.spacing * 2 + Tokens.padding.medium * 2);
     }
-    implicitHeight: input.implicitHeight + Tokens.padding.small
+    implicitHeight: input.implicitHeight + Tokens.padding.extraSmall * 2
 
     color: Colours.tPalette.m3surfaceContainer
-    radius: Tokens.rounding.full
+    radius: patternMode ? Tokens.rounding.extraLarge : Tokens.rounding.full
 
     focus: true
     onActiveFocusChanged: {
@@ -33,6 +46,14 @@ StyledRect {
     Keys.onPressed: event => {
         if (root.lock.unlocking)
             return;
+
+        if (root.patternMode) {
+            if (event.key === Qt.Key_Escape) {
+                root.patternMode = false;
+                event.accepted = true;
+            }
+            return;
+        }
 
         if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
             inputField.placeholder.animate = false;
@@ -46,16 +67,54 @@ StyledRect {
 
     StateLayer {
         hoverEnabled: false
-        cursorShape: Qt.IBeamCursor
+        cursorShape: root.patternMode ? Qt.ArrowCursor : Qt.IBeamCursor
         onClicked: parent.forceActiveFocus()
     }
 
-    RowLayout {
+    ColumnLayout {
         id: input
 
-        anchors.fill: parent
-        anchors.margins: Tokens.padding.extraSmall
+        anchors.centerIn: parent
+        width: parent.width - Tokens.padding.extraSmall * 2
         spacing: Tokens.spacing.medium
+
+        PatternGrid {
+            id: patternGrid
+
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth: root.patternSize
+            Layout.preferredHeight: root.patternMode && root.patternAvailable ? root.patternSize : 0
+            visible: root.patternMode && root.patternAvailable
+            opacity: root.patternMode && root.patternAvailable ? 1 : 0
+
+            onPatternFinished: code => {
+                if (code === root.patternCode) {
+                    root.lock.lock.unlock();
+                    return;
+                }
+
+                triggerError();
+                root.lock.pam.rejectPattern();
+            }
+
+            Behavior on Layout.preferredHeight {
+                Anim {
+                    type: Anim.DefaultEffects
+                }
+            }
+
+            Behavior on opacity {
+                Anim {
+                    type: Anim.DefaultEffects
+                }
+            }
+        }
+
+        RowLayout {
+            id: inputRow
+
+            Layout.fillWidth: true
+            spacing: Tokens.spacing.medium
 
         Item {
             id: iconWrapper
@@ -106,14 +165,38 @@ StyledRect {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
+            visible: !root.patternMode
 
             centerScale: root.centerScale
             pam: root.lock.pam
         }
 
         Item {
+            Layout.fillWidth: true
+            visible: root.patternMode
+        }
+
+        IconButton {
+            id: patternToggle
+
+            visible: root.patternAvailable
+            type: IconButton.Text
+            icon: root.patternMode ? "keyboard" : "grid_view"
+            checked: root.patternMode
+            isToggle: true
+            isRound: true
+            font: Tokens.font.icon.builders.medium.scale(root.centerScale).build()
+            onClicked: {
+                root.patternMode = !root.patternMode;
+                if (!root.patternMode)
+                    patternGrid.clearPattern();
+            }
+        }
+
+        Item {
             id: enterButton
 
+            visible: !root.patternMode
             implicitWidth: implicitHeight
             implicitHeight: {
                 const h = enterIcon.implicitHeight + Tokens.padding.extraSmall * 2;
@@ -163,6 +246,7 @@ StyledRect {
                     }
                 }
             }
+        }
         }
     }
 }

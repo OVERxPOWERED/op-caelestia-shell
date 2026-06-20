@@ -19,6 +19,7 @@ Item {
     }
 
     readonly property real arcCoverGap: Tokens.spacing.extraSmall
+    readonly property real gifSpeed: Math.max(0.8, Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment)
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
@@ -172,7 +173,7 @@ Item {
         anchors.margins: Tokens.padding.extraLargeIncreased
 
         playing: Players.active?.isPlaying ?? false
-        speed: Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment // qmllint disable unresolved-type
+        speed: root.gifSpeed // qmllint disable unresolved-type
         source: Paths.absolutePath(Config.paths.mediaGif)
         asynchronous: true
         fillMode: AnimatedImage.PreserveAspectFit

@@ -2,5 +2,8 @@
     "editor.defaultFormatter": "theqtcompany.qt-qml",
     "[cpp]": {
         "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+    },
+    "[qml]": {
+        "editor.defaultFormatter": "Delgan.qml-format"
     }
 }

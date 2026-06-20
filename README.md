@@ -331,7 +331,7 @@ For example, to disable the bar on DP-1:
     "general": {
         "logo": "",
         "showOverFullscreen": false,
-        "mediaGifSpeedAdjustment": 300,
+        "mediaGifSpeedAdjustment": 120,
         "sessionGifSpeed": 0.7,
         "apps": {
             "terminal": ["foot"],

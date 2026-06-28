@@ -668,6 +668,7 @@ For example, to disable the bar on DP-1:
         ]
     },
     "lock": {
+        "enabled": true,
         "recolourLogo": true,
         "enableFprint": true,
         "maxFprintTries": 3,

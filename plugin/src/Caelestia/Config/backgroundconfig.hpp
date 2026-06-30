@@ -32,20 +32,35 @@ public:
         : ConfigObject(parent) {}
 };
 
+class DesktopClockPosition : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_PROPERTY(qreal, left, -1)
+    CONFIG_PROPERTY(qreal, top, -1)
+    CONFIG_PROPERTY(qreal, right, 2)
+    CONFIG_PROPERTY(qreal, bottom, 2)
+
+public:
+    explicit DesktopClockPosition(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
 class DesktopClock : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
     CONFIG_PROPERTY(bool, enabled, false)
     CONFIG_PROPERTY(qreal, scale, 1.0)
-    CONFIG_PROPERTY(QString, position, QStringLiteral("bottom-right"))
     CONFIG_PROPERTY(bool, invertColors, false)
+    CONFIG_SUBOBJECT(DesktopClockPosition, position)
     CONFIG_SUBOBJECT(DesktopClockBackground, background)
     CONFIG_SUBOBJECT(DesktopClockShadow, shadow)
 
 public:
     explicit DesktopClock(QObject* parent = nullptr)
         : ConfigObject(parent)
+        , m_position(new DesktopClockPosition(this))
         , m_background(new DesktopClockBackground(this))
         , m_shadow(new DesktopClockShadow(this)) {}
 };

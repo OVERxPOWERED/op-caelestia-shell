@@ -49,15 +49,9 @@ ColumnLayout {
 
                 Image {
                     asynchronous: true
-                    source: Paths.absolutePath(Config.paths.lockNoNotifsPic)
+                    source: Paths.absolutePath(Config.paths.notifBg)
                     fillMode: Image.PreserveAspectFit
                     sourceSize.width: clipRect.width * 0.8 * ((QsWindow.window as QsWindow)?.devicePixelRatio ?? 1)
-
-                    layer.enabled: true
-                    layer.effect: Colouriser {
-                        colorizationColor: Colours.palette.m3outlineVariant
-                        brightness: 1
-                    }
                 }
 
                 StyledText {

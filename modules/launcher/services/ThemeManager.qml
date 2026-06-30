@@ -49,10 +49,10 @@ Searcher {
 
     component Theme: QtObject {
         required property FileSystemEntry modelData
-        readonly property string folder: modelData.name
+        readonly property string folder: modelData?.name ?? ""
         readonly property string name: root.prettyName(folder)
         readonly property string desc: qsTr("Apply theme assets and wallpaper")
-        readonly property string wallpaperPath: `${modelData.path}/wallpaper.jpg`
+        readonly property string wallpaperPath: modelData ? `${modelData.path}/wallpaper.jpg` : ""
 
         function onClicked(list: AppList): void {
             list.visibilities.launcher = false;

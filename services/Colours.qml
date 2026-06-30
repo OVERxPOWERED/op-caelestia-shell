@@ -94,6 +94,49 @@ Singleton {
         Hypr.extras.batchMessage([rule.arg("blur").arg(trEnabled), rule.arg("ignore_alpha").arg(Math.max(0, transparency.base - 0.03))]);
     }
 
+    function colourToHex(c: color): string {
+        const r = Math.round(c.r * 255).toString(16).padStart(2, "0");
+        const g = Math.round(c.g * 255).toString(16).padStart(2, "0");
+        const b = Math.round(c.b * 255).toString(16).padStart(2, "0");
+        return r + g + b;
+    }
+
+    function reloadHyprColours(): void {
+        const p = root.palette;
+        const primary = colourToHex(p.m3primary);
+        const onSurfaceVariant = colourToHex(p.m3onSurfaceVariant);
+        const surface = colourToHex(p.m3surface);
+        const surfaceContainer = colourToHex(p.m3surfaceContainer);
+        const outline = colourToHex(p.m3outline);
+        const onPrimary = colourToHex(p.m3onPrimary);
+        const secondary = colourToHex(p.m3secondary);
+
+        if (Hypr.usingLua) {
+            Hypr.extras.batchMessage([
+                `eval hl.config({ general = { col = { active_border = "rgba(${primary}e6)", inactive_border = "rgba(${onSurfaceVariant}11)" } } })`,
+                `eval hl.config({ decoration = { shadow = { color = "rgba(${surface}d4)" } } })`,
+                `eval hl.config({ misc = { background_color = "rgb(${surfaceContainer})" } })`,
+                `eval hl.config({ group = { col = { border_active = "rgba(${primary}e6)", border_inactive = "rgba(${onSurfaceVariant}11)", border_locked_active = "rgba(${primary}e6)", border_locked_inactive = "rgba(${onSurfaceVariant}11)" }, groupbar = { text_color = "rgb(${onPrimary})", col = { active = "rgba(${primary}d4)", inactive = "rgba(${outline}d4)", locked_active = "rgba(${primary}d4)", locked_inactive = "rgba(${secondary}d4)" } } } })`
+            ]);
+        } else {
+            Hypr.extras.batchMessage([
+                `keyword general:col.active_border rgba(${primary}e6)`,
+                `keyword general:col.inactive_border rgba(${onSurfaceVariant}11)`,
+                `keyword decoration:shadow:color rgba(${surface}d4)`,
+                `keyword misc:background_color rgb(${surfaceContainer})`,
+                `keyword group:col.border_active rgba(${primary}e6)`,
+                `keyword group:col.border_inactive rgba(${onSurfaceVariant}11)`,
+                `keyword group:col.border_locked_active rgba(${primary}e6)`,
+                `keyword group:col.border_locked_inactive rgba(${onSurfaceVariant}11)`,
+                `keyword group:groupbar:text_color rgb(${onPrimary})`,
+                `keyword group:groupbar:col.active rgba(${primary}d4)`,
+                `keyword group:groupbar:col.inactive rgba(${outline}d4)`,
+                `keyword group:groupbar:col.locked_active rgba(${primary}d4)`,
+                `keyword group:groupbar:col.locked_inactive rgba(${secondary}d4)`
+            ]);
+        }
+    }
+
     function requestReloadHyprRules(): void {
         if (cooldownTimer.running) {
             root.cooldownPending = true;
@@ -103,11 +146,15 @@ Singleton {
         }
     }
 
-    Component.onCompleted: root.requestReloadHyprRules()
+    Component.onCompleted: {
+        root.requestReloadHyprRules();
+        root.reloadHyprColours();
+    }
 
     Connections {
         function onConfigReloaded(): void {
             root.reloadHyprRules();
+            root.reloadHyprColours();
         }
 
         target: Hypr
@@ -117,7 +164,10 @@ Singleton {
         path: `${Paths.state}/scheme.json`
         watchChanges: true
         onFileChanged: reload()
-        onLoaded: root.load(text(), false)
+        onLoaded: {
+            root.load(text(), false);
+            root.reloadHyprColours();
+        }
     }
 
     ImageAnalyser {

@@ -393,7 +393,12 @@ For example, to disable the bar on DP-1:
         "desktopClock": {
             "enabled": false,
             "scale": 1.0,
-            "position": "bottom-right",
+            "position": {
+                "left": -1,
+                "top": -1,
+                "right": 2,
+                "bottom": 2
+            },
             "invertColors": false,
             "background": {
                 "enabled": false,

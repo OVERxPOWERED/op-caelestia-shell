@@ -63,96 +63,36 @@ Variants {
             asynchronous: true
             active: Config.background.desktopClock.enabled
 
-            anchors.margins: Tokens.padding.extraLargeIncreased
-            anchors.leftMargin: Tokens.padding.extraLargeIncreased + Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness)
+            readonly property real leftPct: Config.background.desktopClock.position.left
+            readonly property real topPct: Config.background.desktopClock.position.top
+            readonly property real rightPct: Config.background.desktopClock.position.right
+            readonly property real bottomPct: Config.background.desktopClock.position.bottom
+            readonly property real barOffset: Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness)
 
-            state: Config.background.desktopClock.position
-            states: [
-                State {
-                    name: "top-left"
+            x: {
+                if (leftPct >= 0)
+                    return Math.max(barOffset, (parent.width * leftPct / 100) - (width / 2));
+                else if (rightPct >= 0)
+                    return parent.width - (parent.width * rightPct / 100) - width;
+                else
+                    return parent.width - width - Tokens.padding.extraLargeIncreased;
+            }
 
-                    AnchorChanges {
-                        target: clockLoader
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                    }
-                },
-                State {
-                    name: "top-center"
+            y: {
+                if (topPct >= 0)
+                    return Math.max(0, (parent.height * topPct / 100) - (height / 2));
+                else if (bottomPct >= 0)
+                    return parent.height - (parent.height * bottomPct / 100) - height;
+                else
+                    return parent.height - height - Tokens.padding.extraLargeIncreased;
+            }
 
-                    AnchorChanges {
-                        target: clockLoader
-                        anchors.top: parent.top
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                },
-                State {
-                    name: "top-right"
+            Behavior on x {
+                Anim {}
+            }
 
-                    AnchorChanges {
-                        target: clockLoader
-                        anchors.top: parent.top
-                        anchors.right: parent.right
-                    }
-                },
-                State {
-                    name: "middle-left"
-
-                    AnchorChanges {
-                        target: clockLoader
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
-                    }
-                },
-                State {
-                    name: "middle-center"
-
-                    AnchorChanges {
-                        target: clockLoader
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                },
-                State {
-                    name: "middle-right"
-
-                    AnchorChanges {
-                        target: clockLoader
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
-                    }
-                },
-                State {
-                    name: "bottom-left"
-
-                    AnchorChanges {
-                        target: clockLoader
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                    }
-                },
-                State {
-                    name: "bottom-center"
-
-                    AnchorChanges {
-                        target: clockLoader
-                        anchors.bottom: parent.bottom
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                },
-                State {
-                    name: "bottom-right"
-
-                    AnchorChanges {
-                        target: clockLoader
-                        anchors.bottom: parent.bottom
-                        anchors.right: parent.right
-                    }
-                }
-            ]
-
-            transitions: Transition {
-                AnchorAnim {}
+            Behavior on y {
+                Anim {}
             }
 
             sourceComponent: DesktopClock {

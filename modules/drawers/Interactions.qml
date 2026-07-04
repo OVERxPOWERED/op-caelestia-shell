@@ -22,6 +22,13 @@ CustomMouseArea {
     property bool dashboardShortcutActive
     property bool osdShortcutActive
     property bool utilitiesShortcutActive
+    property bool dockShortcutActive
+
+    Timer {
+        id: dockHideTimer
+        interval: 100
+        onTriggered: root.screenState.dock = false
+    }
 
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
         const panelY = root.borderThickness + panel.y;
@@ -88,6 +95,9 @@ CustomMouseArea {
 
             if (Config.sidebar.showOnHover)
                 screenState.sidebar = false;
+
+            if (Config.dock.showOnHover)
+                dockHideTimer.start();
         }
     }
 
@@ -207,6 +217,17 @@ CustomMouseArea {
                 screenState.launcher = false;
         }
 
+        // Show/hide dock on hover
+        if (Config.dock.showOnHover && !pressed) {
+            const showDockHover = inBottomPanel(panels.dock, x, y) && !screenState.launcher;
+            if (showDockHover) {
+                dockHideTimer.stop();
+                if (!screenState.dock) screenState.dock = true;
+            } else if (!showDockHover && screenState.dock && !dockHideTimer.running) {
+                dockHideTimer.start();
+            }
+        }
+
         // Show dashboard on hover
         const showDashboard = Config.dashboard.showOnHover && inTopPanel(panels.dashboard, x, y);
 
@@ -254,6 +275,7 @@ CustomMouseArea {
                 root.dashboardShortcutActive = false;
                 root.osdShortcutActive = false;
                 root.utilitiesShortcutActive = false;
+                root.dockShortcutActive = false;
 
                 // Also hide dashboard and OSD if they're not being hovered
                 const inDashboardArea = root.inTopPanel(root.panels.dashboard, root.mouseX, root.mouseY);
@@ -305,6 +327,18 @@ CustomMouseArea {
             } else {
                 // Utilities hidden, clear shortcut flag
                 root.utilitiesShortcutActive = false;
+            }
+        }
+
+        function onDockChanged() {
+            if (root.screenState.dock) {
+                dockHideTimer.stop();
+                const inDockArea = root.inBottomPanel(root.panels.dock, root.mouseX, root.mouseY);
+                if (!inDockArea) {
+                    root.dockShortcutActive = true;
+                }
+            } else {
+                root.dockShortcutActive = false;
             }
         }
 

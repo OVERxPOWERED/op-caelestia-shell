@@ -64,12 +64,22 @@ Scope {
         // qmllint enable unresolved-type
         name: "launcher"
         description: "Toggle launcher"
-        onPressed: {
-            if (!root.hasFullscreen) {
+        onPressed: root.launcherInterrupted = false
+        onReleased: {
+            if (!root.launcherInterrupted && !root.hasFullscreen) {
                 const screenState = ShellState.forActive();
                 screenState.launcher = !screenState.launcher;
             }
+            root.launcherInterrupted = false;
         }
+    }
+
+    // qmllint disable unresolved-type
+    CustomShortcut {
+        // qmllint enable unresolved-type
+        name: "launcherInterrupt"
+        description: "Interrupt launcher keybind"
+        onPressed: root.launcherInterrupted = true
     }
 
     // qmllint disable unresolved-type

@@ -90,7 +90,7 @@ PageBase {
             delegate: StateLayer {
                 id: network
 
-                required property Nmcli.AccessPoint modelData
+                required property var modelData
                 property bool currentSelected
                 property real textOpacity: disabled ? 0.5 : 1
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "configlist.hpp"
 #include "configobject.hpp"
 
 #include <qstring.h>
@@ -9,6 +10,20 @@
 namespace caelestia::config {
 
 using Qt::StringLiterals::operator""_s;
+
+class BarEntry : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_PROPERTY(QString, id)
+    CONFIG_PROPERTY(bool, enabled, true)
+
+public:
+    explicit BarEntry(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
+CONFIG_LIST_TYPE(BarEntry, BarEntryList)
 
 class BarScrollActions : public ConfigObject {
     Q_OBJECT
@@ -137,17 +152,17 @@ class BarConfig : public ConfigObject {
     CONFIG_SUBOBJECT(BarTray, tray)
     CONFIG_SUBOBJECT(BarStatus, status)
     CONFIG_SUBOBJECT(BarClock, clock)
-    CONFIG_PROPERTY(QVariantList, entries,
+    CONFIG_LIST(BarEntryList, entries,
         {
-            vmap({ { u"id"_s, u"logo"_s }, { u"enabled"_s, true } }),
-            vmap({ { u"id"_s, u"workspaces"_s }, { u"enabled"_s, true } }),
-            vmap({ { u"id"_s, u"spacer"_s }, { u"enabled"_s, true } }),
-            vmap({ { u"id"_s, u"activeWindow"_s }, { u"enabled"_s, true } }),
-            vmap({ { u"id"_s, u"spacer"_s }, { u"enabled"_s, true } }),
-            vmap({ { u"id"_s, u"tray"_s }, { u"enabled"_s, true } }),
-            vmap({ { u"id"_s, u"clock"_s }, { u"enabled"_s, true } }),
-            vmap({ { u"id"_s, u"statusIcons"_s }, { u"enabled"_s, true } }),
-            vmap({ { u"id"_s, u"power"_s }, { u"enabled"_s, true } }),
+            vmap({ { u"id"_s, u"logo"_s } }),
+            vmap({ { u"id"_s, u"workspaces"_s } }),
+            vmap({ { u"id"_s, u"spacer"_s } }),
+            vmap({ { u"id"_s, u"activeWindow"_s } }),
+            vmap({ { u"id"_s, u"spacer"_s } }),
+            vmap({ { u"id"_s, u"tray"_s } }),
+            vmap({ { u"id"_s, u"clock"_s } }),
+            vmap({ { u"id"_s, u"statusIcons"_s } }),
+            vmap({ { u"id"_s, u"power"_s } }),
         })
     CONFIG_PROPERTY(QStringList, excludedScreens)
 

@@ -22,8 +22,8 @@ Item {
     property bool separateContent
     property int horizontalContentMargin
 
-    property real openWidth: Math.min(rootParent.width * 0.8, 400)
-    property real openHeight: Math.min(rootParent.height * 0.8, 600)
+    property real openWidth: Math.min(rootParent.width * 0.8, Tokens.sizes.nexus.maxDialogWidth)
+    property real openHeight: Math.min(rootParent.height * 0.8, Tokens.sizes.nexus.maxDialogHeight)
     property bool open
 
     signal accepted

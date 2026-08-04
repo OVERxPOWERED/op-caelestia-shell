@@ -165,16 +165,18 @@ Item {
             }
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.extraLarge
-            anchors.bottomMargin: Tokens.padding.largeIncreased
 
             opacity: 0
             active: opacity > 0
             asynchronous: true
 
             sourceComponent: MouseArea {
+                onWheel: event => event.accepted = true
+
                 ColumnLayout {
                     anchors.fill: parent
+                    anchors.margins: Tokens.padding.extraLarge
+                    anchors.bottomMargin: Tokens.padding.largeIncreased
                     spacing: 0
 
                     StyledText {

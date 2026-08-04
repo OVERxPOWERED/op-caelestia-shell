@@ -251,16 +251,17 @@ void Gpu::runProcess(const QString& program, const QStringList& args, std::funct
     auto* proc = new QProcess(this);
     proc->setStandardErrorFile(QProcess::nullDevice());
 
-    // Deliver the result exactly once, then tear the process down. A crash or a
-    // missing binary yields empty output so the caller can fall through gracefully:
-    // only FailedToStart skips finished(), and a crash reports CrashExit there.
+    // Deliver the result exactly once, then tear the process down. A crash, a missing
+    // binary or a failed run yields empty output so the caller can fall through
+    // gracefully: only FailedToStart skips finished(), and a crash reports CrashExit there.
     const auto finish = [proc, callback = std::move(callback)](const QByteArray& out) {
         callback(out);
         proc->deleteLater();
     };
 
-    QObject::connect(proc, &QProcess::finished, this, [finish, proc](int, QProcess::ExitStatus status) {
-        finish(status == QProcess::NormalExit ? proc->readAllStandardOutput() : QByteArray());
+    QObject::connect(proc, &QProcess::finished, this, [finish, proc](int code, QProcess::ExitStatus status) {
+        const bool ok = status == QProcess::NormalExit && code == 0; // Fail on crashes and non-zero exit codes
+        finish(ok ? proc->readAllStandardOutput() : QByteArray());
     });
     QObject::connect(proc, &QProcess::errorOccurred, this, [finish](QProcess::ProcessError err) {
         if (err == QProcess::FailedToStart) {

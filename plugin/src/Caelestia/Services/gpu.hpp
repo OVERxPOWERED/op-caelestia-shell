@@ -61,8 +61,8 @@ private:
     void readGpuTemperature();
     void resetUsage();
 
-    // Runs a one-shot process, delivering its stdout to callback exactly once
-    // (empty output if it crashes or never starts), then tears the process down.
+    // Runs a one-shot process, delivering its stdout to callback exactly once (empty
+    // output if it fails, crashes or never starts), then tears the process down.
     void runProcess(const QString& program, const QStringList& args, std::function<void(const QByteArray&)> callback);
 
     void setType(Type value);

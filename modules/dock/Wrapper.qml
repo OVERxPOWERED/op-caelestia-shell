@@ -16,6 +16,8 @@ Item {
 
     property real offsetScale: shouldBeActive ? 0 : 1
     property bool editMode: false
+    property bool contextMenuOpen: false
+    property real contextMenuHeight: 0
 
     onShouldBeActiveChanged: {
         if (shouldBeActive)
@@ -48,6 +50,8 @@ Item {
             panels: root.panels
             editMode: root.editMode
             onEditModeChanged: root.editMode = editMode
+            onContextMenuOpenChanged: root.contextMenuOpen = contextMenuOpen
+            onContextMenuHeightChanged: root.contextMenuHeight = contextMenuHeight
         }
     }
 }

@@ -8,6 +8,7 @@ import "modules"
 import "modules/drawers"
 import "modules/background"
 import "modules/areapicker"
+import "modules/overview"
 import "modules/lock"
 import QtQuick
 import Quickshell
@@ -29,6 +30,7 @@ ShellRoot {
     Background {}
     Drawers {}
     AreaPicker {}
+    Overview {}
     Lock {
         id: lock
     }
@@ -39,4 +41,8 @@ ShellRoot {
     IdleMonitors {
         lock: lock
     }
+
+    // Force BtAgent singleton to initialize at startup
+    // so the Bluetooth pairing agent is always running
+    Component.onCompleted: void(BtAgent.active)
 }

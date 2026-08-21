@@ -55,7 +55,7 @@ Searcher {
         readonly property string wallpaperPath: modelData ? `${modelData.path}/wallpaper.jpg` : ""
 
         function onClicked(list: AppList): void {
-            list.visibilities.launcher = false;
+            list.screenState.launcher = false;
             GlobalConfig.paths.themeName = folder;
             GlobalConfig.save();
             Wallpapers.setWallpaper(wallpaperPath);

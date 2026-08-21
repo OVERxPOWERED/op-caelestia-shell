@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Widgets
 import Quickshell.Services.Pipewire
 import Caelestia.Config
 import qs.components
@@ -128,37 +127,10 @@ Item {
             }
         }
 
-        // Applications Header with active stream counter badge
-        RowLayout {
+        StyledText {
             Layout.topMargin: Tokens.spacing.medium
-            Layout.fillWidth: true
-            spacing: Tokens.spacing.small
-
-            StyledText {
-                text: qsTr("Applications")
-                font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
-            }
-
-            Item {
-                Layout.fillWidth: true
-            }
-
-            StyledRect {
-                visible: root.sortedStreams.length > 0
-                implicitHeight: 20
-                implicitWidth: countText.implicitWidth + Tokens.padding.small * 2
-                radius: Tokens.rounding.full
-                color: Colours.tPalette.m3surfaceContainerHigh
-
-                StyledText {
-                    id: countText
-
-                    anchors.centerIn: parent
-                    text: qsTr("%1 active").arg(root.sortedStreams.length)
-                    font: Tokens.font.body.small
-                    color: Colours.palette.m3onSurfaceVariant
-                }
-            }
+            text: qsTr("Applications")
+            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
         }
 
         // Empty state: No audio streams active
@@ -192,7 +164,6 @@ Item {
                 required property PwNode modelData
                 readonly property real streamVol: Audio.getStreamVolume(modelData)
                 readonly property bool streamMuted: Audio.getStreamMuted(modelData)
-                readonly property string streamIcon: Audio.getStreamIcon(modelData)
 
                 Layout.fillWidth: true
                 spacing: Tokens.spacing.extraSmall
@@ -206,14 +177,6 @@ Item {
                         type: IconButton.Text
                         inactiveOnColour: streamControl.streamMuted ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
                         onClicked: Audio.setStreamMuted(streamControl.modelData, !streamControl.streamMuted)
-                    }
-
-                    IconImage {
-                        visible: streamControl.streamIcon !== ""
-                        asynchronous: true
-                        implicitSize: 16
-                        source: streamControl.streamIcon
-                        Layout.alignment: Qt.AlignVCenter
                     }
 
                     StyledText {
@@ -271,37 +234,9 @@ Item {
             readonly property PwNode currentStream: root.selectedStream
             readonly property real streamVol: currentStream ? Audio.getStreamVolume(currentStream) : 0
             readonly property bool streamMuted: currentStream ? Audio.getStreamMuted(currentStream) : false
-            readonly property string currentIcon: currentStream ? Audio.getStreamIcon(currentStream) : ""
-
-            function scrollToSelected(): void {
-                for (let i = 0; i < chipRepeater.count; i++) {
-                    const item = chipRepeater.itemAt(i);
-                    if (item && item.isSelected) {
-                        chipFlickable.scrollTo(item);
-                        break;
-                    }
-                }
-            }
 
             HorizontalFadeFlickable {
                 id: chipFlickable
-
-                function scrollTo(item: Item): void {
-                    if (!item)
-                        return;
-                    const targetX = Math.max(0, Math.min(chipFlickable.contentWidth - chipFlickable.width, item.x + item.width / 2 - chipFlickable.width / 2));
-                    scrollAnim.stop();
-                    scrollAnim.to = targetX;
-                    scrollAnim.start();
-                }
-
-                Anim {
-                    id: scrollAnim
-
-                    target: chipFlickable
-                    property: "contentX"
-                    type: Anim.DefaultSpatial
-                }
 
                 Layout.fillWidth: true
                 implicitHeight: 32
@@ -313,7 +248,6 @@ Item {
                     orientation: Qt.Horizontal
                     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
                     onWheel: event => {
-                        scrollAnim.stop();
                         const delta = event.angleDelta.y !== 0 ? event.angleDelta.y : event.angleDelta.x;
                         chipFlickable.contentX = Math.max(0, Math.min(chipFlickable.contentWidth - chipFlickable.width, chipFlickable.contentX - delta));
                     }
@@ -326,8 +260,6 @@ Item {
                     height: parent.height
 
                     Repeater {
-                        id: chipRepeater
-
                         model: root.useCompactAppSelector ? root.sortedStreams : []
 
                         StyledRect {
@@ -335,16 +267,11 @@ Item {
 
                             required property PwNode modelData
                             readonly property bool isSelected: root.selectedStream?.id === modelData.id
-                            readonly property bool isMuted: Audio.getStreamMuted(modelData)
                             readonly property string streamName: Audio.getStreamName(modelData)
-                            readonly property string appIcon: Audio.getStreamIcon(modelData)
 
                             implicitHeight: 28
-                            implicitWidth: Math.min(145, chipInnerRow.implicitWidth + Tokens.padding.small * 2)
+                            implicitWidth: Math.min(130, chipInnerRow.implicitWidth + Tokens.padding.small * 2)
                             radius: Tokens.rounding.full
-
-                            scale: stateLayer.pressed ? 0.94 : isSelected ? 1.04 : (stateLayer.containsMouse ? 1.02 : 1.0)
-                            opacity: isSelected ? 1.0 : (stateLayer.containsMouse ? 0.9 : 0.75)
 
                             color: isSelected ? Colours.palette.m3primary : Colours.tPalette.m3surfaceContainerHigh
 
@@ -352,26 +279,9 @@ Item {
                                 CAnim {}
                             }
 
-                            Behavior on scale {
-                                Anim {
-                                    type: Anim.FastSpatial
-                                }
-                            }
-
-                            Behavior on opacity {
-                                Anim {
-                                    type: Anim.DefaultEffects
-                                }
-                            }
-
                             StateLayer {
-                                id: stateLayer
-
                                 color: chip.isSelected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
-                                onClicked: {
-                                    root.selectedStreamId = chip.modelData.id;
-                                    chipFlickable.scrollTo(chip);
-                                }
+                                onClicked: root.selectedStreamId = chip.modelData.id
                             }
 
                             RowLayout {
@@ -381,38 +291,14 @@ Item {
                                 spacing: Tokens.spacing.extraSmall
                                 width: Math.min(parent.width - Tokens.padding.small, implicitWidth)
 
-                                IconImage {
-                                    visible: chip.appIcon !== ""
-                                    asynchronous: true
-                                    implicitSize: 14
-                                    source: chip.appIcon
-                                    Layout.alignment: Qt.AlignVCenter
-                                }
-
-                                MaterialIcon {
-                                    visible: chip.appIcon === ""
-                                    text: "music_note"
-                                    fontStyle: Tokens.font.icon.small
-                                    color: chip.isSelected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant
-                                    Layout.alignment: Qt.AlignVCenter
-                                }
-
                                 StyledText {
                                     Layout.fillWidth: true
-                                    Layout.maximumWidth: 90
+                                    Layout.maximumWidth: 110
                                     text: chip.streamName
                                     color: chip.isSelected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant
                                     font: Tokens.font.body.small
                                     elide: Text.ElideRight
                                     horizontalAlignment: Text.AlignHCenter
-                                }
-
-                                MaterialIcon {
-                                    visible: chip.isMuted
-                                    text: "volume_off"
-                                    fontStyle: Tokens.font.icon.small
-                                    color: chip.isSelected ? Colours.palette.m3onPrimary : Colours.palette.m3error
-                                    Layout.alignment: Qt.AlignVCenter
                                 }
                             }
                         }
@@ -432,14 +318,6 @@ Item {
                         if (compactStreamControl.currentStream)
                             Audio.setStreamMuted(compactStreamControl.currentStream, !compactStreamControl.streamMuted);
                     }
-                }
-
-                IconImage {
-                    visible: compactStreamControl.currentIcon !== ""
-                    asynchronous: true
-                    implicitSize: 16
-                    source: compactStreamControl.currentIcon
-                    Layout.alignment: Qt.AlignVCenter
                 }
 
                 StyledText {
@@ -502,5 +380,4 @@ Item {
         }
     }
 }
-
 

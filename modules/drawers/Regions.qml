@@ -36,7 +36,10 @@ Region {
     R {
         panel: root.panels.dock
         y: root.win.height - height
-        height: panel.height * (1 - root.panels.dock.offsetScale) + root.borderThickness
+        height: {
+            const base = panel.height * (1 - root.panels.dock.offsetScale) + root.borderThickness;
+            return root.panels.dock.contextMenuOpen ? base + root.panels.dock.contextMenuHeight : base;
+        }
     }
 
     R {

@@ -123,31 +123,6 @@ Singleton {
         return appName || stream.description || stream.name || qsTr("Unknown Application");
     }
 
-    function getStreamIcon(stream: PwNode): string {
-        if (!stream)
-            return "";
-
-        const props = stream.properties || {};
-        const iconName = props["application.icon-name"] || props["media.icon-name"] || "";
-        if (iconName) {
-            const path = Quickshell.iconPath(iconName, "");
-            if (path)
-                return path;
-        }
-
-        const appName = props["application.name"] || props["application.process.binary"] || stream.name || "";
-        if (appName) {
-            const icon = DesktopEntries.heuristicLookup(appName)?.icon;
-            if (icon) {
-                const path = Quickshell.iconPath(icon, "");
-                if (path)
-                    return path;
-            }
-        }
-
-        return "";
-    }
-
     function isValidOutputSink(node: PwNode): bool {
         if (!node || !node.isSink)
             return false;

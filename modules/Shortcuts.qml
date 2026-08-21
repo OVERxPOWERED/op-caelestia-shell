@@ -23,6 +23,19 @@ Scope {
     // qmllint disable unresolved-type
     CustomShortcut {
         // qmllint enable unresolved-type
+        name: "overview"
+        description: "Toggle workspace overview"
+        onPressed: {
+            if (root.hasFullscreen)
+                return;
+            const screenState = ShellState.forActive();
+            screenState.overview = !screenState.overview;
+        }
+    }
+
+    // qmllint disable unresolved-type
+    CustomShortcut {
+        // qmllint enable unresolved-type
         name: "showall"
         description: "Toggle launcher, dashboard and osd"
         onPressed: {

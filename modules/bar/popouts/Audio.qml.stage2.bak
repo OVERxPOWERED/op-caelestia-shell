@@ -273,35 +273,8 @@ Item {
             readonly property bool streamMuted: currentStream ? Audio.getStreamMuted(currentStream) : false
             readonly property string currentIcon: currentStream ? Audio.getStreamIcon(currentStream) : ""
 
-            function scrollToSelected(): void {
-                for (let i = 0; i < chipRepeater.count; i++) {
-                    const item = chipRepeater.itemAt(i);
-                    if (item && item.isSelected) {
-                        chipFlickable.scrollTo(item);
-                        break;
-                    }
-                }
-            }
-
             HorizontalFadeFlickable {
                 id: chipFlickable
-
-                function scrollTo(item: Item): void {
-                    if (!item)
-                        return;
-                    const targetX = Math.max(0, Math.min(chipFlickable.contentWidth - chipFlickable.width, item.x + item.width / 2 - chipFlickable.width / 2));
-                    scrollAnim.stop();
-                    scrollAnim.to = targetX;
-                    scrollAnim.start();
-                }
-
-                Anim {
-                    id: scrollAnim
-
-                    target: chipFlickable
-                    property: "contentX"
-                    type: Anim.DefaultSpatial
-                }
 
                 Layout.fillWidth: true
                 implicitHeight: 32
@@ -313,7 +286,6 @@ Item {
                     orientation: Qt.Horizontal
                     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
                     onWheel: event => {
-                        scrollAnim.stop();
                         const delta = event.angleDelta.y !== 0 ? event.angleDelta.y : event.angleDelta.x;
                         chipFlickable.contentX = Math.max(0, Math.min(chipFlickable.contentWidth - chipFlickable.width, chipFlickable.contentX - delta));
                     }
@@ -326,8 +298,6 @@ Item {
                     height: parent.height
 
                     Repeater {
-                        id: chipRepeater
-
                         model: root.useCompactAppSelector ? root.sortedStreams : []
 
                         StyledRect {
@@ -343,35 +313,15 @@ Item {
                             implicitWidth: Math.min(145, chipInnerRow.implicitWidth + Tokens.padding.small * 2)
                             radius: Tokens.rounding.full
 
-                            scale: stateLayer.pressed ? 0.94 : isSelected ? 1.04 : (stateLayer.containsMouse ? 1.02 : 1.0)
-                            opacity: isSelected ? 1.0 : (stateLayer.containsMouse ? 0.9 : 0.75)
-
                             color: isSelected ? Colours.palette.m3primary : Colours.tPalette.m3surfaceContainerHigh
 
                             Behavior on color {
                                 CAnim {}
                             }
 
-                            Behavior on scale {
-                                Anim {
-                                    type: Anim.FastSpatial
-                                }
-                            }
-
-                            Behavior on opacity {
-                                Anim {
-                                    type: Anim.DefaultEffects
-                                }
-                            }
-
                             StateLayer {
-                                id: stateLayer
-
                                 color: chip.isSelected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
-                                onClicked: {
-                                    root.selectedStreamId = chip.modelData.id;
-                                    chipFlickable.scrollTo(chip);
-                                }
+                                onClicked: root.selectedStreamId = chip.modelData.id
                             }
 
                             RowLayout {

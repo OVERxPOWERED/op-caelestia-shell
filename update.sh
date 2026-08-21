@@ -44,6 +44,6 @@ echo "=> Rebuilding and installing the C++ plugin to ensure new features work...
 mkdir -p build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/ .. && cmake --build . && DESTDIR="$PWD/../.local-caelestia-plugin" cmake --install .
 
 echo "=> Done! Restarting shell..."
-killall -9 quickshell
-setsid ../scripts/run-local-shell.sh > /dev/null 2>&1 &
+killall -9 quickshell || true
+setsid ./scripts/run-local-shell.sh > /dev/null 2>&1 &
 echo "=> Shell restarted successfully."

@@ -18,7 +18,7 @@ Item {
 
     required property PopoutState popouts
 
-    readonly property list<PwNode> sortedStreams: [...Audio.streams].sort((a, b) => (Audio.getStreamName(a) || "").localeCompare(Audio.getStreamName(b) || ""))
+    readonly property list<PwNode> sortedStreams: [...(Audio.streams ?? [])].filter(s => s).sort((a, b) => (Audio.getStreamName(a) || "").localeCompare(Audio.getStreamName(b) || ""))
     property int selectedStreamId: -1
     readonly property PwNode selectedStream: {
         if (sortedStreams.length === 0)

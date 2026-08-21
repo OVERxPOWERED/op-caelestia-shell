@@ -174,6 +174,11 @@ QStringList intelGtDirs() {
         for (const QString& gt : gts) {
             dirs.append(gtRoot.absoluteFilePath(gt));
         }
+
+        if (QFile::exists(gtRoot.absoluteFilePath(QStringLiteral("rc6_residency_ms"))) ||
+            QFile::exists(gtRoot.absoluteFilePath(QStringLiteral("rps_cur_freq_mhz")))) {
+            dirs.append(gtRoot.absolutePath());
+        }
     }
 
     return dirs;

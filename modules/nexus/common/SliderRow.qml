@@ -15,6 +15,10 @@ ConnectedRect {
     property alias label: label.text
     property alias valueLabel: valueLabel.text
     property real value
+    property bool disabled: false
+
+    enabled: !disabled
+    opacity: disabled ? 0.45 : 1.0
 
     signal moved(value: real)
 

@@ -16,6 +16,10 @@ ConnectedRect {
     property alias fallbackText: splitButton.fallbackText
     property alias fallbackIcon: splitButton.fallbackIcon
     property alias menuOnTop: splitButton.menuOnTop
+    property bool disabled: false
+
+    enabled: !disabled
+    opacity: disabled ? 0.45 : 1.0
 
     signal selected(item: MenuItem)
 

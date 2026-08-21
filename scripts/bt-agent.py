@@ -314,31 +314,39 @@ class BluezAgent(dbus.service.Object):
 
 
 def main():
-    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-    bus = dbus.SystemBus()
+    try:
+        dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+        bus = dbus.SystemBus()
+    except Exception as e:
+        print(f"[bt-agent] D-Bus SystemBus not available: {e}", flush=True)
+        sys.exit(0)
 
     bridge = SocketBridge()
     bridge.start()
 
     agent = BluezAgent(bus, bridge)
 
-    # Register with BlueZ
-    manager = dbus.Interface(
-        bus.get_object("org.bluez", "/org/bluez"),
-        "org.bluez.AgentManager1",
-    )
-    manager.RegisterAgent(AGENT_PATH, AGENT_CAPABILITY)
-    manager.RequestDefaultAgent(AGENT_PATH)
-    print(f"[bt-agent] Registered as default agent (capability={AGENT_CAPABILITY})", flush=True)
+    manager = None
+    try:
+        manager = dbus.Interface(
+            bus.get_object("org.bluez", "/org/bluez"),
+            "org.bluez.AgentManager1",
+        )
+        manager.RegisterAgent(AGENT_PATH, AGENT_CAPABILITY)
+        manager.RequestDefaultAgent(AGENT_PATH)
+        print(f"[bt-agent] Registered as default agent (capability={AGENT_CAPABILITY})", flush=True)
+    except Exception as e:
+        print(f"[bt-agent] BlueZ AgentManager1 not available (Bluetooth may be uninstalled or disabled): {e}", flush=True)
 
     loop = GLib.MainLoop()
 
     def shutdown(_signum=None, _frame=None):
         print("[bt-agent] Shutting down...", flush=True)
-        try:
-            manager.UnregisterAgent(AGENT_PATH)
-        except Exception:
-            pass
+        if manager:
+            try:
+                manager.UnregisterAgent(AGENT_PATH)
+            except Exception:
+                pass
         bridge.stop()
         loop.quit()
 

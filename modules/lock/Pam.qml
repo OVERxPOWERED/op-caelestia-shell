@@ -31,9 +31,9 @@ Scope {
     signal flashMsg
 
     function rejectPattern(): void {
-        state = "fail";
+        root.state = Pam.Failed;
         flashMsg();
-        stateReset.restart();
+        pwdStateReset.restart();
     }
 
     function handleKey(event: KeyEvent): void {

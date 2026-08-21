@@ -243,7 +243,10 @@ Singleton {
         previousSourceName = newSourceName;
     }
 
+    // Populate immediately: Pipewire.nodes may already be filled by the time this
+    // lazily-loaded singleton is created, so onValuesChanged would never fire.
     Component.onCompleted: {
+        refreshNodes();
         previousSinkName = sink?.description || sink?.name || qsTr("Unknown Device");
         previousSourceName = source?.description || source?.name || qsTr("Unknown Device");
     }
@@ -264,8 +267,10 @@ Singleton {
         target: Bluetooth.devices
     }
 
+    // Always track the current defaults so volume/mute bind even if the lists
+    // momentarily lag behind the default node.
     PwObjectTracker {
-        objects: [...root.sinks, ...root.sources, ...root.streams]
+        objects: [root.sink, root.source, ...root.sinks, ...root.sources, ...root.streams].filter(n => n)
     }
 
     CavaProvider {

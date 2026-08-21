@@ -16,9 +16,48 @@ StyledListView {
     required property SearchBar search
     required property ScreenState screenState
 
-    model: ScriptModel {
-        id: model
+    property string displayText
 
+    readonly property string requestedState: stateForText(search.text)
+    readonly property string displayState: stateForText(displayText)
+
+    function syncDisplayText(): void {
+        if (screenState.launcher && requestedState === displayState)
+            displayText = search.text;
+    }
+
+    function stateForText(text: string): string {
+        const prefix = GlobalConfig.launcher.actionPrefix;
+        if (text.startsWith(prefix)) {
+            for (const action of ["calc", "scheme", "theme", "variant"])
+                if (text.startsWith(`${prefix}${action} `))
+                    return action;
+
+            return "actions";
+        }
+
+        return "apps";
+    }
+
+    function resultsForText(text: string): var {
+        switch (stateForText(text)) {
+        case "actions":
+            return Actions.query(text);
+        case "calc":
+            return [0];
+        case "scheme":
+            return Schemes.query(text);
+        case "theme":
+            return ThemeManager.query(text);
+        case "variant":
+            return M3Variants.query(text);
+        default:
+            return Apps.search(text);
+        }
+    }
+
+    model: ScriptModel {
+        values: root.resultsForText(root.displayText)
         onValuesChanged: root.currentIndex = 0
     }
 
@@ -45,19 +84,7 @@ StyledListView {
         }
     }
 
-    state: {
-        const text = search.text;
-        const prefix = GlobalConfig.launcher.actionPrefix;
-        if (text.startsWith(prefix)) {
-            for (const action of ["calc", "scheme", "theme", "variant"])
-                if (text.startsWith(`${prefix}${action} `))
-                    return action;
-
-            return "actions";
-        }
-
-        return "apps";
-    }
+    state: screenState.launcher ? requestedState : displayState
 
     onStateChanged: {
         if (state === "scheme" || state === "variant")
@@ -66,12 +93,13 @@ StyledListView {
             ThemeManager.reload();
     }
 
+    Component.onCompleted: displayText = search.text
+
     states: [
         State {
             name: "apps"
 
             PropertyChanges {
-                model.values: Apps.search(search.text)
                 root.delegate: appItem
             }
         },
@@ -79,7 +107,6 @@ StyledListView {
             name: "actions"
 
             PropertyChanges {
-                model.values: Actions.query(search.text)
                 root.delegate: actionItem
             }
         },
@@ -87,7 +114,6 @@ StyledListView {
             name: "calc"
 
             PropertyChanges {
-                model.values: [0]
                 root.delegate: calcItem
             }
         },
@@ -95,7 +121,6 @@ StyledListView {
             name: "scheme"
 
             PropertyChanges {
-                model.values: Schemes.query(search.text)
                 root.delegate: schemeItem
             }
         },
@@ -103,7 +128,6 @@ StyledListView {
             name: "variant"
 
             PropertyChanges {
-                model.values: M3Variants.query(search.text)
                 root.delegate: variantItem
             }
         },
@@ -111,7 +135,6 @@ StyledListView {
             name: "theme"
 
             PropertyChanges {
-                model.values: ThemeManager.query(search.text)
                 root.delegate: themeItem
             }
         }
@@ -138,8 +161,16 @@ StyledListView {
                 }
             }
             PropertyAction {
-                targets: [model, root]
-                properties: "values,delegate"
+                target: root
+                property: "delegate"
+                value: null
+            }
+            ScriptAction {
+                script: root.displayText = root.search.text
+            }
+            PropertyAction {
+                target: root
+                property: "delegate"
             }
             ParallelAnimation {
                 Anim {
@@ -273,5 +304,21 @@ StyledListView {
         ThemeItem {
             list: root
         }
+    }
+
+    Connections {
+        function onTextChanged() {
+            root.syncDisplayText();
+        }
+
+        target: root.search
+    }
+
+    Connections {
+        function onLauncherChanged() {
+            root.syncDisplayText();
+        }
+
+        target: root.screenState
     }
 }

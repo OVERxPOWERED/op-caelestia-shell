@@ -43,11 +43,32 @@ PageBase {
         }
 
         NavRow {
-            last: true
             icon: "construction"
             text: qsTr("Utilities")
             subtext: Config.utilities.enabled ? qsTr("Enabled") : qsTr("Disabled")
             onClicked: root.nState.openSubPage(5)
+        }
+
+        NavRow {
+            icon: "dock"
+            text: qsTr("Dock")
+            subtext: Config.dock.enabled ? qsTr("Enabled") : qsTr("Disabled")
+            onClicked: root.nState.openSubPage(11)
+        }
+
+        NavRow {
+            icon: "branding_watermark"
+            text: qsTr("On-screen display")
+            subtext: Config.osd.enabled ? qsTr("Enabled") : qsTr("Disabled")
+            onClicked: root.nState.openSubPage(12)
+        }
+
+        NavRow {
+            last: true
+            icon: "view_carousel"
+            text: qsTr("Taskview (Overview)")
+            subtext: qsTr("Workspaces & window overview")
+            onClicked: root.nState.openSubPage(13)
         }
     }
 }

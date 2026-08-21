@@ -55,18 +55,30 @@ QtObject {
             description: qsTr("Manage plugins"),
             category: "system"
         },
+        {
+            label: qsTr("Power & idle"),
+            icon: "battery_charging_full",
+            description: qsTr("Battery alerts, sleep timeouts, idle inhibitors"),
+            category: "system"
+        },
 
         // Shell
         {
             label: qsTr("Panels"),
             icon: "dock_to_bottom",
-            description: qsTr("Dashboard, taskbar, launcher, sidebar"),
+            description: qsTr("Dashboard, taskbar, launcher, sidebar, dock"),
             category: "shell"
         },
         {
             label: qsTr("Apps"),
             icon: "apps",
             description: qsTr("Default apps, favourites, hidden apps"),
+            category: "shell"
+        },
+        {
+            label: qsTr("Lock screen"),
+            icon: "lock",
+            description: qsTr("Pattern lock, fingerprint, face unlock"),
             category: "shell"
         },
         {

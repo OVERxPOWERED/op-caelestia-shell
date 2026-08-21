@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.services
 import qs.modules.nexus.common
 
 PageBase {
@@ -44,8 +45,8 @@ PageBase {
     }
 
     ColumnLayout {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
+        anchors.horizontalCenter: parent?.horizontalCenter
+        anchors.top: parent?.top
         width: root.cappedWidth
         spacing: Tokens.spacing.extraSmall / 2
 

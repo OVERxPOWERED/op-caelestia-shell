@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.services
 import qs.modules.nexus.common
 import "./lock"
 
@@ -14,8 +15,8 @@ PageBase {
     title: qsTr("Lock screen")
 
     ColumnLayout {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
+        anchors.horizontalCenter: parent?.horizontalCenter
+        anchors.top: parent?.top
         width: root.cappedWidth
         spacing: Tokens.spacing.extraSmall / 2
 
@@ -29,7 +30,7 @@ PageBase {
             first: true
             text: qsTr("Pattern unlock")
             subtext: qsTr("Unlock using a 3x3 touch or mouse pattern instead of password")
-            checked: Config.lock.enablePattern
+            checked: GlobalConfig.lock.enablePattern
             onToggled: GlobalConfig.lock.enablePattern = checked
         }
 
@@ -85,15 +86,15 @@ PageBase {
             first: true
             text: qsTr("Fingerprint unlock")
             subtext: qsTr("Authenticate with fingerprint reader via fprintd")
-            checked: Config.lock.enableFprint
+            checked: GlobalConfig.lock.enableFprint
             onToggled: GlobalConfig.lock.enableFprint = checked
         }
 
         StepperRow {
             label: qsTr("Max fingerprint attempts")
             subtext: qsTr("Attempts allowed before locking to password only")
-            disabled: !Config.lock.enableFprint
-            value: Config.lock.maxFprintTries
+            disabled: !GlobalConfig.lock.enableFprint
+            value: GlobalConfig.lock.maxFprintTries
             from: 1
             to: 10
             stepSize: 1
@@ -103,15 +104,15 @@ PageBase {
         ToggleRow {
             text: qsTr("Face unlock (Howdy)")
             subtext: qsTr("Authenticate using infrared facial recognition")
-            checked: Config.lock.enableHowdy
+            checked: GlobalConfig.lock.enableHowdy
             onToggled: GlobalConfig.lock.enableHowdy = checked
         }
 
         StepperRow {
             label: qsTr("Max face unlock attempts")
             subtext: qsTr("Attempts allowed before locking to password")
-            disabled: !Config.lock.enableHowdy
-            value: Config.lock.maxHowdyTries
+            disabled: !GlobalConfig.lock.enableHowdy
+            value: GlobalConfig.lock.maxHowdyTries
             from: 1
             to: 5
             stepSize: 1
@@ -122,8 +123,8 @@ PageBase {
             last: true
             text: qsTr("Trigger face unlock on wake")
             subtext: qsTr("Immediately attempt facial scan when display wakes up")
-            disabled: !Config.lock.enableHowdy
-            checked: Config.lock.triggerHowdyOnWake
+            disabled: !GlobalConfig.lock.enableHowdy
+            checked: GlobalConfig.lock.triggerHowdyOnWake
             onToggled: GlobalConfig.lock.triggerHowdyOnWake = checked
         }
 
@@ -136,7 +137,7 @@ PageBase {
             first: true
             text: qsTr("Wallpaper background")
             subtext: qsTr("Display blurred desktop wallpaper behind lock screen")
-            checked: Config.lock.useWallpaper
+            checked: GlobalConfig.lock.useWallpaper
             onToggled: GlobalConfig.lock.useWallpaper = checked
         }
 
@@ -144,40 +145,46 @@ PageBase {
             last: true
             text: qsTr("Recolour logo")
             subtext: qsTr("Tint the lock screen logo with the theme accent color")
-            checked: Config.lock.recolourLogo
+            checked: GlobalConfig.lock.recolourLogo
             onToggled: GlobalConfig.lock.recolourLogo = checked
         }
-    }
 
-    // Modal popup for pattern recording
-    Loader {
-        id: patternModal
-        active: false
-        anchors.fill: parent
+        // Modal popup for pattern recording
+        Loader {
+            id: patternModal
+            active: false
+            visible: active
+            parent: root
+            x: 0
+            y: 0
+            width: root.width
+            height: root.height
+            z: 99
 
-        sourceComponent: Item {
-            anchors.fill: parent
-
-            Rectangle {
+            sourceComponent: Item {
                 anchors.fill: parent
-                color: Qt.rgba(0, 0, 0, 0.65)
 
-                TapHandler {
-                    onTapped: patternModal.active = false
+                Rectangle {
+                    anchors.fill: parent
+                    color: Qt.rgba(0, 0, 0, 0.65)
+
+                    TapHandler {
+                        onTapped: patternModal.active = false
+                    }
                 }
-            }
 
-            StyledRect {
-                anchors.centerIn: parent
-                implicitWidth: dialogContent.implicitWidth + Tokens.padding.large * 2
-                implicitHeight: dialogContent.implicitHeight + Tokens.padding.large * 2
-                radius: Tokens.rounding.large
-                color: Colours.palette.m3surfaceContainer
-
-                PatternRecordDialog {
-                    id: dialogContent
+                StyledRect {
                     anchors.centerIn: parent
-                    onFinished: success => patternModal.active = false
+                    implicitWidth: dialogContent.implicitWidth + Tokens.padding.large * 2
+                    implicitHeight: dialogContent.implicitHeight + Tokens.padding.large * 2
+                    radius: Tokens.rounding.large
+                    color: Colours.palette.m3surfaceContainer
+
+                    PatternRecordDialog {
+                        id: dialogContent
+                        anchors.centerIn: parent
+                        onFinished: success => patternModal.active = false
+                    }
                 }
             }
         }

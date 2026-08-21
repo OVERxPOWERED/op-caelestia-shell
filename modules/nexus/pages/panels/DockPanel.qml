@@ -42,8 +42,8 @@ PageBase {
     }
 
     ColumnLayout {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
+        anchors.horizontalCenter: parent?.horizontalCenter
+        anchors.top: parent?.top
         width: root.cappedWidth
         spacing: Tokens.spacing.extraSmall / 2
 
@@ -64,9 +64,12 @@ PageBase {
         ToggleRow {
             last: true
             text: qsTr("Show on hover")
-            subtext: qsTr("Auto-hide and reveal the dock when cursor touches the bottom edge")
+            subtext: Config.dock.showOnHover ? qsTr("Reveal dock on hover (launcher opens on drag)") : qsTr("Reveal dock on drag (launcher opens on hover)")
             checked: Config.dock.showOnHover
-            onToggled: GlobalConfig.dock.showOnHover = checked
+            onToggled: {
+                GlobalConfig.dock.showOnHover = checked;
+                GlobalConfig.launcher.showOnHover = !checked;
+            }
         }
 
         // Behaviour & Dimensions

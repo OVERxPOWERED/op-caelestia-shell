@@ -32,9 +32,12 @@ PageBase {
 
         ToggleRow {
             text: qsTr("Show on hover")
-            subtext: qsTr("Reveal when the cursor reaches the screen edge")
+            subtext: Config.launcher.showOnHover ? qsTr("Reveal launcher on hover (dock opens on drag)") : qsTr("Reveal launcher on drag (dock opens on hover)")
             checked: Config.launcher.showOnHover
-            onToggled: GlobalConfig.launcher.showOnHover = checked
+            onToggled: {
+                GlobalConfig.launcher.showOnHover = checked;
+                GlobalConfig.dock.showOnHover = !checked;
+            }
         }
 
         TextFieldRow {

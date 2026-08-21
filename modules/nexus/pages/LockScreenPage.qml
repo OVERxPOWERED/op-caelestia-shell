@@ -35,36 +35,42 @@ PageBase {
         }
 
         ConnectedRect {
+            id: patternRow
+
+            property bool disabled: !GlobalConfig.lock.enablePattern
+
             Layout.fillWidth: true
             last: true
-            implicitHeight: patternBtnLayout.implicitHeight + Tokens.padding.medium * 2
+            implicitHeight: patternBtnLayout.implicitHeight + patternBtnLayout.anchors.margins * 2
+            enabled: !disabled
+            opacity: disabled ? 0.45 : 1.0
 
             RowLayout {
                 id: patternBtnLayout
 
                 anchors.fill: parent
+                anchors.margins: Tokens.padding.medium
                 anchors.leftMargin: Tokens.padding.largeIncreased
-                anchors.rightMargin: Tokens.padding.medium
+                anchors.rightMargin: Tokens.padding.largeIncreased
                 spacing: Tokens.spacing.medium
-
-                MaterialIcon {
-                    text: "gesture"
-                    color: Colours.palette.m3primary
-                }
 
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 0
 
                     StyledText {
+                        Layout.fillWidth: true
                         text: qsTr("Record new pattern")
-                        font: Tokens.font.body.medium
+                        font: Tokens.font.body.small
+                        elide: Text.ElideRight
                     }
 
                     StyledText {
+                        Layout.fillWidth: true
                         text: qsTr("Draw a new 3x3 unlock pattern")
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.body.small
+                        color: Colours.palette.m3outline
+                        font: Tokens.font.label.small
+                        elide: Text.ElideRight
                     }
                 }
 
@@ -72,6 +78,7 @@ PageBase {
                     icon: "edit"
                     text: qsTr("Set pattern")
                     type: IconTextButton.Tonal
+                    disabled: patternRow.disabled
                     onClicked: patternModal.active = true
                 }
             }

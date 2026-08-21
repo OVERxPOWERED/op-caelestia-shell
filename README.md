@@ -12,6 +12,21 @@
 
 https://github.com/user-attachments/assets/0840f496-575c-4ca6-83a8-87bb01a85c5f
 
+## 🌟 Enhanced Fork Features
+
+This repository is an enhanced, feature-packed fork of Caelestia Shell featuring major desktop workflow, security, audio, and hardware improvements:
+
+| Feature | Description | Guide |
+| :--- | :--- | :--- |
+| 🚢 **Application Dock** | Floating bottom dock with running indicators, pinned apps, and context menus | [Read Guide ➔](docs/dock.md) |
+| 🪟 **Taskview / Overview** | Fluid 3D Workspace Carousel, All Windows Grid, and Scratchpads view | [Read Guide ➔](docs/overview.md) |
+| 🎨 **Theme Engine** | Multi-asset theme packages with launcher `:theme` command & Nexus gallery | [Read Guide ➔](docs/themes.md) |
+| 🔒 **Lock Screen & Security** | 3x3 Gesture Pattern unlock, pattern recorder modal, and power confirmations | [Read Guide ➔](docs/lockscreen.md) |
+| 🔊 **Per-App Audio Control** | Live individual application volume sliders, mute toggles, and device routing | [Read Guide ➔](docs/audio.md) |
+| ⚙️ **Expanded Nexus Settings** | Dedicated graphical settings subpages for Dock, OSD, Overview, Themes, and Power | [Read Guide ➔](docs/nexus.md) |
+| 💻 **Hardware Compatibility** | Universal Intel Xe/i915, AMD, NVIDIA, and headless GPU detection + Bluetooth agent | [Read Guide ➔](docs/hardware-compatibility.md) |
+| 🛠️ **Configuration Reference** | Complete schema breakdown for `~/.config/caelestia/shell.json` | [Read Guide ➔](docs/configuration.md) |
+
 ## Components
 
 -   Widgets: [`Quickshell`](https://quickshell.outfoxxed.me)

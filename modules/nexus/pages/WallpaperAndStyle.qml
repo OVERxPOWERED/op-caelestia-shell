@@ -145,6 +145,18 @@ PageBase {
             spacing: Tokens.spacing.small
 
             IconTextButton {
+                icon: "auto_awesome"
+                text: qsTr("Themes")
+                font: Tokens.font.body.large
+                isRound: true
+                shapeMorph: true
+                type: IconTextButton.Tonal
+                horizontalPadding: Tokens.padding.extraLarge
+                verticalPadding: Tokens.padding.medium
+                onClicked: root.nState.openSubPage(4) // Themes page
+            }
+
+            IconTextButton {
                 icon: "wallpaper"
                 text: qsTr("Wallpapers")
                 font: Tokens.font.body.large
@@ -189,10 +201,19 @@ PageBase {
         ToggleRow {
             Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
 
-            last: true
             text: qsTr("Dark theme")
             checked: !Colours.light
             onToggled: Colours.setMode(checked ? "dark" : "light")
+        }
+
+        NavRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+            last: true
+
+            icon: "desktop_windows"
+            text: qsTr("Desktop & background")
+            subtext: qsTr("Desktop clock, audio visualiser, borders & rounding")
+            onClicked: root.nState.openSubPage(5)
         }
     }
 }

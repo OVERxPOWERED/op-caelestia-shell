@@ -36,6 +36,12 @@ QtObject {
                 Component {
                     ColourSelect {}
                 }
+                Component {
+                    ThemeSelect {}
+                }
+                Component {
+                    DesktopBackground {}
+                }
             }
         },
 
@@ -99,6 +105,14 @@ QtObject {
         Component {
             PlaceholderComp {}
         },
+        Component {
+            // Power & idle
+            StackPage {
+                Component {
+                    PowerIdlePage {}
+                }
+            }
+        },
 
         // Shell
         Component {
@@ -139,6 +153,17 @@ QtObject {
                 Component {
                     BarClock {}
                 }
+
+                // Custom panels sub-pages
+                Component {
+                    DockPanel {}
+                }
+                Component {
+                    OsdPanel {}
+                }
+                Component {
+                    OverviewPanel {}
+                }
             }
         },
         Component {
@@ -152,6 +177,14 @@ QtObject {
                 }
                 Component {
                     AppInfo {}
+                }
+            }
+        },
+        Component {
+            // Lock screen
+            StackPage {
+                Component {
+                    LockScreenPage {}
                 }
             }
         },

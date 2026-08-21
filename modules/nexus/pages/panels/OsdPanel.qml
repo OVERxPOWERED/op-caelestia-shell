@@ -11,8 +11,8 @@ PageBase {
     isSubPage: true
 
     ColumnLayout {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
+        anchors.horizontalCenter: parent?.horizontalCenter
+        anchors.top: parent?.top
         width: root.cappedWidth
         spacing: Tokens.spacing.extraSmall / 2
 

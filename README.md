@@ -1,11 +1,10 @@
-<h1 align=center>caelestia-shell</h1>
+<h1 align=center>Caelestia Shell (OP's Enhanced Fork)</h1>
 
 <div align=center>
 
-![GitHub last commit](https://img.shields.io/github/last-commit/caelestia-dots/shell?style=for-the-badge&labelColor=101418&color=9ccbfb)
-![GitHub Repo stars](https://img.shields.io/github/stars/caelestia-dots/shell?style=for-the-badge&labelColor=101418&color=b9c8da)
-![GitHub repo size](https://img.shields.io/github/repo-size/caelestia-dots/shell?style=for-the-badge&labelColor=101418&color=d3bfe6)
-[![Ko-Fi donate](https://img.shields.io/badge/donate-kofi?style=for-the-badge&logo=ko-fi&logoColor=ffffff&label=ko-fi&labelColor=101418&color=f16061&link=https%3A%2F%2Fko-fi.com%2Fsoramane)](https://ko-fi.com/soramane)
+![GitHub last commit](https://img.shields.io/github/last-commit/OVERxPOWERED/OP-s_Caelestiashell?style=for-the-badge&labelColor=101418&color=9ccbfb)
+![GitHub Repo stars](https://img.shields.io/github/stars/OVERxPOWERED/OP-s_Caelestiashell?style=for-the-badge&labelColor=101418&color=b9c8da)
+![GitHub repo size](https://img.shields.io/github/repo-size/OVERxPOWERED/OP-s_Caelestiashell?style=for-the-badge&labelColor=101418&color=d3bfe6)
 [![Discord invite](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdiscordapp.com%2Fapi%2Finvites%2FBGDCFCmMBk%3Fwith_counts%3Dtrue&query=approximate_member_count&style=for-the-badge&logo=discord&logoColor=ffffff&label=discord&labelColor=101418&color=96f1f1&link=https%3A%2F%2Fdiscord.gg%2FBGDCFCmMBk)][discord]
 
 </div>
@@ -56,7 +55,7 @@ and likely to be unstable/have bugs. Regular users are recommended to use the st
 You can run the shell directly via `nix run`:
 
 ```sh
-nix run github:caelestia-dots/shell#with-cli
+nix run github:OVERxPOWERED/OP-s_Caelestiashell#with-cli
 ```
 
 Or add it to your system configuration:
@@ -67,7 +66,7 @@ Or add it to your system configuration:
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     caelestia-shell = {
-      url = "github:caelestia-dots/shell";
+      url = "github:OVERxPOWERED/OP-s_Caelestiashell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -123,7 +122,7 @@ Then build and install using CMake.
 
 ```sh
 cd $XDG_CONFIG_HOME/quickshell
-git clone https://github.com/caelestia-dots/shell.git caelestia
+git clone https://github.com/OVERxPOWERED/OP-s_Caelestiashell.git caelestia
 
 cd caelestia
 cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/
@@ -706,6 +705,7 @@ For example, to automatically hide the bar on the monitor named `DP-1`:
     "lock": {
         "enabled": true,
         "useWallpaper": false,
+        "showGif": true,
         "recolourLogo": true,
         "enableFprint": true,
         "maxFprintTries": 3,

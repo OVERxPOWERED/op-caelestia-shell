@@ -30,6 +30,7 @@ The **Lock Screen & Security** system enhances Caelestia with multi-mode authent
 {
   "lock": {
     "enabled": true,
+    "showGif": true,
     "enablePattern": true,
     "patternHash": "...",
     "enableFprint": true,
@@ -47,6 +48,7 @@ The **Lock Screen & Security** system enhances Caelestia with multi-mode authent
 
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
+| `showGif` | `boolean` | `true` | Display animated GIF instead of system information on lock screen. |
 | `enablePattern` | `boolean` | `false` | Enable 3x3 gesture pattern authentication mode. |
 | `enableFprint` | `boolean` | `true` | Enable fingerprint reader authentication via `fprintd`. |
 | `maxFprintTries` | `integer` | `3` | Maximum fingerprint attempts before locking to password mode. |

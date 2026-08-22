@@ -26,6 +26,7 @@ All shell customization settings are defined in `~/.config/caelestia/shell.json`
   },
   "lock": {
     "enabled": true,
+    "showGif": true,
     "enablePattern": false,
     "patternHash": "",
     "enableFprint": true,

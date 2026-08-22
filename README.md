@@ -17,6 +17,7 @@ This repository is an enhanced, feature-packed fork of Caelestia Shell featuring
 
 | Feature | Description | Guide |
 | :--- | :--- | :--- |
+| 🛠️ **Installation & Setup** | Step-by-step build, local & system installation, and Hyprland autostart guide | [Read Guide ➔](docs/installation.md) |
 | 🚢 **Application Dock** | Floating bottom dock with running indicators, pinned apps, and context menus | [Read Guide ➔](docs/dock.md) |
 | 🪟 **Taskview / Overview** | Fluid 3D Workspace Carousel, All Windows Grid, and Scratchpads view | [Read Guide ➔](docs/overview.md) |
 | 🎨 **Theme Engine** | Multi-asset theme packages with launcher `:theme` command & Nexus gallery | [Read Guide ➔](docs/themes.md) |

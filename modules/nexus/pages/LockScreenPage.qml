@@ -149,6 +149,13 @@ PageBase {
         }
 
         ToggleRow {
+            text: qsTr("Show GIF")
+            subtext: qsTr("Display animated GIF instead of system information")
+            checked: GlobalConfig.lock.showGif
+            onToggled: GlobalConfig.lock.showGif = checked
+        }
+
+        ToggleRow {
             last: true
             text: qsTr("Recolour logo")
             subtext: qsTr("Tint the lock screen logo with the theme accent color")

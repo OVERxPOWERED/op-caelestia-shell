@@ -2,9 +2,9 @@
 
 <div align=center>
 
-![GitHub last commit](https://img.shields.io/github/last-commit/OVERxPOWERED/OP-s_Caelestiashell?style=for-the-badge&labelColor=101418&color=9ccbfb)
-![GitHub Repo stars](https://img.shields.io/github/stars/OVERxPOWERED/OP-s_Caelestiashell?style=for-the-badge&labelColor=101418&color=b9c8da)
-![GitHub repo size](https://img.shields.io/github/repo-size/OVERxPOWERED/OP-s_Caelestiashell?style=for-the-badge&labelColor=101418&color=d3bfe6)
+![GitHub last commit](https://img.shields.io/github/last-commit/OVERxPOWERED/op-caelestia-shell?style=for-the-badge&labelColor=101418&color=9ccbfb)
+![GitHub Repo stars](https://img.shields.io/github/stars/OVERxPOWERED/op-caelestia-shell?style=for-the-badge&labelColor=101418&color=b9c8da)
+![GitHub repo size](https://img.shields.io/github/repo-size/OVERxPOWERED/op-caelestia-shell?style=for-the-badge&labelColor=101418&color=d3bfe6)
 [![Discord invite](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdiscordapp.com%2Fapi%2Finvites%2FBGDCFCmMBk%3Fwith_counts%3Dtrue&query=approximate_member_count&style=for-the-badge&logo=discord&logoColor=ffffff&label=discord&labelColor=101418&color=96f1f1&link=https%3A%2F%2Fdiscord.gg%2FBGDCFCmMBk)][discord]
 
 </div>
@@ -55,7 +55,7 @@ and likely to be unstable/have bugs. Regular users are recommended to use the st
 You can run the shell directly via `nix run`:
 
 ```sh
-nix run github:OVERxPOWERED/OP-s_Caelestiashell#with-cli
+nix run github:OVERxPOWERED/op-caelestia-shell#with-cli
 ```
 
 Or add it to your system configuration:
@@ -66,7 +66,7 @@ Or add it to your system configuration:
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     caelestia-shell = {
-      url = "github:OVERxPOWERED/OP-s_Caelestiashell";
+      url = "github:OVERxPOWERED/op-caelestia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -122,7 +122,7 @@ Then build and install using CMake.
 
 ```sh
 cd $XDG_CONFIG_HOME/quickshell
-git clone https://github.com/OVERxPOWERED/OP-s_Caelestiashell.git caelestia
+git clone https://github.com/OVERxPOWERED/op-caelestia-shell.git caelestia
 
 cd caelestia
 cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/

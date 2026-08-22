@@ -146,14 +146,29 @@ sudo cmake --install build
 > sudo chown -R $USER ~/.config/quickshell/caelestia
 > ```
 
-## Usage
+## Usage & Autostart
 
-You can start the shell by running `caelestia shell -d` (preferred) or `qs -c caelestia -n -d`.
-You may omit `-d` from the command to keep the shell attached to the current terminal if necessary,
-though you likely want it to be detached (so it doesn't close when the terminal is closed).
+### 1. Starting the Shell Manually
+To start the shell manually, you can run:
 
-If using the [Caelestia dotfiles][dots-repo], the shell will be autostarted on login
-via a `hl.on("hyprland.start", ...)` function in the Hyprland config.
+```sh
+# Using the startup helper script:
+~/.config/quickshell/caelestia/scripts/startup-shell.sh
+
+# Or via Caelestia CLI:
+caelestia shell -d
+```
+
+### 2. Autostart with Hyprland
+
+- **In `~/.config/hypr/hyprland.conf`**:
+  ```ini
+  exec-once = ~/.config/quickshell/caelestia/scripts/startup-shell.sh
+  ```
+- **Or in Caelestia dotfiles (`hypr/hyprland/execs.lua`)**:
+  ```lua
+  hl.exec_cmd("sleep 0.5 && ~/.config/quickshell/caelestia/scripts/startup-shell.sh")
+  ```
 
 ### Shortcuts/IPC
 

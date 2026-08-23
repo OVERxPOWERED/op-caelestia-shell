@@ -41,7 +41,10 @@
 
 ### ⚡ Option 1: Automated Installer (Recommended)
 
-The interactive setup script handles dependency checks via `paru`/`yay`, repository cloning, native C++ plugin building, and Hyprland autostart setup automatically.
+The interactive setup script handles dependency checks via `paru`/`yay`, builds the isolated native C++ plugin, and configures the `op-caelestia` command.
+
+> [!TIP]
+> **Side-by-side Coexistence**: If you already have vanilla Caelestia installed at `~/.config/quickshell/caelestia`, the installer will automatically set up OP-Caelestia in `~/.config/quickshell/op-caelestia` without overwriting or conflicting with your existing setup!
 
 ```bash
 # One-Line Remote Installer
@@ -51,9 +54,14 @@ bash <(curl -sSL https://raw.githubusercontent.com/OVERxPOWERED/op-caelestia-she
 Or clone and run locally:
 
 ```bash
-git clone https://github.com/OVERxPOWERED/op-caelestia-shell.git ~/.config/quickshell/caelestia
-cd ~/.config/quickshell/caelestia && ./install.sh
+git clone https://github.com/OVERxPOWERED/op-caelestia-shell.git ~/.config/quickshell/op-caelestia
+cd ~/.config/quickshell/op-caelestia && ./install.sh
 ```
+
+Once installed, you can control the shell anytime from your terminal:
+* **Start**: `op-caelestia`
+* **Restart**: `op-caelestia -r`
+* **Stop**: `op-caelestia -k`
 
 ---
 

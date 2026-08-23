@@ -60,7 +60,13 @@ ask_prompt() {
         return 0
     fi
     local answer
-    read -rp "$(echo -e "${CLR_PURPLE}?${CLR_RESET} ${CLR_BOLD}${prompt_text}${CLR_RESET} [${default_ans}]: ")" answer
+    if [ -t 0 ]; then
+        read -rp "$(echo -e "${CLR_PURPLE}?${CLR_RESET} ${CLR_BOLD}${prompt_text}${CLR_RESET} [${default_ans}]: ")" answer
+    elif [ -e /dev/tty ]; then
+        read -rp "$(echo -e "${CLR_PURPLE}?${CLR_RESET} ${CLR_BOLD}${prompt_text}${CLR_RESET} [${default_ans}]: ")" answer </dev/tty
+    else
+        return 0
+    fi
     answer="${answer:-$default_ans}"
     case "$answer" in
         [yY][eE][sS]|[yY]) return 0 ;;

@@ -84,17 +84,22 @@ sudo cmake --install .
 
 ---
 
-## ▶️ 3. Starting the Shell
+## ▶️ 3. Managing the Shell
 
-To start the shell manually in the background:
+Once installed, you can start, restart, or stop the shell from any terminal:
 
 ```bash
-# Using the local startup helper:
-~/.config/quickshell/caelestia/scripts/startup-shell.sh
+# Start the shell
+op-caelestia
 
-# Or via Caelestia CLI (if system-wide installed):
-caelestia shell -d
+# Restart the shell
+op-caelestia -r
+
+# Stop / Kill running shell instances
+op-caelestia -k
 ```
+
+*(Alternatively, you can run the script directly: `~/.config/quickshell/op-caelestia/scripts/startup-shell.sh`)*
 
 ---
 
@@ -107,14 +112,14 @@ Add this line to `~/.config/hypr/hyprland.conf`:
 
 ```ini
 # Autostart OP-Caelestia Shell on login
-exec-once = ~/.config/quickshell/caelestia/scripts/startup-shell.sh
+exec-once = op-caelestia
 ```
 
 ### If using Caelestia Dotfiles (`hypr/hyprland/execs.lua`):
 Add or update the startup line in `~/.config/hypr/hyprland/execs.lua`:
 
 ```lua
-hl.exec_cmd("sleep 0.5 && ~/.config/quickshell/caelestia/scripts/startup-shell.sh")
+hl.exec_cmd("sleep 0.5 && op-caelestia")
 ```
 
 ---

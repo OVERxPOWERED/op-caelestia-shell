@@ -141,5 +141,47 @@ PageBase {
                     GlobalConfig.paths.wallpaperDir = value.trim();
             }
         }
+
+        // How to create custom themes guide card
+        SectionHeader {
+            text: qsTr("Create your own theme")
+        }
+
+        StyledRect {
+            Layout.fillWidth: true
+            radius: Tokens.rounding.large
+            color: Colours.tPalette.m3surfaceContainer
+            border.width: 1
+            border.color: Colours.palette.m3outlineVariant
+            implicitHeight: guideCol.implicitHeight + Tokens.padding.medium * 2
+
+            ColumnLayout {
+                id: guideCol
+                anchors.fill: parent
+                anchors.margins: Tokens.padding.medium
+                spacing: Tokens.spacing.small
+
+                RowLayout {
+                    spacing: Tokens.spacing.small
+                    MaterialIcon {
+                        text: "palette"
+                        color: Colours.palette.m3primary
+                    }
+                    StyledText {
+                        text: qsTr("Theme Package Structure")
+                        font: Tokens.font.title.small
+                        color: Colours.palette.m3onSurface
+                    }
+                }
+
+                StyledText {
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    text: qsTr("1. Create a folder in <b>assets/themes/&lt;ThemeName&gt;/</b>\n2. Add your wallpaper as <b>wallpaper.jpg</b> (or <b>wallpaper.png</b>)\n3. (Optional) Add theme GIFs inside <b>visuals/</b> (e.g. media.gif, session.gif)\n4. Your new theme appears automatically here and via <b>:theme</b> in the launcher!")
+                    font: Tokens.font.body.medium
+                    color: Colours.palette.m3onSurfaceVariant
+                }
+            }
+        }
     }
 }

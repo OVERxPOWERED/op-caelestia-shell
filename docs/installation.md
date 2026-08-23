@@ -6,7 +6,11 @@ This guide covers everything you need to install, build, configure, and run **OP
 
 ## ⚡ 1. Automated Quick Installation (Recommended)
 
-The easiest and fastest way to install OP-Caelestia Shell is with the built-in interactive setup script. It automatically detects your AUR helper (`paru` or `yay`), resolves missing dependencies, clones the shell, compiles the native C++ plugin, creates your default configuration, and configures Hyprland autostart.
+The easiest and fastest way to install OP-Caelestia Shell is with the built-in interactive setup script. It automatically detects your AUR helper (`paru` or `yay`), resolves missing dependencies, compiles the native C++ plugin, creates your default configuration, and configures the global `op-caelestia` command.
+
+> [!TIP]
+> **Side-by-side Coexistence with Existing Caelestia**:
+> If you already have vanilla Caelestia installed at `~/.config/quickshell/caelestia`, the installer will automatically detect it and install OP-Caelestia side-by-side in `~/.config/quickshell/op-caelestia` without overwriting or deleting any of your existing files!
 
 ### Option A: One-Line Remote Installer
 ```bash
@@ -15,11 +19,11 @@ bash <(curl -sSL https://raw.githubusercontent.com/OVERxPOWERED/op-caelestia-she
 
 ### Option B: Clone & Run Local Installer
 ```bash
-# 1. Clone into your quickshell config folder
-git clone https://github.com/OVERxPOWERED/op-caelestia-shell.git ~/.config/quickshell/caelestia
+# 1. Clone into your quickshell config folder (op-caelestia or custom)
+git clone https://github.com/OVERxPOWERED/op-caelestia-shell.git ~/.config/quickshell/op-caelestia
 
 # 2. Run the installer
-cd ~/.config/quickshell/caelestia
+cd ~/.config/quickshell/op-caelestia
 ./install.sh
 ```
 

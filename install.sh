@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  🌌 OP-Caelestia Shell - Automated Installer & Setup Script
+#  🌌 OP-Caelestia Shell - Automated Installer & Side-by-Side Setup Script
 #  Repository: https://github.com/OVERxPOWERED/op-caelestia-shell
 # ==============================================================================
 
@@ -68,24 +68,43 @@ ask_prompt() {
     esac
 }
 
-# 1. Target Directory Resolution
-CONFIG_BASE="${XDG_CONFIG_HOME:-$HOME/.config}"
-TARGET_DIR="$CONFIG_BASE/quickshell/caelestia"
-REPO_URL="https://github.com/OVERxPOWERED/op-caelestia-shell.git"
-
 print_banner
 
-log_info "Initializing OP-Caelestia Shell Setup..."
-echo -e "${CLR_MUTED}Target destination: ${TARGET_DIR}${CLR_RESET}\n"
+# 1. Target Directory Resolution (Zero Conflicts with Existing Caelestia)
+CONFIG_BASE="${XDG_CONFIG_HOME:-$HOME/.config}"
+REPO_URL="https://github.com/OVERxPOWERED/op-caelestia-shell.git"
+CURRENT_DIR="$(pwd -P 2>/dev/null || echo "")"
+
+if [ -f "$CURRENT_DIR/shell.qml" ] && [ -f "$CURRENT_DIR/CMakeLists.txt" ]; then
+    # Running directly from a cloned working directory
+    TARGET_DIR="$CURRENT_DIR"
+    log_info "Running setup inside current repository: $TARGET_DIR"
+else
+    # Check if vanilla caelestia folder already exists
+    if [ -d "$CONFIG_BASE/quickshell/caelestia" ]; then
+        TARGET_DIR="$CONFIG_BASE/quickshell/op-caelestia"
+        log_info "Detected existing Caelestia folder at $CONFIG_BASE/quickshell/caelestia."
+        log_info "Installing OP-Caelestia side-by-side to $TARGET_DIR (no files overwritten)."
+    else
+        TARGET_DIR="$CONFIG_BASE/quickshell/caelestia"
+        log_info "Target destination: $TARGET_DIR"
+    fi
+fi
 
 # 2. Clone or Sync Repository
-CURRENT_DIR="$(pwd -P 2>/dev/null || echo "")"
 if [ "$CURRENT_DIR" != "$TARGET_DIR" ]; then
     if [ -d "$TARGET_DIR/.git" ]; then
-        log_info "Existing installation detected in $TARGET_DIR. Fetching updates..."
+        log_info "Existing installation detected in $TARGET_DIR. Updating to latest commit..."
         git -C "$TARGET_DIR" pull --ff-only || log_warn "Could not fast-forward existing repo. Continuing with current files..."
+    elif [ -d "$TARGET_DIR" ]; then
+        log_warn "Directory $TARGET_DIR already exists."
+        if ask_prompt "Overwrite and re-clone $TARGET_DIR?" "N"; then
+            rm -rf "$TARGET_DIR"
+            mkdir -p "$CONFIG_BASE/quickshell"
+            git clone "$REPO_URL" "$TARGET_DIR"
+        fi
     else
-        log_info "Cloning OP-Caelestia Shell repository into $TARGET_DIR..."
+        log_info "Cloning OP-Caelestia Shell into $TARGET_DIR..."
         mkdir -p "$CONFIG_BASE/quickshell"
         git clone "$REPO_URL" "$TARGET_DIR"
     fi
@@ -164,7 +183,7 @@ else
     log_success "All required dependencies are satisfied!"
 fi
 
-# 4. Build & Install Local C++ Plugin
+# 4. Build & Install Local Isolated C++ Plugin
 log_info "Building native C++ Caelestia helper plugin..."
 mkdir -p "$TARGET_DIR/build"
 cd "$TARGET_DIR/build"
@@ -176,7 +195,7 @@ cmake -G Ninja \
 
 cmake --build .
 
-log_info "Deploying plugin to local build directory (.local-caelestia-plugin)..."
+log_info "Deploying plugin locally (.local-caelestia-plugin)..."
 DESTDIR="$TARGET_DIR/.local-caelestia-plugin" cmake --install .
 
 cd "$TARGET_DIR"
@@ -219,32 +238,47 @@ EOF
     log_success "Created starter shell.json configuration!"
 fi
 
-# 6. Hyprland Autostart Integration
+# 6. Global Launcher Binary (~/.local/bin/op-caelestia)
+BIN_DIR="$HOME/.local/bin"
+mkdir -p "$BIN_DIR"
+cat > "$BIN_DIR/op-caelestia" << EOF
+#!/usr/bin/env bash
+exec "$TARGET_DIR/scripts/startup-shell.sh" "\$@"
+EOF
+chmod +x "$BIN_DIR/op-caelestia"
+log_success "Created global launcher shortcut: op-caelestia (in ~/.local/bin/op-caelestia)"
+
+# 7. Hyprland Autostart Integration
 HYPR_CONF="$CONFIG_BASE/hypr/hyprland.conf"
-AUTOSTART_LINE="exec-once = $TARGET_DIR/scripts/startup-shell.sh"
+AUTOSTART_CMD="exec-once = op-caelestia"
 
 if [ -f "$HYPR_CONF" ]; then
-    if ! grep -q "startup-shell.sh" "$HYPR_CONF"; then
+    if ! grep -q "op-caelestia" "$HYPR_CONF" && ! grep -q "startup-shell.sh" "$HYPR_CONF"; then
         if ask_prompt "Add OP-Caelestia Shell autostart to your hyprland.conf?" "Y"; then
             echo "" >> "$HYPR_CONF"
             echo "# Autostart OP-Caelestia Shell" >> "$HYPR_CONF"
-            echo "$AUTOSTART_LINE" >> "$HYPR_CONF"
+            echo "$AUTOSTART_CMD" >> "$HYPR_CONF"
             log_success "Added autostart command to $HYPR_CONF"
         fi
     else
-        log_info "Autostart line already present in $HYPR_CONF."
+        log_info "Autostart entry already present in $HYPR_CONF."
     fi
 fi
 
-# 7. Completion & Launch
+# 8. Completion & Launch
 echo ""
 echo -e "${CLR_GREEN}${CLR_BOLD}🎉 OP-Caelestia Shell installation is complete!${CLR_RESET}\n"
-echo -e "You can start the shell at any time using:"
-echo -e "  ${CLR_CYAN}$TARGET_DIR/scripts/startup-shell.sh${CLR_RESET}\n"
+echo -e "You can manage the shell anytime via terminal:"
+echo -e "  • Start:   ${CLR_CYAN}op-caelestia${CLR_RESET}"
+echo -e "  • Restart: ${CLR_CYAN}op-caelestia -r${CLR_RESET}"
+echo -e "  • Stop:    ${CLR_CYAN}op-caelestia -k${CLR_RESET}\n"
 
 if ask_prompt "Would you like to start OP-Caelestia Shell now?" "Y"; then
+    log_info "Stopping any previous shell instances..."
+    killall -9 quickshell 2>/dev/null || true
+    sleep 0.5
     log_info "Launching OP-Caelestia Shell..."
     "$TARGET_DIR/scripts/startup-shell.sh" &
     disown
-    log_success "Shell launched in background!"
+    log_success "OP-Caelestia Shell launched in background!"
 fi

@@ -1,0 +1,10 @@
+CompileFlags:
+  CompilationDatabase: build
+
+Index:
+  Background: Skip
+  StandardLibrary: false
+
+Diagnostics:
+  ClangTidy:
+    Remove: ["*"]

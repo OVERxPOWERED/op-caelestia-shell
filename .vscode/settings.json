@@ -5,5 +5,14 @@
     },
     "[qml]": {
         "editor.defaultFormatter": "Delgan.qml-format"
-    }
+    },
+    "clangd.arguments": [
+        "--compile-commands-dir=build",
+        "--background-index=false",
+        "-j=2",
+        "--header-insertion=never",
+        "--clang-tidy=false"
+    ],
+    "cmake.exportCompileCommandsFile": true
 }
+

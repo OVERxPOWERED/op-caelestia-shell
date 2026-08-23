@@ -8,3 +8,5 @@ build-plugin/
 .local-caelestia-plugin/
 .agents/
 .codex/
+/compile_commands.json
+docs/desktop-environment-roadmap.md

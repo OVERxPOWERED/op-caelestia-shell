@@ -39,45 +39,56 @@
 
 ## 🚀 Quick Start & Installation
 
-### 📋 Prerequisites
+### ⚡ Option 1: Automated Installer (Recommended)
 
-Install the required dependencies on your Arch-based system:
+The interactive setup script handles dependency checks via `paru`/`yay`, repository cloning, native C++ plugin building, and Hyprland autostart setup automatically.
 
 ```bash
-# Core framework & dependencies via AUR helper (paru or yay)
+# One-Line Remote Installer
+bash <(curl -sSL https://raw.githubusercontent.com/OVERxPOWERED/op-caelestia-shell/main/install.sh)
+```
+
+Or clone and run locally:
+
+```bash
+git clone https://github.com/OVERxPOWERED/op-caelestia-shell.git ~/.config/quickshell/caelestia
+cd ~/.config/quickshell/caelestia && ./install.sh
+```
+
+---
+
+### 📦 Option 2: Manual Step-by-Step Build
+
+<details>
+<summary><b>Click to expand manual setup instructions</b></summary>
+
+```bash
+# 1. Install dependencies via AUR helper (paru or yay)
 paru -S quickshell-git caelestia-cli \
         qt6-base qt6-declarative qt6-imageformats qt6-shadertools \
         libpipewire libcava aubio ddcutil brightnessctl networkmanager \
         power-profiles-daemon swappy lm_sensors libqalculate fish bash \
         ttf-material-symbols-variable ttf-rubik-vf ttf-cascadia-code-nerd \
         cmake ninja gcc-libs glibc
-```
 
----
-
-### 📦 Installation (Recommended Local Setup)
-
-Clone this repository into your user Quickshell configuration directory and build the native C++ helper plugin:
-
-```bash
-# 1. Clone the repository
+# 2. Clone the repository
 mkdir -p ~/.config/quickshell
 git clone https://github.com/OVERxPOWERED/op-caelestia-shell.git ~/.config/quickshell/caelestia
 cd ~/.config/quickshell/caelestia
 
-# 2. Build and install the C++ plugin locally
+# 3. Build and install the native C++ plugin locally
 mkdir -p build && cd build
 cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/ ..
 cmake --build .
 DESTDIR="$PWD/../.local-caelestia-plugin" cmake --install .
 
-# 3. Test launch the shell
-cd ..
-./scripts/startup-shell.sh
+# 4. Launch the shell
+cd .. && ./scripts/startup-shell.sh
 ```
 
-> [!TIP]
-> For detailed troubleshooting, step-by-step setup guides, and system-wide installation alternatives, read the full [Installation Manual](docs/installation.md).
+For complete troubleshooting, system-wide installation, and Nix setup, read the full [Installation Manual](docs/installation.md).
+
+</details>
 
 ---
 

@@ -1,6 +1,6 @@
 # 🛠️ Installation & Setup Manual
 
-This guide covers everything you need to install, build, configure, and autostart **op-caelestia-shell**.
+This guide covers everything you need to clone, build, configure, and run **op-caelestia-shell**.
 
 ---
 
@@ -8,82 +8,84 @@ This guide covers everything you need to install, build, configure, and autostar
 
 ### Arch Linux / CachyOS Dependencies
 
-Install the required system libraries and utilities via `pacman` and `paru` / `yay`:
+Install the required system packages and tools:
 
 ```sh
-# System & Build Tools
+# System Libraries, Build Tools & Audio/Media Services
 sudo pacman -S --needed cmake ninja gcc qt6-base qt6-declarative qt6-imageformats qt6-shadertools \
     pipewire libpipewire cava aubio networkmanager lm_sensors brightnessctl ddcutil \
     swappy fish bash python python-dbus libqalculate power-profiles-daemon
 
-# Fonts & Icons (AUR)
+# Quickshell Engine, CLI & Fonts (via AUR)
 paru -S --needed quickshell-git caelestia-cli ttf-material-symbols-variable ttf-rubik-vf ttf-cascadia-code-nerd
 ```
 
 > [!IMPORTANT]
-> `quickshell-git` is required (the git version, not an outdated release build).
+> `quickshell-git` is required (the latest development git build, not an outdated tagged version).
 
 ---
 
-## 🚀 2. Building & Running the Shell
+## 📥 2. Clone the Repository
 
-You have two installation methods available:
+Clone this repository into your Quickshell configuration folder:
 
-### Option A: Local Build & Run (Recommended / No Root Required)
-
-This builds the C++ plugin and QML components inside a local folder within the repository.
-
-1. **Clone the repository:**
-   ```sh
-   mkdir -p ~/.config/quickshell
-   git clone https://github.com/OVERxPOWERED/op-caelestia-shell.git ~/.config/quickshell/caelestia
-   cd ~/.config/quickshell/caelestia
-   ```
-
-2. **Build and install the local plugin:**
-   ```sh
-   cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-   cmake --build build
-   DESTDIR="$PWD/.local-caelestia-plugin" cmake --install build
-   ```
-
-3. **Launch the shell:**
-   ```sh
-   ./scripts/startup-shell.sh -d -n
-   ```
+```sh
+mkdir -p ~/.config/quickshell
+git clone https://github.com/OVERxPOWERED/op-caelestia-shell.git ~/.config/quickshell/caelestia
+cd ~/.config/quickshell/caelestia
+```
 
 ---
 
-### Option B: System-Wide Installation (Standard Caelestia Integration)
+## 🔨 3. Build & Install the Plugin
 
-This installs the C++ plugin and shell into standard system directories (`/usr/lib/qt6/qml` and `/etc/xdg/quickshell/caelestia`).
+Choose either **Local Build** (recommended, no root needed) or **System-Wide Install**:
 
-1. **Clone and build with root install prefix:**
-   ```sh
-   cd ~/.config/quickshell/caelestia
-   cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/
-   cmake --build build
-   sudo cmake --install build
-   ```
+### Option A: Local Build (Recommended / No Root Required)
+Builds the native C++ Caelestia plugin and QML components inside a local folder within the repository:
 
-2. **Launch the shell:**
-   ```sh
-   caelestia shell -d
-   # Or using quickshell CLI:
-   qs -c caelestia -n -d
-   ```
+```sh
+cd ~/.config/quickshell/caelestia
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+DESTDIR="$PWD/.local-caelestia-plugin" cmake --install build
+```
+
+### Option B: System-Wide Installation
+Installs the C++ plugin and shell into standard system directories (`/usr/lib/qt6/qml` and `/etc/xdg/quickshell/caelestia`):
+
+```sh
+cd ~/.config/quickshell/caelestia
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/
+cmake --build build
+sudo cmake --install build
+```
 
 ---
 
-## ⚡ 3. Setting Up Hyprland Autostart
+## ▶️ 4. Starting the Shell
 
-To have the shell start automatically on login:
+To start the shell manually in the background:
+
+```sh
+# If you used Option A (Local Build):
+~/.config/quickshell/caelestia/scripts/startup-shell.sh -d -n
+
+# If you used Option B (System-Wide Install):
+caelestia shell -d
+```
+
+---
+
+## ⚡ 5. Setting Up Hyprland Autostart
+
+To automatically launch the shell when you log in to Hyprland:
 
 ### If using standard `hyprland.conf`:
 Add this line to `~/.config/hypr/hyprland.conf`:
 
 ```ini
-# Autostart Caelestia Shell
+# Autostart OP Caelestia Shell on login
 exec-once = ~/.config/quickshell/caelestia/scripts/startup-shell.sh -d -n
 ```
 
@@ -96,23 +98,23 @@ hl.exec_cmd("sleep 0.5 && ~/.config/quickshell/caelestia/scripts/startup-shell.s
 
 ---
 
-## ⌨️ 4. Hyprland Keybindings Setup
+## ⌨️ 6. Hyprland Keybindings
 
 Add these keybindings to your `~/.config/hypr/hyprland.conf` (or `hypr/hyprland/keybinds.lua`) to trigger the shell features:
 
 ```ini
 # --- OP Caelestia Shell Keybinds ---
 
-# Taskview / 3D Workspace Overview
+# 3D Taskview / Workspace Overview
 bind = SUPER, Tab, global, quickshell:overviewToggle
 
-# Application Launcher
+# Application Launcher & Search
 bind = SUPER, Space, global, quickshell:launcherToggle
 
 # Dashboard Overlay
 bind = SUPER, D, global, quickshell:dashboardToggle
 
-# Notifications & Sidebar
+# Sidebar / Notifications
 bind = SUPER, N, global, quickshell:sidebarToggle
 
 # Nexus Settings Control Center
@@ -124,22 +126,20 @@ bind = SUPER, L, exec, loginctl lock-session
 
 ---
 
-## 🔍 5. Verification & Troubleshooting
+## 🔍 7. Verification & Troubleshooting
 
-### How to verify the shell is running:
+### Check if Quickshell is running:
 ```sh
 pgrep -a quickshell
 ```
-You should see `quickshell -p .../shell.qml` in the process list.
+You should see `quickshell -p .../shell.qml` in the output.
 
-### Viewing live logs:
+### View live logs:
 ```sh
 quickshell log
-# Or check the active log file:
-ls -t /run/user/$UID/quickshell/by-id/*/log.qslog | head -n1 | xargs tail -f
 ```
 
-### Restarting the shell manually:
+### Restart the shell:
 ```sh
 killall -9 quickshell || true
 ~/.config/quickshell/caelestia/scripts/startup-shell.sh -d -n

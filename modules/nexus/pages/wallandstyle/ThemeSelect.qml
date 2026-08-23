@@ -159,7 +159,7 @@ PageBase {
                 id: guideCol
                 anchors.fill: parent
                 anchors.margins: Tokens.padding.medium
-                spacing: Tokens.spacing.small
+                spacing: Tokens.spacing.medium
 
                 RowLayout {
                     spacing: Tokens.spacing.small
@@ -168,7 +168,7 @@ PageBase {
                         color: Colours.palette.m3primary
                     }
                     StyledText {
-                        text: qsTr("Theme Package Structure")
+                        text: qsTr("Theme Package Guide")
                         font: Tokens.font.title.small
                         color: Colours.palette.m3onSurface
                     }
@@ -177,7 +177,11 @@ PageBase {
                 StyledText {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
-                    text: qsTr("1. Create a folder in <b>assets/themes/&lt;ThemeName&gt;/</b>\n2. Add your wallpaper as <b>wallpaper.jpg</b> (or <b>wallpaper.png</b>)\n3. (Optional) Add theme GIFs inside <b>visuals/</b> (e.g. media.gif, session.gif)\n4. Your new theme appears automatically here and via <b>:theme</b> in the launcher!")
+                    textFormat: Text.StyledText
+                    text: qsTr("<b>1.</b> Create a folder: <b>assets/themes/[ThemeName]/</b><br>" +
+                               "<b>2.</b> Add your wallpaper: <b>wallpaper.jpg</b> (or <b>wallpaper.png</b>)<br>" +
+                               "<b>3.</b> <i>(Optional)</i> Add UI GIFs in <b>visuals/</b> (e.g. media.gif, session.gif)<br>" +
+                               "<b>4.</b> Your theme appears automatically here and via <b>:theme</b> in the launcher!")
                     font: Tokens.font.body.medium
                     color: Colours.palette.m3onSurfaceVariant
                 }

@@ -15,18 +15,18 @@ The **Theme Engine** bundles wallpapers, animations, color palettes, and UI acce
 
 ## 📁 Theme Directory Structure
 
-Themes are stored under `~/.config/quickshell/caelestia/assets/themes/` (or custom configured wallpaper directory):
+Themes are stored under `assets/themes/` (inside your quickshell shell folder, e.g. `~/.config/quickshell/op-caelestia/assets/themes/`):
 
 ```
 assets/themes/
 ├── Cyberpunk/
-│   ├── wall.png            # Main wallpaper (1920x1080 or 4K)
-│   ├── colors.json         # Material 3 tonal palette definitions
-│   └── visuals/            # Optional theme-specific GIFs / illustrations
+│   ├── wallpaper.jpg       # Main wallpaper (1920x1080 or 4K)
+│   ├── colors.json         # (Optional) Material 3 tonal palette overrides
+│   └── visuals/            # (Optional) Theme-specific GIFs / illustrations
 │       ├── media.gif
 │       └── session.gif
 └── Nord-Aurora/
-    ├── wall.jpg
+    ├── wallpaper.png
     └── colors.json
 ```
 
@@ -35,10 +35,9 @@ assets/themes/
 ## 🚀 How to Create a Custom Theme
 
 1. Create a new directory inside `assets/themes/<YourThemeName>/`.
-2. Add your primary wallpaper as `wall.png` or `wall.jpg`.
-3. (Optional) Provide a custom `colors.json` containing Material 3 tone definitions (or let Matugen generate them automatically).
-4. (Optional) Place custom animations into `visuals/`.
-5. Open **Nexus Settings** $\rightarrow$ **Wallpaper & style** $\rightarrow$ **Themes** to activate your new theme!
+2. Add your primary wallpaper as `wallpaper.jpg` or `wallpaper.png`.
+3. *(Optional)* Place custom GIF animations inside a `visuals/` subfolder (e.g. `media.gif` or `session.gif`).
+4. Open **Nexus Settings** $\rightarrow$ **Wallpaper & style** $\rightarrow$ **Themes** (or type `:theme <name>` in the launcher) to activate your new theme instantly!
 
 ---
 

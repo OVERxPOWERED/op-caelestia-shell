@@ -32,7 +32,7 @@ The **Lock Screen & Security** system enhances Caelestia with multi-mode authent
     "enabled": true,
     "showGif": true,
     "enablePattern": true,
-    "patternHash": "...",
+    "pattern": "74159",
     "enableFprint": true,
     "maxFprintTries": 3,
     "enableHowdy": false,

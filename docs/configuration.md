@@ -28,7 +28,7 @@ All shell customization settings are defined in `~/.config/caelestia/shell.json`
     "enabled": true,
     "showGif": true,
     "enablePattern": false,
-    "patternHash": "",
+    "pattern": "74159",
     "enableFprint": true,
     "maxFprintTries": 3,
     "enableHowdy": false,

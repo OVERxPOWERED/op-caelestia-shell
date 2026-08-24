@@ -38,7 +38,7 @@ If you prefer to install dependencies and build the plugin manually without usin
 ```bash
 # System Libraries, Build Tools & Audio/Media Services
 sudo pacman -S --needed cmake ninja gcc qt6-base qt6-declarative qt6-imageformats qt6-shadertools \
-    pipewire libpipewire cava aubio networkmanager lm_sensors brightnessctl ddcutil \
+    pipewire libpipewire libcava aubio networkmanager dnsmasq iptables lm_sensors brightnessctl ddcutil \
     swappy fish bash python python-dbus libqalculate power-profiles-daemon
 
 # Quickshell Engine, CLI & Fonts (via AUR)

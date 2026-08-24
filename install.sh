@@ -147,6 +147,8 @@ REQUIRED_PACKAGES=(
     "ddcutil"
     "brightnessctl"
     "networkmanager"
+    "dnsmasq"
+    "iptables"
     "power-profiles-daemon"
     "swappy"
     "lm_sensors"

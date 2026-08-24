@@ -16,6 +16,14 @@ PageBase {
 
     property bool showPassword: false
 
+    property bool savedFeedback: false
+
+    Timer {
+        id: savedTimer
+        interval: 3000
+        onTriggered: root.savedFeedback = false
+    }
+
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
@@ -37,6 +45,87 @@ PageBase {
             onToggled: Hotspot.toggle()
         }
 
+        // Diagnostic / Error Banner if hotspot failed
+        ConnectedRect {
+            Layout.fillWidth: true
+            first: true
+            last: true
+            visible: Hotspot.lastError.length > 0 && !Hotspot.active
+            color: Colours.palette.m3errorContainer
+            implicitHeight: errLayout.implicitHeight + Tokens.padding.medium * 2
+
+            RowLayout {
+                id: errLayout
+                anchors.fill: parent
+                anchors.margins: Tokens.padding.medium
+                anchors.leftMargin: Tokens.padding.largeIncreased
+                anchors.rightMargin: Tokens.padding.largeIncreased
+                spacing: Tokens.spacing.medium
+
+                MaterialIcon {
+                    text: "error"
+                    color: Colours.palette.m3onErrorContainer
+                    fontStyle: Tokens.font.icon.medium
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 0
+
+                    StyledText {
+                        text: Hotspot.lastError.includes("IP configuration") || Hotspot.lastError.includes("reserved")
+                            ? qsTr("Missing DHCP Server (dnsmasq)")
+                            : qsTr("Hotspot Activation Failed")
+                        color: Colours.palette.m3onErrorContainer
+                        font: Tokens.font.body.small
+                    }
+
+                    StyledText {
+                        text: Hotspot.lastError.includes("IP configuration") || Hotspot.lastError.includes("reserved")
+                            ? qsTr("Run: sudo pacman -S dnsmasq to enable DHCP hotspot sharing.")
+                            : Hotspot.lastError
+                        color: Colours.palette.m3onErrorContainer
+                        font: Tokens.font.label.small
+                        wrapMode: Text.WordWrap
+                    }
+                }
+            }
+        }
+
+        // Saved Feedback Banner
+        ConnectedRect {
+            Layout.fillWidth: true
+            first: true
+            last: true
+            visible: root.savedFeedback
+            color: Colours.palette.m3primaryContainer
+            implicitHeight: savedLayout.implicitHeight + Tokens.padding.medium * 2
+
+            RowLayout {
+                id: savedLayout
+                anchors.fill: parent
+                anchors.margins: Tokens.padding.medium
+                anchors.leftMargin: Tokens.padding.largeIncreased
+                anchors.rightMargin: Tokens.padding.largeIncreased
+                spacing: Tokens.spacing.medium
+
+                MaterialIcon {
+                    text: "check_circle"
+                    color: Colours.palette.m3onPrimaryContainer
+                    fontStyle: Tokens.font.icon.medium
+                }
+
+                StyledText {
+                    Layout.fillWidth: true
+                    text: Hotspot.active
+                        ? qsTr("Settings saved! Restarting hotspot with new credentials...")
+                        : qsTr("Settings saved successfully!")
+                    color: Colours.palette.m3onPrimaryContainer
+                    font: Tokens.font.body.small
+                }
+            }
+        }
+
         // 2. Configuration Settings Section
         SectionHeader {
             text: qsTr("Hotspot Settings")
@@ -51,6 +140,7 @@ PageBase {
             leadingIcon: "wifi_tethering"
             errorText: qsTr("SSID cannot be empty")
             inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
+            onAccepted: passwordField.forceActiveFocus()
         }
 
         RowLayout {
@@ -67,6 +157,7 @@ PageBase {
                 echoMode: root.showPassword ? TextInput.Normal : TextInput.Password
                 errorText: qsTr("Password must be at least 8 characters")
                 inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
+                onAccepted: saveBtn.clicked()
             }
 
             IconButton {
@@ -108,9 +199,10 @@ PageBase {
             Item { Layout.fillWidth: true }
 
             IconTextButton {
-                text: qsTr("Save & Apply")
-                icon: "save"
-                type: IconTextButton.Filled
+                id: saveBtn
+                text: root.savedFeedback ? qsTr("Saved!") : qsTr("Save & Apply")
+                icon: root.savedFeedback ? "check" : "save"
+                type: root.savedFeedback ? IconTextButton.Tonal : IconTextButton.Filled
                 onClicked: {
                     const s = ssidField.text.trim();
                     const p = passwordField.text;
@@ -127,7 +219,9 @@ PageBase {
                     ssidField.isError = false;
                     passwordField.isError = false;
                     Hotspot.updateCredentials(s, p, Hotspot.band);
-                    Toaster.toast(qsTr("Wi-Fi Hotspot"), qsTr("Hotspot settings updated"), "wifi_tethering");
+                    root.savedFeedback = true;
+                    savedTimer.restart();
+                    Toaster.toast(qsTr("Wi-Fi Hotspot"), qsTr("Hotspot settings updated to '%1'").arg(s), "wifi_tethering");
                 }
             }
         }

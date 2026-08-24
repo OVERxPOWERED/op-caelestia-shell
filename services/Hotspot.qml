@@ -134,6 +134,8 @@ Singleton {
         onTriggered: root.start()
     }
 
+    property string lastError: ""
+
     // --- Background Process Runners ---
 
     // 1. Start Hotspot Process
@@ -145,7 +147,17 @@ Singleton {
             onRead: data => {
                 const line = data.trim();
                 if (line.length > 0) {
-                    console.log("[Hotspot start]", line);
+                    console.log("[Hotspot stdout]", line);
+                }
+            }
+        }
+
+        stderr: SplitParser {
+            onRead: data => {
+                const line = data.trim();
+                if (line.length > 0) {
+                    root.lastError = line;
+                    console.warn("[Hotspot stderr]", line);
                 }
             }
         }
@@ -155,10 +167,17 @@ Singleton {
             root.refreshStatus();
             if (code === 0) {
                 root.active = true;
+                root.lastError = "";
                 Toaster.toast(qsTr("Wi-Fi Hotspot"), qsTr("Hotspot '%1' is now active").arg(root.ssid), "wifi_tethering");
                 root.refreshClients();
             } else {
-                Toaster.toast(qsTr("Wi-Fi Hotspot Error"), qsTr("Failed to start Hotspot. Check wireless interface mode."), "error");
+                let msg = qsTr("Failed to start Hotspot.");
+                if (root.lastError.includes("IP configuration") || root.lastError.includes("reserved")) {
+                    msg = qsTr("Missing 'dnsmasq' package for DHCP. Install with: sudo pacman -S dnsmasq");
+                } else if (root.lastError.length > 0) {
+                    msg = root.lastError;
+                }
+                Toaster.toast(qsTr("Wi-Fi Hotspot Error"), msg, "error");
             }
         }
     }

@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -15,20 +16,19 @@ PageBase {
     isSubPage: true
 
     property bool showPassword: false
-
     property bool savedFeedback: false
-
-    Timer {
-        id: savedTimer
-        interval: 3000
-        onTriggered: root.savedFeedback = false
-    }
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
         spacing: Tokens.spacing.large
+
+        Timer {
+            id: savedTimer
+            interval: 3000
+            onTriggered: root.savedFeedback = false
+        }
 
         // 1. Master Hotspot Toggle
         ToggleRow {

@@ -19,7 +19,7 @@ Singleton {
     property bool wifiEnabled: true
     readonly property bool scanning: rescanProc.running
     readonly property list<AccessPoint> networks: []
-    readonly property AccessPoint active: networks.find(n => n.active) ?? null
+    readonly property AccessPoint active: Hotspot.active ? null : (networks.find(n => n.active) ?? null)
     property list<string> savedConnections: []
     property list<string> savedConnectionSsids: []
     // Map of saved Wi-Fi SSID (lowercased) -> security type
@@ -89,10 +89,11 @@ Singleton {
 
         const allNetworks = output.trim().split("\n").filter(line => line && line.length > 0).map(n => {
             const net = n.replace(rep, PLACEHOLDER).split(":");
+            const inUse = net[0] === "*" || net[0] === "yes" || net[0] === "true";
             const ssid = (net[3]?.replace(rep2, ":") ?? "").trim();
-            const isLocalHotspot = ssid === "Hotspot" || (Hotspot.active && ssid === Hotspot.ssid);
+            const isLocalHotspot = ssid === "Hotspot" || (Hotspot.ssid && ssid.toLowerCase() === Hotspot.ssid.toLowerCase());
             return {
-                active: net[0] === "yes" && !isLocalHotspot,
+                active: inUse && !Hotspot.active && !isLocalHotspot,
                 strength: parseInt(net[1] || "0", 10) || 0,
                 frequency: parseInt(net[2] || "0", 10) || 0,
                 ssid: ssid,
@@ -102,7 +103,7 @@ Singleton {
         }).filter(n => {
             if (!n.ssid || n.ssid.length === 0)
                 return false;
-            if (Hotspot.active && (n.ssid === Hotspot.ssid || n.ssid === "Hotspot"))
+            if (Hotspot.active && (n.ssid === "Hotspot" || (Hotspot.ssid && n.ssid.toLowerCase() === Hotspot.ssid.toLowerCase())))
                 return false;
             return true;
         });
@@ -837,7 +838,8 @@ Singleton {
                     const conn = parts[3] || "";
                     if (isConnectedState(state)) {
                         // Skip local Hotspot AP connection so machine doesn't report connected to itself
-                        if (conn === "Hotspot" || (Hotspot.active && (conn === Hotspot.ssid || dev === Hotspot.iface))) {
+                        const isHotspotConn = conn === "Hotspot" || (Hotspot.ssid && conn.toLowerCase() === Hotspot.ssid.toLowerCase());
+                        if (isHotspotConn || (Hotspot.active && (dev === Hotspot.iface || type === "wifi"))) {
                             continue;
                         }
                         connected = true;

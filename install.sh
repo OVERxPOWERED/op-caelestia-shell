@@ -142,7 +142,7 @@ REQUIRED_PACKAGES=(
     "qt6-shadertools"
     "pipewire"
     "libpipewire"
-    "cava"
+    "libcava"
     "aubio"
     "ddcutil"
     "brightnessctl"

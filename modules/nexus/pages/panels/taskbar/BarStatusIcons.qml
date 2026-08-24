@@ -13,6 +13,7 @@ PageBase {
             audio: qsTr("Speakers"),
             microphone: qsTr("Microphone"),
             network: qsTr("Network"),
+            hotspot: qsTr("Wi-Fi Hotspot"),
             bluetooth: qsTr("Bluetooth"),
             battery: qsTr("Battery")
         })

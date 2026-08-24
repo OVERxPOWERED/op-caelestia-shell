@@ -126,6 +126,7 @@ class BarConfig : public ConfigObject {
             LIST_ENTRY(microphone, false),
             LIST_ENTRY(kbLayout, false),
             LIST_ENTRY(network, true),
+            LIST_ENTRY(hotspot, true),
             LIST_ENTRY(bluetooth, true),
             LIST_ENTRY(battery, true),
         })

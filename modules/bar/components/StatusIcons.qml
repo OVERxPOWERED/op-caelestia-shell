@@ -37,6 +37,8 @@ StyledRect {
     function collapsed(entry: var): bool {
         if (entry.id === "lockStatus")
             return !Hypr.capsLock && !Hypr.numLock;
+        if (entry.id === "hotspot")
+            return !Hotspot.active;
         return false;
     }
 
@@ -123,6 +125,19 @@ StyledRect {
                             animate: true
                             text: Nmcli.activeEthernet ? "cable" : Nmcli.active ? Icons.getNetworkIcon(Nmcli.active.strength ?? 0) : "wifi_off"
                             color: root.colour
+                        }
+                    }
+                }
+                DelegateChoice {
+                    roleValue: "hotspot"
+                    delegate: EntryWrapper {
+                        name: "network" // Clicking opens network popout
+
+                        MaterialIcon {
+                            animate: true
+                            text: "wifi_tethering"
+                            color: Colours.palette.m3primary
+                            fontStyle: Tokens.font.icon.medium
                         }
                     }
                 }

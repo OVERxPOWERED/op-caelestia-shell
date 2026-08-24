@@ -89,18 +89,20 @@ Singleton {
 
         const allNetworks = output.trim().split("\n").filter(line => line && line.length > 0).map(n => {
             const net = n.replace(rep, PLACEHOLDER).split(":");
+            const ssid = (net[3]?.replace(rep2, ":") ?? "").trim();
+            const isLocalHotspot = ssid === "Hotspot" || (Hotspot.active && ssid === Hotspot.ssid);
             return {
-                active: net[0] === "yes",
+                active: net[0] === "yes" && !isLocalHotspot,
                 strength: parseInt(net[1] || "0", 10) || 0,
                 frequency: parseInt(net[2] || "0", 10) || 0,
-                ssid: (net[3]?.replace(rep2, ":") ?? "").trim(),
+                ssid: ssid,
                 bssid: (net[4]?.replace(rep2, ":") ?? "").trim(),
                 security: (net[5] ?? "").trim()
             };
         }).filter(n => {
             if (!n.ssid || n.ssid.length === 0)
                 return false;
-            if (Hotspot.active && n.ssid === Hotspot.ssid)
+            if (Hotspot.active && (n.ssid === Hotspot.ssid || n.ssid === "Hotspot"))
                 return false;
             return true;
         });
@@ -829,11 +831,18 @@ Singleton {
             for (const line of lines) {
                 const parts = line.split(":");
                 if (parts.length >= 4) {
+                    const dev = parts[0] || "";
+                    const type = parts[1] || "";
                     const state = parts[2] || "";
+                    const conn = parts[3] || "";
                     if (isConnectedState(state)) {
+                        // Skip local Hotspot AP connection so machine doesn't report connected to itself
+                        if (conn === "Hotspot" || (Hotspot.active && (conn === Hotspot.ssid || dev === Hotspot.iface))) {
+                            continue;
+                        }
                         connected = true;
-                        activeIf = parts[0] || "";
-                        activeConn = parts[3] || "";
+                        activeIf = dev;
+                        activeConn = conn;
                         break;
                     }
                 }

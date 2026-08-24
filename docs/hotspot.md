@@ -7,6 +7,7 @@ Caelestia includes native support for Wi-Fi Access Point (Hotspot) broadcasting 
 ## 🌟 Features
 
 - **1-Click Quick Toggle**: Enable or disable Hotspot broadcasting directly from the Dashboard Quick Toggles.
+- **Top Bar Status Indicator**: A dedicated dynamic status icon (`wifi_tethering`) illuminates in the bar when active and automatically hides when idle.
 - **Nexus Settings Subpage**: Manage Hotspot name (SSID), WPA2/WPA3 password, and frequency bands.
 - **Dual-Band Support**: Switch between **2.4 GHz** (long range / maximum device compatibility) and **5 GHz** (high speed).
 - **Connected Clients Monitor**: Live device list showing assigned IP addresses, MAC addresses, and active connection status.

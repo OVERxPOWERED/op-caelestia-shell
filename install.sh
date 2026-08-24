@@ -312,13 +312,33 @@ else
     log_info "No existing Hyprland config found. You can add 'op-caelestia' to your autostart manually."
 fi
 
-# 8. Completion & Launch
+# 8. Completion & Instructions
+REL_TARGET="${AUTOSTART_TARGET_FILE/#$HOME/~}"
+
 echo ""
-echo -e "${CLR_GREEN}${CLR_BOLD}🎉 OP-Caelestia Shell installation is complete!${CLR_RESET}\n"
-echo -e "You can manage the shell anytime via terminal:"
-echo -e "  • Start:   ${CLR_CYAN}op-caelestia${CLR_RESET}"
-echo -e "  • Restart: ${CLR_CYAN}op-caelestia -r${CLR_RESET}"
-echo -e "  • Stop:    ${CLR_CYAN}op-caelestia -k${CLR_RESET}\n"
+echo -e "${CLR_GREEN}${CLR_BOLD}======================================================${CLR_RESET}"
+echo -e "${CLR_GREEN}${CLR_BOLD} 🎉 OP-Caelestia Shell Installation Complete!${CLR_RESET}"
+echo -e "${CLR_GREEN}${CLR_BOLD}======================================================${CLR_RESET}\n"
+
+echo -e "${CLR_BOLD}🎮 CLI Management Commands:${CLR_RESET}"
+echo -e "  • Start:    ${CLR_CYAN}op-caelestia${CLR_RESET}"
+echo -e "  • Restart:  ${CLR_CYAN}op-caelestia -r${CLR_RESET}"
+echo -e "  • Stop:     ${CLR_CYAN}op-caelestia -k${CLR_RESET}\n"
+
+echo -e "${CLR_BOLD}⚡ Autostart & Switching Shells:${CLR_RESET}"
+if [ -n "$AUTOSTART_TARGET_FILE" ]; then
+    if [ "$AUTOSTART_TYPE" = "lua" ]; then
+        echo -e "  • Autostart configured in: ${CLR_CYAN}$REL_TARGET${CLR_RESET}"
+        echo -e "    Added line: ${CLR_MUTED}hl.exec_cmd(\"sleep 0.5 && op-caelestia\")${CLR_RESET}"
+    else
+        echo -e "  • Autostart configured in: ${CLR_CYAN}$REL_TARGET${CLR_RESET}"
+        echo -e "    Added line: ${CLR_MUTED}exec-once = op-caelestia${CLR_RESET}"
+    fi
+    echo -e "  • ${CLR_YELLOW}To disable or change:${CLR_RESET} Open ${CLR_CYAN}$REL_TARGET${CLR_RESET} and comment out / remove the line."
+    echo -e "  • ${CLR_YELLOW}To switch back to vanilla Caelestia:${CLR_RESET} Replace ${CLR_CYAN}op-caelestia${CLR_RESET} with ${CLR_CYAN}caelestia shell -d${CLR_RESET} in that file.\n"
+else
+    echo -e "  • To enable autostart on boot, add ${CLR_CYAN}exec-once = op-caelestia${CLR_RESET} to your Hyprland configuration.\n"
+fi
 
 if ask_prompt "Would you like to start OP-Caelestia Shell now?" "Y"; then
     log_info "Stopping any previous shell instances..."

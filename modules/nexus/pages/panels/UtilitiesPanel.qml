@@ -134,12 +134,20 @@ PageBase {
         }
 
         ToggleRow {
-            last: true
             text: qsTr("VPN")
             subtext: qsTr("Connect or disconnect the VPN")
             disabled: !Config.utilities.cards.quickToggles
             checked: root.isToggleOn("vpn")
             onToggled: root.setToggleOn("vpn", checked)
+        }
+
+        ToggleRow {
+            last: true
+            text: qsTr("Wi-Fi Hotspot")
+            subtext: qsTr("Toggle Wi-Fi Access Point broadcasting")
+            disabled: !Config.utilities.cards.quickToggles
+            checked: root.isToggleOn("hotspot")
+            onToggled: root.setToggleOn("hotspot", checked)
         }
     }
 }

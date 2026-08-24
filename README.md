@@ -214,6 +214,7 @@ Explore the dedicated documentation guides in [`docs/`](docs/):
 * 🎨 **[Theme Engine Manual](docs/themes.md)** — Dynamic palette generation, Material You theming, and preset packages.
 * 🔒 **[Lock Screen & Security](docs/lockscreen.md)** — 3x3 Gesture pattern lock, recorder modal, and PAM authentication.
 * 🔊 **[Audio Management](docs/audio.md)** — Per-app audio stream mixing and device routing.
+* 📶 **[Hotspot & Tethering](docs/hotspot.md)** — Wi-Fi AP broadcasting, client monitoring, and credentials management.
 * ⚙️ **[Nexus Control Center](docs/nexus.md)** — Quick settings toggles, network/bluetooth trays, and preferences.
 * 💻 **[Hardware Compatibility](docs/hardware-compatibility.md)** — Intel Xe, AMD, NVIDIA GPU engine autodetection.
 * 📖 **[Configuration Reference](docs/configuration.md)** — Complete `shell.json` option reference.

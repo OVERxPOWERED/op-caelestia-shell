@@ -11,3 +11,4 @@ build-plugin/
 /compile_commands.json
 docs/desktop-environment-roadmap.md
 update.sh
+changes.md

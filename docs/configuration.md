@@ -96,6 +96,19 @@ All shell customization settings are defined in `~/.config/caelestia/shell.json`
         "to": "YT Music"
       }
     ]
+  },
+  "utilities": {
+    "enabled": true,
+    "quickToggles": [
+      { "id": "wifi", "enabled": true },
+      { "id": "bluetooth", "enabled": true },
+      { "id": "mic", "enabled": true },
+      { "id": "settings", "enabled": true },
+      { "id": "gameMode", "enabled": true },
+      { "id": "dnd", "enabled": true },
+      { "id": "vpn", "enabled": false },
+      { "id": "hotspot", "enabled": true }
+    ]
   }
 }
 ```

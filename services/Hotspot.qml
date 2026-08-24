@@ -174,6 +174,14 @@ Singleton {
                 let msg = qsTr("Failed to start Hotspot.");
                 if (root.lastError.includes("IP configuration") || root.lastError.includes("reserved")) {
                     msg = qsTr("Missing 'dnsmasq' package for DHCP. Install with: sudo pacman -S dnsmasq");
+                } else if (root.lastError.includes("supplicant") || root.lastError.includes("authenticate")) {
+                    if (root.band === "a") {
+                        msg = qsTr("5 GHz not supported in AP mode by card/regdomain. Falling back to 2.4 GHz...");
+                        root.band = "bg";
+                        restartTimer.restart();
+                    } else {
+                        msg = qsTr("Wi-Fi device busy or supplicant timed out. Try toggling Wi-Fi off and on.");
+                    }
                 } else if (root.lastError.length > 0) {
                     msg = root.lastError;
                 }

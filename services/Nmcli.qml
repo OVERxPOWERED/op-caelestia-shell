@@ -4,6 +4,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.services
 
 Singleton {
     id: root
@@ -24,7 +25,7 @@ Singleton {
     // Map of saved Wi-Fi SSID (lowercased) -> security type
     property var savedConnectionSecurity: ({})
 
-    property var wifiConnectionQueue: []
+    property list<string> wifiConnectionQueue: []
     property int currentSsidQueryIndex: 0
     property var pendingConnection: null
     property var wirelessDeviceDetails: null
@@ -96,7 +97,13 @@ Singleton {
                 bssid: (net[4]?.replace(rep2, ":") ?? "").trim(),
                 security: (net[5] ?? "").trim()
             };
-        }).filter(n => n.ssid && n.ssid.length > 0);
+        }).filter(n => {
+            if (!n.ssid || n.ssid.length === 0)
+                return false;
+            if (Hotspot.active && n.ssid === Hotspot.ssid)
+                return false;
+            return true;
+        });
 
         return allNetworks;
     }

@@ -15,6 +15,11 @@ Singleton {
     property bool pending: false
     property string statusText: active ? qsTr("Broadcasting") : qsTr("Disabled")
 
+    onActiveChanged: {
+        Nmcli.refreshStatus(() => {});
+        Nmcli.getNetworks(() => {});
+    }
+
     // --- Hotspot Configuration ---
     property string ssid: "Caelestia-Hotspot"
     property string password: "caelestia1234"

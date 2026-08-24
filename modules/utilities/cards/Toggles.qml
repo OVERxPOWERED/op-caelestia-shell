@@ -149,6 +149,15 @@ StyledRect {
                         onClicked: VPN.toggle()
                     }
                 }
+                DelegateChoice {
+                    roleValue: "hotspot"
+                    delegate: Toggle {
+                        icon: "wifi_tethering"
+                        checked: Hotspot.active
+                        enabled: !Hotspot.pending
+                        onClicked: Hotspot.toggle()
+                    }
+                }
             }
         }
     }

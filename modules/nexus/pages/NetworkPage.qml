@@ -347,5 +347,27 @@ PageBase {
                 root.nState.openSubPage(4); // Add/edit provider sub-page
             }
         }
+
+        // ---- Hotspot & Tethering --------------------------------------------
+        ToggleRow {
+            Layout.topMargin: Tokens.spacing.large
+            Layout.fillWidth: true
+            first: true
+            text: qsTr("Wi-Fi Hotspot")
+            subtext: Hotspot.active ? qsTr("Broadcasting '%1' (%2 connected)").arg(Hotspot.ssid).arg(Hotspot.clientCount) : qsTr("Share internet with other devices")
+            font: Tokens.font.body.medium
+            horizontalPadding: Tokens.padding.largeIncreased
+            checked: Hotspot.active
+            disabled: Hotspot.pending
+            onToggled: Hotspot.toggle()
+        }
+
+        RowButton {
+            last: true
+            icon: "settings"
+            text: qsTr("Hotspot settings")
+            trailingIcon: "chevron_right"
+            onClicked: root.nState.openSubPage(7) // Hotspot sub-page
+        }
     }
 }

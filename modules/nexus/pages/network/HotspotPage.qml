@@ -53,20 +53,27 @@ PageBase {
             inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
         }
 
-        StyledTextField {
-            id: passwordField
+        RowLayout {
             Layout.fillWidth: true
-            text: Hotspot.password
-            placeholderText: qsTr("Password (at least 8 characters)")
-            supportingText: qsTr("WPA2 / WPA3 security key")
-            leadingIcon: "lock"
-            echoMode: root.showPassword ? TextInput.Normal : TextInput.Password
-            errorText: qsTr("Password must be at least 8 characters")
-            inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
+            spacing: Tokens.spacing.small
 
-            trailingButtonComponent: IconButton {
+            StyledTextField {
+                id: passwordField
+                Layout.fillWidth: true
+                text: Hotspot.password
+                placeholderText: qsTr("Password (at least 8 characters)")
+                supportingText: qsTr("WPA2 / WPA3 security key")
+                leadingIcon: "lock"
+                echoMode: root.showPassword ? TextInput.Normal : TextInput.Password
+                errorText: qsTr("Password must be at least 8 characters")
+                inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
+            }
+
+            IconButton {
+                Layout.alignment: Qt.AlignTop
                 icon: root.showPassword ? "visibility_off" : "visibility"
-                type: IconButton.Transparent
+                type: IconButton.Tonal
+                isRound: true
                 onClicked: root.showPassword = !root.showPassword
             }
         }
@@ -84,12 +91,12 @@ PageBase {
                 MenuItem {
                     icon: "wifi"
                     text: qsTr("2.4 GHz (Standard / Long Range)")
-                    onTriggered: Hotspot.band = "bg"
+                    onClicked: Hotspot.band = "bg"
                 },
                 MenuItem {
                     icon: "speed"
                     text: qsTr("5 GHz (High Speed)")
-                    onTriggered: Hotspot.band = "a"
+                    onClicked: Hotspot.band = "a"
                 }
             ]
         }
@@ -155,11 +162,10 @@ PageBase {
                         anchors.rightMargin: Tokens.padding.largeIncreased
                         spacing: Tokens.spacing.medium
 
-                        MaskedIcon {
-                            source: "devices"
-                            colour: Colours.palette.m3primary
-                            implicitWidth: Tokens.sizes.mediumIcon
-                            implicitHeight: Tokens.sizes.mediumIcon
+                        MaterialIcon {
+                            text: "devices"
+                            color: Colours.palette.m3primary
+                            fontStyle: Tokens.font.icon.medium
                         }
 
                         ColumnLayout {

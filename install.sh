@@ -249,26 +249,67 @@ BIN_DIR="$HOME/.local/bin"
 mkdir -p "$BIN_DIR"
 cat > "$BIN_DIR/op-caelestia" << EOF
 #!/usr/bin/env bash
-exec "$TARGET_DIR/scripts/startup-shell.sh" "\$@"
+if [[ "\${1:-}" == "-k" || "\${1:-}" == "--kill" ]]; then
+    killall -9 quickshell 2>/dev/null || true
+    exit 0
+elif [[ "\${1:-}" == "-r" || "\${1:-}" == "--restart" ]]; then
+    killall -9 quickshell 2>/dev/null || true
+    sleep 0.5
+    exec "$TARGET_DIR/scripts/startup-shell.sh" -d -n
+fi
+exec "$TARGET_DIR/scripts/startup-shell.sh" -d -n "\$@"
 EOF
 chmod +x "$BIN_DIR/op-caelestia"
 log_success "Created global launcher shortcut: op-caelestia (in ~/.local/bin/op-caelestia)"
 
-# 7. Hyprland Autostart Integration
-HYPR_CONF="$CONFIG_BASE/hypr/hyprland.conf"
-AUTOSTART_CMD="exec-once = op-caelestia"
+# 7. Hyprland Autostart Integration (Intelligent Lua & Conf Detection)
+log_info "Detecting Hyprland configuration format..."
 
-if [ -f "$HYPR_CONF" ]; then
-    if ! grep -q "op-caelestia" "$HYPR_CONF" && ! grep -q "startup-shell.sh" "$HYPR_CONF"; then
-        if ask_prompt "Add OP-Caelestia Shell autostart to your hyprland.conf?" "Y"; then
-            echo "" >> "$HYPR_CONF"
-            echo "# Autostart OP-Caelestia Shell" >> "$HYPR_CONF"
-            echo "$AUTOSTART_CMD" >> "$HYPR_CONF"
-            log_success "Added autostart command to $HYPR_CONF"
+AUTOSTART_TARGET_FILE=""
+AUTOSTART_TYPE=""
+
+# Priority 1: Check for Lua configurations (Caelestia dotfiles / Hyprland Lua)
+if [ -f "$CONFIG_BASE/hypr/hyprland/execs.lua" ]; then
+    AUTOSTART_TARGET_FILE="$CONFIG_BASE/hypr/hyprland/execs.lua"
+    AUTOSTART_TYPE="lua"
+elif [ -f "$CONFIG_BASE/hypr/execs.lua" ]; then
+    AUTOSTART_TARGET_FILE="$CONFIG_BASE/hypr/execs.lua"
+    AUTOSTART_TYPE="lua"
+elif [ -f "$CONFIG_BASE/hypr/hyprland.lua" ]; then
+    AUTOSTART_TARGET_FILE="$CONFIG_BASE/hypr/hyprland.lua"
+    AUTOSTART_TYPE="lua"
+# Priority 2: Check for Conf configurations (Standard Hyprland)
+elif [ -f "$CONFIG_BASE/hypr/hyprland/execs.conf" ]; then
+    AUTOSTART_TARGET_FILE="$CONFIG_BASE/hypr/hyprland/execs.conf"
+    AUTOSTART_TYPE="conf"
+elif [ -f "$CONFIG_BASE/hypr/execs.conf" ]; then
+    AUTOSTART_TARGET_FILE="$CONFIG_BASE/hypr/execs.conf"
+    AUTOSTART_TYPE="conf"
+elif [ -f "$CONFIG_BASE/hypr/hyprland.conf" ]; then
+    AUTOSTART_TARGET_FILE="$CONFIG_BASE/hypr/hyprland.conf"
+    AUTOSTART_TYPE="conf"
+fi
+
+if [ -n "$AUTOSTART_TARGET_FILE" ]; then
+    if ! grep -q "op-caelestia" "$AUTOSTART_TARGET_FILE" && ! grep -q "startup-shell.sh" "$AUTOSTART_TARGET_FILE"; then
+        REL_PATH="${AUTOSTART_TARGET_FILE/#$HOME/~}"
+        if ask_prompt "Add OP-Caelestia Shell autostart to $REL_PATH?" "Y"; then
+            if [ "$AUTOSTART_TYPE" = "lua" ]; then
+                echo "" >> "$AUTOSTART_TARGET_FILE"
+                echo "-- Autostart OP-Caelestia Shell" >> "$AUTOSTART_TARGET_FILE"
+                echo 'hl.exec_cmd("sleep 0.5 && op-caelestia")' >> "$AUTOSTART_TARGET_FILE"
+            else
+                echo "" >> "$AUTOSTART_TARGET_FILE"
+                echo "# Autostart OP-Caelestia Shell" >> "$AUTOSTART_TARGET_FILE"
+                echo "exec-once = op-caelestia" >> "$AUTOSTART_TARGET_FILE"
+            fi
+            log_success "Added autostart command to $REL_PATH ($AUTOSTART_TYPE format)"
         fi
     else
-        log_info "Autostart entry already present in $HYPR_CONF."
+        log_info "Autostart entry already present in $AUTOSTART_TARGET_FILE."
     fi
+else
+    log_info "No existing Hyprland config found. You can add 'op-caelestia' to your autostart manually."
 fi
 
 # 8. Completion & Launch

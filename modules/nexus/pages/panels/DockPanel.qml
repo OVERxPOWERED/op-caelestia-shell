@@ -129,7 +129,7 @@ PageBase {
                     spacing: Tokens.spacing.medium
 
                     IconImage {
-                        source: Icons.getIcon(root.getAppIcon(pinnedRow.modelData))
+                        source: Quickshell.iconPath(root.getAppIcon(pinnedRow.modelData), "image-missing")
                         implicitWidth: 24
                         implicitHeight: 24
                     }

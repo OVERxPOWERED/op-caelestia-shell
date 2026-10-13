@@ -8,6 +8,7 @@
 #include <qquickitemgrabresult.h>
 #include <qquickwindow.h>
 #include <qregularexpression.h>
+#include <qstandardpaths.h>
 #include <qtconcurrentrun.h>
 
 #include "util/metaenum.hpp"
@@ -107,6 +108,10 @@ QString CUtils::toLocalFile(const QUrl& url) {
     }
 
     return url.toLocalFile();
+}
+
+QString CUtils::findExecutable(const QString& name) {
+    return QStandardPaths::findExecutable(name);
 }
 
 qreal CUtils::clamp(qreal value, qreal min, qreal max) {

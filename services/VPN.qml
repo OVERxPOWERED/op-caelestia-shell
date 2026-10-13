@@ -186,6 +186,11 @@ Singleton {
             return;
         }
         if (!connected && !connecting) {
+            const cmd = active.connectCmd;
+            if (cmd && cmd.length > 0 && !CUtils.findExecutable(cmd[0])) {
+                reportConnectFailure(Tr.tr("Could not start %1. Is '%2' installed?").arg(active.displayName).arg(cmd[0]));
+                return;
+            }
             connectPending = true;
             connectProc.exec(active.connectCmd);
         }
@@ -219,6 +224,17 @@ Singleton {
 
     function checkStatus(): void {
         if (root.selectedProvider.length > 0) {
+            const cmd = root.active.statusCmd;
+            if (cmd && cmd.length > 0 && !CUtils.findExecutable(cmd[0])) {
+                root.updateStatus({
+                    connected: false,
+                    state: "disconnected",
+                    reason: Tr.tr("Command '%1' not found").arg(cmd[0]),
+                    authUrl: "",
+                    server: ""
+                });
+                return;
+            }
             statusProc.running = true;
         }
     }

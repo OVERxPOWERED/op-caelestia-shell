@@ -223,12 +223,17 @@ Use this document to track execution progress across all phases and subphases ou
   - **Date Completed**: 2026-10-13 20:52
   - **Notes**: Working tree is clean on `sync-upstream-latest`. Commits are structured logically on top of `upstream/main` (`a3a8fe59`).
 
+- [x] **Subphase 8.5: Runtime Log Diagnostics & Warning Remediation**
+  - **Status**: `[x] COMPLETED`
+  - **Date Completed**: 2026-10-13 21:55
+  - **Notes**: Fixed QML `getAppEntry` return type annotation in `modules/dock/Content.qml`, corrected icon lookup to `Quickshell.iconPath` in `modules/nexus/pages/panels/DockPanel.qml`, added `CUtils.findExecutable` to guard VPN status & connect processes when binaries are missing in `services/VPN.qml`, and cleaned obsolete Hotspot entry from user config.
+
 ---
 
 ## Progress Summary
 - **Total Phases**: 9 (0 to 8)
-- **Total Subphases**: 25
-- **Subphases Completed**: 25 / 25 (100%)
+- **Total Subphases**: 26
+- **Subphases Completed**: 26 / 26 (100%)
 - **Current Active Branch**: `sync-upstream-latest`
 - **Upstream Base Commit**: `caelestia-dots/shell@a3a8fe59`
-- **Build Status**: **PASSED (0 errors, 223/223 targets)**
+- **Build Status**: **PASSED (0 errors, 223/223 targets, zero runtime QML errors/warnings)**

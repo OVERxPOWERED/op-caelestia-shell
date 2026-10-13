@@ -52,7 +52,7 @@ StyledWindow {
             return 0;
 
         const thresholds = [];
-        for (const panel of ["dashboard", "launcher", "session", "sidebar"])
+        for (const panel of ["dashboard", "launcher", "session", "sidebar", "dock"])
             if (contentItem.Config[panel].enabled)
                 thresholds.push(contentItem.Config[panel].dragThreshold);
         return Math.max(...thresholds);

@@ -13,6 +13,7 @@ Scope {
         Players;
         Brightness;
         Weather.reload();
+        Pomodoro;
 
         if (GlobalConfig.utilities.vpn.enabled)
             VPN;

@@ -244,6 +244,15 @@ Upgrade the core C++ plugin engine, QML modules, services, and tooling to the la
   - `modules/launcher/AppList.qml`: Theme section / filter integration.
   - `modules/launcher/services/Actions.qml`: Theme command triggers.
 
+#### Subphase 5.4: Pomodoro Timer & Dual-Mode Dashboard Clock
+- **Goal**: Add a full-featured Pomodoro timer to the dashboard while preserving the digital clock view via an interactive switcher.
+- **Files Involved**:
+  - `plugin/src/Caelestia/Config/dashboardconfig.hpp`: `DashboardPomodoro` configuration node (`focusDuration`, `shortBreakDuration`, `longBreakDuration`, `sessionsBeforeLongBreak`, `defaultToPomodoro`).
+  - `services/Pomodoro.qml`: Drift-free timestamp-anchored timer singleton with Focus / Short Break / Long Break modes and auto-cycle progression.
+  - `modules/ServiceLoader.qml`: Service loader initialization for `Pomodoro`.
+  - `modules/dashboard/dash/DateTime.qml`: Dual-mode card with smooth flip transition, 76px circular progress indicator with wavy animation, cycle dots, control buttons, and active timer badge in clock view.
+
+
 ---
 
 ## Phase 6: Nexus Settings & Module Suite Synchronization

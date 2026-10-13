@@ -16,6 +16,16 @@ class DashboardPerformance : public settings::ObjectNode {
     CONFIG_PROPERTY(bool, showNetwork, true)
 };
 
+class DashboardPomodoro : public settings::ObjectNode {
+    CONFIG_NODE(DashboardPomodoro, settings::ObjectNode)
+
+    CONFIG_PROPERTY(int, focusDuration, 25)
+    CONFIG_PROPERTY(int, shortBreakDuration, 5)
+    CONFIG_PROPERTY(int, longBreakDuration, 15)
+    CONFIG_PROPERTY(int, sessionsBeforeLongBreak, 4)
+    CONFIG_PROPERTY(bool, defaultToPomodoro, true)
+};
+
 class DashboardConfig : public settings::ObjectNode {
     CONFIG_NODE(DashboardConfig, settings::ObjectNode)
 
@@ -30,6 +40,7 @@ class DashboardConfig : public settings::ObjectNode {
     CONFIG_GLOBAL_PROPERTY(int, resourceUpdateInterval, 1000)
     CONFIG_PROPERTY(int, dragThreshold, 50)
     CONFIG_SUBOBJECT(DashboardPerformance, performance)
+    CONFIG_SUBOBJECT(DashboardPomodoro, pomodoro)
 };
 
 } // namespace caelestia::config

@@ -19,7 +19,7 @@ jobs:
     if: needs.changes.outputs.format-qml == 'true'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository_owner }}/shell-arch-env:latest
+      image: ghcr.io/caelestia-dots/shell-arch-env:latest
 
     steps:
       - name: Checkout repo
@@ -39,7 +39,7 @@ jobs:
     if: needs.changes.outputs.format-cpp == 'true'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository_owner }}/shell-arch-env:latest
+      image: ghcr.io/caelestia-dots/shell-arch-env:latest
 
     steps:
       - name: Checkout repo

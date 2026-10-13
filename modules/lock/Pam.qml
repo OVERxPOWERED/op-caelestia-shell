@@ -30,6 +30,12 @@ Scope {
 
     signal flashMsg
 
+    function rejectPattern(): void {
+        root.state = Pam.Failed;
+        flashMsg();
+        pwdStateReset.restart();
+    }
+
     function handleKey(event: KeyEvent): void {
         if (passwd.active)
             return;

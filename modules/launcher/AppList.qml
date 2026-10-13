@@ -29,7 +29,7 @@ StyledListView {
     function stateForText(text: string): string {
         const prefix = GlobalConfig.launcher.actionPrefix;
         if (text.startsWith(prefix)) {
-            for (const action of ["calc", "scheme", "variant"])
+            for (const action of ["calc", "scheme", "theme", "variant"])
                 if (text.startsWith(`${prefix}${action} `))
                     return action;
 
@@ -47,6 +47,8 @@ StyledListView {
             return [0];
         case "scheme":
             return Schemes.query(text);
+        case "theme":
+            return ThemeManager.query(text);
         case "variant":
             return M3Variants.query(text);
         default:
@@ -87,6 +89,8 @@ StyledListView {
     onStateChanged: {
         if (state === "scheme" || state === "variant")
             Schemes.reload();
+        if (state === "theme")
+            ThemeManager.reload();
     }
 
     Component.onCompleted: displayText = search.text
@@ -125,6 +129,13 @@ StyledListView {
 
             PropertyChanges {
                 root.delegate: variantItem
+            }
+        },
+        State {
+            name: "theme"
+
+            PropertyChanges {
+                root.delegate: themeItem
             }
         }
     ]
@@ -283,6 +294,14 @@ StyledListView {
         id: variantItem
 
         VariantItem {
+            list: root
+        }
+    }
+
+    Component {
+        id: themeItem
+
+        ThemeItem {
             list: root
         }
     }

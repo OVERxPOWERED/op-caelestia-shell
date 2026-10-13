@@ -1,5 +1,7 @@
 #pragma once
 
+#include <qelapsedtimer.h>
+#include <qhash.h>
 #include <qprocess.h>
 #include <qqmlintegration.h>
 #include <qstringlist.h>
@@ -53,6 +55,8 @@ private:
     void finishNameSource(int index, int generation, QString name);
 
     void readGenericUsage();
+    void readIntelUsage();
+    [[nodiscard]] qreal readIntelFrequencyUsage() const;
     void startNvidiaUsage();
     void readGpuTemperature();
     void resetUsage();
@@ -82,6 +86,8 @@ private:
     // Bumped per resolution so callbacks from a superseded probe are dropped
     int m_generation = 0;
     bool m_nvidiaQuerying = false;
+    QElapsedTimer m_intelUsageTimer;
+    QHash<QString, qint64> m_lastIntelRc6Residency;
 };
 
 } // namespace caelestia::services

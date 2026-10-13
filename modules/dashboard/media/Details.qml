@@ -11,7 +11,7 @@ import qs.services
 ColumnLayout {
     id: root
 
-    readonly property bool hasUnknownLength: (Players.active?.length ?? 0) > 2147483647
+    readonly property bool hasUnknownLength: !(Players.active?.lengthSupported ?? false) || (Players.active?.length ?? 0) <= 0 || (Players.active?.length ?? 0) > 2147483647
 
     function lengthStr(length: int): string {
         if (length < 0)
@@ -88,7 +88,7 @@ ColumnLayout {
             id: positionSlider
 
             Layout.fillWidth: true
-            value: Players.active ? Players.active.position / (Players.active.length || 1) : 0
+            value: Players.active && !root.hasUnknownLength ? Players.active.position / (Players.active.length || 1) : 0
             enabled: (Players.active?.canSeek ?? false) && !root.hasUnknownLength
             wavy: true
             animateWave: Players.active?.isPlaying ?? false
@@ -97,7 +97,7 @@ ColumnLayout {
             interactionOnMove: false
             onInteraction: value => {
                 const active = Players.active;
-                if (active?.canSeek && active?.positionSupported)
+                if (active?.canSeek && active?.positionSupported && !root.hasUnknownLength)
                     active.position = value * active.length;
             }
 
@@ -105,7 +105,7 @@ ColumnLayout {
                 target: positionLabel
                 property: "text"
                 value: root.lengthStr(positionSlider.pos * (Players.active?.length ?? 0))
-                when: positionSlider.dragging
+                when: positionSlider.dragging && !root.hasUnknownLength
             }
         }
 

@@ -17,6 +17,10 @@ ConnectedRect {
     property real from: 0
     property real to: 99
     property real stepSize: 1
+    property bool disabled: false
+
+    enabled: !disabled
+    opacity: disabled ? 0.45 : 1.0
 
     signal moved(value: real)
 

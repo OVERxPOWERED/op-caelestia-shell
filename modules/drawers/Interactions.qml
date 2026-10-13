@@ -22,6 +22,13 @@ CustomMouseArea {
     property bool dashboardShortcutActive
     property bool osdShortcutActive
     property bool utilitiesShortcutActive
+    property bool dockShortcutActive
+
+    Timer {
+        id: dockHideTimer
+        interval: 100
+        onTriggered: root.screenState.dock = false
+    }
 
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
         const panelY = root.borderThickness + panel.y;
@@ -88,6 +95,9 @@ CustomMouseArea {
 
             if (Config.sidebar.showOnHover)
                 screenState.sidebar = false;
+
+            if (Config.dock.showOnHover && !panels.dock.contextMenuOpen)
+                dockHideTimer.start();
         }
     }
 
@@ -196,15 +206,46 @@ CustomMouseArea {
                 screenState.sidebar = false;
         }
 
-        // Show launcher on hover, or show/hide on drag if hover is disabled
+        // Bottom drawer gesture and hover handling (Launcher vs Dock)
         if (Config.launcher.showOnHover) {
-            if (!screenState.launcher && inBottomPanel(panels.launcher, x, y))
+            // Launcher on hover
+            if (!screenState.launcher && inBottomPanel(panels.launcher, x, y)) {
                 screenState.launcher = true;
-        } else if (pressed && inBottomPanel(panels.launcher, dragStart.x, dragStart.y) && withinPanelWidth(panels.launcher, x, y)) {
-            if (dragY < -Config.launcher.dragThreshold)
-                screenState.launcher = true;
-            else if (dragY > Config.launcher.dragThreshold)
-                screenState.launcher = false;
+                screenState.dock = false;
+                dockHideTimer.stop();
+            }
+
+            // Dock on drag (when launcher uses hover)
+            if (Config.dock.enabled && pressed && inBottomPanel(panels.dock, dragStart.x, dragStart.y) && !screenState.launcher) {
+                if (dragY < -Config.dock.dragThreshold) {
+                    dockHideTimer.stop();
+                    screenState.dock = true;
+                } else if (dragY > Config.dock.dragThreshold) {
+                    screenState.dock = false;
+                }
+            }
+        } else {
+            // Launcher on drag
+            if (pressed && inBottomPanel(panels.launcher, dragStart.x, dragStart.y) && withinPanelWidth(panels.launcher, x, y)) {
+                if (dragY < -Config.launcher.dragThreshold) {
+                    screenState.launcher = true;
+                    screenState.dock = false;
+                    dockHideTimer.stop();
+                } else if (dragY > Config.launcher.dragThreshold) {
+                    screenState.launcher = false;
+                }
+            }
+
+            // Dock on hover (when launcher uses drag)
+            if (Config.dock.enabled && !pressed) {
+                const showDockHover = inBottomPanel(panels.dock, x, y) && !screenState.launcher;
+                if (showDockHover) {
+                    dockHideTimer.stop();
+                    if (!screenState.dock) screenState.dock = true;
+                } else if (!showDockHover && screenState.dock && !dockHideTimer.running && !panels.dock.contextMenuOpen) {
+                    dockHideTimer.start();
+                }
+            }
         }
 
         // Show dashboard on hover
@@ -254,6 +295,7 @@ CustomMouseArea {
                 root.dashboardShortcutActive = false;
                 root.osdShortcutActive = false;
                 root.utilitiesShortcutActive = false;
+                root.dockShortcutActive = false;
 
                 // Also hide dashboard and OSD if they're not being hovered
                 const inDashboardArea = root.inTopPanel(root.panels.dashboard, root.mouseX, root.mouseY);
@@ -305,6 +347,18 @@ CustomMouseArea {
             } else {
                 // Utilities hidden, clear shortcut flag
                 root.utilitiesShortcutActive = false;
+            }
+        }
+
+        function onDockChanged() {
+            if (root.screenState.dock) {
+                dockHideTimer.stop();
+                const inDockArea = root.inBottomPanel(root.panels.dock, root.mouseX, root.mouseY);
+                if (!inDockArea) {
+                    root.dockShortcutActive = true;
+                }
+            } else {
+                root.dockShortcutActive = false;
             }
         }
 

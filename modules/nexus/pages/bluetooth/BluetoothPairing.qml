@@ -190,5 +190,10 @@ PageBase {
                 }
             }
         }
+
+        // Pairing dialog overlay — appears when the agent receives a pairing request
+        BluetoothPairingDialog {
+            anchors.fill: parent
+        }
     }
 }

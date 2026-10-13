@@ -1,9 +1,13 @@
 #include "gpu.hpp"
 
+#include <algorithm>
+#include <cmath>
+#include <optional>
 #include <qdir.h>
 #include <qdiriterator.h>
 #include <qfile.h>
 #include <qregularexpression.h>
+#include <qset.h>
 
 #include "config/rootnodes.hpp"
 #include "config/serviceconfig.hpp"
@@ -137,6 +141,54 @@ const std::array<NameSource, 3>& nameSources() {
 constexpr int k_nvidiaSource = 0;
 constexpr int k_firstGenericSource = 1;
 
+std::optional<qreal> readRealFile(const QString& path) {
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return std::nullopt;
+    }
+
+    bool ok = false;
+    const qreal value = f.readAll().trimmed().toDouble(&ok);
+    return ok ? std::optional<qreal>(value) : std::nullopt;
+}
+
+std::optional<qint64> readIntFile(const QString& path) {
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return std::nullopt;
+    }
+
+    bool ok = false;
+    const qint64 value = f.readAll().trimmed().toLongLong(&ok);
+    return ok ? std::optional<qint64>(value) : std::nullopt;
+}
+
+QStringList intelGtDirs() {
+    QStringList dirs;
+    const QStringList cards =
+        QDir(u"/sys/class/drm"_s)
+            .entryList(QStringList() << u"card*"_s, QDir::Dirs | QDir::NoDotAndDotDot);
+
+    for (const QString& card : cards) {
+        const QDir gtRoot(u"/sys/class/drm/%1/gt"_s.arg(card));
+        if (!gtRoot.exists()) {
+            continue;
+        }
+
+        const QStringList gts = gtRoot.entryList(QStringList() << u"gt*"_s, QDir::Dirs | QDir::NoDotAndDotDot);
+        for (const QString& gt : gts) {
+            dirs.append(gtRoot.absoluteFilePath(gt));
+        }
+
+        if (QFile::exists(gtRoot.absoluteFilePath(u"rc6_residency_ms"_s)) ||
+            QFile::exists(gtRoot.absoluteFilePath(u"rps_cur_freq_mhz"_s))) {
+            dirs.append(gtRoot.absolutePath());
+        }
+    }
+
+    return dirs;
+}
+
 } // namespace
 
 Gpu::Gpu(QObject* parent)
@@ -208,6 +260,9 @@ void Gpu::tick() {
     if (m_type == GpuType::Generic) {
         readGenericUsage();
         readGpuTemperature();
+    } else if (m_type == GpuType::Intel) {
+        readIntelUsage();
+        readGpuTemperature();
     } else if (m_type == GpuType::Nvidia) {
         startNvidiaUsage();
     } else {
@@ -231,7 +286,7 @@ void Gpu::resolveGpu() {
 
     setName({});
     setDetecting(true);
-    tryNameSource(m_userType == GpuType::Generic ? k_firstGenericSource : k_nvidiaSource, generation);
+    tryNameSource(m_userType == GpuType::Generic || m_userType == GpuType::Intel ? k_firstGenericSource : k_nvidiaSource, generation);
 }
 
 int Gpu::probeEnd() const {
@@ -253,10 +308,13 @@ void Gpu::finishNameSource(int index, int generation, QString name) {
     // Under Auto the NVIDIA name probe doubles as the type probe: a non-empty result
     // means an NVIDIA GPU is present and queryable.
     if (m_userType == GpuType::Auto && index == k_nvidiaSource) {
-        if (!name.isEmpty())
+        if (!name.isEmpty()) {
             setType(GpuType::Nvidia);
-        else
+        } else if (!intelGtDirs().isEmpty()) {
+            setType(GpuType::Intel);
+        } else {
             setType(m_busyFiles.isEmpty() ? GpuType::None : GpuType::Generic);
+        }
 
         if (m_type == GpuType::None) {
             setName({});
@@ -364,8 +422,83 @@ void Gpu::startNvidiaUsage() {
         });
 }
 
+void Gpu::readIntelUsage() {
+    const QStringList gtDirs = intelGtDirs();
+    const qint64 elapsedMs = m_intelUsageTimer.isValid() ? m_intelUsageTimer.elapsed() : 0;
+    qreal sum = 0.0;
+    int count = 0;
+    QSet<QString> seen;
+
+    for (const QString& gtDir : gtDirs) {
+        const QString path = gtDir + u"/rc6_residency_ms"_s;
+        const auto current = readIntFile(path);
+        if (!current) {
+            continue;
+        }
+
+        seen.insert(path);
+        const auto lastIt = m_lastIntelRc6Residency.constFind(path);
+        if (lastIt != m_lastIntelRc6Residency.constEnd() && elapsedMs > 0) {
+            const qint64 delta = std::max<qint64>(0, *current - *lastIt);
+            const qreal idle = std::clamp(static_cast<qreal>(delta) / static_cast<qreal>(elapsedMs), 0.0, 1.0);
+            sum += 1.0 - idle;
+            ++count;
+        }
+        m_lastIntelRc6Residency.insert(path, *current);
+    }
+
+    const auto keys = m_lastIntelRc6Residency.keys();
+    for (const QString& key : keys) {
+        if (!seen.contains(key)) {
+            m_lastIntelRc6Residency.remove(key);
+        }
+    }
+
+    m_intelUsageTimer.restart();
+
+    const qreal newPerc = count > 0 ? sum / static_cast<qreal>(count) : readIntelFrequencyUsage();
+    if (std::abs(newPerc - m_percentage) > 0.0001) {
+        m_percentage = newPerc;
+        emit percentageChanged();
+    }
+}
+
+qreal Gpu::readIntelFrequencyUsage() const {
+    qreal sum = 0.0;
+    int count = 0;
+
+    for (const QString& gtDir : intelGtDirs()) {
+        auto cur = readRealFile(gtDir + u"/rps_act_freq_mhz"_s);
+        if (!cur) {
+            cur = readRealFile(gtDir + u"/rps_cur_freq_mhz"_s);
+        }
+
+        auto min = readRealFile(gtDir + u"/rps_min_freq_mhz"_s);
+        if (!min) {
+            min = readRealFile(gtDir + u"/rps_RPn_freq_mhz"_s);
+        }
+
+        auto max = readRealFile(gtDir + u"/rps_max_freq_mhz"_s);
+        if (!max) {
+            max = readRealFile(gtDir + u"/rps_RP0_freq_mhz"_s);
+        }
+
+        if (!cur || !min || !max || *max <= *min) {
+            continue;
+        }
+
+        sum += std::clamp((*cur - *min) / (*max - *min), 0.0, 1.0);
+        ++count;
+    }
+
+    return count > 0 ? sum / static_cast<qreal>(count) : 0.0;
+}
+
 void Gpu::readGpuTemperature() {
-    const auto t = sensorslib::gpuPciAverageTemp();
+    auto t = sensorslib::gpuPciAverageTemp();
+    if (!t && type() == GpuType::Intel) {
+        t = sensorslib::cpuPackageTemp();
+    }
     const qreal newTemp = t.value_or(0.0);
     if (std::abs(newTemp - m_temperature) > 0.05) {
         m_temperature = newTemp;

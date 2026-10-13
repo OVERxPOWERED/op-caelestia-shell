@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
+import Quickshell.Bluetooth
 import Caelestia
 import Caelestia.Config
 import Caelestia.I18n
@@ -102,8 +103,99 @@ Singleton {
     function getStreamName(stream: PwNode): string {
         if (!stream)
             return Tr.trCtx("Unknown", "unknown audio stream");
-        // Try application name first, then description, then name
-        return stream.properties["application.name"] || stream.description || stream.name || Tr.trCtx("Unknown application", "unknown application audio stream");
+
+        const props = stream.properties || {};
+        const appName = props["application.name"] || stream.name || "";
+        const mediaTitle = props["media.name"] || props["media.title"] || stream.description || "";
+
+        const genericTitles = ["AudioStream", "Playback", "System Sounds", "ALSA Playback", appName];
+        const isGeneric = !mediaTitle || genericTitles.some(t => mediaTitle.toLowerCase().trim() === t.toLowerCase().trim());
+
+        if (!isGeneric && mediaTitle !== "") {
+            if (appName !== "" && mediaTitle.toLowerCase().includes(appName.toLowerCase()))
+                return mediaTitle;
+            if (["Chromium", "Firefox", "Google Chrome", "Brave", "Edge", "Opera", "Vivaldi", "Zen Browser"].some(b => appName.toLowerCase().includes(b.toLowerCase())))
+                return mediaTitle;
+            if (appName !== "")
+                return `${appName}: ${mediaTitle}`;
+            return mediaTitle;
+        }
+
+        return appName || stream.description || stream.name || Tr.trCtx("Unknown application", "unknown application audio stream");
+    }
+
+    function getStreamIcon(stream: PwNode): string {
+        if (!stream)
+            return "";
+
+        const props = stream.properties || {};
+        const iconName = props["application.icon-name"] || props["media.icon-name"] || "";
+        if (iconName) {
+            const path = Quickshell.iconPath(iconName, "");
+            if (path)
+                return path;
+        }
+
+        const appName = props["application.name"] || props["application.process.binary"] || stream.name || "";
+        if (appName) {
+            const icon = DesktopEntries.heuristicLookup(appName)?.icon;
+            if (icon) {
+                const path = Quickshell.iconPath(icon, "");
+                if (path)
+                    return path;
+            }
+        }
+
+        return "";
+    }
+
+    function isValidOutputSink(node: PwNode): bool {
+        if (!node || !node.isSink)
+            return false;
+
+        // Always retain the currently active default audio sink
+        if (node.id === Pipewire.defaultAudioSink?.id)
+            return true;
+
+        const desc = (node.description || "").toLowerCase();
+        const name = (node.name || "").toLowerCase();
+        const props = node.properties || {};
+        const profDesc = (props["device.profile.description"] || "").toLowerCase();
+
+        // Explicit unplugged / disconnected check
+        if (desc.includes("unplugged") || desc.includes("disconnected") || profDesc.includes("unplugged") || profDesc.includes("disconnected"))
+            return false;
+
+        // Bluetooth device verification: must be paired/bonded and connected
+        const isBluetooth = props["device.api"] === "bluez5" || props["device.bus"] === "bluetooth" || name.startsWith("bluez_output.") || desc.includes("bluetooth");
+        if (isBluetooth) {
+            const btDevices = Bluetooth.devices?.values ?? [];
+            const match = btDevices.find(d => {
+                if (!d)
+                    return false;
+                const dAddr = (d.address || "").toLowerCase().replace(/:/g, "_");
+                const dName = (d.name || "").toLowerCase();
+                return (dAddr !== "" && name.includes(dAddr)) || (dName !== "" && desc.includes(dName));
+            });
+            if (!match || (!match.paired && !match.bonded) || !match.connected)
+                return false;
+        }
+
+        // Non-existing / unbound HDMI outputs filtering
+        const isHdmi = desc.includes("hdmi") || desc.includes("displayport") || name.includes("hdmi") || profDesc.includes("hdmi");
+        if (isHdmi) {
+            const nick = (props["node.nick"] || "").trim();
+            const isGenericName = /^hdmi(\s*\/\s*displayport)?\s*[0-9]+$/i.test(desc.trim()) ||
+                                  /^built-in audio digital stereo \(hdmi\)$/i.test(desc.trim()) ||
+                                  /^hdmi\s+[0-9]+$/i.test(desc.trim()) ||
+                                  /^displayport\s+[0-9]+$/i.test(desc.trim()) ||
+                                  /^hdmi\s*\/\s*dp,\s*pcm=[0-9]+$/i.test(desc.trim());
+            // If it has a generic unassigned HDMI hardware name and no custom EDID monitor nick, treat as non-existing
+            if (isGenericName && (nick === "" || nick.toLowerCase().includes("hdmi") || nick.toLowerCase().includes("displayport")))
+                return false;
+        }
+
+        return true;
     }
 
     function refreshNodes(): void {
@@ -113,9 +205,9 @@ Singleton {
 
         for (const node of Pipewire.nodes.values) {
             if (!node.isStream) {
-                if (node.isSink)
+                if (node.isSink && root.isValidOutputSink(node))
                     newSinks.push(node);
-                else if (node.audio)
+                else if (node.audio && !node.isSink)
                     newSources.push(node);
             } else if (node.audio) {
                 newStreams.push(node);
@@ -128,6 +220,7 @@ Singleton {
     }
 
     onSinkChanged: {
+        root.refreshNodes();
         if (!sink?.ready)
             return;
 
@@ -165,6 +258,14 @@ Singleton {
         }
 
         target: Pipewire.nodes
+    }
+
+    Connections {
+        function onValuesChanged(): void {
+            root.refreshNodes();
+        }
+
+        target: Bluetooth.devices
     }
 
     // Always track the current defaults so volume/mute bind even if the lists

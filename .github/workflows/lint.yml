@@ -19,7 +19,7 @@ jobs:
     if: needs.changes.outputs.lint == 'true'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository_owner }}/shell-arch-env:latest
+      image: ghcr.io/caelestia-dots/shell-arch-env:latest
 
     steps:
       - name: Checkout source
@@ -58,7 +58,7 @@ jobs:
     if: needs.changes.outputs.lint == 'true'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository_owner }}/shell-arch-env:latest
+      image: ghcr.io/caelestia-dots/shell-arch-env:latest
 
     steps:
       - name: Checkout source

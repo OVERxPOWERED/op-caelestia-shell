@@ -14,7 +14,7 @@ StyledRect {
         const base = brief.implicitHeight + brief.anchors.topMargin;
         if (showForecast)
             return base + Tokens.spacing.largeIncreased + forecast.implicitHeight + forecast.anchors.margins;
-        return base + brief.anchors.topMargin;
+        return base + Tokens.padding.large;
     }
     radius: Tokens.rounding.extraExtraLarge
     color: Colours.tPalette.m3surfaceContainer
@@ -32,7 +32,7 @@ StyledRect {
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: Tokens.padding.extraLarge
+        anchors.topMargin: Tokens.padding.large
 
         rootHeight: root.rootHeight
     }

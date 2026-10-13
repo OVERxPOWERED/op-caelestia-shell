@@ -10,6 +10,7 @@ import qs.modules.osd as Osd
 import qs.modules.session as Session
 import qs.modules.sidebar as Sidebar
 import qs.modules.utilities as Utilities
+import qs.modules.dock as Dock
 import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities.toasts as Toasts
 
@@ -28,6 +29,7 @@ Item {
     readonly property alias sessionWrapper: sessionWrapper
     readonly property alias launcher: launcher
     readonly property alias dashboard: dashboard
+    readonly property alias dock: dock
     readonly property alias popouts: popoutsWrapper.content
     readonly property alias popoutsWrapper: popoutsWrapper
     readonly property alias utilities: utilities
@@ -98,6 +100,17 @@ Item {
 
     Launcher.Wrapper {
         id: launcher
+
+        screen: root.screen
+        screenState: root.screenState
+        panels: root
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+    }
+
+    Dock.Wrapper {
+        id: dock
 
         screen: root.screen
         screenState: root.screenState

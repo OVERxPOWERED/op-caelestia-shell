@@ -21,7 +21,12 @@ Item {
     StateLayer {
         radius: Tokens.rounding.large
         onClicked: {
-            Apps.launch(root.modelData);
+            if (root.screenState.launcherPickCallback) {
+                root.screenState.launcherPickCallback(root.modelData);
+                root.screenState.launcherPickCallback = undefined;
+            } else {
+                Apps.launch(root.modelData);
+            }
             root.screenState.launcher = false;
         }
     }

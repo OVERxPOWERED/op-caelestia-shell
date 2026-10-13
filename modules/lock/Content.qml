@@ -1,5 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Widgets
+import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.services
@@ -22,12 +24,16 @@ RowLayout {
 
         Fetch {
             Layout.fillWidth: true
+            Layout.fillHeight: Config.lock.showGif
+            Layout.minimumHeight: Config.lock.showGif ? 190 : -1
+            Layout.preferredHeight: Config.lock.showGif ? root.height * 0.42 : -1
             rootHeight: root.height
         }
 
         Media {
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.fillHeight: !Config.lock.showGif
+            Layout.preferredHeight: Config.lock.showGif ? implicitHeight : -1
             lock: root.lock
         }
     }

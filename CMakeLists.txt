@@ -1,14 +1,15 @@
 cmake_minimum_required(VERSION 3.19)
 
 if(NOT DEFINED VERSION)
-    execute_process(COMMAND git describe --tags --abbrev=0
+    execute_process(COMMAND git describe --tags --match "v[0-9]*" --abbrev=0
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
         OUTPUT_VARIABLE VERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
     )
 
     if("${VERSION}" STREQUAL "")
-        message(FATAL_ERROR "VERSION is not set and failed to get from git")
+        set(VERSION "2.5.0")
     endif()
 endif()
 
@@ -17,10 +18,11 @@ if(NOT DEFINED GIT_REVISION)
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
         OUTPUT_VARIABLE GIT_REVISION
         OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
     )
 
     if("${GIT_REVISION}" STREQUAL "")
-        message(FATAL_ERROR "GIT_REVISION is not set and failed to get from git")
+        set(GIT_REVISION "unknown")
     endif()
 endif()
 
@@ -33,6 +35,7 @@ include(GNUInstallDirs)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
 set(DISTRIBUTOR "Unset" CACHE STRING "Distributor")

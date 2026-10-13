@@ -96,7 +96,7 @@ CustomMouseArea {
             if (Config.sidebar.showOnHover)
                 screenState.sidebar = false;
 
-            if (Config.dock.showOnHover && !panels.dock.contextMenuOpen)
+            if (Config.dock?.showOnHover && !panels.dock?.contextMenuOpen)
                 dockHideTimer.start();
         }
     }
@@ -216,11 +216,12 @@ CustomMouseArea {
             }
 
             // Dock on drag (when launcher uses hover)
-            if (Config.dock.enabled && pressed && inBottomPanel(panels.dock, dragStart.x, dragStart.y) && !screenState.launcher) {
-                if (dragY < -Config.dock.dragThreshold) {
+            if (Config.dock?.enabled && pressed && inBottomPanel(panels.dock, dragStart.x, dragStart.y) && !screenState.launcher) {
+                const threshold = Config.dock?.dragThreshold ?? 50;
+                if (dragY < -threshold) {
                     dockHideTimer.stop();
                     screenState.dock = true;
-                } else if (dragY > Config.dock.dragThreshold) {
+                } else if (dragY > threshold) {
                     screenState.dock = false;
                 }
             }
@@ -237,12 +238,12 @@ CustomMouseArea {
             }
 
             // Dock on hover (when launcher uses drag)
-            if (Config.dock.enabled && !pressed) {
+            if (Config.dock?.enabled && !pressed) {
                 const showDockHover = inBottomPanel(panels.dock, x, y) && !screenState.launcher;
                 if (showDockHover) {
                     dockHideTimer.stop();
                     if (!screenState.dock) screenState.dock = true;
-                } else if (!showDockHover && screenState.dock && !dockHideTimer.running && !panels.dock.contextMenuOpen) {
+                } else if (!showDockHover && screenState.dock && !dockHideTimer.running && !panels.dock?.contextMenuOpen) {
                     dockHideTimer.start();
                 }
             }

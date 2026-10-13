@@ -52,10 +52,12 @@ StyledWindow {
             return 0;
 
         const thresholds = [];
-        for (const panel of ["dashboard", "launcher", "session", "sidebar", "dock"])
-            if (contentItem.Config[panel].enabled)
-                thresholds.push(contentItem.Config[panel].dragThreshold);
-        return Math.max(...thresholds);
+        for (const panel of ["dashboard", "launcher", "session", "sidebar", "dock"]) {
+            const p = contentItem.Config[panel];
+            if (p?.enabled)
+                thresholds.push(p.dragThreshold);
+        }
+        return thresholds.length > 0 ? Math.max(...thresholds) : 0;
     }
 
     onHasFullscreenChanged: {

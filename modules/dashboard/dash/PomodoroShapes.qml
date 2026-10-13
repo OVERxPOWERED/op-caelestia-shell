@@ -8,8 +8,10 @@ import qs.services
 Item {
     id: root
 
+    clip: true
+
     // Total shapes in the heap
-    readonly property int count: 42
+    readonly property int count: 38
 
     readonly property list<int> shapePool: [
         MaterialShape.Circle,
@@ -43,9 +45,9 @@ Item {
         const list = [];
         const poolLen = root.shapePool.length;
         for (let i = 0; i < root.count; i++) {
-            // Distribute normY smoothly from 0.04 (bottom) to 0.94 (top) with subtle organic jitter
+            // Distribute normY smoothly from 0.04 (bottom) to 0.92 (top) with subtle organic jitter
             const jitter = Math.sin(i * 3.7) * 0.035;
-            const normY = Math.min(0.95, Math.max(0.04, (i + 0.5) / root.count + jitter));
+            const normY = Math.min(0.92, Math.max(0.04, (i + 0.5) / root.count + jitter));
 
             // Distribute normX across card width (0.06 to 0.82)
             const normX = 0.06 + (((i * 0.6180339887) % 1.0) * 0.76);
@@ -83,20 +85,28 @@ Item {
             readonly property real sSize: modelData.size
             readonly property bool isSpawned: Pomodoro.progress >= modelData.normY && Pomodoro.timeRemaining < Pomodoro.totalTime
 
+            readonly property real targetY: Math.round((1.0 - modelData.normY) * (root.height - sSize))
+            readonly property real startY: -sSize - 16
+
             x: Math.round(modelData.normX * (root.width - sSize))
-            // normY = 0 is at bottom (root.height - sSize), normY = 1 is near top
-            y: Math.round((1.0 - modelData.normY) * (root.height - sSize))
+            y: isSpawned ? targetY : startY
             width: sSize
             height: sSize
 
-            scale: isSpawned ? 1.0 : 0.0
+            scale: isSpawned ? 1.0 : 0.3
             opacity: isSpawned ? modelData.opacityBase : 0.0
+
+            Behavior on y {
+                NumberAnimation {
+                    duration: shapeContainer.isSpawned ? 650 : 200
+                    easing.type: shapeContainer.isSpawned ? Easing.OutBounce : Easing.InQuad
+                }
+            }
 
             Behavior on scale {
                 NumberAnimation {
-                    duration: shapeContainer.isSpawned ? 340 : 200
+                    duration: shapeContainer.isSpawned ? 400 : 200
                     easing.type: shapeContainer.isSpawned ? Easing.OutBack : Easing.InQuad
-                    easing.overshoot: 1.35
                 }
             }
 
@@ -115,7 +125,14 @@ Item {
                 color: root.getShapeColor(shapeContainer.modelData.colorIdx)
 
                 readonly property real wobble: Pomodoro.running ? Math.sin(root.idlePhase + shapeContainer.index * 0.7) * 4.0 : 0.0
-                rotation: shapeContainer.modelData.rot + wobble
+                rotation: shapeContainer.isSpawned ? (shapeContainer.modelData.rot + wobble) : (shapeContainer.modelData.rot - 120)
+
+                Behavior on rotation {
+                    NumberAnimation {
+                        duration: 650
+                        easing.type: Easing.OutCubic
+                    }
+                }
 
                 Behavior on color {
                     CAnim {}

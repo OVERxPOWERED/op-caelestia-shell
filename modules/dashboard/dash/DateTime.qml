@@ -69,16 +69,13 @@ Item {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.rightMargin: switchBtn.width + Tokens.padding.extraSmall
+            anchors.rightMargin: switchBtn.width + Tokens.padding.extraSmall * 2
             anchors.margins: Tokens.padding.extraSmall
             height: 24
             z: 10
 
             CustomMouseArea {
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                implicitHeight: 22
-                implicitWidth: modeRow.implicitWidth + Tokens.padding.small * 2
+                anchors.fill: parent
 
                 onClicked: {
                     const nextMode = (Pomodoro.mode + 1) % 3;
@@ -91,9 +88,8 @@ Item {
                     color: Qt.alpha(root.pomodoroColour, 0.16)
 
                     RowLayout {
-                        id: modeRow
                         anchors.centerIn: parent
-                        spacing: 3
+                        spacing: 4
 
                         MaterialIcon {
                             text: Pomodoro.modeIcon
@@ -101,16 +97,17 @@ Item {
                         }
 
                         StyledText {
-                            text: Pomodoro.modeName
+                            text: Pomodoro.shortModeName
                             font: Tokens.font.label.small
                             color: root.pomodoroColour
+                            elide: Text.ElideRight
                         }
                     }
                 }
             }
         }
 
-        // Middle Vessel: Background Timer Digits submerged by rising translucent M3 shapes
+        // Middle Vessel: Big Vertical Background Timer Digits submerged by falling translucent M3 shapes
         Item {
             id: vesselArea
 
@@ -118,60 +115,47 @@ Item {
             anchors.bottom: bottomControls.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.topMargin: Tokens.padding.extraSmall
-            anchors.bottomMargin: Tokens.padding.extraSmall
+            anchors.topMargin: Tokens.padding.small
+            anchors.bottomMargin: Tokens.padding.small
             clip: true
 
-            // Layer 1: Background Timer Digits
-            ColumnLayout {
+            // Layer 1: Big Vertical Graphic Timer Digits
+            StyledText {
+                id: verticalTimerText
+
                 anchors.centerIn: parent
-                anchors.verticalCenterOffset: -Tokens.padding.extraSmall
-                spacing: -6
+                rotation: 90
+                text: Pomodoro.formattedTime
+                color: Qt.alpha(Colours.palette.m3onSurface, 0.75)
+                font: Tokens.font.clock.size(38).weight(Font.Bold).build()
                 z: 1
 
-                StyledText {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: Pomodoro.minutesStr
-                    color: Colours.palette.m3onSurface
-                    font: Tokens.font.clock.size(34).weight(Font.Bold).build()
-                }
-
-                StyledText {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: "••"
-                    color: Qt.alpha(root.pomodoroColour, 0.45)
-                    font: Tokens.font.clock.size(15).weight(Font.Bold).build()
-                }
-
-                StyledText {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: Pomodoro.secondsStr
-                    color: Qt.alpha(Colours.palette.m3onSurface, 0.78)
-                    font: Tokens.font.clock.size(24).weight(Font.DemiBold).build()
+                Behavior on color {
+                    CAnim {}
                 }
             }
 
-            // Layer 2: Rising Heap of Translucent Material 3 Shapes
+            // Layer 2: Falling & Settling Heap of Translucent Material 3 Shapes
             PomodoroShapes {
                 anchors.fill: parent
                 z: 2
             }
         }
 
-        // Bottom Controls: Elevated above shapes
+        // Bottom Controls: Elevated above shapes with generous breathing room
         ColumnLayout {
             id: bottomControls
 
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottomMargin: Tokens.padding.extraSmall
-            spacing: Tokens.spacing.extraSmall
+            anchors.bottomMargin: Tokens.padding.medium
+            spacing: Tokens.spacing.small
             z: 10
 
             // Cycle progress dots
             Row {
                 Layout.alignment: Qt.AlignHCenter
-                spacing: 4
+                spacing: 5
 
                 Repeater {
                     model: Pomodoro.sessionsBeforeLongBreak
@@ -179,9 +163,9 @@ Item {
                     StyledRect {
                         required property int index
 
-                        width: 6
-                        height: 6
-                        radius: 3
+                        width: 5
+                        height: 5
+                        radius: 2.5
                         color: index < Pomodoro.cycleCount
                             ? Colours.palette.m3primary
                             : (index === Pomodoro.cycleCount && Pomodoro.mode === Pomodoro.Mode.Focus
@@ -198,15 +182,15 @@ Item {
             // Control buttons
             RowLayout {
                 Layout.alignment: Qt.AlignHCenter
-                spacing: Tokens.spacing.extraSmall / 2
+                spacing: Tokens.spacing.extraSmall
 
                 IconButton {
                     type: IconButton.Filled
                     icon: Pomodoro.running ? "pause" : "play_arrow"
                     activeColour: root.pomodoroColour
                     font: Tokens.font.icon.small
-                    implicitWidth: 28
-                    implicitHeight: 28
+                    implicitWidth: 30
+                    implicitHeight: 30
                     onClicked: Pomodoro.toggle()
                 }
 

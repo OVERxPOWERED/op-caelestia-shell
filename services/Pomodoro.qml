@@ -67,6 +67,17 @@ Singleton {
         }
     }
 
+    readonly property string shortModeName: {
+        switch (mode) {
+        case Pomodoro.Mode.ShortBreak:
+            return qsTr("Break");
+        case Pomodoro.Mode.LongBreak:
+            return qsTr("Long");
+        default:
+            return qsTr("Focus");
+        }
+    }
+
     readonly property string modeIcon: {
         switch (mode) {
         case Pomodoro.Mode.ShortBreak:

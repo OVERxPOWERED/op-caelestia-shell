@@ -7,6 +7,7 @@ ROOT="$(pwd -P)"
 # Look for local build or system QML plugin
 QML_PREFIX=""
 for candidate in \
+    "$ROOT/build/qml" \
     "$ROOT/.local-caelestia-plugin/usr/lib/qt6/qml" \
     "$ROOT/.local-caelestia-plugin/usr/local/lib/qt6/qml" \
     "$ROOT/.local-caelestia-plugin/usr/usr/lib/qt6/qml" \

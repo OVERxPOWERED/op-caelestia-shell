@@ -12,3 +12,4 @@ build-plugin/
 docs/desktop-environment-roadmap.md
 update.sh
 changes.md
+__pycache__/

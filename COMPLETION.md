@@ -228,12 +228,17 @@ Use this document to track execution progress across all phases and subphases ou
   - **Date Completed**: 2026-10-13 21:55
   - **Notes**: Fixed QML `getAppEntry` return type annotation in `modules/dock/Content.qml`, corrected icon lookup to `Quickshell.iconPath` in `modules/nexus/pages/panels/DockPanel.qml`, added `CUtils.findExecutable` to guard VPN status & connect processes when binaries are missing in `services/VPN.qml`, and cleaned obsolete Hotspot entry from user config.
 
+- [x] **Subphase 8.6: Idle Timeout Lockscreen Crash & Stack Overflow Remediation**
+  - **Status**: `[x] COMPLETED`
+  - **Date Completed**: 2026-10-13 22:40
+  - **Notes**: Extracted systemd coredump and GDB backtrace from crash directories `yv21nctumt` and `dqa1ywuumt`. Identified 37,300-frame deep infinite binding loop in `modules/lock/Fetch.qml` caused by `sourceSize.width: width` coupled with dynamic layout height dependencies and frame advance timer on `AnimatedImage`. Removed the cyclic `sourceSize` and timer hacks in `Fetch.qml` and `session/Content.qml`, enabling native GPU rendering of theme GIFs without crash loops.
+
 ---
 
 ## Progress Summary
 - **Total Phases**: 9 (0 to 8)
-- **Total Subphases**: 26
-- **Subphases Completed**: 26 / 26 (100%)
+- **Total Subphases**: 27
+- **Subphases Completed**: 27 / 27 (100%)
 - **Current Active Branch**: `sync-upstream-latest`
 - **Upstream Base Commit**: `caelestia-dots/shell@a3a8fe59`
-- **Build Status**: **PASSED (0 errors, 223/223 targets, zero runtime QML errors/warnings)**
+- **Build Status**: **PASSED (0 errors, 223/223 targets, zero runtime QML errors/warnings, lockscreen verified)**

@@ -104,14 +104,19 @@ The goal is that nothing breaks in front of other people. Order: 1.1, then 1.2, 
   2. `~/.config/hypr` is a symlink to `~/.local/share/caelestia/hypr`.
   3. Your saved profile `2-Mon-R-Ex` (updated Sep 20) puts workspace 1 on the Samsung and 2 on the laptop. `hyprland.lua` and `monitors.lua` do the opposite. Applying that profile changes your workspace-to-monitor assignment.
   4. hyprmoncfg 1.25 can express mirroring, rotation and HDR; Hyprland's `mirror` works (`mirrorOf` is reported live). I could **not** capture the mirrored picture to see the crop: `grim` can't see a mirrored output. The crop cause is unconfirmed.
-- **Done so far**: backups at `~/.config/hypr-backup-2026-10-21-before-hyprmoncfg.tar.gz` (follows the symlink) and `~/.config/hypr-backup-2026-10-21-hyprland.lua.original`. hyprmoncfg appended its `dofile` include to the end of `hyprland.lua` (a no-op until the generated file exists). `require("monitors")` and the duplicate workspace rules are **still in place**, so nothing changed in behaviour.
-- **My test mess (resolved)**: the temporary headless output `HEADLESS-1` I created could not be removed while disabled, and a config reload re-enabled it as a ghost screen. `hyprctl output remove HEADLESS-1` works while the output is enabled; it is gone now. Lesson: remove test outputs while they are enabled.
-- **Plan**:
-  1. After the next Hyprland restart: save a `Laptop-Only` profile, check the JSON, apply it with the revert timer, then remove `require("monitors")` and the duplicated workspace rules from `hyprland.lua`.
-  2. Nexus **Display** page (the commented-out "Display" entry in `PageRegistry.qml`): a drag-to-arrange canvas, per-display mode, scale, rotation, mirror and enable, profile list (apply/save/delete), and a "Keep these settings?" countdown driven by hyprmoncfg's own timer.
-  3. Plug-in chooser in the shell, listening for Hyprland monitor events; keyboard first.
-  4. Per-monitor shell size from each display's own config (`~/.config/caelestia/monitors/<output>/shell.json`).
-  5. Mirror crop: reproduce on a real projector or a safe virtual display, then decide between mirroring at the projector's native mode or setting the laptop panel to a mode the projector supports.
+- **Done so far**:
+  - Backups: `~/.config/hypr-backup-2026-10-21-before-hyprmoncfg.tar.gz` (follows the symlink) and `~/.config/hypr-backup-2026-10-21-hyprland.lua.original`.
+  - hyprmoncfg's `dofile` include is at the end of `hyprland.lua`; `hyprmoncfg doctor` reports OK and the generated file `~/.config/hypr/hyprmoncfg-monitors.lua` now exists (laptop panel only, saved as the profile `Auto eDP-1`).
+  - **Display page built** (`modules/nexus/pages/DisplayPage.qml`, `common/DisplayArrangement.qml`, `services/Displays.qml`): quick layouts (Extend, Mirror, External only, Laptop only), a drag-to-arrange map with edge snapping and overlap protection, per-display enable, resolution, refresh rate, scale, rotation, mirror and position, saved profiles (apply, save), and a "Keep these display settings?" banner with a 15 s countdown. Unconfirmed changes revert by themselves; only a kept layout is written to hyprmoncfg. If the shell restarts mid-confirmation, the pending change is offered again.
+  - `qs ipc call displays ...` (`layout`, `mirror`, `enable`, `scale`, `keep`, `revert`, `status`) so layouts can be bound to keys.
+- **Findings while building it**:
+  1. Hyprland cannot change mirroring on a live output: `hl.monitor` only applies `mirror` the first time an output gets a rule, and un-mirroring does nothing until a config reload. `hyprctl keyword` is refused in Lua mode. So mirror changes go through a hyprmoncfg profile (`scripts/display-draft.py` edits a draft profile, `hyprmoncfg apply` writes the file and reloads); everything else applies live with `hyprctl eval`.
+  2. A disabled monitor is only re-enabled by a rule that says `disabled = false`; a normal rule is ignored.
+  3. Presets deliberately ignore virtual outputs (`HEADLESS-*`, e.g. Sunshine).
+  4. The old hand-written Samsung rules in `hyprland.lua` and `monitors.lua` are **kept on purpose**: the generated file only describes connected displays, so removing them would stop the Samsung being placed and its workspaces assigned when plugged in. They go once plug-in handling applies profiles.
+  5. `hyprctl output remove` only works while the output is enabled.
+- **Tested with a virtual display** (no real second screen was connected): mirror, un-mirror, scale, disable, re-enable, last-display guard, revert, 15 s auto-revert, and Keep (file written, temporary profiles removed). **Not yet tested** on the Samsung or a real projector.
+- **Still to do**: plug-in chooser popup (Mirror / Extend / External only / Laptop only on connect, saved profile applied automatically for known displays); per-monitor shell size from each display's own config; the mirror **crop** on a real projector (`grim` cannot capture a mirrored output, so the cause is unconfirmed); deleting a profile from Nexus; hiding the old Samsung rules once profile switching exists.
 - **Done when**: plugging into the Samsung and a 1366x768 or 1024x768 display gives an uncropped mirror, a correctly sized shell, and no workspaces or windows jumping around, all controlled from Nexus.
 
 ### `[ ]` 1.4 Small visible bugs

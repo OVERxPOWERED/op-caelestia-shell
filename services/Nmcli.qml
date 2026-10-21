@@ -25,6 +25,10 @@ Singleton {
     // Map of saved Wi-Fi SSID (lowercased) -> security type
     property var savedConnectionSecurity: ({})
 
+    // Time an access point may go unseen in scans before it is dropped from the list
+    readonly property int apGraceMs: 45000
+    readonly property var apLastSeen: new Map()
+
     property var wifiConnectionQueue: []
     property int currentSsidQueryIndex: 0
     property var pendingConnection: null
@@ -39,6 +43,7 @@ Singleton {
     // nmcli reports "unavailable" for ethernet NICs with no link, so we treat
     // anything other than that as a usable connection.
     readonly property bool hasAvailableEthernet: ethernetDevices.some(d => d.state !== "unavailable")
+    readonly property bool hasEthernetDevice: ethernetDevices.length > 0
     property list<var> activeProcesses: []
 
     readonly property alias connectionCheckTimer: connectionCheckTimer
@@ -93,7 +98,7 @@ Singleton {
                 active: net[0] === "yes",
                 strength: parseInt(net[1] || "0", 10) || 0,
                 frequency: parseInt(net[2] || "0", 10) || 0,
-                ssid: (net[3]?.replace(rep2, ":") ?? "").trim(),
+                ssid: net[3]?.replace(rep2, ":") ?? "",
                 bssid: (net[4]?.replace(rep2, ":") ?? "").trim(),
                 security: (net[5] ?? "").trim()
             };
@@ -131,7 +136,7 @@ Singleton {
             return false;
         }
 
-        return command.includes(root.nmcliCommandWifi) || command.includes(root.nmcliCommandConnection);
+        return command[0] === "nmcli" && (command.includes(root.nmcliCommandWifi) || command.includes(root.nmcliCommandConnection));
     }
 
     function parseDeviceStatusOutput(output: string, filterType: string): list<var> {
@@ -188,9 +193,20 @@ Singleton {
     }
 
     function executeCommand(args: list<string>, callback: var): void {
+        runCommand(["nmcli", ...args], null, callback);
+    }
+
+    // Runs an arbitrary command through the same result handling as nmcli
+    // calls; env holds extra environment variables (e.g. secrets kept out of argv).
+    function runCommand(cmdArgs: list<string>, env: var, callback: var): void {
         const proc = commandProc.createObject(root);
-        proc.cmdArgs = ["nmcli", ...args];
+        proc.cmdArgs = cmdArgs;
         proc.callback = callback;
+        if (env)
+            proc.environment = Object.assign({
+                LANG: "C.UTF-8",
+                LC_ALL: "C.UTF-8"
+            }, env);
 
         activeProcesses.push(proc);
 
@@ -199,6 +215,7 @@ Singleton {
             if (index >= 0) {
                 activeProcesses.splice(index, 1);
             }
+            proc.destroy();
         });
 
         Qt.callLater(() => {
@@ -236,6 +253,9 @@ Singleton {
                             gateway: "",
                             dns: [],
                             subnet: "",
+                            ipv6Address: "",
+                            ipv6Gateway: "",
+                            ipv6Dns: [],
                             macAddress: "",
                             speed: ""
                         }));
@@ -368,6 +388,55 @@ Singleton {
         });
     }
 
+    function ensureEthernetConnection(interfaceName: string, callback: var): void {
+        if (!interfaceName || interfaceName.length === 0) {
+            if (callback)
+                callback("");
+            return;
+        }
+
+        const device = root.ethernetDevices.find(d => d.iface === interfaceName);
+        if (device && device.connection && device.connection.length > 0) {
+            if (callback)
+                callback(device.connection);
+            return;
+        }
+
+        executeCommand(["-t", "-f", "NAME,TYPE,DEVICE", root.nmcliCommandConnection, "show"], result => {
+            if (result.success && result.output) {
+                const lines = result.output.trim().split("\n");
+                let matchedName = "";
+                for (const line of lines) {
+                    const parts = line.split(":");
+                    if (parts.length >= 2 && parts[1] === "802-3-ethernet") {
+                        const name = parts[0];
+                        const dev = parts[2] || "";
+                        if (dev === interfaceName) {
+                            matchedName = name;
+                            break;
+                        } else if (!matchedName && (!dev || dev === "--")) {
+                            matchedName = name;
+                        }
+                    }
+                }
+
+                if (matchedName) {
+                    if (callback)
+                        callback(matchedName);
+                    return;
+                }
+            }
+
+            const newConnName = `Wired connection ${interfaceName}`;
+            executeCommand([root.nmcliCommandConnection, "add", root.connectionParamType, root.deviceTypeEthernet, root.connectionParamConName, newConnName, root.connectionParamIfname, interfaceName], addResult => {
+                loadSavedConnections(() => {});
+                getEthernetInterfaces(() => {});
+                if (callback)
+                    callback(addResult.success ? newConnName : "");
+            });
+        });
+    }
+
     function getAllInterfaces(callback: var): void {
         executeCommand(["-t", "-f", root.deviceStatusFields, root.nmcliCommandDevice, "status"], result => {
             const interfaces = parseDeviceStatusOutput(result.output, "both");
@@ -429,10 +498,26 @@ Singleton {
         connectWireless(ssid, password, bssid, callback);
     }
 
+    // Connects through scripts/wifi-connect.sh, which reuses and updates the
+    // saved profile for the SSID instead of creating duplicates. Its exit code
+    // tells why a connection failed (10 password needed, 11 password rejected,
+    // 12 network not visible).
+    function runWifiConnect(ssid: string, password: string, bssid: string, callback: var): void {
+        const script = Quickshell.shellPath("scripts/wifi-connect.sh");
+        runCommand([script, ssid, bssid ?? ""], password ? {
+            WIFI_PASSWORD: password
+        } : null, result => {
+            result.needsPassword = result.exitCode === 10 || result.exitCode === 11;
+            result.wrongPassword = result.exitCode === 11;
+            result.notFound = result.exitCode === 12;
+            callback(result);
+        });
+    }
+
     function connectWireless(ssid: string, password: string, bssid: string, callback: var, retryCount: int): void {
         const hasBssid = bssid !== undefined && bssid !== null && bssid.length > 0;
         const retries = retryCount !== undefined ? retryCount : 0;
-        const maxRetries = 2;
+        const maxRetries = 1;
 
         if (callback) {
             root.pendingConnection = {
@@ -446,59 +531,40 @@ Singleton {
             immediateCheckTimer.start();
         }
 
-        if (password && password.length > 0 && hasBssid) {
-            const bssidUpper = bssid.toUpperCase();
-            createConnectionWithPassword(ssid, bssidUpper, password, callback);
-            return;
-        }
-
-        let cmd = [root.nmcliCommandDevice, root.nmcliCommandWifi, "connect", ssid];
-        if (password && password.length > 0) {
-            cmd.push(root.connectionParamPassword, password);
-        }
-        executeCommand(cmd, result => {
-            if (result.needsPassword && callback) {
+        runWifiConnect(ssid, password, hasBssid ? bssid : "", result => {
+            if (result.needsPassword) {
+                connectionCheckTimer.stop();
+                immediateCheckTimer.stop();
+                immediateCheckTimer.checkCount = 0;
+                root.pendingConnection = null;
                 if (callback)
                     callback(result);
                 return;
             }
 
-            if (!result.success && root.pendingConnection && retries < maxRetries) {
+            if (result.success) {
+                connectionCheckTimer.stop();
+                immediateCheckTimer.stop();
+                immediateCheckTimer.checkCount = 0;
+                root.pendingConnection = null;
+                loadSavedConnections(() => {});
+                getNetworks(() => {});
+                if (callback)
+                    callback(result);
+            } else if (root.pendingConnection && retries < maxRetries && !result.notFound) {
                 console.warn(lc, "Connection failed, retrying... (attempt " + (retries + 1) + "/" + maxRetries + ")");
                 Qt.callLater(() => {
                     connectWireless(ssid, password, bssid, callback, retries + 1);
                 }, 1000);
-            } else if (!result.success && root.pendingConnection) {} else if (result.success && callback) {} else if (!result.success && !root.pendingConnection) {
+            } else {
+                connectionCheckTimer.stop();
+                immediateCheckTimer.stop();
+                immediateCheckTimer.checkCount = 0;
+                root.pendingConnection = null;
+                root.connectionFailed(ssid);
                 if (callback)
                     callback(result);
             }
-        });
-    }
-
-    function createConnectionWithPassword(ssid: string, bssidUpper: string, password: string, callback: var): void {
-        checkAndDeleteConnection(ssid, () => {
-            const cmd = [root.nmcliCommandConnection, "add", root.connectionParamType, root.deviceTypeWifi, root.connectionParamConName, ssid, root.connectionParamIfname, "*", root.connectionParamSsid, ssid, root.connectionParamBssid, bssidUpper, root.securityKeyMgmt, root.keyMgmtWpaPsk, root.securityPsk, password];
-
-            executeCommand(cmd, result => {
-                if (result.success) {
-                    loadSavedConnections(() => {});
-                    activateConnection(ssid, callback);
-                } else {
-                    const hasDuplicateWarning = result.error && (result.error.includes("another connection with the name") || result.error.includes("Reference the connection by its uuid"));
-
-                    if (hasDuplicateWarning || (result.exitCode > 0 && result.exitCode < 10)) {
-                        loadSavedConnections(() => {});
-                        activateConnection(ssid, callback);
-                    } else {
-                        console.warn(lc, "Connection profile creation failed, trying fallback...");
-                        let fallbackCmd = [root.nmcliCommandDevice, root.nmcliCommandWifi, "connect", ssid, root.connectionParamPassword, password];
-                        executeCommand(fallbackCmd, fallbackResult => {
-                            if (callback)
-                                callback(fallbackResult);
-                        });
-                    }
-                }
-            });
         });
     }
 
@@ -602,7 +668,7 @@ Singleton {
         let keyMgmt = "";
         for (const line of output.trim().split("\n")) {
             if (line.startsWith(ssidPrefix))
-                ssid = line.substring(ssidPrefix.length).trim();
+                ssid = line.substring(ssidPrefix.length);
             else if (line.startsWith(keyMgmtPrefix))
                 keyMgmt = line.substring(keyMgmtPrefix.length).trim();
         }
@@ -649,29 +715,29 @@ Singleton {
     function savedSecurityFor(ssid: string): string {
         if (!ssid || ssid.length === 0)
             return "";
-        return root.savedConnectionSecurity[ssid.toLowerCase().trim()] || "";
+        return root.savedConnectionSecurity[ssid.toLowerCase()] || "";
     }
 
     function hasSavedProfile(ssid: string): bool {
         if (!ssid || ssid.length === 0) {
             return false;
         }
-        const ssidLower = ssid.toLowerCase().trim();
+        const ssidLower = ssid.toLowerCase();
 
         if (root.active && root.active.ssid) {
-            const activeSsidLower = root.active.ssid.toLowerCase().trim();
+            const activeSsidLower = root.active.ssid.toLowerCase();
             if (activeSsidLower === ssidLower) {
                 return true;
             }
         }
 
-        const hasSsid = root.savedConnectionSsids.some(savedSsid => savedSsid && savedSsid.toLowerCase().trim() === ssidLower);
+        const hasSsid = root.savedConnectionSsids.some(savedSsid => savedSsid && savedSsid.toLowerCase() === ssidLower);
 
         if (hasSsid) {
             return true;
         }
 
-        const hasConnectionName = root.savedConnections.some(connName => connName && connName.toLowerCase().trim() === ssidLower);
+        const hasConnectionName = root.savedConnections.some(connName => connName && connName.toLowerCase() === ssidLower);
 
         return hasConnectionName;
     }
@@ -791,7 +857,7 @@ Singleton {
             return;
         }
 
-        const connectionName = root.savedConnections.find(conn => conn && conn.toLowerCase().trim() === ssid.toLowerCase().trim()) || ssid;
+        const connectionName = root.savedConnections.find(conn => conn && conn.toLowerCase() === ssid.toLowerCase()) || ssid;
 
         executeCommand([root.nmcliCommandConnection, "delete", connectionName], result => {
             if (result.success) {
@@ -981,10 +1047,20 @@ Singleton {
             for (const n of networks)
                 newMap.set(`${n.frequency}:${n.ssid}:${n.bssid}`, n);
 
+            // Scans only return a subset of nearby access points while connected,
+            // so an AP that goes unseen is kept for a while instead of vanishing.
+            const now = Date.now();
             for (let i = rNetworks.length - 1; i >= 0; i--) {
                 const rn = rNetworks[i];
                 const key = `${rn.frequency}:${rn.ssid}:${rn.bssid}`;
-                if (!newMap.has(key)) {
+                if (newMap.has(key)) {
+                    root.apLastSeen.delete(key);
+                    continue;
+                }
+                const missingSince = root.apLastSeen.get(key) ?? now;
+                root.apLastSeen.set(key, missingSince);
+                if (rn.active || now - missingSince > root.apGraceMs) {
+                    root.apLastSeen.delete(key);
                     rNetworks.splice(i, 1);
                     rn.destroy();
                 }
@@ -1033,7 +1109,7 @@ Singleton {
 
                 const parts = line.split(":");
                 if (parts.length >= 1) {
-                    const ssid = parts[0].trim();
+                    const ssid = parts[0];
                     if (ssid && ssid.length > 0 && !seenSSIDs.has(ssid)) {
                         seenSSIDs.add(ssid);
                         const signalStr = parts.length >= 2 ? parts[1].trim() : "";
@@ -1270,14 +1346,159 @@ Singleton {
                     callback(result);
                 return;
             }
-            // Reactivate so changes take effect immediately.
-            executeCommand([root.nmcliCommandConnection, "up", connectionName], upResult => {
+            // Only reactivate if connection is currently active.
+            const isActive = root.ethernetDevices.some(d => d.connection === connectionName && d.connected);
+            if (isActive) {
+                executeCommand([root.nmcliCommandConnection, "up", connectionName], upResult => {
+                    Qt.callLater(() => {
+                        refreshOnConnectionChange();
+                    });
+                    if (callback)
+                        callback(upResult);
+                });
+            } else {
                 Qt.callLater(() => {
                     refreshOnConnectionChange();
                 });
                 if (callback)
-                    callback(upResult);
-            });
+                    callback(result);
+            }
+        });
+    }
+
+    // Reads the IPv6 configuration (method, address, gateway, DNS, autoconnect)
+    // of a connection profile for the ethernet detail page.
+    function getIpv6Config(connectionName: string, callback: var): void {
+        if (!connectionName || connectionName.length === 0) {
+            if (callback)
+                callback(null);
+            return;
+        }
+
+        executeCommand(["-t", "-f", "ipv6.method,ipv6.addresses,ipv6.gateway,ipv6.dns,ipv6.ignore-auto-dns,connection.autoconnect", root.nmcliCommandConnection, "show", connectionName], result => {
+            if (!result.success) {
+                if (callback)
+                    callback(null);
+                return;
+            }
+
+            const cfg = {
+                method: "auto",
+                address: "",
+                gateway: "",
+                dns: "",
+                ignoreAutoDns: false,
+                autoconnect: true
+            };
+
+            const lines = result.output.trim().split("\n");
+            for (const line of lines) {
+                const idx = line.indexOf(":");
+                if (idx < 0)
+                    continue;
+                const key = line.slice(0, idx).trim();
+                const value = line.slice(idx + 1).trim();
+
+                if (key === "ipv6.ignore-auto-dns")
+                    cfg.ignoreAutoDns = value === "yes";
+                else if (key === "connection.autoconnect")
+                    cfg.autoconnect = value !== "no";
+
+                if (value === "" || value === "--")
+                    continue;
+
+                if (key === "ipv6.method")
+                    cfg.method = value;
+                else if (key === "ipv6.addresses")
+                    cfg.address = value.split(",")[0].trim();
+                else if (key === "ipv6.gateway")
+                    cfg.gateway = value;
+                else if (key === "ipv6.dns")
+                    cfg.dns = value.replace(/;\s*$/, "").split(/[;,]/).map(d => d.trim()).filter(d => d.length > 0).join(", ");
+            }
+
+            // Distinguish "automatic + custom DNS only" from plain DHCPv6/SLAAC.
+            if (cfg.method === "auto" && cfg.ignoreAutoDns)
+                cfg.method = "auto-dns";
+
+            if (callback)
+                callback(cfg);
+        });
+    }
+
+    // Writes an IPv6 configuration to a connection profile and reactivates it if active.
+    function setIpv6Config(connectionName: string, config: var, callback: var): void {
+        if (!connectionName || connectionName.length === 0) {
+            if (callback)
+                callback({
+                    success: false,
+                    output: "",
+                    error: "No connection specified",
+                    exitCode: -1
+                });
+            return;
+        }
+
+        const dnsList = (config.dns ?? "").split(",").map(d => d.trim()).filter(d => d.length > 0).join(" ");
+        let cmd = [root.nmcliCommandConnection, "modify", connectionName];
+
+        if (config.method === "manual") {
+            cmd.push("ipv6.method", "manual");
+            cmd.push("ipv6.addresses", config.address ?? "");
+            cmd.push("ipv6.gateway", config.gateway ?? "");
+            cmd.push("ipv6.dns", dnsList);
+            cmd.push("ipv6.ignore-auto-dns", "yes");
+        } else if (config.method === "auto-dns") {
+            // SLAAC/DHCPv6 addressing, custom DNS only.
+            cmd.push("ipv6.method", "auto");
+            cmd.push("ipv6.addresses", "");
+            cmd.push("ipv6.gateway", "");
+            cmd.push("ipv6.dns", dnsList);
+            cmd.push("ipv6.ignore-auto-dns", "yes");
+        } else if (config.method === "link-local") {
+            cmd.push("ipv6.method", "link-local");
+            cmd.push("ipv6.addresses", "");
+            cmd.push("ipv6.gateway", "");
+            cmd.push("ipv6.dns", "");
+            cmd.push("ipv6.ignore-auto-dns", "no");
+        } else if (config.method === "disabled") {
+            cmd.push("ipv6.method", "disabled");
+            cmd.push("ipv6.addresses", "");
+            cmd.push("ipv6.gateway", "");
+            cmd.push("ipv6.dns", "");
+            cmd.push("ipv6.ignore-auto-dns", "no");
+        } else {
+            // Full auto (SLAAC / DHCPv6)
+            cmd.push("ipv6.method", "auto");
+            cmd.push("ipv6.addresses", "");
+            cmd.push("ipv6.gateway", "");
+            cmd.push("ipv6.dns", "");
+            cmd.push("ipv6.ignore-auto-dns", "no");
+        }
+
+        executeCommand(cmd, result => {
+            if (!result.success) {
+                if (callback)
+                    callback(result);
+                return;
+            }
+            // If connection is active, reactivate so changes take effect immediately.
+            const isActive = root.ethernetDevices.some(d => d.connection === connectionName && d.connected);
+            if (isActive) {
+                executeCommand([root.nmcliCommandConnection, "up", connectionName], upResult => {
+                    Qt.callLater(() => {
+                        refreshOnConnectionChange();
+                    });
+                    if (callback)
+                        callback(upResult);
+                });
+            } else {
+                Qt.callLater(() => {
+                    refreshOnConnectionChange();
+                });
+                if (callback)
+                    callback(result);
+            }
         });
     }
 
@@ -1344,6 +1565,9 @@ Singleton {
             gateway: "",
             dns: [],
             subnet: "",
+            ipv6Address: "",
+            ipv6Gateway: "",
+            ipv6Dns: [],
             macAddress: "",
             speed: ""
         };
@@ -1376,6 +1600,18 @@ Singleton {
                 } else if (key.startsWith("IP4.DNS")) {
                     if (value !== "--" && value.length > 0) {
                         details.dns.push(value);
+                    }
+                } else if (key.startsWith("IP6.ADDRESS")) {
+                    if (!details.ipv6Address && value !== "--") {
+                        details.ipv6Address = value;
+                    }
+                } else if (key === "IP6.GATEWAY") {
+                    if (value !== "--") {
+                        details.ipv6Gateway = value;
+                    }
+                } else if (key.startsWith("IP6.DNS")) {
+                    if (value !== "--" && value.length > 0) {
+                        details.ipv6Dns.push(value);
                     }
                 } else if (key === "GENERAL.HWADDR") {
                     details.macAddress = value;
@@ -1507,7 +1743,7 @@ Singleton {
     Timer {
         id: connectionCheckTimer
 
-        interval: 4000
+        interval: 25000
         onTriggered: {
             if (root.pendingConnection) {
                 const connected = root.active && root.active.ssid === root.pendingConnection.ssid;
@@ -1636,7 +1872,7 @@ Singleton {
                         }
                     }
 
-                    if (checkCount >= 6) {
+                    if (checkCount >= 50) {
                         immediateCheckTimer.stop();
                         immediateCheckTimer.checkCount = 0;
                     }
@@ -1824,6 +2060,9 @@ Singleton {
         readonly property string ipAddress: lastIpcObject.ipAddress ?? ""
         readonly property string gateway: lastIpcObject.gateway ?? ""
         readonly property var dns: lastIpcObject.dns ?? []
+        readonly property string ipv6Address: lastIpcObject.ipv6Address ?? ""
+        readonly property string ipv6Gateway: lastIpcObject.ipv6Gateway ?? ""
+        readonly property var ipv6Dns: lastIpcObject.ipv6Dns ?? []
         readonly property string subnet: lastIpcObject.subnet ?? ""
         readonly property string macAddress: lastIpcObject.macAddress ?? ""
         readonly property string speed: lastIpcObject.speed ?? ""

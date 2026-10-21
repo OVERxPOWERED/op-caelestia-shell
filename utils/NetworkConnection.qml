@@ -1,6 +1,8 @@
 pragma Singleton
 
 import QtQuick
+import Caelestia
+import Caelestia.I18n
 import qs.services
 
 /**
@@ -66,36 +68,27 @@ QtObject {
             return;
         }
 
-        if (network.isSecure) {
-            const hasSavedProfile = Nmcli.hasSavedProfile(network.ssid);
-
-            if (hasSavedProfile) {
-                Nmcli.connectToNetwork(network.ssid, "", network.bssid, null);
-            } else {
-                // Use password check with callback
-                Nmcli.connectToNetworkWithPasswordCheck(network.ssid, network.isSecure, result => {
-                    if (result.needsPassword) {
-                        // Clear pending connection if exists
-                        if (Nmcli.pendingConnection) {
-                            Nmcli.connectionCheckTimer.stop();
-                            Nmcli.immediateCheckTimer.stop();
-                            Nmcli.immediateCheckTimer.checkCount = 0;
-                            Nmcli.pendingConnection = null;
-                        }
-
-                        // Handle password dialog - use session if available, otherwise use callback
-                        if (session && session.network) {
-                            session.network.showPasswordDialog = true;
-                            session.network.pendingNetwork = network;
-                        } else if (onPasswordNeeded) {
-                            onPasswordNeeded(network);
-                        }
-                    }
-                }, network.bssid);
+        // Always listen for the outcome: a saved profile can hold a stale
+        // password (e.g. a phone hotspot that changed it), and that failure must
+        // lead to the password dialog instead of silently doing nothing.
+        Nmcli.connectToNetwork(network.ssid, "", network.bssid, result => {
+            if (result.success) {
+                return;
             }
-        } else {
-            Nmcli.connectToNetwork(network.ssid, "", network.bssid, null);
-        }
+
+            if (result.needsPassword) {
+                if (session && session.network) {
+                    session.network.showPasswordDialog = true;
+                    session.network.pendingNetwork = network;
+                } else if (onPasswordNeeded) {
+                    onPasswordNeeded(network);
+                }
+            } else if (result.notFound) {
+                Toaster.toast(Tr.tr("Network not found"), Tr.tr("%1 is out of range or not broadcasting").arg(network.ssid), "wifi_off");
+            } else {
+                Toaster.toast(Tr.tr("Could not connect"), Tr.tr("Connecting to %1 failed").arg(network.ssid), "wifi_off");
+            }
+        });
     }
 
     /**

@@ -19,6 +19,8 @@ Protocol (QML → agent):
   {"type": "pin",     "value": "1234"}
 """
 
+import ctypes
+import fcntl
 import json
 import os
 import signal
@@ -37,7 +39,56 @@ SOCKET_PATH = os.path.join(
     os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}"),
     "caelestia-bt-agent.sock",
 )
+LOCK_PATH = SOCKET_PATH + ".lock"
 RESPONSE_TIMEOUT = 30  # seconds
+PARENT_POLL_MS = 2000
+
+
+def claim_single_instance():
+    """Become the only running agent, taking over from any previous one.
+
+    A shell restart that kills quickshell without letting it stop its children
+    leaves the old agent running, so a newer agent replaces it instead of
+    queueing behind it. Returns the lock file object, which must stay open.
+    """
+    lock = open(LOCK_PATH, "a+")
+    for _ in range(20):
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            lock.seek(0)
+            try:
+                old_pid = int(lock.read().strip() or 0)
+                with open(f"/proc/{old_pid}/cmdline", "rb") as f:
+                    is_agent = b"bt-agent.py" in f.read()
+            except (ValueError, OSError):
+                is_agent = False
+                old_pid = 0
+            if is_agent and old_pid != os.getpid():
+                print(f"[bt-agent] Replacing previous agent (pid {old_pid})", flush=True)
+                try:
+                    os.kill(old_pid, signal.SIGKILL)
+                except OSError:
+                    pass
+            GLib.usleep(100_000)
+            continue
+        lock.seek(0)
+        lock.truncate()
+        lock.write(str(os.getpid()))
+        lock.flush()
+        return lock
+    print("[bt-agent] Could not take over from the previous agent", flush=True)
+    sys.exit(1)
+
+
+def exit_with_parent():
+    """Exit when the process that started us (quickshell) goes away."""
+    try:
+        ctypes.CDLL("libc.so.6", use_errno=True).prctl(1, signal.SIGTERM)  # PR_SET_PDEATHSIG
+    except Exception:
+        pass
+    parent = os.getppid()
+    return parent
 
 
 def get_device_name(device_path: str) -> str:
@@ -65,10 +116,12 @@ class SocketBridge:
         self._client: socket.socket | None = None
         self._lock = threading.Lock()
         self._recv_buffer = ""
+        self._ino: int | None = None
 
     def start(self):
         """Start listening on the Unix socket."""
-        # Clean up stale socket
+        # Clean up stale socket; we hold the single-instance lock, so any
+        # existing socket belongs to a previous agent
         if os.path.exists(SOCKET_PATH):
             os.unlink(SOCKET_PATH)
 
@@ -76,6 +129,7 @@ class SocketBridge:
         self._server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._server.bind(SOCKET_PATH)
         os.chmod(SOCKET_PATH, 0o600)
+        self._ino = os.stat(SOCKET_PATH).st_ino
         self._server.listen(1)
         self._server.setblocking(False)
 
@@ -160,8 +214,12 @@ class SocketBridge:
                 self._server.close()
             except Exception:
                 pass
-        if os.path.exists(SOCKET_PATH):
-            os.unlink(SOCKET_PATH)
+        # Only remove the socket if it is still ours; a newer agent may own it
+        try:
+            if os.stat(SOCKET_PATH).st_ino == self._ino:
+                os.unlink(SOCKET_PATH)
+        except OSError:
+            pass
 
 
 class BluezAgent(dbus.service.Object):
@@ -314,6 +372,9 @@ class BluezAgent(dbus.service.Object):
 
 
 def main():
+    lock = claim_single_instance()  # noqa: F841 - held open for the process lifetime
+    parent = exit_with_parent()
+
     try:
         dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
         bus = dbus.SystemBus()
@@ -352,6 +413,15 @@ def main():
 
     signal.signal(signal.SIGTERM, shutdown)
     signal.signal(signal.SIGINT, shutdown)
+
+    def check_parent():
+        if os.getppid() != parent:
+            print("[bt-agent] Parent process gone, exiting", flush=True)
+            shutdown()
+            return False
+        return True
+
+    GLib.timeout_add(PARENT_POLL_MS, check_parent)
 
     try:
         loop.run()

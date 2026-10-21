@@ -108,6 +108,24 @@ Item {
         anchors.leftMargin: navPane.anchors.margins + anchors.margins
         anchors.margins: Tokens.padding.extraLarge
 
+        visible: !nState.searchOpen
         nState: nState
+    }
+
+    SearchResults {
+        anchors.left: navPane.right
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: navPane.anchors.margins + anchors.margins
+        anchors.margins: Tokens.padding.extraLarge
+
+        visible: nState.searchOpen
+        nState: nState
+    }
+
+    Shortcut {
+        sequence: "Ctrl+F"
+        onActivated: nState.focusSearch()
     }
 }

@@ -84,3 +84,15 @@ Nexus Settings
 - Sleep inhibitors (keep awake during audio playback, keep awake when plugged into AC power).
 - Inactivity timeouts for screen lock, display off (DPMS), and system suspend.
 - Lock before sleep toggle.
+
+
+---
+
+## 🔎 Settings search
+
+The search box in the navigation pane searches every setting in every page and sub-page.
+
+- **Keys**: `Ctrl+F` focuses the box, `↑`/`↓` move through results, `Enter` opens the page and flashes the row, `Esc` clears.
+- **Index**: `modules/nexus/SearchIndex.qml` is generated from the page files by `scripts/gen-nexus-search-index.py`. After adding or renaming a setting, run `scripts/gen-nexus-search-index.py`; `--check` exits non-zero if the index is stale.
+- **Keywords and synonyms**: add them in `scripts/nexus-search-keywords.json` (per page, or per setting label), then regenerate.
+- **Not searchable**: sub-pages that need a selected device, network or app, and rows whose label contains a `%` placeholder.

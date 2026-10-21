@@ -1,0 +1,145 @@
+{
+  "pages": {
+    "Wallpaper & style": [
+      "theme",
+      "wallpaper",
+      "background",
+      "colour",
+      "color",
+      "font",
+      "dark mode",
+      "light mode",
+      "appearance",
+      "scheme"
+    ],
+    "Network": [
+      "wifi",
+      "wi-fi",
+      "wireless",
+      "internet",
+      "ethernet",
+      "vpn",
+      "hotspot",
+      "connection",
+      "password"
+    ],
+    "Connected devices": [
+      "bluetooth",
+      "pairing",
+      "headphones",
+      "earbuds",
+      "mouse",
+      "keyboard",
+      "device"
+    ],
+    "Audio": [
+      "sound",
+      "volume",
+      "speaker",
+      "microphone",
+      "mic",
+      "output",
+      "input",
+      "headphones"
+    ],
+    "Power & idle": [
+      "battery",
+      "sleep",
+      "suspend",
+      "hibernate",
+      "lock",
+      "timeout",
+      "screen off",
+      "charge",
+      "inhibit"
+    ],
+    "Panels": [
+      "dashboard",
+      "bar",
+      "taskbar",
+      "dock",
+      "launcher",
+      "sidebar",
+      "osd",
+      "overview"
+    ],
+    "Apps": [
+      "default apps",
+      "browser",
+      "terminal",
+      "file manager",
+      "favourites",
+      "hidden"
+    ],
+    "Lock screen": [
+      "fingerprint",
+      "pattern",
+      "password",
+      "face",
+      "security",
+      "unlock"
+    ],
+    "Services": [
+      "poll",
+      "weather",
+      "lyrics",
+      "calendar",
+      "notifications"
+    ],
+    "Language & region": [
+      "locale",
+      "units",
+      "celsius",
+      "fahrenheit",
+      "temperature",
+      "time format",
+      "24 hour",
+      "translation"
+    ],
+    "About": [
+      "system information",
+      "version",
+      "hostname",
+      "distro",
+      "kernel",
+      "credits"
+    ],
+    "Display": [
+      "monitor",
+      "screen",
+      "projector",
+      "hdmi",
+      "mirror",
+      "extend",
+      "resolution",
+      "scale",
+      "refresh rate",
+      "rotation",
+      "external display",
+      "second screen",
+      "arrangement"
+    ]
+  },
+  "rows": {
+    "Dark theme": [
+      "dark mode",
+      "night mode",
+      "light mode",
+      "dark"
+    ],
+    "Transparency": [
+      "blur",
+      "glass",
+      "opacity",
+      "translucent"
+    ],
+    "Wi-Fi": [
+      "wireless",
+      "internet"
+    ],
+    "Lock screen timeout": [
+      "auto lock",
+      "lock after"
+    ]
+  }
+}

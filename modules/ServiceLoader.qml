@@ -14,6 +14,7 @@ Scope {
         Brightness;
         Weather.reload();
         Pomodoro;
+        Displays;
 
         if (GlobalConfig.utilities.vpn.enabled)
             VPN;

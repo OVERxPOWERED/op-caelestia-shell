@@ -34,10 +34,40 @@ ColumnLayout {
             CAnim {}
         }
 
+        Keys.onDownPressed: root.nState.searchMove(1)
+        Keys.onUpPressed: root.nState.searchMove(-1)
+        Keys.onReturnPressed: root.nState.searchActivate()
+        Keys.onEnterPressed: root.nState.searchActivate()
+        Keys.onEscapePressed: event => {
+            if (text.length > 0)
+                clear();
+            else
+                event.accepted = false;
+        }
+
         Binding {
             target: root.nState
             property: "searchOpen"
             value: searchField.text.length > 0
+        }
+
+        Binding {
+            target: root.nState
+            property: "searchText"
+            value: searchField.text
+        }
+
+        Connections {
+            function onFocusSearch(): void {
+                searchField.forceActiveFocus();
+                searchField.selectAll();
+            }
+
+            function onClearSearch(): void {
+                searchField.clear();
+            }
+
+            target: root.nState
         }
     }
 

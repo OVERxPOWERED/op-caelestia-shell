@@ -35,6 +35,8 @@ MouseArea {
 
     parent: {
         const win = QsWindow.window;
+        if (!win) // Not in a window yet, or its window is being torn down
+            return null;
         const contentWin = win as ContentWindow; // If inside the drawer content window, put it inside the interaction wrapper so hover works
         return contentWin ? contentWin.interactionWrapper : (win as QsWindow).contentItem;
     }
@@ -54,16 +56,20 @@ MouseArea {
         }
     }
 
-    // Room around the attach point, to cap the menu's height and to decide whether it opens up
-    readonly property real spaceBelow: {
-        watcher.transform; // not reactive on its own
-        const p = attachTo.mapToItem(parent, 0, attachTo.height);
-        return parent.height - p.y - Tokens.padding.large;
+    // Room around the attach point, to cap the menu's height and to decide whether it opens up.
+    // Measured when the menu opens and when anything above it moves, rather than bound, because
+    // the geometry it reads is not reactive and a binding here loops with the menu's own position.
+    property real spaceBelow: 0
+    property real spaceAbove: 0
+
+    function measure(): void {
+        if (!parent || !attachTo)
+            return;
+        const top = attachTo.mapToItem(parent, 0, 0).y;
+        spaceAbove = top - Tokens.padding.large;
+        spaceBelow = parent.height - (top + attachTo.height) - Tokens.padding.large;
     }
-    readonly property real spaceAbove: {
-        watcher.transform;
-        return attachTo.mapToItem(parent, 0, 0).y - Tokens.padding.large;
-    }
+
     readonly property real naturalHeight: column.implicitHeight + flick.anchors.margins * 2
     // Opens upward when it would not fit below and there is more room above
     readonly property bool flipUp: thisSideY === Menu.Top && attachSideY === Menu.Bottom && spaceBelow < Math.min(naturalHeight, 260) && spaceAbove > spaceBelow
@@ -81,8 +87,10 @@ MouseArea {
     }
 
     onExpandedChanged: {
-        if (expanded)
+        if (expanded) {
+            measure();
             Qt.callLater(revealActive);
+        }
     }
 
     TransformWatcher {
@@ -90,6 +98,14 @@ MouseArea {
 
         a: root.parent
         b: root.attachTo
+    }
+
+    Connections {
+        function onTransformChanged(): void {
+            root.measure();
+        }
+
+        target: watcher
     }
 
     Elevation {

@@ -24,4 +24,13 @@ if [[ -n "$QML_PREFIX" ]]; then
     export QML2_IMPORT_PATH="$QML_PREFIX${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
 fi
 
+# Quickshell does not take the icon theme from qt6ct, so without this file pickers, and any
+# icon looked up by name, show missing-icon squares. Use the theme you already chose in qt6ct
+# (or GTK), unless QS_ICON_THEME is set.
+if [[ -z "${QS_ICON_THEME:-}" ]]; then
+    theme="$(sed -n 's/^icon_theme=//p' "${XDG_CONFIG_HOME:-$HOME/.config}/qt6ct/qt6ct.conf" 2>/dev/null | head -n1)"
+    [[ -n "$theme" ]] || theme="$(gsettings get org.gnome.desktop.interface icon-theme 2>/dev/null | tr -d "'")"
+    [[ -n "$theme" ]] && export QS_ICON_THEME="$theme"
+fi
+
 exec quickshell -p "$ROOT/shell.qml" "$@"

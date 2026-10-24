@@ -45,12 +45,6 @@ Item {
     Behavior on width { Anim {} }
     Behavior on height { Anim {} }
 
-    // Drag support
-    Drag.active: dragArea.drag.active
-    Drag.source: root.modelData
-    Drag.hotSpot.x: width / 2
-    Drag.hotSpot.y: height / 2
-
     StyledRect {
         id: bg
 
@@ -63,7 +57,7 @@ Item {
             ? Colours.palette.m3primary
             : (hoverHandler.hovered ? Colours.palette.m3outline : Colours.palette.m3outlineVariant)
 
-        opacity: dragArea.drag.active ? 0.6 : 1.0
+        opacity: (OverviewState.draggingWindow === root.modelData) ? 0.35 : 1.0
 
         Behavior on border.color { CAnim {} }
         Behavior on opacity { Anim {} }
@@ -97,16 +91,14 @@ Item {
                     height: Math.min(24, Math.max(18, root.height * 0.28))
                     radius: Tokens.rounding.small
                     color: Colours.layer(Colours.palette.m3surfaceContainerHighest, 1)
-                    opacity: hoverHandler.hovered || screencopy.captureSource === null ? 0.95 : 0.75
-
-                    Behavior on opacity { Anim {} }
+                    opacity: 0.95
 
                     Row {
                         anchors.left: parent.left
-                        anchors.right: closeBtn.visible ? closeBtn.left : parent.right
-                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: closeBtn.visible ? (closeBtn.width + 6) : Tokens.padding.extraSmall
                         anchors.leftMargin: Tokens.padding.extraSmall
-                        anchors.rightMargin: Tokens.padding.extraSmall
+                        anchors.verticalCenter: parent.verticalCenter
                         spacing: Tokens.spacing.extraSmall
                         clip: true
 
@@ -122,7 +114,7 @@ Item {
                         StyledText {
                             id: titleText
                             text: root.modelData?.title || root.ipc.class || qsTr("Window")
-                            font.pixelSize: Math.max(8, Math.min(11, topBar.height * 0.6))
+                            font.pixelSize: Math.max(9, Math.min(11, topBar.height * 0.6))
                             font.weight: Font.DemiBold
                             color: Colours.palette.m3onSurface
                             elide: Text.ElideRight
@@ -131,42 +123,92 @@ Item {
                             visible: root.width > 55
                         }
                     }
-
-                    // Close button on hover
-                    IconButton {
-                        id: closeBtn
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.rightMargin: 2
-                        implicitWidth: Math.min(16, topBar.height - 2)
-                        implicitHeight: Math.min(16, topBar.height - 2)
-                        icon: "close"
-                        visible: hoverHandler.hovered && root.width > 48 && root.height > 24
-                        onClicked: OverviewState.closeWindow(root.modelData)
-                    }
                 }
             }
         }
 
+        // Drag area for window interaction (z: 1)
         MouseArea {
             id: dragArea
             anchors.fill: parent
+            z: 1
             hoverEnabled: true
-            acceptedButtons: Qt.LeftButton | Qt.MiddleButton
-            drag.target: root
+            preventStealing: isDraggingThis
+            acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+            cursorShape: Qt.PointingHandCursor
 
-            drag.onActiveChanged: {
-                if (drag.active) {
-                    root.parent.parent.Drag.start();
+            property bool isDraggingThis: false
+            property point rightPressPos
+
+            onPressed: mouse => {
+                if (mouse.button === Qt.RightButton) {
+                    rightPressPos = Qt.point(mouse.x, mouse.y);
+                    isDraggingThis = false;
+                }
+            }
+
+            onPositionChanged: mouse => {
+                if (pressed && (mouse.buttons & Qt.RightButton)) {
+                    const dx = mouse.x - rightPressPos.x;
+                    const dy = mouse.y - rightPressPos.y;
+                    if (!isDraggingThis && (dx * dx + dy * dy > 64)) {
+                        isDraggingThis = true;
+                        const globalPos = dragArea.mapToItem(null, mouse.x, mouse.y);
+                        OverviewState.startWindowDrag(
+                            root.modelData,
+                            root.modelData?.title || root.ipc.class || qsTr("Window"),
+                            Icons.getAppIcon(root.ipc.class || root.ipc.initialClass || "", "image-missing"),
+                            globalPos.x,
+                            globalPos.y
+                        );
+                    }
+                    if (isDraggingThis) {
+                        const globalPos = dragArea.mapToItem(null, mouse.x, mouse.y);
+                        OverviewState.updateDrag(globalPos.x, globalPos.y);
+                    }
+                }
+            }
+
+            onReleased: mouse => {
+                if (isDraggingThis) {
+                    isDraggingThis = false;
+                    OverviewState.finishDrag();
+                }
+            }
+
+            onCanceled: {
+                if (isDraggingThis) {
+                    isDraggingThis = false;
+                    OverviewState.cancelDrag();
                 }
             }
 
             onClicked: mouse => {
-                if (mouse.button === Qt.MiddleButton) {
-                    OverviewState.closeWindow(root.modelData);
-                } else if (mouse.button === Qt.LeftButton) {
+                if (mouse.button === Qt.LeftButton) {
                     OverviewState.focusWindow(root.modelData);
+                } else if (mouse.button === Qt.MiddleButton) {
+                    OverviewState.closeWindow(root.modelData);
                 }
+            }
+        }
+
+        // Close button (z: 20, explicitly higher than dragArea to guarantee clicks work)
+        IconButton {
+            id: closeBtn
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.topMargin: 1
+            anchors.rightMargin: 1
+            z: 20
+            implicitWidth: 20
+            implicitHeight: 20
+            padding: 2
+            font: Tokens.font.icon.small
+            icon: "close"
+            type: IconButton.Tonal
+            visible: hoverHandler.hovered && root.width > 48 && root.height > 24
+            onClicked: {
+                OverviewState.closeWindow(root.modelData);
             }
         }
 

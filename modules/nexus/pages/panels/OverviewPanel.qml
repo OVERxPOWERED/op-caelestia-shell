@@ -44,12 +44,20 @@ PageBase {
 
         SelectRow {
             first: true
-            last: true
+            last: false
             label: qsTr("Active tab")
             subtext: qsTr("Initial view when opening the fullscreen overview")
             menuItems: root.tabItems
             active: root.tabItems[Math.max(0, Math.min(2, OverviewState.activeTab))]
             onSelected: item => OverviewState.activeTab = root.tabItems.indexOf(item)
+        }
+
+        ToggleRow {
+            last: true
+            text: qsTr("Grid layout for workspaces")
+            subtext: qsTr("Display workspaces in a 2D responsive grid instead of a carousel")
+            checked: OverviewState.gridMode
+            onToggled: OverviewState.gridMode = checked
         }
 
         // Integration & Controls

@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Widgets
@@ -31,98 +32,166 @@ Item {
     implicitWidth: baseWidth
     implicitHeight: baseHeight + 36
 
-    scale: hoverHandler.hovered || isSelected ? 1.03 : (isFocused ? 1.01 : 1.0)
-    Behavior on scale { Anim {} }
+    readonly property bool isDropTarget: {
+        if (!OverviewState.isDragging || !OverviewState.draggingWindow || !modelData) return false;
+        const pos = root.mapFromItem(null, OverviewState.dragGlobalX, OverviewState.dragGlobalY);
+        return pos.x >= 0 && pos.x <= root.width && pos.y >= 0 && pos.y <= root.height;
+    }
 
-    DropArea {
-        id: dropArea
+    onIsDropTargetChanged: {
+        if (isDropTarget) {
+            OverviewState.dropTargetWsId = modelData.id;
+        } else if (OverviewState.dropTargetWsId === modelData.id) {
+            OverviewState.dropTargetWsId = -1;
+        }
+    }
+
+    opacity: (OverviewState.draggingWorkspace === root.modelData) ? 0.35 : 1.0
+    scale: hoverHandler.hovered || isSelected || isDropTarget ? 1.03 : (isFocused ? 1.01 : 1.0)
+    Behavior on scale { Anim {} }
+    Behavior on opacity { Anim {} }
+
+    // Unified Card MouseArea for left-click focus/scroll and right-click workspace dragging (z: 0)
+    MouseArea {
+        id: cardMouseArea
         anchors.fill: parent
-        onDropped: drop => {
-            if (drop.source && modelData) {
-                OverviewState.moveWindowToWorkspace(drop.source, modelData.id);
+        z: 0
+        preventStealing: isDraggingWs
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+        property bool isDraggingWs: false
+        property point rightPressPos
+
+        onPressed: mouse => {
+            if (mouse.button === Qt.RightButton) {
+                rightPressPos = Qt.point(mouse.x, mouse.y);
+                isDraggingWs = false;
+            }
+        }
+
+        onPositionChanged: mouse => {
+            if (pressed && (mouse.buttons & Qt.RightButton)) {
+                const dx = mouse.x - rightPressPos.x;
+                const dy = mouse.y - rightPressPos.y;
+                if (!isDraggingWs && (dx * dx + dy * dy > 64)) {
+                    isDraggingWs = true;
+                    const globalPos = cardMouseArea.mapToItem(null, mouse.x, mouse.y);
+                    OverviewState.startWorkspaceDrag(
+                        root.modelData,
+                        root.modelData?.name || `Workspace ${root.modelData?.id}`,
+                        globalPos.x,
+                        globalPos.y,
+                        root.cardIndex
+                    );
+                }
+                if (isDraggingWs) {
+                    const globalPos = cardMouseArea.mapToItem(null, mouse.x, mouse.y);
+                    OverviewState.updateDrag(globalPos.x, globalPos.y);
+                }
+            }
+        }
+
+        onReleased: mouse => {
+            if (isDraggingWs) {
+                isDraggingWs = false;
+                OverviewState.finishDrag();
+            }
+        }
+
+        onCanceled: {
+            if (isDraggingWs) {
+                isDraggingWs = false;
+                OverviewState.cancelDrag();
+            }
+        }
+
+        onClicked: mouse => {
+            if (mouse.button === Qt.LeftButton) {
+                root.clicked();
             }
         }
     }
 
     // Top Card Header
-    Row {
+    Item {
         id: header
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Tokens.padding.extraSmall
-        spacing: Tokens.spacing.small
+        height: 32
 
-        // Workspace number badge
-        StyledRect {
-            implicitWidth: 24
-            implicitHeight: 24
-            radius: Tokens.rounding.full
-            color: root.isFocused ? Colours.palette.m3primary : Colours.palette.m3surfaceContainerHigh
-            anchors.verticalCenter: parent.verticalCenter
+        RowLayout {
+            anchors.fill: parent
+            anchors.leftMargin: Tokens.padding.extraSmall
+            anchors.rightMargin: Tokens.padding.extraSmall
+            spacing: Tokens.spacing.small
 
-            StyledText {
-                anchors.centerIn: parent
-                text: root.modelData?.id ?? ""
-                font.pixelSize: 11
-                font.weight: Font.Bold
-                color: root.isFocused ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
-            }
-        }
+            // Workspace number badge
+            StyledRect {
+                implicitWidth: 24
+                implicitHeight: 24
+                radius: Tokens.rounding.full
+                color: root.isFocused ? Colours.palette.m3primary : Colours.palette.m3surfaceContainerHigh
 
-        // Workspace Name
-        StyledText {
-            text: root.modelData?.name ?? qsTr("Workspace")
-            font.pixelSize: 13
-            font.weight: Font.DemiBold
-            color: root.isFocused ? Colours.palette.m3primary : Colours.palette.m3onSurface
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        // Focused / Active Status Pill inside Header
-        StyledRect {
-            implicitWidth: statusText.implicitWidth + 14
-            implicitHeight: 20
-            radius: Tokens.rounding.full
-            visible: root.isFocused || root.isActiveOnMonitor
-            color: root.isFocused ? Colours.palette.m3primaryContainer : Colours.palette.m3surfaceContainerHigh
-            border.width: 1
-            border.color: root.isFocused ? Colours.palette.m3primary : Colours.palette.m3outlineVariant
-            anchors.verticalCenter: parent.verticalCenter
-
-            StyledText {
-                id: statusText
-                anchors.centerIn: parent
-                text: root.isFocused ? qsTr("Focused") : qsTr("Active")
-                font.pixelSize: 10
-                font.weight: Font.Bold
-                color: root.isFocused ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurfaceVariant
-            }
-        }
-
-        Item {
-            implicitWidth: 1
-            implicitHeight: 1
-            width: Math.max(1, header.width - (parent.children[0].width + parent.children[1].width + (parent.children[2].visible ? parent.children[2].width : 0) + parent.children[4].width + Tokens.spacing.small * 5))
-        }
-
-        // Window count badge
-        Row {
-            spacing: Tokens.spacing.extraSmall
-            anchors.verticalCenter: parent.verticalCenter
-
-            StyledText {
-                text: root.toplevels.length
-                font.pixelSize: 12
-                color: Colours.palette.m3onSurfaceVariant
-                anchors.verticalCenter: parent.verticalCenter
+                StyledText {
+                    anchors.centerIn: parent
+                    text: root.modelData?.id ?? ""
+                    font.pixelSize: 11
+                    font.weight: Font.Bold
+                    color: root.isFocused ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+                }
             }
 
-            MaterialIcon {
-                text: "filter_none"
-                fontStyle: Tokens.font.icon.small
-                color: Colours.palette.m3onSurfaceVariant
-                anchors.verticalCenter: parent.verticalCenter
+            // Workspace Name
+            StyledText {
+                text: root.modelData?.name ?? qsTr("Workspace")
+                font.pixelSize: 13
+                font.weight: Font.DemiBold
+                color: root.isFocused ? Colours.palette.m3primary : Colours.palette.m3onSurface
+            }
+
+            // Focused / Active Status Pill inside Header
+            StyledRect {
+                implicitWidth: statusText.implicitWidth + 14
+                implicitHeight: 20
+                radius: Tokens.rounding.full
+                visible: root.isFocused || root.isActiveOnMonitor
+                color: root.isFocused ? Colours.palette.m3primaryContainer : Colours.palette.m3surfaceContainerHigh
+                border.width: 1
+                border.color: root.isFocused ? Colours.palette.m3primary : Colours.palette.m3outlineVariant
+
+                StyledText {
+                    id: statusText
+                    anchors.centerIn: parent
+                    text: root.isFocused ? qsTr("Focused") : qsTr("Active")
+                    font.pixelSize: 10
+                    font.weight: Font.Bold
+                    color: root.isFocused ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurfaceVariant
+                }
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            // Window count badge
+            Row {
+                spacing: Tokens.spacing.extraSmall
+                Layout.alignment: Qt.AlignVCenter
+
+                StyledText {
+                    text: root.toplevels.length
+                    font.pixelSize: 12
+                    color: Colours.palette.m3onSurfaceVariant
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                MaterialIcon {
+                    text: "filter_none"
+                    fontStyle: Tokens.font.icon.small
+                    color: Colours.palette.m3onSurfaceVariant
+                    anchors.verticalCenter: parent.verticalCenter
+                }
             }
         }
     }
@@ -139,18 +208,21 @@ Item {
         radius: Tokens.rounding.large
 
         color: Colours.layer(Colours.palette.m3surfaceContainer, 0)
-        border.width: root.isFocused ? 2 : (hoverHandler.hovered || root.isSelected || dropArea.containsDrag ? 1.5 : 1)
-        border.color: root.isFocused
+        border.width: root.isDropTarget ? 2.5 : (root.isFocused ? 2 : (hoverHandler.hovered || root.isSelected ? 1.5 : 1))
+        border.color: root.isDropTarget
             ? Colours.palette.m3primary
-            : (dropArea.containsDrag ? Colours.palette.m3tertiary : (hoverHandler.hovered || root.isSelected ? Colours.palette.m3outline : Colours.palette.m3outlineVariant))
+            : (root.isFocused
+                ? Colours.palette.m3primary
+                : (hoverHandler.hovered || root.isSelected ? Colours.palette.m3outline : Colours.palette.m3outlineVariant))
 
         Behavior on border.color { CAnim {} }
         Behavior on border.width { Anim {} }
 
-        // Curved Content Wrapper
+        // Curved Content Wrapper (z: 1)
         ClippingWrapperRectangle {
             anchors.fill: parent
             anchors.margins: 1
+            z: 1
             color: "transparent"
             radius: Tokens.rounding.large
 
@@ -167,11 +239,12 @@ Item {
                     asynchronous: true
                 }
 
-                // Miniature windows viewport
+                // Miniature windows viewport (z: 2)
                 Item {
                     id: innerViewport
                     anchors.fill: parent
                     anchors.margins: Tokens.padding.extraSmall
+                    z: 2
 
                     Repeater {
                         model: root.toplevels
@@ -184,14 +257,6 @@ Item {
                     }
                 }
             }
-        }
-
-        // State layer for card clicks
-        StateLayer {
-            id: stateLayer
-            anchors.fill: parent
-            radius: Tokens.rounding.large
-            onClicked: root.clicked()
         }
 
         HoverHandler {

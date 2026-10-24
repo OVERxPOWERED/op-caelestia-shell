@@ -46,7 +46,8 @@ public:
 
 private:
     [[nodiscard]] QString themeAsset(const QString& fileName) const {
-        return u"root:/assets/themes/"_s + m_themeName + u"/"_s + fileName;
+        const auto& theme = m_themeName.isEmpty() ? u"Shinchan"_s : m_themeName;
+        return u"root:/assets/themes/"_s + theme + u"/"_s + fileName;
     }
 };
 

@@ -62,7 +62,6 @@ PageBase {
         }
 
         ToggleRow {
-            last: true
             text: qsTr("Show on hover")
             subtext: Config.dock.showOnHover ? qsTr("Reveal dock on hover (launcher opens on drag)") : qsTr("Reveal dock on drag (launcher opens on hover)")
             checked: Config.dock.showOnHover
@@ -70,6 +69,14 @@ PageBase {
                 GlobalConfig.dock.showOnHover = checked;
                 GlobalConfig.launcher.showOnHover = !checked;
             }
+        }
+
+        ToggleRow {
+            last: true
+            text: qsTr("Scroll to open launcher")
+            subtext: qsTr("Scrolling over the dock opens the application launcher")
+            checked: Config.dock.scrollToLauncher
+            onToggled: GlobalConfig.dock.scrollToLauncher = checked
         }
 
         // Behaviour & Dimensions

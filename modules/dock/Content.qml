@@ -98,6 +98,29 @@ Item {
     implicitWidth: row.implicitWidth + padding * 2
     implicitHeight: row.implicitHeight + padding * 2
 
+    property real dockHoverX: -1
+    readonly property bool dockHovered: !editMode && dockHoverHandler.hovered
+
+    function getMagnificationScale(itemCenterX: real): real {
+        if (!dockHovered || editMode || dockHoverX < 0) return 1.0;
+        const dist = Math.abs(dockHoverX - itemCenterX);
+        const maxDist = (root.itemSize + Tokens.spacing.medium) * 1.5;
+        if (dist >= maxDist) return 1.0;
+        const factor = 0.5 * (1.0 + Math.cos(Math.PI * dist / maxDist));
+        return 1.0 + 0.25 * factor;
+    }
+
+    WheelHandler {
+        target: null
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        onWheel: (event) => {
+            if (GlobalConfig.dock.scrollToLauncher && event.angleDelta.y !== 0) {
+                root.screenState.launcher = true;
+                root.screenState.dock = false;
+            }
+        }
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────
 
     function getAppEntry(id: string): var {
@@ -353,6 +376,14 @@ Item {
         anchors.centerIn: parent
         spacing: Tokens.spacing.medium
 
+        HoverHandler {
+            id: dockHoverHandler
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+            onPointChanged: {
+                root.dockHoverX = point.position.x;
+            }
+        }
+
         // ── Pinned apps ─────────────────────────────────────────────
 
         ListView {
@@ -399,6 +430,20 @@ Item {
                         id: contentItem
                         width: root.itemSize
                         height: root.itemSize
+
+                        readonly property real itemCenterX: delegateRoot.index * (root.itemSize + Tokens.spacing.medium) + root.itemSize / 2
+                        readonly property real magScale: root.getMagnificationScale(itemCenterX)
+
+                        scale: magScale
+                        y: -(magScale - 1.0) * height * 0.45
+                        z: Math.round((magScale - 1.0) * 100)
+
+                        Behavior on scale {
+                            NumberAnimation { duration: 120; easing.type: Easing.OutQuad }
+                        }
+                        Behavior on y {
+                            NumberAnimation { duration: 120; easing.type: Easing.OutQuad }
+                        }
 
                         Drag.active: dragHandler.active
                         Drag.source: contentItem
@@ -571,6 +616,30 @@ Item {
 
                 width: root.itemSize
                 height: root.itemSize
+
+                readonly property real runningStartX: {
+                    let w = 0;
+                    if (listView.count > 0) {
+                        w += listView.width + Tokens.spacing.medium;
+                        if (root.runningOnlyApps.length > 0) {
+                            w += 2 + Tokens.spacing.medium; // divider
+                        }
+                    }
+                    return w;
+                }
+                readonly property real itemCenterX: runningStartX + runningItem.index * (root.itemSize + Tokens.spacing.medium) + root.itemSize / 2
+                readonly property real magScale: root.getMagnificationScale(itemCenterX)
+
+                scale: magScale
+                y: -(magScale - 1.0) * height * 0.45
+                z: Math.round((magScale - 1.0) * 100)
+
+                Behavior on scale {
+                    NumberAnimation { duration: 120; easing.type: Easing.OutQuad }
+                }
+                Behavior on y {
+                    NumberAnimation { duration: 120; easing.type: Easing.OutQuad }
+                }
 
                 // Item background
                 StyledRect {

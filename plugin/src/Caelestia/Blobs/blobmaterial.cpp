@@ -57,7 +57,8 @@ bool BlobMaterialShader::updateUniformData(RenderState& state, QSGMaterial* newM
     memcpy(buf->data() + 84, &mat->m_smoothFactor, 4);
 
     // Rect count (offset 88)
-    memcpy(buf->data() + 88, &mat->m_rectCount, 4);
+    const int clampedCount = qBound(0, mat->m_rectCount, k_maxRects);
+    memcpy(buf->data() + 88, &clampedCount, 4);
 
     // My index (offset 92)
     memcpy(buf->data() + 92, &mat->m_myIndex, 4);

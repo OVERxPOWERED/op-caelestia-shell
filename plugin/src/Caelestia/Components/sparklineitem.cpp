@@ -27,21 +27,32 @@ void SparklineItem::paint(QPainter* painter) {
 }
 
 void SparklineItem::drawLine(QPainter* painter, CircularBuffer* buffer, const QColor& color, qreal fillAlpha) {
-    if (m_historyLength < 2)
+    if (m_historyLength < 2 || m_maxValue <= 0.0)
         return;
 
     const qreal w = width();
     const qreal h = height();
     const int len = buffer->count();
+    if (len == 0 || w <= 0.0 || h <= 0.0)
+        return;
+
+    painter->save();
+    painter->setClipRect(QRectF(0, 0, w, h));
+
     const qreal stepX = w / static_cast<qreal>(m_historyLength - 1);
     const qreal startX = w - (len - 1) * stepX - stepX * m_slideProgress + stepX;
 
+    const auto clampY = [h](qreal val, qreal max) -> qreal {
+        if (max <= 0.0) return h;
+        return std::clamp(h - (val / max) * h, 0.0, h);
+    };
+
     // Build line path
     QPainterPath linePath;
-    linePath.moveTo(startX, h - (buffer->at(0) / m_maxValue) * h);
+    linePath.moveTo(startX, clampY(buffer->at(0), m_maxValue));
     for (int i = 1; i < len; ++i) {
         const qreal x = startX + i * stepX;
-        const qreal y = h - (buffer->at(i) / m_maxValue) * h;
+        const qreal y = clampY(buffer->at(i), m_maxValue);
         linePath.lineTo(x, y);
     }
 
@@ -64,6 +75,8 @@ void SparklineItem::drawLine(QPainter* painter, CircularBuffer* buffer, const QC
     painter->setPen(Qt::NoPen);
     painter->setBrush(fillColor);
     painter->drawPath(fillPath);
+
+    painter->restore();
 }
 
 void SparklineItem::connectBuffer(CircularBuffer* buffer) {

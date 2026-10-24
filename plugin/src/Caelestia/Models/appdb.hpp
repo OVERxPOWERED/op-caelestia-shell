@@ -72,6 +72,7 @@ class AppDb : public QObject {
 
 public:
     explicit AppDb(QObject* parent = nullptr);
+    ~AppDb() override;
 
     [[nodiscard]] QString uuid() const;
 

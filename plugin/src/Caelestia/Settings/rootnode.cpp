@@ -39,6 +39,10 @@ void RootNode::reloadFromFile() {
     emit treeLoaded(this);
 }
 
+void RootNode::save() {
+    saveToFile();
+}
+
 void RootNode::saveToFile() {
     m_file->write(toJson());
 }

@@ -4,6 +4,7 @@
 #include <qjsonarray.h>
 #include <qlocalsocket.h>
 #include <qloggingcategory.h>
+#include <qtimer.h>
 #include <qvariant.h>
 
 #include "hyprdevices.hpp"
@@ -51,7 +52,7 @@ HyprExtras::HyprExtras(QObject* parent)
     QObject::connect(m_socket, &QLocalSocket::stateChanged, this, &HyprExtras::socketStateChanged);
     QObject::connect(m_socket, &QLocalSocket::readyRead, this, &HyprExtras::readEvent);
 
-    m_socket->connectToServer(m_eventSocket, QLocalSocket::ReadOnly);
+    connectSocket();
 }
 
 QVariantHash HyprExtras::options() const {
@@ -156,20 +157,42 @@ void HyprExtras::refreshDevices() {
     });
 }
 
-void HyprExtras::socketError(QLocalSocket::LocalSocketError error) const {
+void HyprExtras::connectSocket() {
+    if (!m_socket || m_eventSocket.isEmpty())
+        return;
+    if (m_socket->state() == QLocalSocket::ConnectedState || m_socket->state() == QLocalSocket::ConnectingState)
+        return;
+    m_socket->connectToServer(m_eventSocket, QLocalSocket::ReadOnly);
+}
+
+void HyprExtras::socketError(QLocalSocket::LocalSocketError error) {
     if (!m_socketValid) {
         qCWarning(lcHypr) << "socketError: unable to connect to Hyprland event socket:" << error;
+        QTimer::singleShot(3000, this, [this]() {
+            connectSocket();
+        });
     } else {
         qCWarning(lcHypr) << "socketError: Hyprland event socket error:" << error;
     }
 }
 
 void HyprExtras::socketStateChanged(QLocalSocket::LocalSocketState state) {
-    if (state == QLocalSocket::UnconnectedState && m_socketValid) {
-        qCWarning(lcHypr) << "socketStateChanged: Hyprland event socket disconnected.";
+    if (state == QLocalSocket::UnconnectedState) {
+        if (m_socketValid) {
+            qCWarning(lcHypr) << "socketStateChanged: Hyprland event socket disconnected, scheduling reconnection...";
+        }
+        m_socketValid = false;
+        QTimer::singleShot(2000, this, [this]() {
+            connectSocket();
+        });
+        return;
     }
 
     m_socketValid = state == QLocalSocket::ConnectedState;
+    if (m_socketValid) {
+        refreshOptions();
+        refreshDevices();
+    }
 }
 
 void HyprExtras::readEvent() {

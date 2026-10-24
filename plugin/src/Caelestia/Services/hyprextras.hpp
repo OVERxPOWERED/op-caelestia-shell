@@ -51,8 +51,9 @@ private:
     SocketPtr m_optionsRefresh;
     SocketPtr m_devicesRefresh;
 
-    void socketError(QLocalSocket::LocalSocketError error) const;
+    void socketError(QLocalSocket::LocalSocketError error);
     void socketStateChanged(QLocalSocket::LocalSocketState state);
+    void connectSocket();
     void readEvent();
     void handleEvent(const QString& event);
 

@@ -81,9 +81,12 @@ CONFIG_ATTACHED_GETTER(ServiceConfig, services)
 CONFIG_ATTACHED_GETTER(SessionConfig, session)
 CONFIG_ATTACHED_GETTER(SidebarConfig, sidebar)
 CONFIG_ATTACHED_GETTER(UtilitiesConfig, utilities)
-CONFIG_ATTACHED_GETTER(UserPaths, paths)
 
 #undef CONFIG_ATTACHED_GETTER
+
+const UserPaths* Config::paths() const {
+    return ConfigSingleton::instance()->paths();
+}
 
 ConfigRoot* Config::forScreen(const QString& screen) {
     return ConfigSingleton::instance()->forScreen(screen);

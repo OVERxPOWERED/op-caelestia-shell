@@ -1,6 +1,7 @@
 #pragma once
 
 #include <qdbusconnection.h>
+#include <qdbusunixfiledescriptor.h>
 #include <qobject.h>
 #include <qqmlintegration.h>
 #include <qstring.h>
@@ -42,11 +43,13 @@ private slots:
 private:
     [[nodiscard]] static std::optional<QDBusConnection> getSystemBus();
     [[nodiscard]] static bool queryHibernateAvailable();
+    void acquireSleepInhibitor();
     void call(const QString& path, const QString& iface, const QString& method, const QVariantList& args = {});
     void callManager(const QString& method);
     void callSession(const QString& method);
 
     QString m_sessionPath;
+    QDBusUnixFileDescriptor m_inhibitorFd;
 };
 
 } // namespace caelestia::services

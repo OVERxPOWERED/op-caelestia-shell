@@ -49,6 +49,7 @@ void Requests::get(const QUrl& url, const QJSValue& onSuccess, const QJSValue& o
     }
 
     QNetworkRequest request(url);
+    request.setTransferTimeout(15000);
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
     request.setAttribute(QNetworkRequest::CookieSaveControlAttribute, QNetworkRequest::Manual);
     request.setRawHeader("Cache-Control"_ba, "no-cache, no-store"_ba);

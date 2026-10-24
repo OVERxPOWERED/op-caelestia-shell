@@ -102,6 +102,20 @@ bool CUtils::deleteFile(const QUrl& path) {
 }
 
 QString CUtils::toLocalFile(const QUrl& url) {
+    if (url.scheme() == QStringLiteral("root")) {
+        QString path = url.path();
+        while (path.startsWith(QLatin1Char('/')))
+            path = path.mid(1);
+        const QString relative = QDir::current().absoluteFilePath(path);
+        if (QFile::exists(relative))
+            return relative;
+        const QString xdgConfig = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation)
+            + QStringLiteral("/quickshell/caelestia/") + path;
+        if (QFile::exists(xdgConfig))
+            return xdgConfig;
+        return relative;
+    }
+
     if (!url.isLocalFile()) {
         qCWarning(lcCUtils) << "toLocalFile: given url is not a local file" << url;
         return {};

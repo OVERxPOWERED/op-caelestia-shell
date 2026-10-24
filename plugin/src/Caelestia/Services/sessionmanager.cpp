@@ -6,7 +6,9 @@
 #include <qdbuspendingcall.h>
 #include <qdbuspendingreply.h>
 #include <qdbusreply.h>
+#include <qdbusunixfiledescriptor.h>
 #include <qloggingcategory.h>
+#include <qtimer.h>
 
 #include "core/toaster.hpp"
 #include "util/i18n.hpp"
@@ -58,6 +60,8 @@ SessionManager::SessionManager(QObject* parent)
     ok = bus->connect(k_loginService, m_sessionPath, k_sessionIface, u"Unlock"_s, this, SLOT(handleUnlockRequested()));
     if (!ok)
         qCWarning(lcSessionManager) << "Failed to connect to Unlock signal:" << bus->lastError().message();
+
+    acquireSleepInhibitor();
 }
 
 bool SessionManager::exec(const QStringList& command) {
@@ -188,10 +192,31 @@ void SessionManager::callSession(const QString& method) {
     call(m_sessionPath, k_sessionIface, method);
 }
 
+void SessionManager::acquireSleepInhibitor() {
+    auto bus = getSystemBus();
+    if (!bus)
+        return;
+
+    auto msg = QDBusMessage::createMethodCall(k_loginService, k_loginPath, k_loginIface, u"Inhibit"_s);
+    msg.setArguments({ u"sleep"_s, u"caelestia"_s, u"Lock screen before sleep"_s, u"delay"_s });
+
+    const QDBusReply<QDBusUnixFileDescriptor> reply = bus->call(msg);
+    if (reply.isValid()) {
+        m_inhibitorFd = reply.value();
+    } else {
+        qCWarning(lcSessionManager) << "Failed to acquire sleep inhibitor lock:" << reply.error().message();
+    }
+}
+
 void SessionManager::handlePrepareForSleep(bool sleep) {
     if (sleep) {
         emit aboutToSleep();
+        // Allow shell to present lock surface before releasing delay inhibitor lock
+        QTimer::singleShot(500, this, [this]() {
+            m_inhibitorFd = QDBusUnixFileDescriptor();
+        });
     } else {
+        acquireSleepInhibitor();
         emit resumed();
     }
 }

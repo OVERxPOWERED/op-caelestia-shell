@@ -129,6 +129,16 @@ AppDb::AppDb(QObject* parent)
     query.exec(u"CREATE TABLE IF NOT EXISTS frequencies (id TEXT PRIMARY KEY, frequency INTEGER)"_s);
 }
 
+AppDb::~AppDb() {
+    {
+        auto db = QSqlDatabase::database(m_uuid, false);
+        if (db.isOpen()) {
+            db.close();
+        }
+    }
+    QSqlDatabase::removeDatabase(m_uuid);
+}
+
 QString AppDb::uuid() const {
     return m_uuid;
 }

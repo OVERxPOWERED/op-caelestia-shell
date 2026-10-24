@@ -15,6 +15,7 @@ Scope {
         Weather.reload();
         Pomodoro;
         Displays;
+        DockPins;
 
         if (GlobalConfig.utilities.vpn.enabled)
             VPN;

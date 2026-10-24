@@ -54,6 +54,37 @@ MouseArea {
         }
     }
 
+    // Room around the attach point, to cap the menu's height and to decide whether it opens up
+    readonly property real spaceBelow: {
+        watcher.transform; // not reactive on its own
+        const p = attachTo.mapToItem(parent, 0, attachTo.height);
+        return parent.height - p.y - Tokens.padding.large;
+    }
+    readonly property real spaceAbove: {
+        watcher.transform;
+        return attachTo.mapToItem(parent, 0, 0).y - Tokens.padding.large;
+    }
+    readonly property real naturalHeight: column.implicitHeight + flick.anchors.margins * 2
+    // Opens upward when it would not fit below and there is more room above
+    readonly property bool flipUp: thisSideY === Menu.Top && attachSideY === Menu.Bottom && spaceBelow < Math.min(naturalHeight, 260) && spaceAbove > spaceBelow
+    readonly property real maxMenuHeight: {
+        const room = (flipUp || thisSideY === Menu.Bottom) ? spaceAbove : spaceBelow;
+        return Math.max(120, Math.min(340, room));
+    }
+
+    // Scroll the current choice into view when the menu opens
+    function revealActive(): void {
+        const it = repeater.itemAt(items.indexOf(active));
+        if (!it)
+            return;
+        flick.contentY = Math.max(0, Math.min(flick.contentHeight - flick.height, it.y - (flick.height - it.height) / 2));
+    }
+
+    onExpandedChanged: {
+        if (expanded)
+            Qt.callLater(revealActive);
+    }
+
     TransformWatcher {
         id: watcher
 
@@ -76,20 +107,22 @@ MouseArea {
             watcher.transform; // mapToItem is not reactive so this forces updates
             const item = root.attachTo;
             let off = root.attachSideY === Menu.Top ? 0 : item.height;
-            if (root.thisSideY === Menu.Bottom)
+            if (root.thisSideY === Menu.Bottom || root.flipUp) {
+                off = root.flipUp ? 0 : off;
                 off -= height;
+            }
             return item.mapToItem(root.parent, 0, off).y + root.marginY;
         }
 
         radius: Tokens.rounding.large
         level: 2
 
-        implicitWidth: Math.max(200, column.implicitWidth + column.anchors.margins * 2)
-        implicitHeight: column.implicitHeight + column.anchors.margins * 2
+        implicitWidth: Math.max(200, column.implicitWidth + flick.anchors.margins * 2)
+        implicitHeight: Math.min(root.naturalHeight, root.maxMenuHeight)
 
         transform: Scale {
             yScale: root.expanded ? 1 : 0.1
-            origin.y: root.thisSideY === Menu.Bottom ? menu.height : 0
+            origin.y: (root.thisSideY === Menu.Bottom || root.flipUp) ? menu.height : 0
 
             Behavior on yScale {
                 Anim {}
@@ -107,11 +140,21 @@ MouseArea {
             radius: parent.radius
             color: Colours.palette.m3surfaceContainerLow
 
-            ColumnLayout {
-                id: column
+            Flickable {
+                id: flick
 
                 anchors.fill: parent
                 anchors.margins: Tokens.padding.extraSmall
+                contentWidth: width
+                contentHeight: column.implicitHeight
+                clip: true
+                boundsBehavior: Flickable.StopAtBounds
+                interactive: contentHeight > height
+
+            ColumnLayout {
+                id: column
+
+                width: flick.width
                 spacing: 0
 
                 Repeater {
@@ -192,6 +235,7 @@ MouseArea {
                         }
                     }
                 }
+            }
             }
         }
     }

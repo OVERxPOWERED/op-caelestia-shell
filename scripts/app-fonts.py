@@ -2,7 +2,9 @@
 """Default fonts for apps, behind Nexus > Look & feel > App fonts.
 
     app-fonts.py status           JSON: whether it is on, the chosen fonts, which fonts are available
-    app-fonts.py set SANS MONO    map sans-serif and monospace (fontconfig) and the GTK fonts
+    app-fonts.py set SANS MONO [SANS_SCALE MONO_SCALE]
+                                  map sans-serif and monospace (fontconfig) and the GTK fonts;
+                                  the scales (1 = as designed) make a font with small letters bigger
     app-fonts.py off              undo that, restoring the GTK fonts that were there before
     app-fonts.py add PATH         copy a .ttf/.otf/.ttc into our own fonts folder
     app-fonts.py remove FILE      delete a font we added (by file name, only from that folder)
@@ -80,6 +82,14 @@ def current():
     return {"sans": fams[1], "mono": fams[3]} if len(fams) >= 4 else None
 
 
+def size_rule(family, scale):
+    """Scale a family's pixel size wherever fontconfig is asked to match it (skipped at 1x)."""
+    if abs(scale - 1) < 0.01:
+        return ""
+    return (f'  <match target="font"><test name="family" qual="any"><string>{escape(family)}</string></test>'
+            f'<edit name="pixelsize" mode="assign"><times><name>pixelsize</name><double>{scale:.3f}</double></times></edit></match>\n')
+
+
 def match(generic):
     return subprocess.run(["fc-match", "-f", "%{family[0]}", generic], capture_output=True, text=True).stdout
 
@@ -95,8 +105,13 @@ def main():
                           "added": mine,
                           "sansChoices": [f for f in SANS if f in have] + extra, "monoChoices": [f for f in MONO if f in have] + extra,
                           "nowSans": match("sans-serif"), "nowMono": match("monospace")}))
-    elif cmd == "set" and len(sys.argv) == 4:
+    elif cmd == "set" and len(sys.argv) in (4, 6):
         sans, mono = sys.argv[2], sys.argv[3]
+        try:
+            # Clamped so a bad value can never make text unreadably tiny or huge
+            sans_scale, mono_scale = [min(2.0, max(0.5, float(v))) for v in sys.argv[4:6]] or [1.0, 1.0]
+        except ValueError:
+            sans_scale = mono_scale = 1.0
         extra = [a["family"] for a in added()]
         if sans not in SANS + extra or mono not in MONO + extra or sans not in have or mono not in have:
             sys.exit("font not available")
@@ -107,7 +122,7 @@ def main():
 <fontconfig>
   <alias binding="same"><family>sans-serif</family><prefer><family>{escape(sans)}</family></prefer></alias>
   <alias binding="same"><family>monospace</family><prefer><family>{escape(mono)}</family></prefer></alias>
-</fontconfig>
+{size_rule(sans, sans_scale)}{size_rule(mono, mono_scale) if mono != sans else ""}</fontconfig>
 """)
         set_gtk(sans, mono)
         print(json.dumps({"ok": True}))

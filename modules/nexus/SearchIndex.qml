@@ -39,6 +39,7 @@ QtObject {
         { kind: "row", page: 1, sub: 0, label: Tr.tr("Use these fonts in apps"), subtext: "", section: Tr.tr("App fonts"), subTitle: Tr.tr("Look & feel"), kw: [] },
         { kind: "row", page: 1, sub: 0, label: Tr.tr("Sans-serif font"), subtext: Tr.tr("Text in browsers, Qt and most other apps"), section: Tr.tr("App fonts"), subTitle: Tr.tr("Look & feel"), kw: [] },
         { kind: "row", page: 1, sub: 0, label: Tr.tr("Monospace font"), subtext: Tr.tr("Code and terminal-style text"), section: Tr.tr("App fonts"), subTitle: Tr.tr("Look & feel"), kw: [] },
+        { kind: "row", page: 1, sub: 0, label: Tr.tr("Text size"), subtext: "", section: Tr.tr("App fonts"), subTitle: Tr.tr("Look & feel"), kw: [] },
         { kind: "row", page: 1, sub: 0, label: Tr.tr("Restart the shell to use your new font"), subtext: Tr.tr("The shell only sees fonts that were installed when it started. Until then it shows another font"), section: Tr.tr("App fonts"), subTitle: Tr.tr("Look & feel"), kw: [] },
         { kind: "row", page: 1, sub: 0, label: Tr.tr("Also use them in the shell"), subtext: Tr.tr("The bar, panels and Nexus too. Icons keep their own font"), section: Tr.tr("App fonts"), subTitle: Tr.tr("Look & feel"), kw: [] },
         { kind: "page", page: 2, sub: 0, label: Tr.tr("Display"), subtext: Tr.tr("Resolution, scale, arrangement, mirroring"), section: "", subTitle: "", kw: [] },

@@ -27,6 +27,71 @@ Singleton {
     property bool shellToo
     property var shellOriginal: null
 
+    // Text size. Fonts differ a lot in how big their letters are at the same nominal size, so each
+    // font is scaled to look as big as the reference (Adwaita Sans, JetBrains Mono) by comparing
+    // the height of its lowercase letters. `sizeAdjust` (percent) is the user's own change on top.
+    property int sizeAdjust: 100
+    readonly property real autoSans: autoFactor(sans, refSans.xHeight)
+    readonly property real autoMono: autoFactor(mono, refMono.xHeight)
+    readonly property real sansScale: autoSans * sizeAdjust / 100
+    readonly property real monoScale: autoMono * sizeAdjust / 100
+
+    function autoFactor(family: string, refX: real): real {
+        // A font Qt does not know yet is drawn as another one, so measuring it would mislead
+        if (!Qt.fontFamilies().includes(family))
+            return 1;
+        const x = family === sans ? sansMetrics.xHeight : monoMetrics.xHeight;
+        return x > 0 && refX > 0 ? Math.min(1.6, Math.max(0.8, refX / x)) : 1;
+    }
+
+    FontMetrics {
+        id: refSans
+
+        font.family: "Adwaita Sans"
+        font.pixelSize: 100
+    }
+
+    FontMetrics {
+        id: refMono
+
+        font.family: "JetBrains Mono"
+        font.pixelSize: 100
+    }
+
+    FontMetrics {
+        id: sansMetrics
+
+        font.family: root.sans
+        font.pixelSize: 100
+    }
+
+    FontMetrics {
+        id: monoMetrics
+
+        font.family: root.mono
+        font.pixelSize: 100
+    }
+
+    function setSizeAdjust(percent: int): void {
+        sizeAdjust = percent;
+        saveState();
+    }
+
+    // Writes the sizes to the apps and the shell once the numbers settle
+    onSansScaleChanged: rescale.restart()
+    onMonoScaleChanged: rescale.restart()
+
+    Timer {
+        id: rescale
+
+        interval: 500
+        onTriggered: {
+            if (root.enabled)
+                root.run(["set", root.sans, root.mono, root.sansScale.toFixed(3), root.monoScale.toFixed(3)]);
+            root.applyShell();
+        }
+    }
+
     // Qt reads the installed fonts once, when the shell starts, so a font added since then is
     // unknown to it (text falls back to another font) until the shell restarts
     readonly property bool needsRestart: {
@@ -46,14 +111,14 @@ Singleton {
     }
 
     function turn(on: bool): void {
-        run(on ? ["set", sans, mono] : ["off"]);
+        run(on ? ["set", sans, mono, sansScale.toFixed(3), monoScale.toFixed(3)] : ["off"]);
     }
 
     function choose(newSans: string, newMono: string): void {
         sans = newSans;
         mono = newMono;
         if (enabled)
-            run(["set", sans, mono]);
+            run(["set", sans, mono, sansScale.toFixed(3), monoScale.toFixed(3)]);
         applyShell();
     }
 
@@ -81,6 +146,7 @@ Singleton {
     function applyShell(): void {
         const f = GlobalConfig.appearance.font;
         const styles = ["headline", "title", "body", "label"];
+        const sizes = ["large", "medium", "small"];
         if (enabled && shellToo) {
             if (!shellOriginal) {
                 shellOriginal = {
@@ -90,14 +156,32 @@ Singleton {
                     label: f.label.family,
                     mono: f.mono.family
                 };
+            }
+            if (!shellOriginal.sizes) {
+                shellOriginal.sizes = {};
+                for (const s of styles.concat(["mono"]))
+                    shellOriginal.sizes[s] = {
+                        large: f[s].large.size,
+                        medium: f[s].medium.size,
+                        small: f[s].small.size
+                    };
                 saveState();
             }
-            for (const s of styles)
+            for (const s of styles) {
                 f[s].family = sans;
+                for (const k of sizes)
+                    f[s][k].size = Math.max(8, Math.round(shellOriginal.sizes[s][k] * sansScale));
+            }
             f.mono.family = mono;
+            for (const k of sizes)
+                f.mono[k].size = Math.max(8, Math.round(shellOriginal.sizes.mono[k] * monoScale));
         } else if (shellOriginal) {
-            for (const s of styles.concat(["mono"]))
+            for (const s of styles.concat(["mono"])) {
                 f[s].family = shellOriginal[s];
+                for (const k of sizes)
+                    if (shellOriginal.sizes)
+                        f[s][k].size = shellOriginal.sizes[s][k];
+            }
             shellOriginal = null;
             saveState();
         } else {
@@ -110,6 +194,7 @@ Singleton {
     function saveState(): void {
         stateFile.setText(JSON.stringify({
             shellToo: shellToo,
+            sizeAdjust: sizeAdjust,
             shellOriginal: shellOriginal
         }, null, 4));
     }
@@ -143,6 +228,7 @@ Singleton {
             try {
                 const d = JSON.parse(text());
                 root.shellToo = d.shellToo === true;
+                root.sizeAdjust = d.sizeAdjust ?? 100;
                 root.shellOriginal = d.shellOriginal ?? null;
             } catch (e) {
                 console.warn("[app-fonts] could not read app-fonts.json:", e);
@@ -212,6 +298,14 @@ Singleton {
 
         function choose(newSans: string, newMono: string): void {
             root.choose(newSans, newMono);
+        }
+
+        function size(percent: int): void {
+            root.setSizeAdjust(percent);
+        }
+
+        function scales(): string {
+            return `sans ${root.autoSans.toFixed(3)} mono ${root.autoMono.toFixed(3)} adjust ${root.sizeAdjust} -> ${root.sansScale.toFixed(3)} / ${root.monoScale.toFixed(3)}; body ${GlobalConfig.appearance.font.body.medium.size}`;
         }
 
         function shell(on: bool): void {

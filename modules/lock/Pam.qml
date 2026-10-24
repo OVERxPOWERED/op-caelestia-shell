@@ -52,8 +52,10 @@ Scope {
             howdy.abort();
 
         if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
+            bufferInactivityTimer.stop();
             passwd.start();
         } else if (event.key === Qt.Key_Backspace) {
+            bufferInactivityTimer.restart();
             if (event.modifiers & Qt.ControlModifier) {
                 buffer = "";
             } else {
@@ -61,6 +63,7 @@ Scope {
             }
         } else if (/^[^\x00-\x1F\x7F-\x9F]+$/.test(event.text)) {
             // Allow anything except control characters
+            bufferInactivityTimer.restart();
             buffer += event.text;
         }
     }
@@ -125,6 +128,16 @@ Scope {
         onTriggered: {
             if (root.state !== Pam.MaxTries)
                 root.state = Pam.None;
+        }
+    }
+
+    Timer {
+        id: bufferInactivityTimer
+
+        interval: 10000
+        repeat: false
+        onTriggered: {
+            root.buffer = "";
         }
     }
 

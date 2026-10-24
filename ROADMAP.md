@@ -133,14 +133,18 @@ The goal is that nothing breaks in front of other people. Order: 1.1, then 1.2, 
 - **Plug-in chooser (2026-10-24)**: when a display is plugged in, the shell either applies the layout you saved for exactly this set of displays (matched by display description, ignoring virtual outputs, newest wins) and shows a toast, or opens a keyboard-driven chooser (`modules/displays/DisplayChooser.qml`): Extend, Mirror, Display only, Laptop only; arrows or Tab, 1-4, Enter, Esc. A chosen layout goes through the same Keep/Revert dialog, and Keep saves it, so the same displays are "known" next time. Displays already connected at shell start are not treated as new. `qs ipc call displays chooser` opens it by hand.
 - **Unplug safety net**: if nothing physical is left on (for example "Display only" and the cable is pulled), the laptop panel is switched back on at its last scale and rotation. Found by testing: Hyprland adds a placeholder output named `FALLBACK` when the last display goes away, and the first version counted it as a working display.
 - **Tested**: plug-in event to chooser, arrows and number keys, Esc, mirror through the chooser, the unplug safety net (twice), and the saved-layout matching with seven made-up cases. **Not tested** on a real second screen or projector.
-- **Still to do**: per-monitor shell size from each display's own config; the mirror **crop** on a real projector (`grim` cannot capture a mirrored output, so the cause is unconfirmed); deleting a profile from Nexus; hiding the old Samsung rules once profile switching has proven itself on real hardware.
+- **Finished 2026-10-24**:
+  - **Projector crop, cause found**: Hyprland's documentation says a mirror is not re-rendered for the second screen ("squishing and stretching will occur on aspect ratios that differ (e.g 16:9 and 16:10)"). The old Mirror preset set the projector to its *preferred* mode, usually 4:3 or 16:10, so the laptop's 16:9 picture was distorted. Mirroring now picks the mirrored display's highest-resolution mode with the same shape as the source (60 Hz preferred), and if none exists the confirmation dialog says the picture may look stretched. Tested with five made-up mode lists (not on a real projector).
+  - **Per-display interface size**: an "Interface size" row (80, 85, 90, 100, 110, 125, 150%) per display, stored in that display's own `~/.config/caelestia/monitors/<name>/shell.json` (font, padding and spacing scales). It applies live and affects only that display; this also gives the 85% and 90% that Hyprland's own scale cannot.
+  - **Delete a profile** from Nexus, with a two-step trash button (press twice within 3 seconds).
+- **Still to do**: confirm all of this on a real second screen or projector; hide the old Samsung rules in `hyprland.lua` once profile switching has proven itself on real hardware.
 - **Done when**: plugging into the Samsung and a 1366x768 or 1024x768 display gives an uncropped mirror, a correctly sized shell, and no workspaces or windows jumping around, all controlled from Nexus.
 
 ### `[ ]` 1.4 Small visible bugs
 
 | Bug | Where | Fix |
 |---|---|---|
-| Overview header shows "2 2" | `modules/overview/components/WorkspaceCard.qml:138` and `:147`: the number badge plus `name`, which equals the id for numbered workspaces | Hide the name when it equals `String(id)` |
+| ~~Overview header shows "2 2"~~ (done 2026-10-24) | `modules/overview/components/WorkspaceCard.qml`: the header shows the workspace number in a badge and, next to it, the workspace *name*, which Hyprland sets to the number itself for numbered workspaces. The intended second slot is the name of the active window | The slot now shows the app of the window last used in that workspace ("Zen Browser", "foot"), a workspace's own name if it has one, `special:` stripped, or "Empty" |
 | Text cut off: "Hyprland..." (dashboard user card), "Screen rec..." (sidebar recorder card) | dashboard and utilities cards | Fit the text, shorten the labels, or reflow the layout |
 | Further glitches you spot | — | Add them to this table as they appear |
 

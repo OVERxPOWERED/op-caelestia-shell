@@ -339,6 +339,36 @@ PageBase {
         }
 
         SelectRow {
+            id: sizeRow
+
+            visible: root.mon !== null && !root.mon.disabled
+            label: Tr.tr("Interface size")
+            subtext: Tr.tr("Text and spacing of the shell on this display only")
+            fallbackText: `${Math.round(Displays.interfaceSize(root.mon?.name ?? "") * 100)}%`
+            menuItems: sizeItems.instances
+            onSelected: item => Displays.setInterfaceSize(root.mon.name, item.value)
+
+            Binding {
+                target: sizeRow
+                property: "active"
+                value: sizeItems.instances.find(i => Math.abs(i.value - (root.mon ? Displays.interfaceSize(root.mon.name) : 1)) < 0.001) ?? null
+            }
+
+            Variants {
+                id: sizeItems
+
+                model: [0.8, 0.85, 0.9, 1, 1.1, 1.25, 1.5]
+
+                MenuItem {
+                    required property real modelData
+
+                    text: `${Math.round(modelData * 100)}%`
+                    value: modelData
+                }
+            }
+        }
+
+        SelectRow {
             id: rotRow
 
             visible: root.mon !== null && !root.mon.disabled
@@ -434,18 +464,55 @@ PageBase {
         Repeater {
             model: Displays.userProfiles
 
-            RowButton {
-                id: profileRow
+            Item {
+                id: profileItem
 
                 required property var modelData
                 required property int index
+                property bool confirming
 
-                first: index === 0
-                icon: "bookmark"
-                text: modelData.name
-                subtext: modelData.outputs.map(o => o.name).join(" · ")
-                trailingIcon: "play_arrow"
-                onClicked: Displays.applyProfile(modelData)
+                Layout.fillWidth: true
+                implicitHeight: profileRow.implicitHeight
+
+                // Deleting needs a second press within 3 seconds
+                Timer {
+                    id: confirmTimer
+
+                    interval: 3000
+                    onTriggered: profileItem.confirming = false
+                }
+
+                RowButton {
+                    id: profileRow
+
+                    anchors.fill: parent
+                    first: profileItem.index === 0
+                    icon: "bookmark"
+                    text: profileItem.modelData.name
+                    subtext: profileItem.modelData.outputs.map(o => o.name).join(" · ")
+                    trailingIcon: "play_arrow"
+                    onClicked: Displays.applyProfile(profileItem.modelData)
+                }
+
+                IconButton {
+                    anchors.right: parent.right
+                    anchors.rightMargin: Tokens.padding.largeIncreased + Tokens.padding.extraLarge * 1.6
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    icon: profileItem.confirming ? "check" : "delete"
+                    type: profileItem.confirming ? IconButton.Filled : IconButton.Text
+                    inactiveColour: profileItem.confirming ? Colours.palette.m3error : "transparent"
+                    inactiveOnColour: profileItem.confirming ? Colours.palette.m3onError : Colours.palette.m3onSurfaceVariant
+                    onClicked: {
+                        if (profileItem.confirming) {
+                            confirmTimer.stop();
+                            Displays.deleteProfile(profileItem.modelData.name);
+                        } else {
+                            profileItem.confirming = true;
+                            confirmTimer.restart();
+                        }
+                    }
+                }
             }
         }
 

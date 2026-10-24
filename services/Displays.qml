@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import Caelestia
+import Caelestia.Config
 import Caelestia.I18n
 
 // Monitor layout control for the Nexus Display page.
@@ -110,6 +111,36 @@ Singleton {
         }).w;
     }
 
+    // A mirror is not re-rendered for the second screen, so Hyprland squeezes or stretches the
+    // picture when the two shapes differ (16:9 on a 4:3 or 16:10 screen). Pick the mode of the
+    // mirrored display whose shape matches the source best, highest resolution first.
+    function bestMirrorMode(ext: var, src: var): var {
+        const size = logicalSize(src);
+        const target = size.w / size.h;
+        const parsed = (ext.modes ?? []).map(m => {
+            const [res, rate] = m.split("@");
+            const [w, h] = res.split("x").map(Number);
+            return {
+                mode: m,
+                pixels: w * h,
+                rate: parseFloat(rate),
+                diff: Math.abs(w / h - target)
+            };
+        });
+        if (parsed.length === 0)
+            return {
+                mode: ext.mode,
+                exact: false
+            };
+        const closest = Math.min(...parsed.map(p => p.diff));
+        const pool = parsed.filter(p => p.diff <= closest + 0.01);
+        pool.sort((a, b) => b.pixels - a.pixels || Math.abs(a.rate - 60) - Math.abs(b.rate - 60));
+        return {
+            mode: pool[0].mode,
+            exact: closest < 0.02
+        };
+    }
+
     function luaFor(m: var): string {
         if (m.disabled)
             return `hl.monitor({ output = "${m.name}", disabled = true })`;
@@ -205,24 +236,24 @@ Singleton {
 
     // Applies patches ({ monitorName: { field: value } }) and starts the confirmation countdown.
     // Mirroring cannot be changed on a live output, so those changes go through hyprmoncfg.
-    function change(patches: var): bool {
+    function change(patches: var, note = ""): bool {
         if (pending)
-            return applyChange(patches);
+            return applyChange(patches, note);
 
         // The first change of a confirmation window starts from the displays as they are right now,
         // not from a copy that may predate something done outside the shell
-        refresh(() => root.applyChange(patches));
+        refresh(() => root.applyChange(patches, note));
         return true;
     }
 
-    function applyChange(patches: var): bool {
+    function applyChange(patches: var, note = ""): bool {
         const next = monitors.map(m => patches[m.name] ? Object.assign({}, m, patches[m.name]) : m);
         if (!next.some(m => !m.disabled)) {
             Toaster.toast(Tr.tr("Display unchanged"), Tr.tr("At least one display has to stay on"), "monitor");
             return false;
         }
 
-        pendingSummary = describe(patches);
+        pendingSummary = describe(patches) + (note ? `\n${note}` : "");
         const needsReload = monitors.some(m => patches[m.name] && patches[m.name].mirrorOf !== undefined && patches[m.name].mirrorOf !== m.mirrorOf);
         withSnapshot(() => {
             root.countdown = root.confirmSeconds;
@@ -279,15 +310,23 @@ Singleton {
     function setMirror(name: string, target: string): void {
         const m = monitors.find(o => o.name === name);
         const src = monitors.find(o => o.name === target);
+        if (!target || !src || !m) {
+            change({
+                [name]: {
+                    mirrorOf: ""
+                }
+            });
+            return;
+        }
+        const best = bestMirrorMode(m, src);
         change({
-            [name]: target && src ? {
+            [name]: {
                 mirrorOf: target,
+                mode: best.mode,
                 x: src.x,
                 y: src.y
-            } : {
-                mirrorOf: ""
             }
-        });
+        }, best.exact ? "" : mismatchNote);
     }
 
     function setEnabled(name: string, enabled: bool): void {
@@ -314,6 +353,7 @@ Singleton {
             return;
 
         const patches = {};
+        let note = "";
         const preferred = m => m.modes[0] ?? m.mode;
 
         if (kind === "laptop") {
@@ -332,14 +372,18 @@ Singleton {
                 disabled: false,
                 mirrorOf: ""
             };
-            for (const m of externalMonitors)
+            for (const m of externalMonitors) {
+                const best = bestMirrorMode(m, internal);
+                if (!best.exact)
+                    note = mismatchNote;
                 patches[m.name] = {
                     disabled: false,
-                    mode: preferred(m),
+                    mode: best.mode,
                     mirrorOf: internal.name,
                     x: internal.x,
                     y: internal.y
                 };
+            }
         } else {
             // extend or external-only: lay displays out left to right
             const ordered = kind === "external" ? externalMonitors : [internal, ...externalMonitors];
@@ -361,7 +405,7 @@ Singleton {
                     disabled: true
                 };
         }
-        change(patches);
+        change(patches, note);
     }
 
     // Applies a saved profile through hyprmoncfg, with the current layout kept for revert
@@ -449,7 +493,25 @@ Singleton {
         run(["hyprmoncfg", "delete", name], () => root.reloadProfiles());
     }
 
+    // ---- interface size (per display) ------------------------------------------------------
+
+    // The shell's text and spacing on one display, set in that display's own config file, so a
+    // projector or a big monitor can differ from the laptop panel
+    function interfaceSize(name: string): real {
+        return GlobalConfig.forScreen(name).appearance.font.scale;
+    }
+
+    function setInterfaceSize(name: string, size: real): void {
+        const c = GlobalConfig.forScreen(name);
+        c.appearance.font.scale = size;
+        c.appearance.padding.scale = size;
+        c.appearance.spacing.scale = size;
+        c.save();
+    }
+
     // ---- plug and unplug -------------------------------------------------------------------
+
+    readonly property string mismatchNote: Tr.tr("No mode matches the laptop's shape, so the picture may look stretched.")
 
     property var addedQueue: []
 

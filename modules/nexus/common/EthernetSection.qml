@@ -82,7 +82,7 @@ ColumnLayout {
         id: ethRepeater
 
         model: ScriptModel {
-            values: Nmcli.ethernetDevices.filter(d => d.state !== "unavailable")
+            values: Nmcli.ethernetDevices
         }
 
         delegate: ConnectedRect {
@@ -150,7 +150,11 @@ ColumnLayout {
 
                     StyledText {
                         Layout.fillWidth: true
-                        text: ethRow.isConnected ? ethRow.modelData.iface : Tr.trCtx("Not connected • %1", "ethernet link state with interface name").arg(ethRow.modelData.iface)
+                        text: ethRow.isConnected
+                            ? ethRow.modelData.iface
+                            : (ethRow.modelData.state === "unavailable"
+                                ? Tr.trCtx("Cable unplugged • %1", "ethernet link state with interface name").arg(ethRow.modelData.iface)
+                                : Tr.trCtx("Not connected • %1", "ethernet link state with interface name").arg(ethRow.modelData.iface))
                         color: ethRow.isConnected ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
                         font: Tokens.font.label.small
                         elide: Text.ElideRight
@@ -210,6 +214,7 @@ ColumnLayout {
                     type: IconButton.Tonal
                     isToggle: true
                     isRound: true
+                    enabled: ethRow.modelData.state !== "unavailable"
                     checked: ethRow.isConnected
                     icon: ethRow.isConnected ? "link_off" : "link"
                     onClicked: {

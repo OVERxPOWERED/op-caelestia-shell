@@ -47,7 +47,7 @@ PageBase {
 
         Loader {
             Layout.fillWidth: true
-            active: Nmcli.hasAvailableEthernet
+            active: Nmcli.hasEthernetDevice
             visible: active
             asynchronous: true
 
@@ -58,7 +58,7 @@ PageBase {
         }
 
         ToggleRow {
-            Layout.topMargin: Nmcli.hasAvailableEthernet ? Tokens.spacing.large : 0
+            Layout.topMargin: Nmcli.hasEthernetDevice ? Tokens.spacing.large : 0
             first: true
             text: Tr.tr("Wi-Fi")
             font: Tokens.font.body.medium

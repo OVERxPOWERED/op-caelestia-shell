@@ -69,7 +69,7 @@ QtObject {
         }
 
         // Always listen for the outcome: a saved profile can hold a stale
-        // password (e.g. a phone hotspot that changed it), and that failure must
+        // password (e.g. a router whose password was changed), and that failure must
         // lead to the password dialog instead of silently doing nothing.
         Nmcli.connectToNetwork(network.ssid, "", network.bssid, result => {
             if (result.success) {

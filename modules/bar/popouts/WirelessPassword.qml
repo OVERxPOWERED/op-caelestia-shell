@@ -37,17 +37,13 @@ ColumnLayout {
         // Check for connection failures - if pending connection was cleared but we're not connected
         if (Nmcli.pendingConnection === null && connectButton.connecting) {
             // Wait a bit more before giving up (allow time for connection to establish)
-            if (connectionMonitor.repeatCount > 10) {
+            if (connectionMonitor.repeatCount > 25) {
                 connectionMonitor.stop();
                 connectButton.connecting = false;
                 connectButton.hasError = true;
                 connectButton.enabled = true;
                 connectButton.text = Tr.tr("Connect");
                 passwordContainer.passwordBuffer = "";
-                // Delete the failed connection
-                if (root.network && root.network.ssid) {
-                    Nmcli.forgetNetwork(root.network.ssid);
-                }
             }
         }
     }
@@ -519,32 +515,24 @@ ColumnLayout {
 
                         // Connect to network
                         NetworkConnection.connectWithPassword(root.network, password, result => {
-                            if (result && result.success)
-                            // Connection successful, monitor will handle the rest
-                            {} else if (result && result.needsPassword) {
-                                // Shouldn't happen since we provided password
+                            if (result && result.success) {
+                                // Connection successful, monitor will handle the rest
+                            } else if (result && result.needsPassword) {
+                                // Password was rejected or secrets needed
                                 connectionMonitor.stop();
                                 connecting = false;
                                 hasError = true;
                                 enabled = true;
                                 text = Tr.tr("Connect");
                                 passwordContainer.passwordBuffer = "";
-                                // Delete the failed connection
-                                if (root.network && root.network.ssid) {
-                                    Nmcli.forgetNetwork(root.network.ssid);
-                                }
                             } else {
-                                // Connection failed immediately - show error
+                                // Connection failed - show error
                                 connectionMonitor.stop();
                                 connecting = false;
                                 hasError = true;
                                 enabled = true;
                                 text = Tr.tr("Connect");
                                 passwordContainer.passwordBuffer = "";
-                                // Delete the failed connection
-                                if (root.network && root.network.ssid) {
-                                    Nmcli.forgetNetwork(root.network.ssid);
-                                }
                             }
                         });
 
@@ -614,8 +602,6 @@ ColumnLayout {
                 connectButton.enabled = true;
                 connectButton.text = Tr.tr("Connect");
                 passwordContainer.passwordBuffer = "";
-                // Delete the failed connection
-                Nmcli.forgetNetwork(ssid);
             }
         }
 

@@ -49,14 +49,21 @@ StyledRect {
             Layout.bottomMargin: Tokens.spacing.small
             Layout.fillWidth: true
             Layout.fillHeight: true
+            clip: true
 
             SparklineItem {
                 id: sparkline
 
-                property real targetMax: 1024
-                property real smoothMax: targetMax
+                readonly property real bufferMax: Math.max(
+                    NetworkUsage.downloadBuffer && NetworkUsage.downloadBuffer.maximum ? NetworkUsage.downloadBuffer.maximum : 0,
+                    NetworkUsage.uploadBuffer && NetworkUsage.uploadBuffer.maximum ? NetworkUsage.uploadBuffer.maximum : 0,
+                    1024
+                )
+                property real targetMax: bufferMax
+                property real smoothMax: bufferMax
 
                 anchors.fill: parent
+                clip: true
                 line1: NetworkUsage.uploadBuffer // qmllint disable missing-type
                 line1Color: Colours.palette.m3secondary
                 line1FillAlpha: 0.15
@@ -66,9 +73,14 @@ StyledRect {
                 maxValue: smoothMax
                 historyLength: NetworkUsage.historyLength
 
+                Component.onCompleted: {
+                    sparkline.targetMax = sparkline.bufferMax;
+                    sparkline.smoothMax = sparkline.bufferMax;
+                }
+
                 Connections {
                     function onValuesChanged(): void {
-                        sparkline.targetMax = Math.max(NetworkUsage.downloadBuffer.maximum, NetworkUsage.uploadBuffer.maximum, 1024);
+                        sparkline.targetMax = sparkline.bufferMax;
                         slideAnim.restart();
                     }
 

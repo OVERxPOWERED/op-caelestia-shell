@@ -14,6 +14,7 @@ Scope {
         Brightness;
         Weather.reload();
         Pomodoro;
+        CalendarService;
         Displays;
         DockPins;
 

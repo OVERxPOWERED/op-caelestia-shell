@@ -207,6 +207,9 @@ QtObject {
                 Component {
                     NotificationsPage {}
                 }
+                Component {
+                    CalendarPage {}
+                }
             }
         },
         Component {

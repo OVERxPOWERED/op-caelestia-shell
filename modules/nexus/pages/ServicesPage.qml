@@ -81,6 +81,20 @@ PageBase {
             onClicked: root.nState.openSubPage(1)
         }
 
+        // Google Calendar
+        SectionHeader {
+            text: Tr.tr("Calendar")
+        }
+
+        NavRow {
+            first: true
+            last: true
+            icon: "calendar_month"
+            text: Tr.tr("Google Calendar")
+            subtext: CalendarService.authenticated ? Tr.tr("Connected as %1").arg(CalendarService.accountEmail) : Tr.tr("Not connected")
+            onClicked: root.nState.openSubPage(2)
+        }
+
         // Polling
         SectionHeader {
             text: Tr.tr("Polling")

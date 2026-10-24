@@ -347,6 +347,14 @@ PageBase {
             }
         }
 
+        RowButton {
+            visible: AppFonts.needsRestart
+            icon: "restart_alt"
+            text: Tr.tr("Restart the shell to use your new font")
+            subtext: Tr.tr("The shell only sees fonts that were installed when it started. Until then it shows another font")
+            onClicked: AppFonts.restartShell()
+        }
+
         ToggleRow {
             id: shellFontRow
 

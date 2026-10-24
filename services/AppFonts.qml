@@ -27,6 +27,18 @@ Singleton {
     property bool shellToo
     property var shellOriginal: null
 
+    // Qt reads the installed fonts once, when the shell starts, so a font added since then is
+    // unknown to it (text falls back to another font) until the shell restarts
+    readonly property bool needsRestart: {
+        added.length; // re-check when the list of added fonts changes
+        const known = Qt.fontFamilies();
+        return enabled && (!known.includes(sans) || !known.includes(mono));
+    }
+
+    function restartShell(): void {
+        Quickshell.execDetached(["setsid", "-f", "sh", "-c", `sleep 0.5; exec "${Quickshell.shellPath("scripts/startup-shell.sh")}" -r`]);
+    }
+
     readonly property string script: Quickshell.shellPath("scripts/app-fonts.py")
 
     function refresh(): void {
@@ -196,6 +208,10 @@ Singleton {
 
         function turn(on: bool): void {
             root.turn(on);
+        }
+
+        function choose(newSans: string, newMono: string): void {
+            root.choose(newSans, newMono);
         }
 
         function shell(on: bool): void {

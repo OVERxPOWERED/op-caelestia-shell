@@ -33,12 +33,26 @@ MouseArea {
 
     signal itemSelected(item: MenuItem)
 
-    parent: {
-        const win = QsWindow.window;
-        if (!win) // Not in a window yet, or its window is being torn down
-            return null;
-        const contentWin = win as ContentWindow; // If inside the drawer content window, put it inside the interaction wrapper so hover works
-        return contentWin ? contentWin.interactionWrapper : (win as QsWindow).contentItem;
+    // The window this menu is in. Windows that Quickshell does not report here (the Nexus
+    // window is one) leave it null, and then the menu is attached to the top of its own tree
+    readonly property var hostWindow: QsWindow.window
+
+    function topItem(item: Item): Item {
+        let it = item;
+        while (it.parent)
+            it = it.parent;
+        return it;
+    }
+
+    Binding {
+        target: root
+        property: "parent"
+        when: root.hostWindow !== null
+        value: {
+            const win = root.hostWindow;
+            const contentWin = win as ContentWindow; // If inside the drawer content window, put it inside the interaction wrapper so hover works
+            return contentWin ? contentWin.interactionWrapper : (win as QsWindow).contentItem;
+        }
     }
     anchors.fill: parent
 
@@ -88,6 +102,8 @@ MouseArea {
 
     onExpandedChanged: {
         if (expanded) {
+            if (!hostWindow && attachTo)
+                parent = topItem(attachTo);
             measure();
             Qt.callLater(revealActive);
         }

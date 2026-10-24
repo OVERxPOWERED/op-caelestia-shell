@@ -5,6 +5,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Caelestia.Config
+import Caelestia.I18n
 import Caelestia.Images
 import qs.services
 import qs.utils
@@ -60,7 +61,6 @@ Singleton {
     }
 
     function load(data: string, isPreview: bool): void {
-        const colours = isPreview ? preview : current;
         if (!data || data.trim().length === 0)
             return;
 
@@ -75,6 +75,7 @@ Singleton {
         if (!scheme || !scheme.colours)
             return;
 
+        const colours = isPreview ? preview : current;
 
         if (!isPreview) {
             root.scheme = scheme.name ?? "";
@@ -93,6 +94,20 @@ Singleton {
 
     function setMode(mode: string): void {
         Quickshell.execDetached(["caelestia", "scheme", "set", "--notify", "-m", mode]);
+    }
+
+    function toggleTransparency(notify: bool): void {
+        const nextState = !transparency.enabled;
+        GlobalConfig.appearance.transparency.enabled = nextState;
+        if (notify ?? false) {
+            Quickshell.execDetached([
+                "notify-send",
+                "-a", "Caelestia",
+                "-i", "opacity",
+                Tr.tr("Transparency"),
+                nextState ? Tr.tr("Transparency & blur enabled") : Tr.tr("Transparency & blur disabled")
+            ]);
+        }
     }
 
     function reloadHyprRules(): void {

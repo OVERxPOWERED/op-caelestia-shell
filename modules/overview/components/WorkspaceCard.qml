@@ -27,6 +27,23 @@ Item {
     readonly property bool isSelected: OverviewState.selectedCardIndex === cardIndex
     readonly property var toplevels: OverviewState.getToplevelsForWorkspace(modelData?.id ?? 0)
 
+    // The window that was last active in this workspace (falls back to its first window)
+    readonly property var activeToplevel: toplevels.find(t => `0x${t.address}` === modelData?.lastIpcObject?.lastwindow) ?? toplevels[0] ?? null
+    readonly property string activeAppName: {
+        const cls = activeToplevel?.lastIpcObject?.class ?? "";
+        return DesktopEntries.heuristicLookup(cls)?.name || cls || activeToplevel?.title || "";
+    }
+
+    // What to call the workspace: its own name if it has one, otherwise the app you were using in it.
+    // (Hyprland names a numbered workspace with its number, which used to show up as "2  2".)
+    readonly property string label: {
+        const raw = modelData?.name ?? "";
+        const name = raw.startsWith("special:") ? raw.slice(8) : raw;
+        if (name && name !== String(modelData?.id))
+            return name;
+        return activeAppName || qsTr("Empty");
+    }
+
     signal clicked
 
     implicitWidth: baseWidth
@@ -78,7 +95,7 @@ Item {
                     const globalPos = cardMouseArea.mapToItem(null, mouse.x, mouse.y);
                     OverviewState.startWorkspaceDrag(
                         root.modelData,
-                        root.modelData?.name || `Workspace ${root.modelData?.id}`,
+                        root.label,
                         globalPos.x,
                         globalPos.y,
                         root.cardIndex
@@ -144,7 +161,9 @@ Item {
 
             // Workspace Name
             StyledText {
-                text: root.modelData?.name ?? qsTr("Workspace")
+                Layout.maximumWidth: root.width * 0.42
+                text: root.label
+                elide: Text.ElideRight
                 font.pixelSize: 13
                 font.weight: Font.DemiBold
                 color: root.isFocused ? Colours.palette.m3primary : Colours.palette.m3onSurface

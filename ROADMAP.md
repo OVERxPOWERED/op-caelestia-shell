@@ -50,6 +50,8 @@ These apply to every item below.
 | 2026-10-21 | New directions chosen: self-healing "Doctor", signature motion, phone control app. |
 | 2026-10-21 | Phone app: Android first, iOS next. Scope is **everything**, using the hybrid model (native controls plus per-window streaming), with limits mapped honestly (see Track 3). |
 | 2026-10-21 | Displays: Nexus front-end with hyprmoncfg as the engine; fix the Hyprland include with a backup; plug-in chooser popup. Search: every individual setting. |
+| 2026-10-24 | The Wi-Fi hotspot feature is dropped for now and will not be ported; it can be attempted again later from scratch. The leftover NetworkManager profile was deleted. |
+| 2026-10-24 | The new branch will become `main` after the uncommitted work is committed, using a history-preserving merge (no force-push) and a backup tag of the old `main`. |
 | 2026-10-21 | `DIAGNOS_RDMP.md` became this `ROADMAP.md`. The old content was kept in `docs/diagnostic-roadmap.md`. |
 
 ### Withdrawn findings from the first analysis
@@ -66,7 +68,7 @@ These were wrong and must not come back:
 
 The goal is that nothing breaks in front of other people. Order: 1.1, then 1.2, 1.3, 1.4, 1.5.
 
-### `[/]` 1.1 Bluetooth agent leak (pairing fails, headphones won't connect)
+### `[x]` 1.1 Bluetooth agent leak (pairing fails, headphones won't connect)
 
 - **Evidence (2026-10-21)**: 8 `bt-agent.py` processes were running. Only one (PID 1603224) belongs to the current shell. The other 7 were re-parented to PID 1126, one per shell restart since Oct 16, and all use the same `$XDG_RUNTIME_DIR/caelestia-bt-agent.sock`. `bluetoothd` logs `a2dp-sink profile connect failed ... Device or resource busy` and `Reconnecting services failed: Operation already in progress` for `98:47:44:BC:92:42`.
 - **Likely cause**: `scripts/startup-shell.sh` restarts the shell with `killall -9 quickshell`. SIGKILL gives the shell no chance to stop its child processes, so each old agent keeps running. When a pairing request goes to a leftover agent, its prompt has no UI to show in. *Likely, not proven yet.*
@@ -78,7 +80,7 @@ The goal is that nothing breaks in front of other people. Order: 1.1, then 1.2, 
 - **Progress (2026-10-21)**: Steps 1–4 are implemented in `underWork` (`scripts/bt-agent.py`, `scripts/startup-shell.sh`) and not committed. A new agent takes over from a previous one through a lock file in `$XDG_RUNTIME_DIR`. Each agent exits when its parent dies (`PR_SET_PDEATHSIG` plus a 2-second parent check). An agent only removes the socket file if it still owns it; before, an old agent's cleanup deleted the live agent's socket. The 7 leftover agents were force-killed. Takeover and parent-death were tested in isolation. First run under the real shell failed with `Address already in use`: my edit had removed the stale-socket cleanup from `start()` (fixed). After the fix, the underWork shell runs exactly one agent parented to it, and killing that agent makes the shell respawn exactly one replacement. **Still to do**: restart the shell with the new `startup-shell.sh` several times and confirm one agent each time, pair a device, reconnect the headphones, then copy to `caelestia-stable` with your approval.
 - **Done when**: after 5 shell restarts there is exactly one agent, pairing a new device shows the prompt, and the headphones connect on the first try.
 
-### `[/]` 1.2 Wi-Fi in the shell (networks missing, correct password fails)
+### `[x]` 1.2 Wi-Fi in the shell (networks missing, correct password fails)
 
 - **Symptoms**: Sometimes networks don't show up. Sometimes the correct password still fails to connect. Seeing networks or connecting currently needs `nmtui`.
 - **Plan**:
@@ -128,7 +130,10 @@ The goal is that nothing breaks in front of other people. Order: 1.1, then 1.2, 
   2. The shared `Menu` is now scrollable with a capped height (340 px), opens upward when there is more room above, and scrolls the current choice into view. Measured with 13 items at the bottom of a small window: 632 px of content, shown at 340 px, opens upward.
   3. After a workspace reorder the bar's indicator kept the old dot lit: Hyprland does not announce a renumbering, so the shell's copy of each monitor's active workspace went stale. The overview now refreshes workspaces, then monitors, then windows, three times after a reorder. Checked over three consecutive swaps. (Same note: uncommitted overview files.)
   4. The display service now refreshes the real display state before the first change of a confirmation window, so a change made outside the shell (or a stale copy) can no longer be applied or "reverted" to the wrong values.
-- **Still to do**: plug-in chooser popup (Mirror / Extend / External only / Laptop only on connect, saved profile applied automatically for known displays); per-monitor shell size from each display's own config; the mirror **crop** on a real projector (`grim` cannot capture a mirrored output, so the cause is unconfirmed); deleting a profile from Nexus; hiding the old Samsung rules once profile switching exists.
+- **Plug-in chooser (2026-10-24)**: when a display is plugged in, the shell either applies the layout you saved for exactly this set of displays (matched by display description, ignoring virtual outputs, newest wins) and shows a toast, or opens a keyboard-driven chooser (`modules/displays/DisplayChooser.qml`): Extend, Mirror, Display only, Laptop only; arrows or Tab, 1-4, Enter, Esc. A chosen layout goes through the same Keep/Revert dialog, and Keep saves it, so the same displays are "known" next time. Displays already connected at shell start are not treated as new. `qs ipc call displays chooser` opens it by hand.
+- **Unplug safety net**: if nothing physical is left on (for example "Display only" and the cable is pulled), the laptop panel is switched back on at its last scale and rotation. Found by testing: Hyprland adds a placeholder output named `FALLBACK` when the last display goes away, and the first version counted it as a working display.
+- **Tested**: plug-in event to chooser, arrows and number keys, Esc, mirror through the chooser, the unplug safety net (twice), and the saved-layout matching with seven made-up cases. **Not tested** on a real second screen or projector.
+- **Still to do**: per-monitor shell size from each display's own config; the mirror **crop** on a real projector (`grim` cannot capture a mirrored output, so the cause is unconfirmed); deleting a profile from Nexus; hiding the old Samsung rules once profile switching has proven itself on real hardware.
 - **Done when**: plugging into the Samsung and a 1366x768 or 1024x768 display gives an uncropped mirror, a correctly sized shell, and no workspaces or windows jumping around, all controlled from Nexus.
 
 ### `[ ]` 1.4 Small visible bugs
@@ -154,7 +159,7 @@ Turns Track 1 into something permanent instead of a one-time cleanup.
 - **Watchdog**: background checks that raise a quiet toast when something drifts.
 - **Done when**: every Track 1 issue above would have been caught and offered a fix by Doctor.
 
-### `[/]` 1.6 Nexus search (does nothing today)
+### `[x]` 1.6 Nexus search (does nothing today)
 
 - **Finding**: the search box in `modules/nexus/NavPane.qml` only sets `nState.searchOpen`; nothing in the codebase reads it. Upstream Caelestia has the same empty hook, so this is an unfinished feature, not a regression.
 - **Decision (2026-10-21)**: search **every individual setting**, with synonyms ("wifi" finds Network).
@@ -332,4 +337,7 @@ Suggested but not chosen this round. Kept here so they aren't lost.
 
 ## 8. Next step
 
-Start **1.1 (Bluetooth agent leak)** in `caelestia-underWork`, then verify it per its "done when". In parallel, before any code is written for Track 3, confirm D1–D7.
+1. Review and push the plug-in chooser commit.
+2. Switch `main` to this branch: tag the old `main` as `backup/old-main`, merge it in with `-s ours`, push as a fast-forward.
+3. Then either a small round on Track 1 leftovers (1.4 small visible bugs, 1.5 "Doctor") or start Track 2 (density first, since the UI feels too big).
+4. Track 3 (phone app) still waits for decisions D1-D7.

@@ -40,8 +40,14 @@ Singleton {
     readonly property string draftName: "__nexus_draft"
     readonly property var userProfiles: profiles.filter(p => !p.name.startsWith("__nexus"))
 
+    // Include virtual outputs (e.g. Sunshine's) when picking displays for layouts; for testing
+    property bool treatVirtualAsExternal
+    // Set while the plug-in chooser is open: { name, description }
+    property var chooser: null
+    readonly property double startedAt: Date.now()
+
     readonly property var internalMonitor: monitors.find(m => m.internal) ?? null
-    readonly property var externalMonitors: monitors.filter(m => !m.internal && !m.virtual)
+    readonly property var externalMonitors: monitors.filter(m => !m.internal && (treatVirtualAsExternal || !m.virtual))
     readonly property var selectedMonitor: monitors.find(m => m.name === selected) ?? monitors.find(m => !m.disabled) ?? monitors[0] ?? null
     readonly property bool canChangeLayout: internalMonitor !== null && externalMonitors.length > 0
 
@@ -73,7 +79,9 @@ Singleton {
                 mirrorOf: src ? src.name : "",
                 modes: (m.availableModes ?? []).map(s => s.replace(/Hz$/, "")),
                 internal: /^(eDP|LVDS|DSI)/.test(m.name),
-                virtual: m.name.startsWith("HEADLESS")
+                // Hyprland adds a placeholder output named FALLBACK when no real display is left
+                fallback: m.name === "FALLBACK",
+                virtual: m.name.startsWith("HEADLESS") || m.name === "FALLBACK"
             };
         }).map(m => Object.assign(m, {
                 mode: currentMode(m)
@@ -119,10 +127,22 @@ Singleton {
         proc.running = true;
     }
 
+    // Last scale and rotation seen for each display while it was on, so a display that has to be
+    // switched back on (see handleRemoved) returns the way it was
+    property var lastGood: ({})
+
     function refresh(done: var): void {
         run(["hyprctl", "-j", "monitors", "all"], (code, out) => {
-            if (code === 0)
+            if (code === 0) {
                 root.monitors = root.parseMonitors(out);
+                for (const m of root.monitors) {
+                    if (!m.disabled && !m.fallback)
+                        root.lastGood[m.name] = {
+                            scale: m.scale,
+                            transform: m.transform
+                        };
+                }
+            }
             if (done)
                 done();
         });
@@ -429,6 +449,140 @@ Singleton {
         run(["hyprmoncfg", "delete", name], () => root.reloadProfiles());
     }
 
+    // ---- plug and unplug -------------------------------------------------------------------
+
+    property var addedQueue: []
+
+    // A display you can actually look at (not Hyprland's FALLBACK, and not a virtual output
+    // unless virtual ones are being treated as real for testing)
+    function isPhysical(m: var): bool {
+        return !m.fallback && (treatVirtualAsExternal || !m.virtual);
+    }
+
+    function isExternalName(name: string): bool {
+        return !/^(eDP|LVDS|DSI)/.test(name) && (treatVirtualAsExternal || !name.startsWith("HEADLESS"));
+    }
+
+    function displayKey(m: var): string {
+        return m.description || m.name;
+    }
+
+    // The saved layout made for exactly the displays that are connected now, if there is one
+    function profileForConnected(): var {
+        const real = monitors.filter(m => treatVirtualAsExternal || !m.virtual);
+        const connected = new Set(real.map(displayKey));
+        const matches = userProfiles.filter(p => {
+            const keys = new Set(p.outputs.filter(o => treatVirtualAsExternal || !o.name.startsWith("HEADLESS")).map(o => o.description || o.name));
+            return keys.size === connected.size && [...keys].every(k => connected.has(k));
+        });
+        matches.sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at)));
+        return matches[0] ?? null;
+    }
+
+    // A display appeared: apply the layout saved for this set of displays, or ask what to do
+    function handleAdded(name: string): void {
+        if (pending || chooser)
+            return;
+        const m = monitors.find(o => o.name === name);
+        if (!m || !isExternalName(name))
+            return;
+
+        const known = profileForConnected();
+        if (known) {
+            run(["hyprmoncfg", "apply", known.name, "--confirm-timeout", "0"], (code, out, err) => {
+                if (code === 0)
+                    Toaster.toast(Tr.tr("Display layout applied"), Tr.tr("Using your saved layout \"%1\"").arg(known.name), "monitor");
+                else
+                    root.fail(Tr.tr("Could not apply the saved layout"), out, err);
+                refreshTimer.restart();
+            });
+        } else {
+            openChooser(m);
+        }
+    }
+
+    function openChooser(m: var): void {
+        chooser = {
+            name: m.name,
+            description: m.description || m.name
+        };
+        chooserTimer.restart();
+    }
+
+    function dismissChooser(): void {
+        chooserTimer.stop();
+        chooser = null;
+    }
+
+    function chooseLayout(kind: string): void {
+        dismissChooser();
+        layout(kind);
+    }
+
+    // A display went away. If that leaves nothing on (e.g. "external only" and the cable was
+    // pulled), turn the laptop panel back on so the screen is never left black.
+    function handleRemoved(name: string): void {
+        if (chooser && chooser.name === name)
+            dismissChooser();
+        if (monitors.some(m => !m.disabled && isPhysical(m)))
+            return;
+
+        if (pending)
+            revert();
+        const internal = internalMonitor;
+        if (internal && !monitors.some(m => !m.disabled && isPhysical(m))) {
+            const was = lastGood[internal.name] ?? {
+                scale: 1,
+                transform: 0
+            };
+            Quickshell.execDetached(["hyprctl", "eval", `hl.monitor({ output = "${internal.name}", disabled = false, mode = "preferred", position = "0x0", scale = ${was.scale}, transform = ${was.transform} })`]);
+            Toaster.toast(Tr.tr("Laptop screen turned back on"), Tr.tr("The display you were using was disconnected"), "laptop");
+            refreshTimer.restart();
+        }
+    }
+
+    Timer {
+        id: addedTimer
+
+        // Give Hyprland a moment to publish the new display's modes before looking at it
+        interval: 900
+        onTriggered: {
+            const names = root.addedQueue;
+            root.addedQueue = [];
+            root.refresh(() => {
+                root.reloadProfiles();
+                // profiles load asynchronously; wait for them before matching
+                matchTimer.names = names;
+                matchTimer.start();
+            });
+        }
+    }
+
+    Timer {
+        id: matchTimer
+
+        property var names: []
+
+        interval: 350
+        onTriggered: names.forEach(n => root.handleAdded(n))
+    }
+
+    Timer {
+        id: removedTimer
+
+        property string name
+
+        interval: 700
+        onTriggered: root.refresh(() => root.handleRemoved(name))
+    }
+
+    Timer {
+        id: chooserTimer
+
+        interval: 45000
+        onTriggered: root.dismissChooser()
+    }
+
     Component.onCompleted: {
         refresh();
         reloadProfiles();
@@ -457,6 +611,19 @@ Singleton {
         function onRawEvent(event: HyprlandEvent): void {
             if (event.name.includes("mon") || event.name === "configreloaded")
                 refreshTimer.restart();
+
+            if (event.name === "monitoraddedv2") {
+                // Displays already connected when the shell starts are not "new"
+                const [, name] = event.parse(3);
+                if (Date.now() - root.startedAt > 10000 && root.isExternalName(name)) {
+                    root.addedQueue = [...root.addedQueue, name];
+                    addedTimer.restart();
+                }
+            } else if (event.name === "monitorremovedv2") {
+                const [, name] = event.parse(3);
+                removedTimer.name = name;
+                removedTimer.restart();
+            }
         }
 
         target: Hyprland
@@ -489,6 +656,22 @@ Singleton {
             root.setTransform(output, transform);
         }
 
+        // Open the "what should this display do" chooser by hand
+        function chooser(): string {
+            if (!root.canChangeLayout)
+                return "no external display";
+            root.openChooser(root.externalMonitors[0]);
+            return "ok";
+        }
+
+        function choose(kind: string): void {
+            root.chooseLayout(kind);
+        }
+
+        function includeVirtual(on: bool): void {
+            root.treatVirtualAsExternal = on;
+        }
+
         function keep(): void {
             root.keep();
         }
@@ -501,6 +684,7 @@ Singleton {
             return JSON.stringify({
                 pending: root.pending,
                 countdown: root.countdown,
+                chooser: root.chooser,
                 screens: Quickshell.screens.map(s => ({
                             name: s.name,
                             width: s.width,

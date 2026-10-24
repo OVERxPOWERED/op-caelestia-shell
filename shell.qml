@@ -34,6 +34,7 @@ ShellRoot {
     Drawers {}
     AreaPicker {}
     DisplayConfirm {}
+    DisplayChooser {}
     Overview {}
     QuickNote {}
     Lock {

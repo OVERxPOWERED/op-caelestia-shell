@@ -65,11 +65,18 @@ PageBase {
         }
 
         NavRow {
-            last: true
             icon: "view_carousel"
             text: Tr.tr("Taskview (Overview)")
             subtext: Tr.tr("Workspaces & window overview")
             onClicked: root.nState.openSubPage(13)
+        }
+
+        NavRow {
+            last: true
+            icon: "sticky_note_2"
+            text: Tr.tr("Scratchpad & Notes")
+            subtext: Tr.tr("Scratchpad directory & custom tags")
+            onClicked: root.nState.openSubPage(14)
         }
     }
 }

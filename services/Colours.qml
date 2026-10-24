@@ -98,13 +98,19 @@ Singleton {
     function reloadHyprRules(): void {
         let rule, trEnabled;
         if (Hypr.usingLua) {
-            rule = `eval hl.layer_rule({ match = { namespace = "caelestia-drawers" }, %1 = %2 })`;
+            rule = `eval hl.layer_rule({ match = { namespace = "%1" }, %2 = %3 })`;
             trEnabled = transparency.enabled;
         } else {
-            rule = "keyword layerrule %1 %2, match:namespace caelestia-drawers";
+            rule = "keyword layerrule %2 %3, match:namespace %1";
             trEnabled = transparency.enabled ? 1 : 0;
         }
-        Hypr.extras.batchMessage([rule.arg("blur").arg(trEnabled), rule.arg("ignore_alpha").arg(Math.max(0, transparency.base - 0.03))]);
+        const ignoreAlpha = Math.min(0.57, Math.max(0, transparency.base - 0.03));
+        const messages = [];
+        for (const ns of ["caelestia-drawers", "caelestia-quicknote"]) {
+            messages.push(rule.arg(ns).arg("blur").arg(trEnabled));
+            messages.push(rule.arg(ns).arg("ignore_alpha").arg(ignoreAlpha));
+        }
+        Hypr.extras.batchMessage(messages);
     }
 
     function colourToHex(c: color): string {

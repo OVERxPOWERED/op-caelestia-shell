@@ -10,6 +10,7 @@ import "modules/background"
 import "modules/areapicker"
 import "modules/displays"
 import "modules/overview"
+import "modules/quicknote"
 import "modules/lock"
 import QtQuick
 import Quickshell
@@ -34,6 +35,7 @@ ShellRoot {
     AreaPicker {}
     DisplayConfirm {}
     Overview {}
+    QuickNote {}
     Lock {
         id: lock
     }

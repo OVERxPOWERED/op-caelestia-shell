@@ -174,6 +174,9 @@ QtObject {
                 Component {
                     OverviewPanel {}
                 }
+                Component {
+                    ScratchpadPanel {}
+                }
             }
         },
         Component {

@@ -36,6 +36,43 @@ Singleton {
             implicitWidth: nexus.implicitWidth
             implicitHeight: nexus.implicitHeight
 
+            // The size follows the screen, but the compositor only reads the implicit size when the
+            // window is created. When the screen changes (e.g. a new display scale), resize and
+            // re-centre the window ourselves.
+            Connections {
+                function onImplicitWidthChanged(): void {
+                    resizeTimer.restart();
+                }
+
+                function onImplicitHeightChanged(): void {
+                    resizeTimer.restart();
+                }
+
+                target: nexus
+            }
+
+            Timer {
+                id: resizeTimer
+
+                interval: 150
+                onTriggered: {
+                    // Hyprland has to be told which window; match this one by its title
+                    const toplevel = Hypr.toplevels.values.find(t => t.title === win.title);
+                    if (!toplevel)
+                        return;
+                    const addr = toplevel.address.startsWith("0x") ? toplevel.address : `0x${toplevel.address}`;
+                    const w = Math.round(nexus.implicitWidth);
+                    const h = Math.round(nexus.implicitHeight);
+                    if (Hypr.usingLua) {
+                        Hypr.dispatch(`hl.dsp.window.resize({ x = ${w}, y = ${h}, exact = true, window = "address:${addr}" })`);
+                        Hypr.dispatch(`hl.dsp.window.center({ window = "address:${addr}" })`);
+                    } else {
+                        Hypr.dispatch(`resizewindowpixel exact ${w} ${h},address:${addr}`);
+                        Hypr.dispatch(`centerwindow`);
+                    }
+                }
+            }
+
             minimumSize.width: contentItem.Tokens.sizes.nexus.minWidth
             minimumSize.height: contentItem.Tokens.sizes.nexus.minHeight
 

@@ -20,8 +20,10 @@ Item {
 
     signal close
 
+    // Sized from the screen height, but never wider than the screen (a rotated, portrait display
+    // is taller than it is wide, which used to make the window many times wider than the screen)
     implicitWidth: Math.round(implicitHeight * Tokens.sizes.nexus.ratio)
-    implicitHeight: Math.round(nState.screen.height * Tokens.sizes.nexus.heightMult)
+    implicitHeight: Math.round(Math.min(nState.screen.height * Tokens.sizes.nexus.heightMult, nState.screen.width * 0.92 / Tokens.sizes.nexus.ratio))
 
     Behavior on blobColour {
         CAnim {}

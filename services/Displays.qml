@@ -30,6 +30,8 @@ Singleton {
     property bool pending
     property int countdown
     property var snapshot: []
+    // What the pending change does, for the confirmation dialog
+    property string pendingSummary
     // True once a change went through hyprmoncfg (config reload), which writes the new layout
     // to disk straight away; revert then restores the saved snapshot profile
     property bool viaProfile
@@ -117,10 +119,12 @@ Singleton {
         proc.running = true;
     }
 
-    function refresh(): void {
+    function refresh(done: var): void {
         run(["hyprctl", "-j", "monitors", "all"], (code, out) => {
             if (code === 0)
                 root.monitors = root.parseMonitors(out);
+            if (done)
+                done();
         });
     }
 
@@ -139,6 +143,28 @@ Singleton {
                 countdownTimer.restart();
             }
         });
+    }
+
+    // One line per changed display, e.g. "HDMI-A-1: 125%, mirrors eDP-1"
+    function describe(patches: var): string {
+        const rotations = [Tr.tr("normal"), Tr.tr("rotated 90°"), Tr.tr("rotated 180°"), Tr.tr("rotated 270°")];
+        return Object.keys(patches).map(name => {
+            const p = patches[name];
+            const parts = [];
+            if (p.disabled !== undefined)
+                parts.push(p.disabled ? Tr.tr("turned off") : Tr.tr("on"));
+            if (p.mode)
+                parts.push(p.mode.replace("@", " @ ") + " Hz");
+            if (p.scale !== undefined)
+                parts.push(`${Math.round(p.scale * 100)}%`);
+            if (p.transform !== undefined)
+                parts.push(rotations[p.transform] ?? "");
+            if (p.mirrorOf !== undefined)
+                parts.push(p.mirrorOf ? Tr.tr("mirrors %1").arg(p.mirrorOf) : Tr.tr("no longer mirrored"));
+            if ((p.x !== undefined || p.y !== undefined) && p.mirrorOf === undefined)
+                parts.push(Tr.tr("moved"));
+            return `${name}: ${parts.filter(x => x).join(", ")}`;
+        }).join("\n");
     }
 
     // Saves the layout before the first change of a confirmation window so it can be restored
@@ -160,12 +186,23 @@ Singleton {
     // Applies patches ({ monitorName: { field: value } }) and starts the confirmation countdown.
     // Mirroring cannot be changed on a live output, so those changes go through hyprmoncfg.
     function change(patches: var): bool {
+        if (pending)
+            return applyChange(patches);
+
+        // The first change of a confirmation window starts from the displays as they are right now,
+        // not from a copy that may predate something done outside the shell
+        refresh(() => root.applyChange(patches));
+        return true;
+    }
+
+    function applyChange(patches: var): bool {
         const next = monitors.map(m => patches[m.name] ? Object.assign({}, m, patches[m.name]) : m);
         if (!next.some(m => !m.disabled)) {
             Toaster.toast(Tr.tr("Display unchanged"), Tr.tr("At least one display has to stay on"), "monitor");
             return false;
         }
 
+        pendingSummary = describe(patches);
         const needsReload = monitors.some(m => patches[m.name] && patches[m.name].mirrorOf !== undefined && patches[m.name].mirrorOf !== m.mirrorOf);
         withSnapshot(() => {
             root.countdown = root.confirmSeconds;
@@ -309,6 +346,7 @@ Singleton {
 
     // Applies a saved profile through hyprmoncfg, with the current layout kept for revert
     function applyProfile(p: var): void {
+        pendingSummary = Tr.tr("Profile: %1").arg(p.name);
         withSnapshot(() => {
             root.viaProfile = true;
             root.countdown = root.confirmSeconds;
@@ -447,6 +485,10 @@ Singleton {
             root.setScale(output, value);
         }
 
+        function rotate(output: string, transform: int): void {
+            root.setTransform(output, transform);
+        }
+
         function keep(): void {
             root.keep();
         }
@@ -459,6 +501,12 @@ Singleton {
             return JSON.stringify({
                 pending: root.pending,
                 countdown: root.countdown,
+                screens: Quickshell.screens.map(s => ({
+                            name: s.name,
+                            width: s.width,
+                            height: s.height,
+                            scale: s.devicePixelRatio
+                        })),
                 monitors: root.monitors.map(m => ({
                             name: m.name,
                             mode: m.mode,

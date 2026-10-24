@@ -26,7 +26,31 @@ PageBase {
     }
     readonly property string currentResolution: mon ? `${mon.width}x${mon.height}` : ""
     readonly property var refreshRates: (mon?.modes ?? []).filter(m => m.startsWith(currentResolution + "@")).map(m => m.split("@")[1])
-    readonly property var scales: [0.75, 1, 1.25, 1.5, 1.75, 2]
+    // Hyprland only accepts scales that divide both dimensions into whole pixels, and snaps
+    // anything else to the nearest one it likes (e.g. 85% and 90% both become 83% on 1080p).
+    // It takes multiples of 1/120 and of 1/16, so offer exactly those that work.
+    readonly property var scales: {
+        if (!mon)
+            return [1];
+        const wholePixels = s => {
+            const w = mon.width / s;
+            const h = mon.height / s;
+            return Math.abs(w - Math.round(w)) < 0.001 && Math.abs(h - Math.round(h)) < 0.001;
+        };
+        const found = new Set();
+        for (let k = 60; k <= 360; k++) {
+            if (wholePixels(k / 120))
+                found.add(Math.round(k / 120 * 10000) / 10000);
+        }
+        for (let k = 8; k <= 48; k++) {
+            if (wholePixels(k / 16))
+                found.add(Math.round(k / 16 * 10000) / 10000);
+        }
+        const valid = [...found].filter(s => s >= 0.5 && s <= 2);
+        if (!valid.some(v => Math.abs(v - mon.scale) < 0.001))
+            valid.push(mon.scale);
+        return valid.sort((a, b) => a - b);
+    }
     readonly property var rotations: [
         {
             text: Tr.tr("Normal"),
@@ -63,56 +87,8 @@ PageBase {
         width: root.cappedWidth
         spacing: Tokens.spacing.extraSmall / 2
 
-        // Keep or revert the change that was just made
-        ConnectedRect {
-            Layout.fillWidth: true
-            Layout.bottomMargin: Tokens.spacing.medium
-            visible: Displays.pending
-            first: true
-            last: true
-            color: Colours.palette.m3secondaryContainer
-            implicitHeight: confirmRow.implicitHeight + Tokens.padding.large * 2
-
-            RowLayout {
-                id: confirmRow
-
-                anchors.fill: parent
-                anchors.margins: Tokens.padding.large
-                spacing: Tokens.spacing.medium
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 0
-
-                    StyledText {
-                        text: Tr.tr("Keep these display settings?")
-                        color: Colours.palette.m3onSecondaryContainer
-                        font: Tokens.font.title.small
-                    }
-
-                    StyledText {
-                        text: Tr.tr("Reverting in %1 s").arg(Displays.countdown)
-                        color: Colours.palette.m3onSecondaryContainer
-                        font: Tokens.font.label.medium
-                    }
-                }
-
-                TextButton {
-                    text: Tr.tr("Revert")
-                    type: TextButton.Text
-                    onClicked: Displays.revert()
-                }
-
-                TextButton {
-                    text: Tr.tr("Keep")
-                    type: TextButton.Filled
-                    onClicked: Displays.keep()
-                }
-            }
-        }
-
         SectionHeader {
-            first: !Displays.pending
+            first: true
             text: Tr.tr("Layout")
         }
 
@@ -250,24 +226,41 @@ PageBase {
         }
 
         ToggleRow {
+            id: enabledRow
+
             visible: root.mon !== null
             first: true
             text: Tr.tr("Enabled")
             subtext: Tr.tr("Turn this display on or off")
             checked: !(root.mon?.disabled ?? false)
             onToggled: Displays.setEnabled(root.mon.name, checked)
+
+            // Toggling replaces the binding above; keep following the real state (e.g. after a revert)
+            Binding {
+                target: enabledRow
+                property: "checked"
+                value: !(root.mon?.disabled ?? false)
+            }
         }
 
         SelectRow {
+            id: resRow
+
             visible: root.mon !== null && !root.mon.disabled
             label: Tr.tr("Resolution")
-            active: resItems.instances.find(i => i.res === root.currentResolution) ?? null
             fallbackText: root.currentResolution
             menuItems: resItems.instances
             onSelected: item => {
                 const best = root.mon.modes.find(m => m.startsWith(item.res + "@"));
                 if (best)
                     Displays.setMode(root.mon.name, best);
+            }
+
+            // Picking an item replaces a plain `active:` binding, so re-assert the real value
+            Binding {
+                target: resRow
+                property: "active"
+                value: resItems.instances.find(i => i.res === root.currentResolution) ?? null
             }
 
             Variants {
@@ -285,12 +278,20 @@ PageBase {
         }
 
         SelectRow {
+            id: rateRow
+
             visible: root.mon !== null && !root.mon.disabled
             label: Tr.tr("Refresh rate")
-            active: rateItems.instances.find(i => i.rate === root.mon.refresh.toFixed(2)) ?? null
             fallbackText: `${root.mon?.refresh.toFixed(2)} Hz`
             menuItems: rateItems.instances
             onSelected: item => Displays.setMode(root.mon.name, `${root.currentResolution}@${item.rate}`)
+
+            // Picking an item replaces a plain `active:` binding, so re-assert the real value
+            Binding {
+                target: rateRow
+                property: "active"
+                value: rateItems.instances.find(i => i.rate === root.mon?.refresh.toFixed(2)) ?? null
+            }
 
             Variants {
                 id: rateItems
@@ -307,13 +308,21 @@ PageBase {
         }
 
         SelectRow {
+            id: scaleRow
+
             visible: root.mon !== null && !root.mon.disabled
             label: Tr.tr("Scale")
             subtext: Tr.tr("Makes everything on this display larger or smaller")
-            active: scaleItems.instances.find(i => Math.abs(i.value - root.mon.scale) < 0.01) ?? null
             fallbackText: `${Math.round((root.mon?.scale ?? 1) * 100)}%`
             menuItems: scaleItems.instances
             onSelected: item => Displays.setScale(root.mon.name, item.value)
+
+            // Picking an item replaces a plain `active:` binding, so re-assert the real value
+            Binding {
+                target: scaleRow
+                property: "active"
+                value: scaleItems.instances.find(i => Math.abs(i.value - (root.mon?.scale ?? 1)) < 0.01) ?? null
+            }
 
             Variants {
                 id: scaleItems
@@ -330,12 +339,20 @@ PageBase {
         }
 
         SelectRow {
+            id: rotRow
+
             visible: root.mon !== null && !root.mon.disabled
             label: Tr.tr("Rotation")
-            active: rotItems.instances.find(i => i.value === root.mon.transform) ?? null
             fallbackText: Tr.tr("Custom")
             menuItems: rotItems.instances
             onSelected: item => Displays.setTransform(root.mon.name, item.value)
+
+            // Picking an item replaces a plain `active:` binding, so re-assert the real value
+            Binding {
+                target: rotRow
+                property: "active"
+                value: rotItems.instances.find(i => i.value === root.mon?.transform) ?? null
+            }
 
             Variants {
                 id: rotItems
@@ -352,13 +369,21 @@ PageBase {
         }
 
         SelectRow {
+            id: mirrorRow
+
             visible: root.mon !== null && !root.mon.disabled && root.others.length > 0
             label: Tr.tr("Mirror")
             subtext: Tr.tr("Show the same picture as another display")
-            active: mirrorItems.instances.find(i => i.target === (root.mon.mirrorOf ?? "")) ?? null
             fallbackText: Tr.tr("Off")
             menuItems: mirrorItems.instances
             onSelected: item => Displays.setMirror(root.mon.name, item.target)
+
+            // Picking an item replaces a plain `active:` binding, so re-assert the real value
+            Binding {
+                target: mirrorRow
+                property: "active"
+                value: mirrorItems.instances.find(i => i.target === (root.mon?.mirrorOf ?? "")) ?? null
+            }
 
             Variants {
                 id: mirrorItems
@@ -375,6 +400,8 @@ PageBase {
         }
 
         StepperRow {
+            id: xRow
+
             visible: root.mon !== null && !root.mon.disabled && !root.mon.mirrorOf
             label: Tr.tr("Position X")
             subtext: Tr.tr("Distance from the left edge of the layout (pixels)")
@@ -386,6 +413,8 @@ PageBase {
         }
 
         StepperRow {
+            id: yRow
+
             visible: root.mon !== null && !root.mon.disabled && !root.mon.mirrorOf
             last: true
             label: Tr.tr("Position Y")

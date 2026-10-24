@@ -15,6 +15,13 @@ QtObject {
             category: "appearance"
         },
 
+        {
+            label: Tr.tr("Look & feel"),
+            icon: "tune",
+            description: Tr.tr("Density, spacing and other opt-in visual options"),
+            category: "appearance"
+        },
+
         // Connectivity
         {
             label: Tr.tr("Display"),

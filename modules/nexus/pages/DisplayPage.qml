@@ -339,34 +339,9 @@ PageBase {
             }
         }
 
-        SelectRow {
-            id: sizeRow
-
+        InterfaceSizeRow {
             visible: root.mon !== null && !root.mon.disabled
-            label: Tr.tr("Interface size")
-            subtext: Tr.tr("Text and spacing of the shell on this display only")
-            fallbackText: `${Math.round(Displays.interfaceSize(root.mon?.name ?? "") * 100)}%`
-            menuItems: sizeItems.instances
-            onSelected: item => Displays.setInterfaceSize(root.mon.name, item.value)
-
-            Binding {
-                target: sizeRow
-                property: "active"
-                value: sizeItems.instances.find(i => Math.abs(i.value - (root.mon ? Displays.interfaceSize(root.mon.name) : 1)) < 0.001) ?? null
-            }
-
-            Variants {
-                id: sizeItems
-
-                model: [0.8, 0.85, 0.9, 1, 1.1, 1.25, 1.5]
-
-                MenuItem {
-                    required property real modelData
-
-                    text: `${Math.round(modelData * 100)}%`
-                    value: modelData
-                }
-            }
+            screenName: root.mon?.name ?? ""
         }
 
         SelectRow {

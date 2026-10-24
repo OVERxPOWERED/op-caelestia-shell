@@ -17,6 +17,8 @@ Scope {
         CalendarService;
         Displays;
         DockPins;
+        Density;
+        Glass;
 
         if (GlobalConfig.utilities.vpn.enabled)
             VPN;

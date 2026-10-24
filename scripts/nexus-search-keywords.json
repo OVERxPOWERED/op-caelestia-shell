@@ -41,6 +41,17 @@
       "input",
       "headphones"
     ],
+    "Look & feel": [
+      "density",
+      "compact",
+      "dense",
+      "gaps",
+      "spacing",
+      "border",
+      "smaller",
+      "too big",
+      "interface size"
+    ],
     "Doctor": [
       "health",
       "diagnose",

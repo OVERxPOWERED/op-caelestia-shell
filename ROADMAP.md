@@ -18,6 +18,7 @@ Someone said the setup "looks cheap, unprofessional, incomplete, things do not c
 1. **Reliability comes first** (Track 1).
 2. **Look and feel gets refined, not replaced** (Track 2). The character themes stay. Every visual change is opt-in.
 3. **Something new**: control the laptop from the phone, natively (Track 3).
+4. **Config in Nexus** (Track 4, added 2026-10-24): the Hyprland config files become settings you can change from Nexus.
 
 ---
 
@@ -186,7 +187,10 @@ Turns Track 1 into something permanent instead of a one-time cleanup.
 
 Each item ships behind config options, with before/after screenshots, following P2. Defaults keep today's look.
 
-### `[ ]` 2.1 Density: make things smaller, tuned live
+### `[x]` 2.1 Density: make things smaller, tuned live
+
+**Status (2026-10-24)**: done and tested by you. Nexus > **Look & feel** (one page for all of Track 2; glass, motion and fonts become sections of it). `services/Density.qml` pushes window gaps and border to Hyprland live and re-applies them after a config reload; game mode is respected. Presets set window spacing only (Comfortable = whatever `variables.lua` says, Compact, Dense). Interface size is the same per-display setting as Display > Interface size (one shared row component), so the two pages always agree. **Not done**: app-content scaling (GTK/Qt/Chromium text), which stays optional.
+
 
 You want to tune this live rather than get a fixed number.
 
@@ -328,7 +332,30 @@ Each phase ends with something you can actually use.
 
 ---
 
-## 7. Parked ideas
+## 7. Track 4: Config in Nexus (added 2026-10-24)
+
+**Idea (yours)**: in this kind of setup the config files play the role of the settings app, so Nexus should be able to change them, and eventually most config options should live in Nexus.
+
+**Verdict**: yes, as an *override layer*, not by rewriting your files.
+
+- **Facts**: `variables.lua` has 62 values, `keybinds.lua` about 123 bindings, `rules.lua` about 60 window and layer rules, plus small files for input, animations, gestures, autostart (about 870 lines in total). Nexus already edits `shell.json`, and Density already controls Hyprland live.
+- **The risk**: if Nexus rewrites your hand-written Lua, edits collide, comments are lost, and a Nexus bug can break the whole session.
+- **Rules**:
+  1. Your files are never rewritten. Nexus keeps its choices in its own file; the shell applies them live and again after every reload (the Density model).
+  2. Every setting has "reset to what the config says".
+  3. Risky changes go through Keep/Revert (the 15 second undo already used for displays).
+  4. Large files (keybinds, rules, autostart) are **read-only viewers first**, editing later and opt-in.
+- **Order**:
+  1. `variables.lua` values (gaps, opacity, blur, rounding, cursor): the Density model, extended.
+  2. Input: keyboard repeat, touchpad, gestures.
+  3. Animations (overlaps with 2.3 Signature motion).
+  4. Keybinds: searchable viewer ("what does Super+X do?"), then rebinding with conflict detection.
+  5. Window rules: viewer, then editor.
+- **Done when**: you can change the settings you used to edit by hand from Nexus, undo any of it, and your own files are untouched.
+
+---
+
+## 8. Parked ideas
 
 Suggested but not chosen this round. Kept here so they aren't lost.
 
@@ -342,7 +369,7 @@ Suggested but not chosen this round. Kept here so they aren't lost.
 
 ---
 
-## 8. Next step
+## 9. Next step
 
 1. Review and push the plug-in chooser commit.
 2. Switch `main` to this branch: tag the old `main` as `backup/old-main`, merge it in with `-s ours`, push as a fast-forward.

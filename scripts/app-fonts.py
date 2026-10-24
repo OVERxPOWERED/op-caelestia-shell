@@ -121,6 +121,14 @@ def main():
         if src.suffix.lower() not in EXTS or not src.is_file():
             print(json.dumps({"ok": False, "message": "Choose a .ttf, .otf or .ttc font file"}))
             return
+        if not os.access(src, os.R_OK):
+            # Zip extractors sometimes leave files with no permissions at all. We own the file,
+            # so give ourselves read access (and nothing else) rather than refuse it.
+            try:
+                os.chmod(src, src.stat().st_mode | 0o400)
+            except OSError:
+                print(json.dumps({"ok": False, "message": "That file is not readable and its permissions can't be changed"}))
+                return
         fams = families_in(src)
         if not fams:
             print(json.dumps({"ok": False, "message": "That file is not a usable font"}))

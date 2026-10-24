@@ -13,3 +13,6 @@ docs/desktop-environment-roadmap.md
 update.sh
 changes.md
 __pycache__/
+
+# file-manager comment metadata
+.comments/

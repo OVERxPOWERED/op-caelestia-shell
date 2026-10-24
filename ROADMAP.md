@@ -148,7 +148,10 @@ The goal is that nothing breaks in front of other people. Order: 1.1, then 1.2, 
 | Text cut off: "Hyprland..." (dashboard user card), "Screen rec..." (sidebar recorder card) | dashboard and utilities cards | Fit the text, shorten the labels, or reflow the layout |
 | Further glitches you spot | — | Add them to this table as they appear |
 
-### `[ ]` 1.5 "Doctor": a self-healing page in Nexus
+### `[~]` 1.5 "Doctor": a self-healing page in Nexus
+
+**Status (2026-10-24)**: page done (Nexus > System > Doctor, `scripts/doctor.py`): 13 read-only checks; fixes for radios, duplicate bt-agent, portals, audio, polkit agent start, crash dismissal, and per-profile Forget/Keep for duplicate Wi-Fi profiles. **Not done**: the watchdog (quiet toast when something drifts), checks for coredump-free shell crashes in more detail, and Bluetooth device reset.
+
 
 Turns Track 1 into something permanent instead of a one-time cleanup.
 

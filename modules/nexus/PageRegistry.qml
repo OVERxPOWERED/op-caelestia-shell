@@ -62,6 +62,13 @@ QtObject {
             category: "system"
         },
 
+        {
+            label: Tr.tr("Doctor"),
+            icon: "health_and_safety",
+            description: Tr.tr("Check Wi-Fi, Bluetooth, audio, displays and services"),
+            category: "system"
+        },
+
         // Shell
         {
             label: Tr.tr("Panels"),

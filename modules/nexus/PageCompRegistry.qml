@@ -123,6 +123,14 @@ QtObject {
                 }
             }
         },
+        Component {
+            // Doctor
+            StackPage {
+                Component {
+                    DoctorPage {}
+                }
+            }
+        },
 
         // Shell
         Component {

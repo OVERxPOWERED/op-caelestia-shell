@@ -41,6 +41,16 @@
       "input",
       "headphones"
     ],
+    "Doctor": [
+      "health",
+      "diagnose",
+      "troubleshoot",
+      "fix",
+      "problems",
+      "crash",
+      "broken",
+      "not working"
+    ],
     "Power & idle": [
       "battery",
       "sleep",

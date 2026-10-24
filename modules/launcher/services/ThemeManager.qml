@@ -57,7 +57,8 @@ Searcher {
         function onClicked(list: AppList): void {
             list.screenState.launcher = false;
             GlobalConfig.paths.themeName = folder;
-            GlobalConfig.save();
+            if (typeof GlobalConfig.save === "function")
+                GlobalConfig.save();
             Wallpapers.setWallpaper(wallpaperPath);
         }
     }

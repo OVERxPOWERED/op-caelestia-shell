@@ -109,18 +109,30 @@ Singleton {
         printErrors: false
         path: `${Paths.state}/notifs.json`
         onLoaded: {
-            const data = JSON.parse(text());
-            for (const notif of data) {
-                const properties = Object.assign({}, notif);
-
-                // Backwards compatibility for old notifications
-                if (properties.notificationId === undefined && properties.id !== undefined)
-                    properties.notificationId = properties.id;
-
-                delete properties.id;
-                root.list.push(notifComp.createObject(root, properties));
+            let data = [];
+            try {
+                const content = text().trim();
+                if (content.length > 0)
+                    data = JSON.parse(content);
+            } catch (e) {
+                console.warn("Failed to parse notifications JSON:", e);
+                data = [];
             }
-            root.list.sort((a, b) => b.time - a.time);
+            if (Array.isArray(data)) {
+                for (const notif of data) {
+                    if (!notif)
+                        continue;
+                    const properties = Object.assign({}, notif);
+
+                    // Backwards compatibility for old notifications
+                    if (properties.notificationId === undefined && properties.id !== undefined)
+                        properties.notificationId = properties.id;
+
+                    delete properties.id;
+                    root.list.push(notifComp.createObject(root, properties));
+                }
+                root.list.sort((a, b) => (b?.time ?? 0) - (a?.time ?? 0));
+            }
             root.loaded = true;
         }
         onLoadFailed: err => {

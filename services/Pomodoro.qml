@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import Caelestia
 import Caelestia.Config
 import Caelestia.I18n
 
@@ -139,12 +140,15 @@ Singleton {
             if (nextCycle >= sessionsBeforeLongBreak) {
                 cycleCount = 0;
                 mode = Pomodoro.Mode.LongBreak;
+                Toaster.toast(Tr.tr("Pomodoro Focus Complete"), Tr.tr("Great job! Time for a long break."), "timer", Toast.Success);
             } else {
                 cycleCount = nextCycle;
                 mode = Pomodoro.Mode.ShortBreak;
+                Toaster.toast(Tr.tr("Pomodoro Focus Complete"), Tr.tr("Time for a short break."), "timer", Toast.Success);
             }
         } else {
             mode = Pomodoro.Mode.Focus;
+            Toaster.toast(Tr.tr("Break Finished"), Tr.tr("Ready to start another focus session?"), "alarm", Toast.Info);
         }
         resetCurrent();
     }

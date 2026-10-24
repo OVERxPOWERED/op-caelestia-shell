@@ -61,11 +61,24 @@ Singleton {
 
     function load(data: string, isPreview: bool): void {
         const colours = isPreview ? preview : current;
-        const scheme = JSON.parse(data);
+        if (!data || data.trim().length === 0)
+            return;
+
+        let scheme;
+        try {
+            scheme = JSON.parse(data);
+        } catch (e) {
+            console.warn("Failed to parse colour scheme JSON:", e);
+            return;
+        }
+
+        if (!scheme || !scheme.colours)
+            return;
+
 
         if (!isPreview) {
-            root.scheme = scheme.name;
-            flavour = scheme.flavour;
+            root.scheme = scheme.name ?? "";
+            flavour = scheme.flavour ?? "";
             currentLight = scheme.mode === "light";
         } else {
             previewLight = scheme.mode === "light";

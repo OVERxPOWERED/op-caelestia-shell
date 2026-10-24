@@ -115,7 +115,8 @@ PageBase {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             GlobalConfig.paths.themeName = themeCard.modelData.folder;
-                            GlobalConfig.save();
+                            if (typeof GlobalConfig.save === "function")
+                                GlobalConfig.save();
                             if (themeCard.modelData.wallpaperPath)
                                 Wallpapers.setWallpaper(themeCard.modelData.wallpaperPath);
                         }

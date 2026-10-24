@@ -160,11 +160,13 @@ REQUIRED_PACKAGES=(
 )
 
 MISSING_PACKAGES=()
-for pkg in "${REQUIRED_PACKAGES[@]}"; do
-    if ! pacman -Qi "$pkg" >/dev/null 2>&1 && ! pacman -Q "$pkg" >/dev/null 2>&1; then
-        MISSING_PACKAGES+=("$pkg")
-    fi
-done
+if command -v pacman >/dev/null 2>&1; then
+    for pkg in "${REQUIRED_PACKAGES[@]}"; do
+        if ! pacman -Qi "$pkg" >/dev/null 2>&1 && ! pacman -Q "$pkg" >/dev/null 2>&1; then
+            MISSING_PACKAGES+=("$pkg")
+        fi
+    done
+fi
 
 if [ ${#MISSING_PACKAGES[@]} -gt 0 ]; then
     log_warn "Missing dependencies detected (${#MISSING_PACKAGES[@]} packages):"

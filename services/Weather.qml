@@ -215,8 +215,14 @@ Singleton {
         const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=${lang}&format=json`;
 
         Requests.get(url, text => {
-            const json = JSON.parse(text);
-            if (json.results && json.results.length > 0) {
+            let json;
+            try {
+                json = JSON.parse(text);
+            } catch (e) {
+                console.warn(lc, `Failed to parse geocoding response: ${e}`);
+                return;
+            }
+            if (json && json.results && json.results.length > 0) {
                 const result = json.results[0];
                 loc = result.latitude + "," + result.longitude;
                 city = fixCityName(result.name);
@@ -233,8 +239,14 @@ Singleton {
             return;
 
         Requests.get(url, text => {
-            const json = JSON.parse(text);
-            if (!json.current || !json.daily)
+            let json;
+            try {
+                json = JSON.parse(text);
+            } catch (e) {
+                console.warn(lc, `Failed to parse weather data response: ${e}`);
+                return;
+            }
+            if (!json || !json.current || !json.daily)
                 return;
 
             cc = {

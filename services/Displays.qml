@@ -45,6 +45,8 @@ Singleton {
     property bool treatVirtualAsExternal
     // Set while the plug-in chooser is open: { name, description }
     property var chooser: null
+    // A saved layout waiting for a yes or no before it is applied
+    property var profileToApply: null
     readonly property double startedAt: Date.now()
 
     readonly property var internalMonitor: monitors.find(m => m.internal) ?? null
@@ -423,6 +425,18 @@ Singleton {
         });
     }
 
+    // Clicking a saved layout asks first; applying it still goes through Keep/Revert afterwards
+    function askApplyProfile(p: var): void {
+        profileToApply = p;
+    }
+
+    function answerProfile(yes: bool): void {
+        const p = profileToApply;
+        profileToApply = null;
+        if (yes && p)
+            applyProfile(p);
+    }
+
     function discardTemporaryProfiles(): void {
         run(["hyprmoncfg", "delete", prevName], () => run(["hyprmoncfg", "delete", draftName], () => root.reloadProfiles()));
     }
@@ -726,6 +740,18 @@ Singleton {
             return "ok";
         }
 
+        function askProfile(name: string): string {
+            const p = root.userProfiles.find(x => x.name === name);
+            if (!p)
+                return "no such profile";
+            root.askApplyProfile(p);
+            return "ok";
+        }
+
+        function answerProfile(yes: bool): void {
+            root.answerProfile(yes);
+        }
+
         function choose(kind: string): void {
             root.chooseLayout(kind);
         }
@@ -747,6 +773,8 @@ Singleton {
                 pending: root.pending,
                 countdown: root.countdown,
                 chooser: root.chooser,
+                profileToApply: root.profileToApply ? root.profileToApply.name : null,
+                profiles: root.userProfiles.map(p => p.name),
                 screens: Quickshell.screens.map(s => ({
                             name: s.name,
                             width: s.width,

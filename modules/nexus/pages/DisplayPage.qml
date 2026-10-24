@@ -26,27 +26,28 @@ PageBase {
     }
     readonly property string currentResolution: mon ? `${mon.width}x${mon.height}` : ""
     readonly property var refreshRates: (mon?.modes ?? []).filter(m => m.startsWith(currentResolution + "@")).map(m => m.split("@")[1])
-    // Hyprland only accepts scales that divide both dimensions into whole pixels, and snaps
-    // anything else to the nearest one it likes (e.g. 85% and 90% both become 83% on 1080p).
-    // It takes multiples of 1/120 and of 1/16, so offer exactly those that work.
+    // A scale has to satisfy two things. Hyprland only accepts one that divides both dimensions
+    // into whole pixels (it snaps anything else, e.g. 85% and 90% become 83% on 1080p). And
+    // Wayland tells apps the scale as a whole number of 120ths, so one that is not an exact
+    // multiple of 1/120 (like 0.9375 = 112.5/120) reaches apps rounded (0.94167): apps then
+    // disagree with the compositor and look blurry or slightly misplaced. Offer only scales
+    // that satisfy both.
+    function exactScale(s: real): bool {
+        return Math.abs(s * 120 - Math.round(s * 120)) < 0.0001;
+    }
+
     readonly property var scales: {
         if (!mon)
             return [1];
-        const wholePixels = s => {
+        const valid = [];
+        for (let k = 60; k <= 240; k++) {
+            const s = k / 120;
             const w = mon.width / s;
             const h = mon.height / s;
-            return Math.abs(w - Math.round(w)) < 0.001 && Math.abs(h - Math.round(h)) < 0.001;
-        };
-        const found = new Set();
-        for (let k = 60; k <= 360; k++) {
-            if (wholePixels(k / 120))
-                found.add(Math.round(k / 120 * 10000) / 10000);
+            if (Math.abs(w - Math.round(w)) < 0.001 && Math.abs(h - Math.round(h)) < 0.001)
+                valid.push(Math.round(s * 10000) / 10000);
         }
-        for (let k = 8; k <= 48; k++) {
-            if (wholePixels(k / 16))
-                found.add(Math.round(k / 16 * 10000) / 10000);
-        }
-        const valid = [...found].filter(s => s >= 0.5 && s <= 2);
+        // Keep the current scale selectable even if it is not exact, so the menu can show it
         if (!valid.some(v => Math.abs(v - mon.scale) < 0.001))
             valid.push(mon.scale);
         return valid.sort((a, b) => a - b);
@@ -312,7 +313,7 @@ PageBase {
 
             visible: root.mon !== null && !root.mon.disabled
             label: Tr.tr("Scale")
-            subtext: Tr.tr("Makes everything on this display larger or smaller")
+            subtext: root.mon && !root.exactScale(root.mon.scale) ? Tr.tr("This scale cannot be sent to apps exactly, so some may look blurry or misplaced. 100% or 83% are safer.") : Tr.tr("Makes everything on this display larger or smaller")
             fallbackText: `${Math.round((root.mon?.scale ?? 1) * 100)}%`
             menuItems: scaleItems.instances
             onSelected: item => Displays.setScale(root.mon.name, item.value)
@@ -332,7 +333,7 @@ PageBase {
                 MenuItem {
                     required property real modelData
 
-                    text: `${Math.round(modelData * 100)}%`
+                    text: root.exactScale(modelData) ? `${Math.round(modelData * 100)}%` : Tr.tr("%1% (inexact)").arg(Math.round(modelData * 100))
                     value: modelData
                 }
             }
@@ -491,7 +492,7 @@ PageBase {
                     text: profileItem.modelData.name
                     subtext: profileItem.modelData.outputs.map(o => o.name).join(" · ")
                     trailingIcon: "play_arrow"
-                    onClicked: Displays.applyProfile(profileItem.modelData)
+                    onClicked: Displays.askApplyProfile(profileItem.modelData)
                 }
 
                 IconButton {

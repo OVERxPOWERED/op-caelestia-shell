@@ -28,7 +28,7 @@ QtObject {
         { kind: "row", page: 1, sub: 0, label: Tr.tr("Enabled"), subtext: Tr.tr("Turn this display on or off"), section: Tr.tr("Arrangement"), subTitle: Tr.tr("Display"), kw: [] },
         { kind: "row", page: 1, sub: 0, label: Tr.tr("Resolution"), subtext: "", section: Tr.tr("Arrangement"), subTitle: Tr.tr("Display"), kw: [] },
         { kind: "row", page: 1, sub: 0, label: Tr.tr("Refresh rate"), subtext: "", section: Tr.tr("Arrangement"), subTitle: Tr.tr("Display"), kw: [] },
-        { kind: "row", page: 1, sub: 0, label: Tr.tr("Scale"), subtext: Tr.tr("Makes everything on this display larger or smaller"), section: Tr.tr("Arrangement"), subTitle: Tr.tr("Display"), kw: [] },
+        { kind: "row", page: 1, sub: 0, label: Tr.tr("Scale"), subtext: "", section: Tr.tr("Arrangement"), subTitle: Tr.tr("Display"), kw: [] },
         { kind: "row", page: 1, sub: 0, label: Tr.tr("Interface size"), subtext: Tr.tr("Text and spacing of the shell on this display only"), section: Tr.tr("Arrangement"), subTitle: Tr.tr("Display"), kw: [] },
         { kind: "row", page: 1, sub: 0, label: Tr.tr("Rotation"), subtext: "", section: Tr.tr("Arrangement"), subTitle: Tr.tr("Display"), kw: [] },
         { kind: "row", page: 1, sub: 0, label: Tr.tr("Mirror"), subtext: Tr.tr("Show the same picture as another display"), section: Tr.tr("Arrangement"), subTitle: Tr.tr("Display"), kw: [] },

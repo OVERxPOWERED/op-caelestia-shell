@@ -35,6 +35,7 @@ ShellRoot {
     AreaPicker {}
     DisplayConfirm {}
     DisplayChooser {}
+    DisplayProfileAsk {}
     Overview {}
     QuickNote {}
     Lock {

@@ -9,6 +9,7 @@ import Caelestia
 import Caelestia.Config
 import Caelestia.I18n
 import Caelestia.Services
+import qs.utils
 
 Singleton {
     id: root
@@ -31,6 +32,121 @@ Singleton {
 
     readonly property alias cava: cava
     readonly property alias beatTracker: beatTracker
+
+    // --- Routing & Combined Output ---
+    property var streamTargets: ({})
+    property bool combinedSinkEnabled: false
+    property var combinedSinkMembers: []
+    property var sinkVolumeTrims: ({})
+    readonly property string combinedModuleName: "caelestia_combined"
+    readonly property PwNode combinedSinkNode: sinks.find(s => s && s.name === combinedModuleName) ?? null
+    readonly property bool isCombinedSinkActive: combinedSinkNode !== null
+    property bool routingStateLoaded: false
+
+    signal routingChanged()
+
+    function getStreamTargetId(stream: PwNode): int {
+        if (!stream)
+            return -1;
+        return streamTargets[stream.id] ?? -1;
+    }
+
+    function setStreamTarget(stream: PwNode, targetSink: PwNode): void {
+        if (!stream)
+            return;
+
+        const streamId = stream.id;
+        const targetId = targetSink ? targetSink.id : -1;
+        const targetName = targetSink ? targetSink.name : (sink ? sink.name : "");
+        const props = stream.properties || {};
+        const serial = props["object.serial"] || "";
+
+        const newTargets = Object.assign({}, streamTargets);
+        if (targetId === -1 || (sink && targetId === sink.id)) {
+            delete newTargets[streamId];
+        } else {
+            newTargets[streamId] = targetId;
+        }
+        streamTargets = newTargets;
+        routingChanged();
+
+        let cmd = "";
+        if (targetId === -1) {
+            cmd = `pw-metadata -n default ${streamId} -d target.node 2>/dev/null; pw-metadata -n default ${streamId} -d target.object 2>/dev/null`;
+            if (serial && targetName) {
+                cmd += `; pactl move-sink-input ${serial} ${targetName} 2>/dev/null || true`;
+            }
+        } else {
+            cmd = `pw-metadata -n default ${streamId} target.node ${targetId} 2>/dev/null; pw-metadata -n default ${streamId} target.object ${targetId} 2>/dev/null`;
+            if (serial && targetName) {
+                cmd += `; pactl move-sink-input ${serial} ${targetName} 2>/dev/null || true`;
+            }
+        }
+
+        audioCmdProc.exec(["sh", "-c", cmd]);
+    }
+
+    function toggleCombinedSinkMember(sinkName: string): void {
+        const members = [...combinedSinkMembers];
+        const idx = members.indexOf(sinkName);
+        if (idx >= 0) {
+            members.splice(idx, 1);
+        } else {
+            members.push(sinkName);
+        }
+        combinedSinkMembers = members;
+        saveRoutingState();
+        rebuildCombinedSink();
+    }
+
+    function setCombinedSinkEnabled(enable: bool): void {
+        combinedSinkEnabled = enable;
+        saveRoutingState();
+        rebuildCombinedSink();
+    }
+
+    function setSinkTrimVolume(node: PwNode, vol: real): void {
+        if (node?.ready && node?.audio) {
+            node.audio.muted = false;
+            node.audio.volume = Math.max(0, Math.min(GlobalConfig.services.maxVolume, vol));
+            const newTrims = Object.assign({}, sinkVolumeTrims);
+            newTrims[node.name] = vol;
+            sinkVolumeTrims = newTrims;
+            saveRoutingState();
+        }
+    }
+
+    function saveRoutingState(): void {
+        if (!routingStateLoaded)
+            return;
+        const data = {
+            combinedEnabled: combinedSinkEnabled,
+            combinedSinkMembers: combinedSinkMembers,
+            sinkVolumeTrims: sinkVolumeTrims
+        };
+        routingStorage.setText(JSON.stringify(data, null, 2));
+    }
+
+    function rebuildCombinedSink(): void {
+        if (!combinedSinkEnabled) {
+            const unloadCmd = "for id in $(pactl list short modules 2>/dev/null | grep module-combine-sink | awk '{print $1}'); do pactl unload-module \"$id\" 2>/dev/null || true; done";
+            audioCmdProc.exec(["sh", "-c", unloadCmd]);
+            return;
+        }
+
+        const activeMembers = [];
+        for (const s of sinks) {
+            if (s && s.name !== combinedModuleName && combinedSinkMembers.includes(s.name)) {
+                activeMembers.push(s.name);
+            }
+        }
+
+        if (activeMembers.length >= 2) {
+            const slavesStr = activeMembers.join(",");
+            const cmd = `for id in $(pactl list short modules 2>/dev/null | grep module-combine-sink | awk '{print $1}'); do pactl unload-module "$id" 2>/dev/null || true; done; pactl load-module module-combine-sink sink_name=${combinedModuleName} slaves=${slavesStr} sink_properties=device.description="Combined\\ Output"`;
+            audioCmdProc.exec(["sh", "-c", cmd]);
+        }
+    }
 
     function setVolume(newVolume: real): void {
         if (sink?.ready && sink?.audio) {
@@ -153,6 +269,10 @@ Singleton {
         if (!node || !node.isSink)
             return false;
 
+        // If it's our combined sink, it is always valid when present
+        if (node.name === root.combinedModuleName)
+            return true;
+
         // Always retain the currently active default audio sink
         if (node.id === Pipewire.defaultAudioSink?.id)
             return true;
@@ -217,6 +337,18 @@ Singleton {
         root.sinks = newSinks;
         root.sources = newSources;
         root.streams = newStreams;
+
+        if (!metaProc.running)
+            metaProc.exec(["pw-metadata", "-n", "default"]);
+
+        if (root.combinedSinkEnabled && root.routingStateLoaded) {
+            const comb = newSinks.find(s => s && s.name === root.combinedModuleName);
+            if (comb && root.sink?.name !== root.combinedModuleName) {
+                root.setAudioSink(comb);
+            } else if (!comb) {
+                root.rebuildCombinedSink();
+            }
+        }
     }
 
     onSinkChanged: {
@@ -289,6 +421,72 @@ Singleton {
             root.cycleNextAudioOutput();
         }
 
+        function toggleCombined(): void {
+            root.setCombinedSinkEnabled(!root.combinedSinkEnabled);
+        }
+
         target: "audio"
+    }
+
+    Process {
+        id: audioCmdProc
+    }
+
+    Process {
+        id: metaProc
+
+        command: ["pw-metadata", "-n", "default"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const targets = {};
+                const lines = text.split("\n");
+                for (const line of lines) {
+                    const match = line.match(/update:\s+id:(\d+)\s+key:'target\.(?:node|object)'\s+value:'(\d+)'/);
+                    if (match) {
+                        targets[parseInt(match[1])] = parseInt(match[2]);
+                    }
+                }
+                root.streamTargets = targets;
+                root.routingChanged();
+            }
+        }
+    }
+
+    FileView {
+        id: routingStorage
+
+        printErrors: false
+        path: `${Paths.state}/audio_routing.json`
+        onLoaded: {
+            try {
+                const content = text().trim();
+                if (content.length > 0) {
+                    const data = JSON.parse(content);
+                    if (data) {
+                        root.combinedSinkEnabled = !!data.combinedEnabled;
+                        if (Array.isArray(data.combinedSinkMembers))
+                            root.combinedSinkMembers = data.combinedSinkMembers;
+                        if (data.sinkVolumeTrims && typeof data.sinkVolumeTrims === "object")
+                            root.sinkVolumeTrims = data.sinkVolumeTrims;
+                    }
+                }
+            } catch (e) {
+                console.warn("Failed to parse audio routing JSON:", e);
+            }
+            root.routingStateLoaded = true;
+            if (root.combinedSinkEnabled) {
+                root.rebuildCombinedSink();
+            }
+        }
+        onLoadFailed: err => {
+            if (err === FileViewError.FileNotFound) {
+                root.routingStateLoaded = true;
+                Qt.callLater(() => routingStorage.setText(JSON.stringify({
+                    combinedEnabled: false,
+                    combinedSinkMembers: [],
+                    sinkVolumeTrims: {}
+                }, null, 2)));
+            }
+        }
     }
 }

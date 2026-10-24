@@ -203,7 +203,10 @@ You want to tune this live rather than get a fixed number.
 - **Deliverable**: a "Density" section in Nexus with live sliders, plus three named presets: **Comfortable** (today's look), **Compact**, and **Dense**. You fine-tune from there.
 - **Done when**: you have picked values you're happy with.
 
-### `[ ]` 2.2 Glass: examples you can compare
+### `[x]` 2.2 Glass: examples you can compare
+
+**Status (2026-10-24)**: done, you liked it. Nexus > Look & feel > Glass (`services/Glass.qml`): blur behind the overview, window opacity (default read from `variables.lua`), solid text windows, reset. Idea for later: keep only media regions solid in see-through windows, parked in `docs/IDEAS.md`.
+
 
 You're happy with the glass today. These are examples only, each one switchable:
 
@@ -211,7 +214,10 @@ You're happy with the glass today. These are examples only, each one switchable:
 - **Readability**: a version where only text-heavy app windows become opaque, compared against today's `windowOpacity = 0.92`.
 - More examples get added here as we find them. Each is kept or dropped after you see it.
 
-### `[ ]` 2.3 Signature motion
+### `[x]` 2.3 Signature motion
+
+**Status (2026-10-24)**: done in a lighter form (`services/Motion.qml`, Look & feel > Motion): one **Animation speed** for the shell and Hyprland (the shell's own `appearance.anim.durations.scale` plus Hyprland's speeds, read from `animations.lua` and changed live), and **Windows move like the shell** (Hyprland uses the shell's spatial and effects curves). The audit found that the "63 hard-coded durations" were mostly the About logo (34); the rest (keyboard layout popout 9, dock 7, overview carousel 6) ignore the speed setting and were left alone on purpose.
+
 
 One consistent animation style for the whole shell: opening, closing, morphing, and moving between surfaces.
 
@@ -220,7 +226,10 @@ One consistent animation style for the whole shell: opening, closing, morphing, 
 - Define the style in one place, so a future theme *could* override it without changing any theme folders (P5).
 - **Done when**: side-by-side recordings show every surface moving the same way, and you prefer it.
 
-### `[ ]` 2.4 App font consistency (to show you, not to impose)
+### `[x]` 2.4 App font consistency (to show you, not to impose)
+
+**Status (2026-10-24)**: done (`services/AppFonts.qml`, `scripts/app-fonts.py`, Look & feel > App fonts). A switch maps `sans-serif` and `monospace` to Adwaita Sans and JetBrains Mono through one owned fontconfig file, and sets the GTK fonts (the previous values are saved and restored when switched off). Extras: add your own font file (copied to `~/.local/share/fonts/caelestia/`, removable), a preview, and an option to use the same fonts in the shell (icons untouched; originals restored when off).
+
 
 - **Evidence**: there is no user fontconfig file, so the generic `sans-serif` and `monospace` names resolve to **Noto Sans CJK KR** and **Noto Sans Mono CJK KR**. Qt apps (qt6ct `"Sans Serif"`) and Chromium/Electron apps therefore render in a Korean CJK font, GTK uses Adwaita Sans, and the shell uses Google Sans Flex, which it loads only for itself (`modules/GSFLoader.qml`).
 - **Option**: a fontconfig file mapping `sans-serif` and `monospace` to fonts you choose, with screenshots of apps before and after.

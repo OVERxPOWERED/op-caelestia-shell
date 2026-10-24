@@ -19,6 +19,8 @@ Scope {
         DockPins;
         Density;
         Glass;
+        Motion;
+        AppFonts;
 
         if (GlobalConfig.utilities.vpn.enabled)
             VPN;

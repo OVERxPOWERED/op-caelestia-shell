@@ -7,6 +7,7 @@ import Caelestia.Config
 import Caelestia.I18n
 import qs.components
 import qs.components.controls
+import qs.components.filedialog
 import qs.services
 import qs.modules.nexus.common
 
@@ -190,6 +191,257 @@ PageBase {
             subtext: Tr.tr("Back to the look from your config")
             disabled: Glass.isDefault
             onClicked: Glass.resetAll()
+        }
+
+        SectionHeader {
+            text: Tr.tr("Motion")
+        }
+
+        SelectRow {
+            id: speedRow
+
+            first: true
+            label: Tr.tr("Animation speed")
+            subtext: Tr.tr("How fast the shell and your windows animate, together")
+            fallbackText: `${Motion.speed.toFixed(2)}×`
+            menuItems: speedItems.instances
+            onSelected: item => Motion.setSpeed(item.value)
+
+            // Picking an item replaces a plain `active:` binding, so re-assert the real value
+            Binding {
+                target: speedRow
+                property: "active"
+                value: speedItems.instances.find(i => Math.abs(i.value - Motion.speed) < 0.001) ?? null
+            }
+
+            Variants {
+                id: speedItems
+
+                model: [
+                    {
+                        name: Tr.tr("Calm"),
+                        factor: 1.3
+                    },
+                    {
+                        name: Tr.tr("Standard"),
+                        factor: 1
+                    },
+                    {
+                        name: Tr.tr("Snappy"),
+                        factor: 0.75
+                    },
+                    {
+                        name: Tr.tr("Quick"),
+                        factor: 0.5
+                    }
+                ]
+
+                MenuItem {
+                    required property var modelData
+
+                    text: modelData.name
+                    value: modelData.factor
+                }
+            }
+        }
+
+        ToggleRow {
+            id: matchRow
+
+            text: Tr.tr("Windows move like the shell")
+            subtext: Tr.tr("Windows, workspaces and panels share one set of curves and timings")
+            onToggled: Motion.setMatchShell(matchRow.checked)
+
+            Binding {
+                target: matchRow
+                property: "checked"
+                value: Motion.matchShell
+            }
+        }
+
+        RowButton {
+            last: true
+            icon: "restart_alt"
+            text: Tr.tr("Reset motion to defaults")
+            subtext: Tr.tr("Back to the timings from your config")
+            disabled: Motion.isDefault
+            onClicked: Motion.resetAll()
+        }
+
+        SectionHeader {
+            text: Tr.tr("App fonts")
+        }
+
+        ToggleRow {
+            id: fontsRow
+
+            first: true
+            text: Tr.tr("Use these fonts in apps")
+            subtext: AppFonts.enabled ? Tr.tr("Apps pick this up the next time they start") : Tr.tr("Apps currently use %1 and %2 by default").arg(AppFonts.nowSans).arg(AppFonts.nowMono)
+            onToggled: AppFonts.turn(fontsRow.checked)
+
+            Binding {
+                target: fontsRow
+                property: "checked"
+                value: AppFonts.enabled
+            }
+        }
+
+        SelectRow {
+            id: sansRow
+
+            label: Tr.tr("Sans-serif font")
+            subtext: Tr.tr("Text in browsers, Qt and most other apps")
+            disabled: !AppFonts.enabled || AppFonts.busy
+            fallbackText: AppFonts.sans
+            menuItems: sansItems.instances
+            onSelected: item => AppFonts.choose(item.value, AppFonts.mono)
+
+            Binding {
+                target: sansRow
+                property: "active"
+                value: sansItems.instances.find(i => i.value === AppFonts.sans) ?? null
+            }
+
+            Variants {
+                id: sansItems
+
+                model: AppFonts.sansChoices
+
+                MenuItem {
+                    required property string modelData
+
+                    text: modelData
+                    value: modelData
+                }
+            }
+        }
+
+        SelectRow {
+            id: monoRow
+
+            label: Tr.tr("Monospace font")
+            subtext: Tr.tr("Code and terminal-style text")
+            disabled: !AppFonts.enabled || AppFonts.busy
+            fallbackText: AppFonts.mono
+            menuItems: monoItems.instances
+            onSelected: item => AppFonts.choose(AppFonts.sans, item.value)
+
+            Binding {
+                target: monoRow
+                property: "active"
+                value: monoItems.instances.find(i => i.value === AppFonts.mono) ?? null
+            }
+
+            Variants {
+                id: monoItems
+
+                model: AppFonts.monoChoices
+
+                MenuItem {
+                    required property string modelData
+
+                    text: modelData
+                    value: modelData
+                }
+            }
+        }
+
+        ToggleRow {
+            id: shellFontRow
+
+            text: Tr.tr("Also use them in the shell")
+            subtext: Tr.tr("The bar, panels and Nexus too. Icons keep their own font")
+            disabled: !AppFonts.enabled
+            onToggled: AppFonts.setShellToo(shellFontRow.checked)
+
+            Binding {
+                target: shellFontRow
+                property: "checked"
+                value: AppFonts.shellToo && AppFonts.enabled
+            }
+        }
+
+        ConnectedRect {
+            Layout.fillWidth: true
+            implicitHeight: preview.implicitHeight + Tokens.padding.large * 2
+
+            ColumnLayout {
+                id: preview
+
+                anchors.fill: parent
+                anchors.margins: Tokens.padding.large
+                anchors.leftMargin: Tokens.padding.largeIncreased
+                spacing: Tokens.spacing.extraSmall
+
+                StyledText {
+                    Layout.fillWidth: true
+                    text: Tr.tr("The quick brown fox jumps over the lazy dog")
+                    font.family: AppFonts.sans
+                    font.pixelSize: 18
+                    elide: Text.ElideRight
+                }
+
+                StyledText {
+                    Layout.fillWidth: true
+                    text: "0123456789  {}[]()  <= != =>  fn main() {}"
+                    color: Colours.palette.m3onSurfaceVariant
+                    font.family: AppFonts.mono
+                    font.pixelSize: 14
+                    elide: Text.ElideRight
+                }
+            }
+        }
+
+        RowButton {
+            last: AppFonts.added.length === 0
+            icon: "upload_file"
+            text: AppFonts.busy ? Tr.tr("Working…") : Tr.tr("Add a font…")
+            subtext: AppFonts.message || Tr.tr("Pick a .ttf, .otf or .ttc file. It is copied to your own fonts folder")
+            disabled: AppFonts.busy
+            onClicked: addFontDialog.open()
+
+            FileDialog {
+                id: addFontDialog
+
+                title: Tr.tr("Choose a font file")
+                filterLabel: Tr.tr("Font files")
+                filters: ["ttf", "otf", "ttc"]
+                onAccepted: path => AppFonts.addFont(path)
+            }
+        }
+
+        Repeater {
+            model: AppFonts.added
+
+            RowButton {
+                id: fontItem
+
+                required property var modelData
+                required property int index
+                property bool armed
+
+                last: index === AppFonts.added.length - 1
+                icon: "font_download"
+                text: modelData.family
+                subtext: armed ? Tr.tr("Press again to remove %1").arg(modelData.file) : modelData.file
+                trailingIcon: armed ? "delete_forever" : "delete"
+                disabled: AppFonts.busy
+                onClicked: {
+                    if (!armed) {
+                        armed = true;
+                        return;
+                    }
+                    armed = false;
+                    AppFonts.removeFont(modelData.file);
+                }
+
+                Timer {
+                    running: fontItem.armed
+                    interval: 4000
+                    onTriggered: fontItem.armed = false
+                }
+            }
         }
     }
 }

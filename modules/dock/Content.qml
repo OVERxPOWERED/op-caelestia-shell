@@ -135,13 +135,22 @@ Item {
 
     function focusWindow(toplevel): void {
         const addr = toplevel.address;
-        const wsId = toplevel.workspace?.id;
+        const wsName = toplevel.workspace?.name;
+
+        // Close an open special overlay when the target window is on a normal workspace
+        const openSpecial = (toplevel.monitor ?? Hypr.focusedMonitor)?.lastIpcObject?.specialWorkspace?.name ?? "";
+        if (openSpecial.startsWith("special:") && !wsName?.startsWith("special:")) {
+            const specialName = openSpecial.slice("special:".length);
+            Hypr.dispatch(Hypr.usingLua
+                ? `hl.dsp.workspace.toggle_special("${specialName}")`
+                : `togglespecialworkspace ${specialName}`);
+        }
 
         // First switch to the workspace (proven pattern)
-        if (wsId !== undefined) {
+        if (wsName) {
             Hypr.dispatch(Hypr.usingLua
-                ? `hl.dsp.focus({ workspace = "${wsId}" })`
-                : `workspace ${wsId}`);
+                ? `hl.dsp.focus({ workspace = "${wsName}" })`
+                : `workspace ${wsName}`);
         }
 
         // Then focus the specific window

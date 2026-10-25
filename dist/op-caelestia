@@ -16,6 +16,7 @@ op-caelestia [option]
   -k, --kill     stop the shell
   -l, --log      show the shell's log
   -v, --version  print the version
+  config <cmd>   Hyprland integration: status, plan, apply, restore (see `op-caelestia config -h`)
   -h, --help     this text
 EOF
 }
@@ -63,6 +64,10 @@ case "${1:-}" in
         v="$(pacman -Q op-caelestia-shell 2>/dev/null || pacman -Q op-caelestia-shell-git 2>/dev/null || true)"
         echo "${v:-op-caelestia (not installed from a package)}"
         quickshell --version
+        ;;
+    config)
+        shift
+        exec python3 "$SHARE/scripts/hypr-config.py" "$@"
         ;;
     -h|--help)
         usage

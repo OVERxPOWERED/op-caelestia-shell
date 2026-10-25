@@ -17,8 +17,8 @@ class LockConfig : public settings::ObjectNode {
     CONFIG_GLOBAL_PROPERTY(bool, enableHowdy, true)
     CONFIG_GLOBAL_PROPERTY(int, maxHowdyTries, 3)
     CONFIG_GLOBAL_PROPERTY(bool, triggerHowdyOnWake, true)
-    CONFIG_GLOBAL_PROPERTY(bool, enablePattern, true)
-    CONFIG_GLOBAL_PROPERTY(QString, pattern, u"74159"_s)
+    CONFIG_GLOBAL_PROPERTY(bool, enablePattern, false)
+    CONFIG_GLOBAL_PROPERTY(QString, pattern, u""_s) // no default: a shipped default would unlock every install
     CONFIG_PROPERTY(bool, hideNotifs, false)
     CONFIG_GLOBAL_PROPERTY(bool, enableSessionControls, false)
 };

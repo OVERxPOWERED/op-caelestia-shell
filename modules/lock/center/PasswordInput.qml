@@ -17,8 +17,9 @@ StyledRect {
     property bool patternMode
 
     readonly property int patternSize: Math.max(180, Math.min(240, Math.round(centerWidth * 0.42)))
-    readonly property string patternCode: GlobalConfig.lock.pattern ?? "4753"
-    readonly property bool patternAvailable: GlobalConfig.lock.enablePattern
+    readonly property string patternCode: GlobalConfig.lock.pattern ?? ""
+    // Only with a pattern the user recorded: an empty or very short one would be trivially guessable
+    readonly property bool patternAvailable: GlobalConfig.lock.enablePattern && patternCode.length >= 4
 
     onPatternAvailableChanged: {
         if (!patternAvailable)

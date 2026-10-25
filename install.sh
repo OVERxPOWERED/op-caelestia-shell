@@ -157,6 +157,13 @@ REQUIRED_PACKAGES=(
     "ttf-rubik-vf"
     "ttf-cascadia-code-nerd"
     "quickshell-git"
+    "caelestia-cli"
+    "bluez"
+    "python-dbus"
+    "python-gobject"
+    "wl-clipboard"
+    "slurp"
+    "grim"
 )
 
 MISSING_PACKAGES=()
@@ -213,38 +220,7 @@ log_success "Native C++ plugin built and deployed successfully!"
 CONFIG_DIR="$CONFIG_BASE/caelestia"
 mkdir -p "$CONFIG_DIR"
 
-if [ ! -f "$CONFIG_DIR/shell.json" ]; then
-    log_info "Creating default starter configuration in $CONFIG_DIR/shell.json..."
-    cat > "$CONFIG_DIR/shell.json" << 'EOF'
-{
-  "dock": {
-    "enabled": true,
-    "position": "bottom",
-    "autoHide": false,
-    "scale": 1.0,
-    "pinnedApps": [
-      "firefox.desktop",
-      "kitty.desktop",
-      "thunar.desktop",
-      "spotify.desktop"
-    ]
-  },
-  "overview": {
-    "defaultTab": "carousel",
-    "showSpecialWorkspaces": true,
-    "scale": 1.0
-  },
-  "lock": {
-    "patternEnabled": true,
-    "patternConfirmation": true
-  },
-  "background": {
-    "wallpaperEnabled": true
-  }
-}
-EOF
-    log_success "Created starter shell.json configuration!"
-fi
+# The shell creates shell.json itself the first time you change a setting; nothing to write here.
 
 # 6. Global Launcher Binary (~/.local/bin/op-caelestia)
 BIN_DIR="$HOME/.local/bin"

@@ -1,0 +1,70 @@
+# Features
+
+What this fork adds or changes on top of upstream Caelestia. Settings for all of these are in Nexus ([nexus.md](nexus.md)); the
+option names are in [configuration.md](configuration.md).
+
+## Dock
+
+A floating dock with pinned apps and indicators for running windows. Right-clicking an icon opens a menu (close all windows of the
+app, pin or unpin it). Icons grow smoothly near the pointer. It appears when the pointer touches the bottom edge (`dock.showOnHover`);
+with that off, drag up from the edge (`dock.dragThreshold`). Optionally, scrolling over it opens the launcher
+(`dock.scrollToLauncher`). Pinned apps that are no longer installed are removed automatically.
+
+## Workspace overview
+
+`caelestia:overview` shows your workspaces as a carousel or a grid (toggle in its header) with miniature live windows, plus a
+scratchpad carousel. Click a window to focus it, middle-click to close it, drag windows between workspaces, and drag workspaces to
+reorder them. Left and right arrows move between workspaces; Escape closes it. Each workspace card is labelled with the app you
+used last in it.
+
+## Quick notes
+
+A keyboard-driven scratchpad overlay for plain-text notes, with tags and auto-save. The text follows the cursor so it can be used
+without a mouse. Notes live in `~/Documents/Notes` unless you change the folder.
+
+## Lock screen
+
+The lock screen supports your password (PAM), fingerprint (`fprintd`) and face (Howdy) where those are set up. It can also unlock
+with a **3x3 touch or mouse pattern**. This is a convenience, **not as strong as a password**: the pattern is stored in plain text in
+`~/.config/caelestia/shell.json` and is checked by the shell itself without PAM. It is **off by default and there is no default
+pattern**; turn it on and record yours in Nexus > Lock screen (at least 4 dots).
+
+## Audio
+
+Nexus > Audio sets the volume of each app separately, routes an app to a chosen output, and can play to several outputs at once with
+a trim for each.
+
+## Themes
+
+Eight character themes ship in `assets/themes/` (Abstract_Purple, berserk, Deadpool, Gojo, LOTM, Pikachu, Shinchan, SpiderMan).
+A theme is a folder with a wallpaper and optional animated images; apply one in Nexus > Wallpaper & style > Themes or with
+`:theme` in the launcher. Colours follow the wallpaper.
+
+To make your own, copy an existing theme folder and keep its file names (`wallpaper.jpg`, and `lock.gif`, `media.gif`,
+`session.gif`, `notif.png` if you want them).
+
+## Display management
+
+Plug-in chooser, saved layouts, mirroring that matches the laptop's shape, per-display interface size, and a safety net when you
+unplug a display. See [nexus.md](nexus.md#display). Needs Hyprland 0.55+ with a Lua config.
+
+## Look & feel
+
+Window spacing presets, overview blur, window opacity, animation speed, and app fonts with your own font files. See
+[nexus.md](nexus.md). Every option is off or at your Hyprland config's values until you change it, and the changes are applied
+live without editing your Hyprland files. Needs Hyprland 0.55+ with a Lua config.
+
+## Doctor
+
+Health checks and an optional background watchdog. See [nexus.md](nexus.md#doctor).
+
+## Google Calendar
+
+Optional. Nexus > Services > Google Calendar connects an account (you create your own Google OAuth client for it); the dashboard
+calendar then marks days with events.
+
+## Hardware
+
+System monitors probe Intel (i915 and Xe), AMD and NVIDIA graphics, and fall back quietly on machines without a GPU sensor
+(virtual machines). The Bluetooth pairing helper (`scripts/bt-agent.py`) registers a single BlueZ agent for PIN and passkey prompts
+and does nothing on machines without Bluetooth.

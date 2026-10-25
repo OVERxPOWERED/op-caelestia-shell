@@ -28,7 +28,7 @@ makepkg -d -f --noconfirm
 pkg=$(ls /home/builder/pkg/op-caelestia-shell-git-r*.pkg.tar.zst | head -n1)
 echo "=== package contents (top levels)"
 pacman -Qlp "$pkg" | sed "s#^[^ ]* ##" | awk -F/ "{print \"/\"\$2\"/\"\$3\"/\"\$4\"/\"\$5}" | sort -u | head -40
-pacman -U --noconfirm --nodeps "$pkg"
+pacman -Udd --noconfirm "$pkg"
 echo "=== launcher"
 op-caelestia --version
 echo "=== QML and plugin resolve when launched headless (no compositor, so window errors are expected)"

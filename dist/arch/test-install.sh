@@ -13,7 +13,7 @@ useradd -m builder
 echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
 su builder -c "
 set -eux
-git config --global --add safe.directory /repo
+git config --global --add safe.directory \"*\"
 mkdir -p ~/standins && cd ~/standins
 for name in caelestia-cli ttf-rubik-vf; do
     mkdir \$name && (cd \$name && printf \"pkgname=%s\npkgver=1\npkgrel=1\narch=(any)\npackage() { :; }\n\" \$name > PKGBUILD && makepkg -si --noconfirm)

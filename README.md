@@ -38,7 +38,7 @@ a place to see what is broken, and more.
 - An **Arch-based** system (Arch, CachyOS, EndeavourOS) with **Hyprland**. Other distributions and compositors are not supported.
 - **Hyprland 0.55 or newer with a `hyprland.lua` config** for the Display and Look & feel features. On the older `hyprland.conf` the shell
   runs, but those features do nothing.
-- `quickshell-git` and `caelestia-cli` from the AUR, plus the packages listed in [docs/installation.md](docs/installation.md).
+- `quickshell` (0.3 or newer) and `caelestia-cli` (AUR), plus the packages listed in [docs/installation.md](docs/installation.md).
 
 ## Install
 

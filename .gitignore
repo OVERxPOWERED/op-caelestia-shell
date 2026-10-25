@@ -9,10 +9,17 @@ build-plugin/
 .agents/
 .codex/
 /compile_commands.json
-docs/desktop-environment-roadmap.md
 update.sh
-changes.md
 __pycache__/
 
 # file-manager comment metadata
 .comments/
+
+# private planning notes live outside the repo (~/op-caelestia-private)
+/ROADMAP.md
+/COMPLETION.md
+/DISCOVERY.md
+/changes.md
+/docs/IDEAS.md
+/docs/*roadmap.md
+.vscode/

@@ -12,7 +12,7 @@ import qs.utils
 Singleton {
     id: root
 
-    property string notesDir: Paths.home + "/padhai_in_linux/NOTE"
+    property string notesDir: Paths.home + "/Documents/Notes"
     property string currentFileName: "ToDo.txt"
     readonly property string currentFilePath: notesDir + "/" + currentFileName
 

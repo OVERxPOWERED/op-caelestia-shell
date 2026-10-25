@@ -179,9 +179,9 @@ PageBase {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     textFormat: Text.StyledText
-                    text: qsTr("<b>1.</b> Create a folder: <b>assets/themes/[ThemeName]/</b><br>" +
-                               "<b>2.</b> Add your wallpaper: <b>wallpaper.jpg</b> (or <b>wallpaper.png</b>)<br>" +
-                               "<b>3.</b> <i>(Optional)</i> Add UI GIFs in <b>visuals/</b> (e.g. media.gif, session.gif)<br>" +
+                    text: qsTr("<b>1.</b> Create a folder: <b>~/.local/share/op-caelestia/themes/[ThemeName]/</b><br>" +
+                               "<b>2.</b> Add your wallpaper as <b>wallpaper.jpg</b><br>" +
+                               "<b>3.</b> <i>(Optional)</i> Add <b>lock.gif</b>, <b>media.gif</b>, <b>session.gif</b> and <b>notif.png</b> in the same folder<br>" +
                                "<b>4.</b> Your theme appears automatically here and via <b>:theme</b> in the launcher!")
                     font: Tokens.font.body.medium
                     color: Colours.palette.m3onSurfaceVariant

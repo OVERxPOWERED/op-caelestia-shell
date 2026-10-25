@@ -1,5 +1,6 @@
 #pragma once
 
+#include <qfileinfo.h>
 #include <qstandardpaths.h>
 #include <qstring.h>
 
@@ -13,7 +14,7 @@ using Qt::StringLiterals::operator""_s;
 class UserPaths : public settings::ObjectNode {
     CONFIG_NODE(UserPaths, settings::ObjectNode)
 
-    CONFIG_GLOBAL_PROPERTY(QString, themeName, u"Shinchan"_s)
+    CONFIG_GLOBAL_PROPERTY(QString, themeName, u"Nebula"_s)
     CONFIG_GLOBAL_PROPERTY(
         QString, wallpaperDir, QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + u"/Wallpapers"_s)
     CONFIG_GLOBAL_PROPERTY(
@@ -46,7 +47,12 @@ public:
 
 private:
     [[nodiscard]] QString themeAsset(const QString& fileName) const {
-        const auto& theme = m_themeName.isEmpty() ? u"Shinchan"_s : m_themeName;
+        const auto& theme = m_themeName.isEmpty() ? u"Nebula"_s : m_themeName;
+        // Themes the user added (~/.local/share/op-caelestia/themes/<name>/) win over the bundled ones
+        const auto mine = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + u"/op-caelestia/themes/"_s
+            + theme + u"/"_s + fileName;
+        if (QFileInfo::exists(mine))
+            return mine;
         return u"root:/assets/themes/"_s + theme + u"/"_s + fileName;
     }
 };

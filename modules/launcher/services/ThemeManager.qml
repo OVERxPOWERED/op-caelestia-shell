@@ -13,6 +13,8 @@ Searcher {
     id: root
 
     readonly property string themesDir: Quickshell.shellPath("assets/themes")
+    // Themes the user added; they live outside the install so a packaged (read-only) install can have them too
+    readonly property string userThemesDir: Paths.themes
 
     function prettyName(folder: string): string {
         return folder.replace(/[_-]+/g, " ").replace(/\b\w/g, c => c.toUpperCase());
@@ -25,9 +27,11 @@ Searcher {
     function reload(): void {
         themeDirs.path = "";
         themeDirs.path = root.themesDir;
+        userThemeDirs.path = "";
+        userThemeDirs.path = root.userThemesDir;
     }
 
-    list: themes.instances
+    list: [...userThemes.instances, ...themes.instances]
     useFuzzy: GlobalConfig.launcher.useFuzzy.actions
     keys: ["name", "folder"]
     weights: [0.8, 0.2]
@@ -40,12 +44,29 @@ Searcher {
         watchChanges: true
     }
 
+    FileSystemModel {
+        id: userThemeDirs
+
+        path: root.userThemesDir
+        filter: FileSystemModel.Dirs
+        watchChanges: true
+    }
+
     Variants {
         id: themes
 
         model: themeDirs.entries
         Theme {}
     }
+
+    Variants {
+        id: userThemes
+
+        model: userThemeDirs.entries
+        Theme {}
+    }
+
+    Component.onCompleted: Quickshell.execDetached(["mkdir", "-p", root.userThemesDir])
 
     component Theme: QtObject {
         required property FileSystemEntry modelData

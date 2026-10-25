@@ -245,7 +245,7 @@ Dotted names are nested objects: `dock.maxSlots` is `{ "dock": { "maxSlots": 5 }
 
 | Option | Type | Default |
 | --- | --- | --- |
-| `paths.themeName` | string | `"Shinchan"` |
+| `paths.themeName` | string | `"Nebula"` |
 | `paths.wallpaperDir` | string | `~/Pictures/Wallpapers` |
 | `paths.lyricsDir` | string | `~/Music/Lyrics/` |
 | `paths.noNotifsPic` | string | `"root:/assets/dino.png"` |

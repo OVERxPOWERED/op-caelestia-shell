@@ -77,6 +77,9 @@ if("shell" IN_LIST ENABLE_MODULES)
 
     install(PROGRAMS assets/wrap_term_launch.sh DESTINATION "${INSTALL_QSCONFDIR}/assets")
 
+    # Helper scripts the shell runs (Bluetooth agent, Doctor, display changes, fonts, ...)
+    install(DIRECTORY scripts DESTINATION "${INSTALL_QSCONFDIR}" USE_SOURCE_PERMISSIONS)
+
     file(READ shell.qml SHELL_QML)
     string(REPLACE "settings.watchFiles: true" "settings.watchFiles: false" SHELL_QML "${SHELL_QML}")
     file(WRITE "${CMAKE_BINARY_DIR}/qml/shell.qml" "${SHELL_QML}")

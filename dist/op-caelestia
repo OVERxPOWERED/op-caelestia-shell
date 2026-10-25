@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Launcher for the packaged OP-Caelestia Shell. It runs next to vanilla Caelestia: it uses its own
+# QML plugin folder and only ever stops its own shell.
+set -euo pipefail
+
+SHARE="${OP_CAELESTIA_SHARE:-/usr/share/op-caelestia}"
+LIB="${OP_CAELESTIA_LIB:-/usr/lib/op-caelestia}"
+SHELL_QML="$SHARE/shell.qml"
+
+usage() {
+    cat <<EOF
+op-caelestia [option]
+
+  (none)         start the shell
+  -r, --restart  restart the shell
+  -k, --kill     stop the shell
+  -l, --log      show the shell's log
+  -v, --version  print the version
+  -h, --help     this text
+EOF
+}
+
+env_setup() {
+    export QML_IMPORT_PATH="$LIB/qml${QML_IMPORT_PATH:+:$QML_IMPORT_PATH}"
+    export QML2_IMPORT_PATH="$LIB/qml${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
+    export CAELESTIA_LIB_DIR="$LIB"
+
+    # Quickshell does not take the icon theme from qt6ct: without this, name-based icons are missing squares
+    if [[ -z "${QS_ICON_THEME:-}" ]]; then
+        local theme
+        theme="$(sed -n 's/^icon_theme=//p' "${XDG_CONFIG_HOME:-$HOME/.config}/qt6ct/qt6ct.conf" 2>/dev/null | head -n1)"
+        [[ -n "$theme" ]] || theme="$(gsettings get org.gnome.desktop.interface icon-theme 2>/dev/null | tr -d "'")"
+        [[ -n "$theme" ]] && export QS_ICON_THEME="$theme"
+    fi
+}
+
+stop_shell() {
+    quickshell -p "$SHELL_QML" kill 2>/dev/null || true
+    for _ in $(seq 30); do
+        quickshell -p "$SHELL_QML" list >/dev/null 2>&1 || return 0
+        sleep 0.1
+    done
+}
+
+case "${1:-}" in
+    "")
+        env_setup
+        exec quickshell -p "$SHELL_QML"
+        ;;
+    -r|--restart)
+        stop_shell
+        env_setup
+        # detach so the restart outlives the terminal it was typed in
+        setsid -f quickshell -p "$SHELL_QML" >/dev/null 2>&1
+        ;;
+    -k|--kill)
+        stop_shell
+        ;;
+    -l|--log)
+        quickshell -p "$SHELL_QML" log
+        ;;
+    -v|--version)
+        v="$(pacman -Q op-caelestia-shell 2>/dev/null || pacman -Q op-caelestia-shell-git 2>/dev/null || true)"
+        echo "${v:-op-caelestia (not installed from a package)}"
+        quickshell --version
+        ;;
+    -h|--help)
+        usage
+        ;;
+    *)
+        usage >&2
+        exit 2
+        ;;
+esac

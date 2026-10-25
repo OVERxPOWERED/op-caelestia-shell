@@ -1,0 +1,55 @@
+# Maintainer: OVERxPOWERED
+# Builds the latest commit of the main branch. For tested releases use op-caelestia-shell.
+
+pkgname=op-caelestia-shell-git
+pkgver=r0.0000000
+pkgrel=1
+pkgdesc='Desktop shell for Hyprland on Quickshell: a Caelestia fork with a settings app, display management and a health checker'
+arch=('x86_64')
+url='https://github.com/OVERxPOWERED/op-caelestia-shell'
+license=('GPL-3.0-only')
+depends=('hyprland' 'quickshell' 'caelestia-cli'
+         'qt6-base' 'qt6-declarative' 'qt6-svg' 'qt6-imageformats'
+         'libpipewire' 'libqalculate' 'aubio' 'libcava' 'lm_sensors'
+         'networkmanager' 'bluez' 'python' 'python-dbus' 'python-gobject'
+         'brightnessctl' 'ddcutil'
+         'ttf-material-symbols-variable' 'ttf-rubik-vf' 'ttf-cascadia-code-nerd')
+makedepends=('git' 'cmake' 'ninja' 'qt6-shadertools')
+optdepends=('hyprmoncfg: saved display layouts in Nexus > Display'
+            'polkit-gnome: a password prompt for apps that need one'
+            'fprintd: fingerprint unlock'
+            'power-profiles-daemon: power profile switching')
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("$pkgname::git+$url.git")
+sha256sums=('SKIP')
+
+# CMake needs a plain number; the commit identifies the build
+_basever=3.0.0
+
+pkgver() {
+    cd "$pkgname"
+    printf 'r%s.%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
+}
+
+build() {
+    cd "$pkgname"
+    cmake -S . -B build -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DENABLE_MODULES='extras;plugin;shell' \
+        -DINSTALL_LIBDIR=lib/op-caelestia \
+        -DINSTALL_QMLDIR=lib/op-caelestia/qml \
+        -DINSTALL_QSCONFDIR=share/op-caelestia \
+        -DVERSION="$_basever" \
+        -DGIT_REVISION="$(git rev-parse HEAD)" \
+        -DDISTRIBUTOR='AUR'
+    cmake --build build
+}
+
+package() {
+    cd "$pkgname"
+    DESTDIR="$pkgdir" cmake --install build
+    install -Dm755 dist/op-caelestia "$pkgdir/usr/bin/op-caelestia"
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

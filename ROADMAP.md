@@ -364,7 +364,33 @@ Each phase ends with something you can actually use.
 
 ---
 
-## 8. Parked ideas
+## 8. Track 5: Make it installable by other people (added 2026-10-25)
+
+**Why**: an earlier public release was hard for people to install. The shell is more than QML: a C++ plugin (about 2 min to build), `quickshell-git` and `caelestia-cli` from the AUR, about 20 other packages, a very new Hyprland (Lua config), and no starter Hyprland config.
+
+**Decisions (2026-10-25)**
+- **Targets**: Arch, CachyOS, EndeavourOS on **Hyprland only**. Niri (NiriOS) is a possible later track: it means rewriting the compositor-specific parts.
+- **Routes**: an **AUR package** (main route) plus a **sturdier installer script** (backup route). Prebuilt plugin downloads are rejected: they break whenever Arch updates Qt. The existing Nix flake is a bonus to test.
+- **Coexists with upstream Caelestia**: own install folder, own `op-caelestia` command, plugin in its own folder (the module names clash with upstream's `caelestia-shell` otherwise).
+- **Releases**: `op-caelestia-shell` follows tested version tags, `op-caelestia-shell-git` follows `main`.
+- **Dependencies**: keep depending on upstream `caelestia-cli`.
+- **Layout**: a `dist/` folder in this repo holds the PKGBUILD(s), installer, starter configs and the restore tool.
+- **Hyprland config handling**: never rewrite the user's config. The installer detects the format, shows the exact lines it will add, writes a timestamped **backup**, adds one include line to files we own, and `op-caelestia config restore` undoes it. The starter config (a clean, generic one built from the author's, with personal bits removed) is **optional** and generated in Lua and conf from one source. For `.conf` users an *optional* migration step runs an existing converter (hypr-migrate, hyprconf2lua or hyprmorph) on a copy, checks it with `Hyprland --verify-config` and keeps the original. No Lua-to-conf conversion (hand-written Lua can't be converted back). Hyprland has deprecated hyprlang since 0.55 and plans to drop it, so Lua is where things are going. Later: give Density, Glass, Motion and Displays a `hyprctl keyword` path so `.conf` users need no conversion.
+- **Private files**: ROADMAP, COMPLETION, DISCOVERY, changes.md and docs/IDEAS.md come out of the public repo; copies are kept locally in a private folder.
+
+**Phases**
+1. **Clean the repo**: move the private files out, remove `.vscode` and similar, replace personal defaults (`~/padhai_in_linux/NOTE`, anything machine-specific), check the docs read well for strangers, rewrite README for the new install routes. Tracked build artefacts, if any, are removed too.
+2. **Package**: release-mode plugin build, install to its own folder, `op-caelestia` launcher, PKGBUILD for tags and for `-git`, tested in a clean Arch container.
+3. **Installer**: distro and Hyprland checks with clear messages, dry run, backup, restore, uninstall, optional starter config, optional migration.
+4. **Starter config**: the generic Lua version first, the conf version generated from the same source.
+5. **Test on clean systems** (Arch, CachyOS in a VM or container), then publish to the AUR, tag the first release, announce.
+6. **Later**: `.conf` paths for the live features; Niri scoping.
+
+**Done when**: someone on fresh CachyOS or Arch can run one command and get a working shell, and can undo any change the installer made.
+
+---
+
+## 9. Parked ideas
 
 Suggested but not chosen this round. Kept here so they aren't lost.
 
@@ -378,7 +404,7 @@ Suggested but not chosen this round. Kept here so they aren't lost.
 
 ---
 
-## 9. Next step
+## 10. Next step
 
 1. Review and push the plug-in chooser commit.
 2. Switch `main` to this branch: tag the old `main` as `backup/old-main`, merge it in with `-s ours`, push as a fast-forward.

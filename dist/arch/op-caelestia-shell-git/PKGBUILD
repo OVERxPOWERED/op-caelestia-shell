@@ -15,6 +15,7 @@ depends=('hyprland' 'quickshell' 'caelestia-cli'
          'brightnessctl' 'ddcutil'
          'ttf-material-symbols-variable' 'ttf-rubik-vf' 'ttf-cascadia-code-nerd')
 makedepends=('git' 'cmake' 'ninja' 'qt6-shadertools')
+options=('!debug')
 optdepends=('hyprmoncfg: saved display layouts in Nexus > Display'
             'polkit-gnome: a password prompt for apps that need one'
             'fprintd: fingerprint unlock'

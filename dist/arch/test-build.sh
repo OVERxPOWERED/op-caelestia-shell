@@ -25,7 +25,7 @@ git config --global --add safe.directory /repo
 # AUR-only runtime dependencies (caelestia-cli, a font) are not installed here
 makepkg -d -f --noconfirm
 "
-pkg=$(ls /home/builder/pkg/*.pkg.tar.zst | head -n1)
+pkg=$(ls /home/builder/pkg/op-caelestia-shell-git-r*.pkg.tar.zst | head -n1)
 echo "=== package contents (top levels)"
 pacman -Qlp "$pkg" | sed "s#^[^ ]* ##" | awk -F/ "{print \"/\"\$2\"/\"\$3\"/\"\$4\"/\"\$5}" | sort -u | head -40
 pacman -U --noconfirm --nodeps "$pkg"

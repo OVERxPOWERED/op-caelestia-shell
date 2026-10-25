@@ -10,9 +10,9 @@ OP-Caelestia Shell is a [Quickshell](https://quickshell.org) configuration plus 
 
 | Needed for | Packages |
 | --- | --- |
-| The shell itself | `quickshell-git` (AUR; the development build, not an old tagged release), Hyprland |
+| The shell itself | `quickshell` (0.3 or newer; `quickshell-git` also works), Hyprland |
 | Building the plugin | `cmake`, `ninja`, `gcc`, `qt6-base`, `qt6-declarative`, `qt6-imageformats`, `qt6-shadertools` |
-| Audio, media, system info | `pipewire`, `libpipewire`, `cava`, `aubio`, `libqalculate`, `lm_sensors`, `power-profiles-daemon` |
+| Audio, media, system info | `pipewire`, `libpipewire`, `libcava` (AUR), `aubio`, `libqalculate`, `lm_sensors`, `power-profiles-daemon` |
 | Network, Bluetooth, displays | `networkmanager`, `bluez`, `python-dbus`, `python-gobject`, `brightnessctl`, `ddcutil` |
 | Wallpapers, colour schemes, screen recording | `caelestia-cli` (AUR). The shell calls it for `caelestia wallpaper`, `caelestia scheme` and `caelestia record` |
 | Screenshots and clipboard | `swappy`, `wl-clipboard`, `slurp`, `grim` |
@@ -24,6 +24,24 @@ OP-Caelestia Shell is a [Quickshell](https://quickshell.org) configuration plus 
 The Display, Look & feel (Density, Glass, Motion) features change Hyprland **live** through its Lua configuration API, which needs
 **Hyprland 0.55 or newer using a `hyprland.lua` config**. On the older `hyprland.conf` format the shell still runs, but those
 features do nothing. Hyprland has deprecated the old format and plans to drop it, so this is where things are heading.
+
+## Install as a package
+
+The cleanest way: build a proper Arch package from the repository. It installs to `/usr/share/op-caelestia` and
+`/usr/lib/op-caelestia`, gives you an `op-caelestia` command, and is removed cleanly with `pacman -R`. It runs next to vanilla
+Caelestia.
+
+```bash
+git clone https://github.com/OVERxPOWERED/op-caelestia-shell.git
+cd op-caelestia-shell/dist/arch/op-caelestia-shell-git
+makepkg -si
+```
+
+`makepkg -si` installs the packages the shell needs. Three of them (`caelestia-cli`, `libcava`, `ttf-rubik-vf`) come from the AUR, so have an AUR
+helper such as `paru` or `yay` ready (install them first: `paru -S caelestia-cli libcava ttf-rubik-vf`). An AUR package is planned,
+which will make this a one-liner.
+
+Then start it with `op-caelestia`, and see [Start it with Hyprland](#start-it-with-hyprland).
 
 ## Install with the script
 
@@ -41,9 +59,9 @@ an `op-caelestia` command in `~/.local/bin`. It runs side by side with vanilla C
 ```bash
 # 1. Packages (see the table above)
 sudo pacman -S --needed cmake ninja gcc qt6-base qt6-declarative qt6-imageformats qt6-shadertools \
-    pipewire libpipewire cava aubio libqalculate lm_sensors power-profiles-daemon networkmanager bluez \
+    pipewire libpipewire aubio libqalculate lm_sensors power-profiles-daemon networkmanager bluez \
     python-dbus python-gobject brightnessctl ddcutil swappy wl-clipboard slurp grim
-paru -S --needed quickshell-git caelestia-cli ttf-material-symbols-variable ttf-rubik-vf ttf-cascadia-code-nerd
+paru -S --needed quickshell caelestia-cli libcava ttf-material-symbols-variable ttf-rubik-vf ttf-cascadia-code-nerd
 
 # 2. Get the shell
 git clone https://github.com/OVERxPOWERED/op-caelestia-shell.git ~/.config/quickshell/op-caelestia

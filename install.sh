@@ -142,7 +142,7 @@ REQUIRED_PACKAGES=(
     "qt6-shadertools"
     "pipewire"
     "libpipewire"
-    "cava"
+    "libcava"
     "aubio"
     "ddcutil"
     "brightnessctl"
@@ -156,7 +156,7 @@ REQUIRED_PACKAGES=(
     "ttf-material-symbols-variable"
     "ttf-rubik-vf"
     "ttf-cascadia-code-nerd"
-    "quickshell-git"
+    "quickshell"
     "caelestia-cli"
     "bluez"
     "python-dbus"
@@ -168,11 +168,9 @@ REQUIRED_PACKAGES=(
 
 MISSING_PACKAGES=()
 if command -v pacman >/dev/null 2>&1; then
-    for pkg in "${REQUIRED_PACKAGES[@]}"; do
-        if ! pacman -Qi "$pkg" >/dev/null 2>&1 && ! pacman -Q "$pkg" >/dev/null 2>&1; then
-            MISSING_PACKAGES+=("$pkg")
-        fi
-    done
+    # pacman -T prints what is not satisfied, counting what other packages provide
+    # (quickshell-git provides quickshell)
+    mapfile -t MISSING_PACKAGES < <(pacman -T "${REQUIRED_PACKAGES[@]}" || true)
 fi
 
 if [ ${#MISSING_PACKAGES[@]} -gt 0 ]; then

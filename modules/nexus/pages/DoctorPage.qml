@@ -138,6 +138,55 @@ PageBase {
         }
 
         SectionHeader {
+            text: Tr.tr("Watchdog")
+        }
+
+        ToggleRow {
+            id: watchRow
+
+            first: true
+            text: Tr.tr("Watch in the background")
+            subtext: Tr.tr("Look for new problems every few minutes and show a notification. Uses almost no CPU, and pauses in game mode")
+            onToggled: DoctorWatchdog.setEnabled(watchRow.checked)
+
+            Binding {
+                target: watchRow
+                property: "checked"
+                value: DoctorWatchdog.enabled
+            }
+        }
+
+        SelectRow {
+            id: everyRow
+
+            last: true
+            label: Tr.tr("Check every")
+            disabled: !DoctorWatchdog.enabled
+            fallbackText: Tr.tr("%1 minutes").arg(DoctorWatchdog.minutes)
+            menuItems: everyItems.instances
+            onSelected: item => DoctorWatchdog.setMinutes(item.value)
+
+            Binding {
+                target: everyRow
+                property: "active"
+                value: everyItems.instances.find(i => i.value === DoctorWatchdog.minutes) ?? null
+            }
+
+            Variants {
+                id: everyItems
+
+                model: [2, 5, 15, 30]
+
+                MenuItem {
+                    required property int modelData
+
+                    text: Tr.tr("%1 minutes").arg(modelData)
+                    value: modelData
+                }
+            }
+        }
+
+        SectionHeader {
             text: Tr.tr("Checks")
         }
 

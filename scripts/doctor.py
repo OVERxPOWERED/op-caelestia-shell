@@ -2,6 +2,7 @@
 """Health checks behind Nexus > Doctor.
 
     doctor.py check        print a JSON list of checks (read-only)
+    doctor.py check --watch  the same, minus the slow or noisy ones, for the background watchdog
     doctor.py fix <id> [arg]  run the one safe fix a check offers
 
 Checks never change anything. Fixes only touch what they name: user services, rfkill, extra copies of our own
@@ -343,11 +344,17 @@ FIXES = {"rfkill": f_rfkill, "btagent": f_btagent, "forget": f_forget, "keep": f
          "audio": f_units("pipewire", "wireplumber")}
 
 
+# Left out of background runs: they only matter when you are looking, and they cost the most
+NOT_WATCHED = {c_wifi_dupes, c_plugin}
+
+
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else "check"
     if cmd == "check":
         res = []
         for fn in CHECKS:
+            if "--watch" in sys.argv and fn in NOT_WATCHED:
+                continue
             try:
                 res.append(fn())
             except Exception as e:  # one broken check must not hide the rest

@@ -84,6 +84,8 @@ QtObject {
         { kind: "row", page: 8, sub: 0, label: qsTr("Display turn-off (DPMS)"), subtext: qsTr("Minutes of inactivity before turning displays off"), section: qsTr("Inactivity timeouts"), subTitle: qsTr("Power & idle"), kw: [] },
         { kind: "row", page: 8, sub: 0, label: qsTr("Suspend / Hibernate timeout"), subtext: qsTr("Minutes of inactivity before putting system to sleep"), section: qsTr("Inactivity timeouts"), subTitle: qsTr("Power & idle"), kw: [] },
         { kind: "page", page: 9, sub: 0, label: Tr.tr("Doctor"), subtext: Tr.tr("Check Wi-Fi, Bluetooth, audio, displays and services"), section: "", subTitle: "", kw: [] },
+        { kind: "row", page: 9, sub: 0, label: Tr.tr("Watch in the background"), subtext: Tr.tr("Look for new problems every few minutes and show a notification. Uses almost no CPU, and pauses in game mode"), section: Tr.tr("Watchdog"), subTitle: Tr.tr("Doctor"), kw: [] },
+        { kind: "row", page: 9, sub: 0, label: Tr.tr("Check every"), subtext: "", section: Tr.tr("Watchdog"), subTitle: Tr.tr("Doctor"), kw: [] },
         { kind: "page", page: 10, sub: 0, label: Tr.tr("Panels"), subtext: Tr.tr("Dashboard, taskbar, launcher, sidebar, dock"), section: "", subTitle: "", kw: [] },
         { kind: "row", page: 10, sub: 0, label: Tr.tr("Taskview (Overview)"), subtext: Tr.tr("Workspaces & window overview"), section: "", subTitle: Tr.tr("Panels"), kw: [] },
         { kind: "page", page: 10, sub: 1, label: Tr.tr("Dashboard"), subtext: "", section: "", subTitle: Tr.tr("Dashboard"), kw: [] },

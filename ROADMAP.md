@@ -149,9 +149,9 @@ The goal is that nothing breaks in front of other people. Order: 1.1, then 1.2, 
 | Text cut off: "Hyprland..." (dashboard user card), "Screen rec..." (sidebar recorder card) | dashboard and utilities cards | Fit the text, shorten the labels, or reflow the layout |
 | Further glitches you spot | — | Add them to this table as they appear |
 
-### `[~]` 1.5 "Doctor": a self-healing page in Nexus
+### `[x]` 1.5 "Doctor": a self-healing page in Nexus
 
-**Status (2026-10-24)**: page done (Nexus > System > Doctor, `scripts/doctor.py`): 13 read-only checks; fixes for radios, duplicate bt-agent, portals, audio, polkit agent start, crash dismissal, and per-profile Forget/Keep for duplicate Wi-Fi profiles. **Not done**: the watchdog (quiet toast when something drifts), checks for coredump-free shell crashes in more detail, and Bluetooth device reset.
+**Status (2026-10-24)**: page done (Nexus > System > Doctor, `scripts/doctor.py`): 13 read-only checks; fixes for radios, duplicate bt-agent, portals, audio, polkit agent start, crash dismissal, and per-profile Forget/Keep for duplicate Wi-Fi profiles. **Watchdog (2026-10-25)**: `services/DoctorWatchdog.qml` runs `doctor.py check --watch` (11 quick checks, about 0.1 s of CPU at the lowest priority) every 2/5/15/30 minutes (default 5, first look after 90 s), pauses in game mode, and shows one notification per new problem (again only if it changes or comes back). The first run after a fresh start only announces real breakage. On/off and the interval are on the Doctor page. **Not done**: Bluetooth device reset.
 
 
 Turns Track 1 into something permanent instead of a one-time cleanup.

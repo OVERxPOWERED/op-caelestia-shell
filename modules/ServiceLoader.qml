@@ -21,6 +21,7 @@ Scope {
         Glass;
         Motion;
         AppFonts;
+        DoctorWatchdog;
 
         if (GlobalConfig.utilities.vpn.enabled)
             VPN;

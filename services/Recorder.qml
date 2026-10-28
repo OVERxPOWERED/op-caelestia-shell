@@ -16,6 +16,13 @@ Singleton {
     property bool needsStop
     property bool needsPause
 
+    // gpu-screen-recorder inherits the CLI's stdout/stderr. If those are pipes owned by
+    // Quickshell, the recorder dies on its next log write once the CLI exits and the pipes
+    // close, so redirect them away from the process.
+    function runCli(args: list<string>): void {
+        commandProc.exec(["sh", "-c", 'exec caelestia record "$@" </dev/null >/dev/null 2>&1', "sh", ...args]);
+    }
+
     function start(extraArgs = []): void {
         needsStart = true;
         startArgs = extraArgs;
@@ -51,14 +58,14 @@ Singleton {
             const running = code === 0;
 
             if (running && root.needsStop) {
-                commandProc.exec(["caelestia", "record"]);
+                root.runCli([]);
                 props.running = false;
                 props.paused = false;
             } else if (running && root.needsPause) {
-                commandProc.exec(["caelestia", "record", "-p"]);
+                root.runCli(["-p"]);
                 props.paused = !props.paused;
             } else if (!running && root.needsStart) {
-                commandProc.exec(["caelestia", "record", ...root.startArgs]);
+                root.runCli(root.startArgs);
                 props.running = true;
                 props.paused = false;
                 props.elapsed = 0;

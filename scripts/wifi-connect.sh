@@ -26,24 +26,20 @@ fail() {
     exit "$1"
 }
 
-visible=$(nmcli -g SSID device wifi list | unescape | grep -Fxc -- "$ssid" || true)
-if [[ "$visible" -eq 0 ]]; then
+# Without --rescan no, nmcli starts a new scan whenever its results are older than 30 s
+# and waits for it (about 4 s), so asking whether the network exists would delay every
+# connection. The cached list is enough; only when the network is missing from it is a
+# fresh scan worth waiting for.
+is_visible() { nmcli -g SSID device wifi list --rescan "$1" | unescape | grep -Fxq -- "$ssid"; }
+if ! is_visible no && ! is_visible yes; then
     fail 12 "No network with SSID '$ssid' found"
 fi
 
 # Saved profiles for this SSID, most recently used first
 profiles=()
-while IFS=: read -r uuid ts; do
-    profiles+=("$uuid")
-done < <(
-    while IFS=: read -r uuid type; do
-        [[ "$type" == "802-11-wireless" ]] || continue
-        p_ssid=$(nmcli -g 802-11-wireless.ssid connection show uuid "$uuid" 2>/dev/null | unescape)
-        [[ "$p_ssid" == "$ssid" ]] || continue
-        ts=$(nmcli -g connection.timestamp connection show uuid "$uuid" 2>/dev/null)
-        echo "${ts:-0}:$uuid"
-    done < <(nmcli -g UUID,TYPE connection show) | sort -rn | awk -F: '{print $2":"$1}'
-)
+while IFS=$'\t' read -r uuid _ts _key_mgmt p_ssid; do
+    [[ "$p_ssid" == "$ssid" ]] && profiles+=("$uuid")
+done < <("$(dirname -- "${BASH_SOURCE[0]}")/wifi-profiles.sh" | sort -t$'\t' -k2,2 -rn)
 
 if [[ -n "$password" ]]; then
     for uuid in "${profiles[@]}"; do

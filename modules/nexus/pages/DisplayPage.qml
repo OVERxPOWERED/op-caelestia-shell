@@ -26,16 +26,6 @@ PageBase {
     }
     readonly property string currentResolution: mon ? `${mon.width}x${mon.height}` : ""
     readonly property var refreshRates: (mon?.modes ?? []).filter(m => m.startsWith(currentResolution + "@")).map(m => m.split("@")[1])
-    // A scale has to satisfy two things. Hyprland only accepts one that divides both dimensions
-    // into whole pixels (it snaps anything else, e.g. 85% and 90% become 83% on 1080p). And
-    // Wayland tells apps the scale as a whole number of 120ths, so one that is not an exact
-    // multiple of 1/120 (like 0.9375 = 112.5/120) reaches apps rounded (0.94167): apps then
-    // disagree with the compositor and look blurry or slightly misplaced. Offer only scales
-    // that satisfy both.
-    function exactScale(s: real): bool {
-        return Math.abs(s * 120 - Math.round(s * 120)) < 0.0001;
-    }
-
     readonly property var scales: {
         if (!mon)
             return [1];
@@ -63,6 +53,23 @@ PageBase {
         },
         {
             text: Tr.tr("180°"),
+            value: 2
+        },
+        {
+            text: Tr.tr("270°"),
+            value: 3
+        }
+    ]
+
+    // A scale has to satisfy two things. Hyprland only accepts one that divides both dimensions
+    // into whole pixels (it snaps anything else, e.g. 85% and 90% become 83% on 1080p). And
+    // Wayland tells apps the scale as a whole number of 120ths, so one that is not an exact
+    // multiple of 1/120 (like 0.9375 = 112.5/120) reaches apps rounded (0.94167): apps then
+    // disagree with the compositor and look blurry or slightly misplaced. Offer only scales
+    // that satisfy both.
+    function exactScale(s: real): bool {
+        return Math.abs(s * 120 - Math.round(s * 120)) < 0.0001;
+    }
             value: 2
         },
         {
@@ -503,7 +510,7 @@ PageBase {
 
         TextFieldRow {
             first: Displays.userProfiles.length === 0
-            last: true
+            last: false
             label: Tr.tr("Save current layout")
             subtext: Tr.tr("Type a name and press Enter")
             placeholderText: Tr.tr("Profile name")
@@ -513,6 +520,19 @@ PageBase {
                     field.clear();
                 }
             }
+        }
+
+        SectionHeader {
+            text: Tr.tr("Workspaces")
+        }
+
+        NavRow {
+            first: true
+            last: true
+            icon: "splitscreen"
+            text: Tr.tr("Workspace distribution & gestures")
+            subtext: Tr.tr("Configure monitor blocks, navigation scope, and trackpad gestures")
+            onClicked: root.nState.openSearchResult(10, 6, "", false)
         }
     }
 }

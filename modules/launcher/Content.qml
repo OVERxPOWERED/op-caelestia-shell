@@ -75,7 +75,12 @@ Item {
                     else
                         currentItem.modelData.onClicked(list.currentList);
                 } else {
-                    Apps.launch(currentItem.modelData);
+                    if (root.screenState.launcherPickCallback) {
+                        root.screenState.launcherPickCallback(currentItem.modelData);
+                        root.screenState.launcherPickCallback = undefined;
+                    } else {
+                        Apps.launch(currentItem.modelData);
+                    }
                     root.screenState.launcher = false;
                 }
             }

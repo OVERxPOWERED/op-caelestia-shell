@@ -28,10 +28,18 @@ Singleton {
     property string dragIcon: ""
     readonly property bool isDragging: draggingWindow !== null || draggingWorkspace !== null
     property int dropTargetWsId: -1
+    // Bumped when a view scrolls during a drag, so drop targets are checked again under a still cursor
+    property int scrollRevision: 0
 
     property int dragOriginIndex: -1
     property int dragTargetIndex: -1
     property var dragInitialWorkspaces: []
+
+    // A dropped workspace: the cards glide to the new order first, then Hyprland is updated
+    // (which is when the real cards change places and this is cleared)
+    property var dropPreview: null
+    property var dropOrder: []
+    readonly property bool dropApplyPending: dropApplyTimer.running
 
     property var customWorkspaceOrder: []
     property real lastSwapTime: 0
@@ -57,6 +65,7 @@ Singleton {
     }
 
     function startWorkspaceDrag(ws, title, x, y, originIndex): void {
+        dropPreview = null;
         draggingWindow = null;
         draggingWorkspace = ws;
         dragTitle = title || "";
@@ -108,7 +117,9 @@ Singleton {
                 const movedItem = finalOrder.splice(origin, 1)[0];
                 finalOrder.splice(target, 0, movedItem);
 
-                applyWorkspaceOrderToHyprland(finalOrder);
+                dropPreview = { origin: origin, target: target };
+                dropOrder = finalOrder;
+                dropApplyTimer.restart();
             }
         } else {
             cancelDrag();
@@ -141,12 +152,13 @@ Singleton {
             return;
         }
 
+        const sortedSlots = [...order].sort((a, b) => a - b);
         const moves = [];
         let anyChanged = false;
 
         for (let i = 0; i < order.length; i++) {
             const oldId = order[i];
-            const newId = i + 1;
+            const newId = sortedSlots[i];
             if (oldId !== newId) {
                 anyChanged = true;
             }
@@ -167,7 +179,7 @@ Singleton {
         // workspace, so their layouts are untouched, and it is a single batched request instead
         // of one move per window (which re-tiled every window and flooded the shell with events).
         const inOrder = new Set(order);
-        const collides = order.some((oldId, i) => oldId !== i + 1 && !inOrder.has(i + 1) && Hypr.workspaces.values.some(w => w && w.id === i + 1));
+        const collides = order.some((oldId, i) => oldId !== sortedSlots[i] && !inOrder.has(sortedSlots[i]) && Hypr.workspaces.values.some(w => w && w.id === sortedSlots[i]));
         if (Hypr.usingLua && !collides) {
             const change = (ws, id) => `eval hl.dispatch(hl.dsp.workspace.change_id({ workspace = "${ws}", id = ${id} }))`;
             const batch = [];
@@ -244,6 +256,24 @@ Singleton {
     }
 
     property int refreshPasses
+
+    Timer {
+        id: dropApplyTimer
+
+        interval: 260
+        onTriggered: {
+            root.applyWorkspaceOrderToHyprland(root.dropOrder);
+            dropExpiry.restart();
+        }
+    }
+
+    // If the windows never change (nothing was reordered), the cards glide back
+    Timer {
+        id: dropExpiry
+
+        interval: 1500
+        onTriggered: root.dropPreview = null
+    }
 
     Timer {
         id: reorderRefresh

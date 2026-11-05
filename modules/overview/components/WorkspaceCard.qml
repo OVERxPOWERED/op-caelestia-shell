@@ -19,6 +19,8 @@ Item {
     required property HyprlandMonitor monitor
     required property int index
     property int cardIndex: index
+    // The grid shows the dragged workspace as a slot marker instead of a faded card
+    property bool hideWhileDragged: false
     property real baseWidth: 420
     property real baseHeight: baseWidth * (9 / 16)
 
@@ -51,6 +53,7 @@ Item {
 
     readonly property bool isDropTarget: {
         if (!OverviewState.isDragging || !OverviewState.draggingWindow || !modelData) return false;
+        void OverviewState.scrollRevision;
         const pos = root.mapFromItem(null, OverviewState.dragGlobalX, OverviewState.dragGlobalY);
         return pos.x >= 0 && pos.x <= root.width && pos.y >= 0 && pos.y <= root.height;
     }
@@ -63,7 +66,7 @@ Item {
         }
     }
 
-    opacity: (OverviewState.draggingWorkspace === root.modelData) ? 0.35 : 1.0
+    opacity: (OverviewState.draggingWorkspace === root.modelData) ? (root.hideWhileDragged ? 0 : 0.35) : 1.0
     scale: hoverHandler.hovered || isSelected || isDropTarget ? 1.03 : (isFocused ? 1.01 : 1.0)
     Behavior on scale { Anim {} }
     Behavior on opacity { Anim {} }
@@ -274,6 +277,38 @@ Item {
                             cardHeight: innerViewport.height
                         }
                     }
+                }
+            }
+        }
+
+        // Drop cue while a window is dragged over this workspace
+        StyledRect {
+            anchors.fill: parent
+            z: 3
+            radius: Tokens.rounding.large
+            color: Colours.layer(Colours.palette.m3primaryContainer, 0.55)
+            opacity: root.isDropTarget ? 1 : 0
+            visible: opacity > 0
+
+            Behavior on opacity { Anim {} }
+
+            ColumnLayout {
+                anchors.centerIn: parent
+                spacing: Tokens.spacing.extraSmall
+
+                MaterialIcon {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "drive_file_move"
+                    fontStyle: Tokens.font.icon.large
+                    color: Colours.palette.m3onPrimaryContainer
+                }
+
+                StyledText {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: qsTr("Move here")
+                    font.pixelSize: 13
+                    font.weight: Font.DemiBold
+                    color: Colours.palette.m3onPrimaryContainer
                 }
             }
         }

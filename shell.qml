@@ -12,6 +12,7 @@ import "modules/displays"
 import "modules/overview"
 import "modules/quicknote"
 import "modules/lock"
+import "modules/shutdown"
 import QtQuick
 import Quickshell
 import qs.services
@@ -42,6 +43,7 @@ ShellRoot {
         id: lock
     }
 
+    Shutdown {}
     Shortcuts {}
     BatteryMonitor {}
     IdleMonitors {

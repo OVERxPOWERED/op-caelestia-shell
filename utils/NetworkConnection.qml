@@ -44,6 +44,13 @@ QtObject {
             return;
         }
 
+        // A new password-protected network has no password to try, so ask for it right
+        // away, and stay connected to the current network while the user types it.
+        if (Nmcli.needsNewPassword(network)) {
+            root.askForPassword(network, session, onPasswordNeeded);
+            return;
+        }
+
         if (Nmcli.active && Nmcli.active.ssid !== network.ssid) {
             Nmcli.disconnectFromNetwork();
             Qt.callLater(() => {
@@ -51,6 +58,15 @@ QtObject {
             });
         } else {
             root.connectToNetwork(network, session, onPasswordNeeded);
+        }
+    }
+
+    function askForPassword(network, session, onPasswordNeeded): void {
+        if (session && session.network) {
+            session.network.showPasswordDialog = true;
+            session.network.pendingNetwork = network;
+        } else if (onPasswordNeeded) {
+            onPasswordNeeded(network);
         }
     }
 
@@ -77,12 +93,7 @@ QtObject {
             }
 
             if (result.needsPassword) {
-                if (session && session.network) {
-                    session.network.showPasswordDialog = true;
-                    session.network.pendingNetwork = network;
-                } else if (onPasswordNeeded) {
-                    onPasswordNeeded(network);
-                }
+                root.askForPassword(network, session, onPasswordNeeded);
             } else if (result.notFound) {
                 Toaster.toast(Tr.tr("Network not found"), Tr.tr("%1 is out of range or not broadcasting").arg(network.ssid), "wifi_off");
             } else {

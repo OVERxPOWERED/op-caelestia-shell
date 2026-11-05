@@ -29,8 +29,8 @@ Singleton {
     readonly property int apGraceMs: 45000
     readonly property var apLastSeen: new Map()
 
-    property var wifiConnectionQueue: []
-    property int currentSsidQueryIndex: 0
+    // True once the saved Wi-Fi profiles have been read at least once
+    property bool savedProfilesLoaded: false
     property var pendingConnection: null
     property var wirelessDeviceDetails: null
     property var ethernetDeviceDetails: null
@@ -608,86 +608,65 @@ Singleton {
 
     function parseConnectionList(output: string, callback: var): void {
         const lines = output.trim().split("\n").filter(line => line.length > 0);
-        const wifiConnections = [];
         const connections = [];
+        let hasWifi = false;
 
         for (const line of lines) {
             const parts = line.split(":");
             if (parts.length >= 2) {
-                const name = parts[0];
-                const type = parts[1];
-                connections.push(name);
+                connections.push(parts[0]);
 
-                if (type === root.connectionTypeWireless) {
-                    wifiConnections.push(name);
-                }
+                if (parts[1] === root.connectionTypeWireless)
+                    hasWifi = true;
             }
         }
 
         root.savedConnections = connections;
 
-        root.savedConnectionSecurity = {};
-
-        if (wifiConnections.length > 0) {
-            root.wifiConnectionQueue = wifiConnections;
-            root.currentSsidQueryIndex = 0;
-            root.savedConnectionSsids = [];
-            queryNextSsid(callback);
+        if (hasWifi) {
+            loadSavedWifiProfiles(callback);
         } else {
             root.savedConnectionSsids = [];
-            root.wifiConnectionQueue = [];
+            root.savedConnectionSecurity = {};
+            root.savedProfilesLoaded = true;
             if (callback)
                 callback(root.savedConnectionSsids);
         }
     }
 
-    function queryNextSsid(callback: var): void {
-        if (root.currentSsidQueryIndex < root.wifiConnectionQueue.length) {
-            const connectionName = root.wifiConnectionQueue[root.currentSsidQueryIndex];
-            root.currentSsidQueryIndex++;
+    // Reads every saved Wi-Fi profile's SSID and security with one script call. nmcli
+    // can only show those one profile at a time, which took ~40 ms each (2.5 s for 59
+    // profiles) run in sequence; the script asks for them side by side. The lists are
+    // replaced in one go, so "is this network saved?" never reads as empty mid-load.
+    function loadSavedWifiProfiles(callback: var): void {
+        runCommand([Quickshell.shellPath("scripts/wifi-profiles.sh")], null, result => {
+            if (result.success) {
+                const ssids = [];
+                const seen = new Set();
+                const security = {};
 
-            executeCommand(["-t", "-f", `${root.wirelessSsidField},${root.securityKeyMgmt}`, root.nmcliCommandConnection, "show", connectionName], result => {
-                if (result.success) {
-                    processSsidOutput(result.output);
+                for (const line of result.output.split("\n")) {
+                    const [, , keyMgmt, ...rest] = line.split("\t");
+                    const ssid = rest.join("\t");
+                    if (!ssid)
+                        continue;
+
+                    const ssidLower = ssid.toLowerCase();
+                    if (!seen.has(ssidLower)) {
+                        seen.add(ssidLower);
+                        ssids.push(ssid);
+                    }
+                    security[ssidLower] = (keyMgmt ?? "").trim();
                 }
-                queryNextSsid(callback);
-            });
-        } else {
-            root.wifiConnectionQueue = [];
-            root.currentSsidQueryIndex = 0;
+
+                root.savedConnectionSsids = ssids;
+                root.savedConnectionSecurity = security;
+                root.savedProfilesLoaded = true;
+            }
+
             if (callback)
                 callback(root.savedConnectionSsids);
-        }
-    }
-
-    function processSsidOutput(output: string): void {
-        const ssidPrefix = "802-11-wireless.ssid:";
-        const keyMgmtPrefix = `${root.securityKeyMgmt}:`;
-
-        let ssid = "";
-        let keyMgmt = "";
-        for (const line of output.trim().split("\n")) {
-            if (line.startsWith(ssidPrefix))
-                ssid = line.substring(ssidPrefix.length);
-            else if (line.startsWith(keyMgmtPrefix))
-                keyMgmt = line.substring(keyMgmtPrefix.length).trim();
-        }
-
-        if (!ssid || ssid.length === 0)
-            return;
-
-        const ssidLower = ssid.toLowerCase();
-
-        const exists = root.savedConnectionSsids.some(s => s && s.toLowerCase() === ssidLower);
-        if (!exists) {
-            const newList = root.savedConnectionSsids.slice();
-            newList.push(ssid);
-            root.savedConnectionSsids = newList;
-        }
-
-        const security = Object.assign({}, root.savedConnectionSecurity);
-        security[ssidLower] = keyMgmt;
-        root.savedConnectionSecurity = security;
+        });
     }
 
     function securityLabel(keyMgmt: string): string {
@@ -740,6 +719,22 @@ Singleton {
         const hasConnectionName = root.savedConnections.some(connName => connName && connName.toLowerCase() === ssidLower);
 
         return hasConnectionName;
+    }
+
+    // True when connecting to this network can only end in a password prompt: it is
+    // protected with a password (WPA or WEP, not 802.1X) and there is no saved profile,
+    // so there is no password to try. The caller can then ask straight away instead of
+    // running a connection attempt that is bound to fail. False while the saved
+    // profiles are still loading, so a saved network is never asked for its password.
+    function needsNewPassword(network: var): bool {
+        if (!network || !root.savedProfilesLoaded)
+            return false;
+
+        const security = network.security ?? "";
+        if (!/WPA|WEP/i.test(security) || /802\.1X|EAP/i.test(security))
+            return false;
+
+        return !root.hasSavedProfile(network.ssid);
     }
 
     // Adds and connects to an SSID by name. When hidden is true the profile is
@@ -1032,7 +1027,10 @@ Singleton {
     }
 
     function getNetworks(callback: var): void {
-        executeCommand(["-g", root.networkDetailFields, "d", "w"], result => {
+        // Read the cached scan results. Plain `d w` rescans (and waits ~4 s) whenever they are
+        // older than 30 s, and this runs on every NetworkManager event, even mid-connection.
+        // Scans are started on purpose by rescanWifi() and by the rescan timer.
+        executeCommand(["-g", root.networkDetailFields, root.nmcliCommandDevice, root.nmcliCommandWifi, "list", "--rescan", "no"], result => {
             if (!result.success) {
                 if (callback)
                     callback([]);
@@ -1088,7 +1086,7 @@ Singleton {
     }
 
     function getWirelessSSIDs(interfaceName: string, callback: var): void {
-        let cmd = ["-t", "-f", root.networkListFields, root.nmcliCommandDevice, root.nmcliCommandWifi, "list"];
+        let cmd = ["-t", "-f", root.networkListFields, root.nmcliCommandDevice, root.nmcliCommandWifi, "list", "--rescan", "no"];
         if (interfaceName && interfaceName.length > 0) {
             cmd.push(root.connectionParamIfname, interfaceName);
         }

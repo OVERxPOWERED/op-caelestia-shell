@@ -18,7 +18,7 @@ StyledClippingRect {
 
     readonly property HyprlandMonitor monitor: Hypr.monitorFor(screen)
     readonly property bool onSpecial: Boolean(monitor?.lastIpcObject?.specialWorkspace?.name)
-    readonly property int activeWsId: monitor?.activeWorkspace?.id ?? 1
+    readonly property int activeWsId: monitor?.activeWorkspace?.id ?? ((monitor?.id ?? 0) * shown + 1)
     readonly property int activeWsIdx: workspaceIndex(activeWsId)
     readonly property int shown: Math.max(1, Config.bar.workspaces.shown)
 

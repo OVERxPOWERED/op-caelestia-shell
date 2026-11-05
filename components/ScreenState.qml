@@ -28,7 +28,9 @@ PersistentProperties {
     }
 
     onLauncherChanged: {
-        if (launcher) {
+        if (!launcher)
+            launcherPickCallback = undefined;
+        else {
             dock = false;
             overview = false;
             quicknote = false;

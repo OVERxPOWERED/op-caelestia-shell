@@ -17,8 +17,10 @@ Scope {
         CalendarService;
         Displays;
         DockPins;
+        WorkspaceManager;
         Density;
         Glass;
+        ShutdownScreen;
         Motion;
         AppFonts;
         DoctorWatchdog;

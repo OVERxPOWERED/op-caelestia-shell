@@ -70,13 +70,6 @@ PageBase {
     function exactScale(s: real): bool {
         return Math.abs(s * 120 - Math.round(s * 120)) < 0.0001;
     }
-            value: 2
-        },
-        {
-            text: Tr.tr("270°"),
-            value: 3
-        }
-    ]
 
     function monitorLabel(m: var): string {
         return m.description ? `${m.name} · ${m.description}` : m.name;

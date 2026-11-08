@@ -40,11 +40,18 @@ MouseArea {
             return [];
 
         const special = mon.lastIpcObject?.specialWorkspace;
-        const wsId = special?.name ? special.id : mon.activeWorkspace?.id;
-        if (wsId === undefined)
+        const targetWs = (special?.name && special.name !== "") ? special.name : (mon.activeWorkspace?.name ?? mon.activeWorkspace?.id);
+        if (targetWs === undefined || targetWs === "")
             return [];
 
-        return Hypr.toplevelsForWs(wsId).sort((a, b) => {
+        const wsClients = Hypr.toplevelsForWs(targetWs);
+        const monId = mon.id;
+        const pinnedClients = Hypr.toplevels.values.filter(t => {
+            const ipc = t?.lastIpcObject;
+            return ipc?.pinned && ipc?.monitor === monId && !wsClients.includes(t) && !Hypr.isToplevelIgnored(t);
+        });
+
+        return wsClients.concat(pinnedClients).sort((a, b) => {
             // Pinned first, then fullscreen, then floating, then any other
             const ac = a?.lastIpcObject;
             const bc = b?.lastIpcObject;

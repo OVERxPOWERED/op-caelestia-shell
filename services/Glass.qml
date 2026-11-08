@@ -14,7 +14,7 @@ Singleton {
     id: root
 
     // Windows that are mostly text, kept fully opaque when "Solid text windows" is on
-    readonly property string solidClasses: "zen|firefox|chromium|google-chrome|brave-browser|code|code-oss|obsidian|org\\.pwmt\\.zathura|org\\.gnome\\.Evince|libreoffice.*"
+    readonly property string solidClasses: "zen|firefox|chromium|google-chrome|brave-browser|code|code-oss|obsidian|org\\.pwmt\\.zathura|org\\.gnome\\.Evince|libreoffice.*|FFPWA-.*"
 
     // From variables.lua (a fraction, 0.92 by default)
     property int basePercent: 92

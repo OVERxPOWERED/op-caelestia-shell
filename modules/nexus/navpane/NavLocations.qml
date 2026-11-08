@@ -13,6 +13,7 @@ VerticalFadeFlickable {
 
     required property NexusState nState
 
+    clip: true
     topMargin: Tokens.padding.large
     bottomMargin: Tokens.padding.large
     contentHeight: content.implicitHeight

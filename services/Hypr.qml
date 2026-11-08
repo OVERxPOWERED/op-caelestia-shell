@@ -97,8 +97,15 @@ Singleton {
         return name.startsWith("special:") ? name.slice("special:".length) : name;
     }
 
-    function toplevelsForWs(ws: int, ignoredTags = []): list<HyprlandToplevel> {
-        return toplevels.values.filter(t => t.workspace && t.workspace.id === ws && !isToplevelIgnored(t, ignoredTags));
+    function toplevelsForWs(ws: var, ignoredTags = []): list<HyprlandToplevel> {
+        const wsId = typeof ws === "object" && ws !== null ? (ws.id ?? ws.name) : ws;
+        const wsName = typeof ws === "object" && ws !== null ? (ws.name ?? String(ws.id ?? "")) : String(ws ?? "");
+        return toplevels.values.filter(t => {
+            if (!t.workspace || isToplevelIgnored(t, ignoredTags))
+                return false;
+            return (t.workspace.id !== undefined && t.workspace.id === wsId)
+                || (t.workspace.name !== undefined && (t.workspace.name === wsName || t.workspace.name === String(wsId)));
+        });
     }
 
     function isToplevelIgnored(toplevel: HyprlandToplevel, ignoredTags = []): bool {

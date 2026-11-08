@@ -90,6 +90,18 @@ QtObject {
             category: "shell"
         },
         {
+            label: Tr.tr("Notifications"),
+            icon: "notifications",
+            description: Tr.tr("Popups, toasts, timeouts"),
+            category: "shell"
+        },
+        {
+            label: Tr.tr("Voice typing"),
+            icon: "mic",
+            description: Tr.tr("Speech recognition, microphone, smart formatting"),
+            category: "shell"
+        },
+        {
             label: Tr.tr("Lock screen"),
             icon: "lock",
             description: Tr.tr("Pattern lock, fingerprint, face unlock"),

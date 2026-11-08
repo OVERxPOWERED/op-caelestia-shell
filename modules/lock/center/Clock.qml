@@ -10,83 +10,103 @@ Item {
     id: root
 
     required property real centerScale
+    property int centerWidth: Math.round(Tokens.sizes.lock.centerWidth * centerScale)
 
     function calcTopOff(metrics: TextMetrics): real {
         return metrics.tightBoundingRect.y - metrics.boundingRect.y;
     }
 
-    implicitWidth: hours.implicitWidth + minutes.implicitWidth + Tokens.spacing.small
-    implicitHeight: hourMetrics.tightBoundingRect.height
+    readonly property real maxClockWidth: Math.min(centerWidth * 0.92, centerWidth - Tokens.padding.large * 2)
+    readonly property real rawWidth: clockContent.implicitWidth
+    readonly property real rawHeight: clockContent.implicitHeight
+    readonly property real fitScale: (maxClockWidth > 0 && rawWidth > maxClockWidth) ? (maxClockWidth / rawWidth) : 1.0
 
-    StyledText {
-        id: hours
+    implicitWidth: rawWidth > 0 ? Math.round(rawWidth * fitScale) : 0
+    implicitHeight: rawHeight > 0 ? Math.round(rawHeight * fitScale) : 0
 
-        y: -root.calcTopOff(hourMetrics)
-        text: Time.hourStr
-        color: Colours.palette.m3primary
-        font: Tokens.font.headline.builders.large.scale(7 * root.centerScale).width(30).build()
+    Item {
+        id: clockContent
 
-        TextMetrics {
-            id: hourMetrics
+        implicitWidth: hours.implicitWidth + minutes.implicitWidth + Tokens.spacing.small
+        implicitHeight: Math.max(hourMetrics.tightBoundingRect.height, minuteMetrics.tightBoundingRect.height)
 
-            text: hours.text
-            font: hours.font
+        width: implicitWidth
+        height: implicitHeight
+
+        scale: root.fitScale
+        transformOrigin: Item.TopLeft
+
+        StyledText {
+            id: hours
+
+            y: -root.calcTopOff(hourMetrics)
+            text: Time.hourStr
+            color: Colours.palette.m3primary
+            font: Tokens.font.headline.builders.large.scale(7 * root.centerScale).width(30).build()
+
+            TextMetrics {
+                id: hourMetrics
+
+                text: hours.text
+                font: hours.font
+            }
         }
-    }
 
-    StyledText {
-        id: minutes
+        StyledText {
+            id: minutes
 
-        anchors.right: parent.right
-        y: -root.calcTopOff(minuteMetrics)
+            anchors.left: hours.right
+            anchors.leftMargin: Tokens.spacing.small
+            y: -root.calcTopOff(minuteMetrics)
 
-        text: Time.minuteStr
-        color: Colours.palette.m3secondary
-        font: Tokens.font.headline.builders.large.scale((Units.twelveHourClock ? 3.8 : 7) * root.centerScale).width(30).build()
+            text: Time.minuteStr
+            color: Colours.palette.m3secondary
+            font: Tokens.font.headline.builders.large.scale((Units.twelveHourClock ? 3.8 : 7) * root.centerScale).width(30).build()
 
-        TextMetrics {
-            id: minuteMetrics
+            TextMetrics {
+                id: minuteMetrics
 
-            text: minutes.text
-            font: minutes.font
+                text: minutes.text
+                font: minutes.font
+            }
         }
-    }
 
-    Loader {
-        anchors.left: minutes.left
-        anchors.leftMargin: minuteMetrics.tightBoundingRect.x
-        y: hourMetrics.tightBoundingRect.height - implicitHeight
+        Loader {
+            anchors.left: minutes.left
+            anchors.leftMargin: minuteMetrics.tightBoundingRect.x
+            y: hourMetrics.tightBoundingRect.height - implicitHeight
 
-        active: Units.twelveHourClock
-        asynchronous: true
+            active: Units.twelveHourClock
+            asynchronous: true
 
-        sourceComponent: StyledRect {
-            color: Colours.tPalette.m3surfaceContainerHigh
-            radius: Tokens.rounding.large
+            sourceComponent: StyledRect {
+                color: Colours.tPalette.m3surfaceContainerHigh
+                radius: Tokens.rounding.large
 
-            implicitWidth: minuteMetrics.tightBoundingRect.width
-            implicitHeight: amPmMetrics.tightBoundingRect.height + Tokens.padding.large * 2
+                implicitWidth: minuteMetrics.tightBoundingRect.width
+                implicitHeight: amPmMetrics.tightBoundingRect.height + Tokens.padding.large * 2
 
-            StyledText {
-                id: amPm
+                StyledText {
+                    id: amPm
 
-                anchors.centerIn: parent
-                width: amPmMetrics.tightBoundingRect.width
-                height: amPmMetrics.tightBoundingRect.height
-                transform: Translate {
-                    x: -amPmMetrics.tightBoundingRect.x
-                    y: -root.calcTopOff(amPmMetrics)
-                }
+                    anchors.centerIn: parent
+                    width: amPmMetrics.tightBoundingRect.width
+                    height: amPmMetrics.tightBoundingRect.height
+                    transform: Translate {
+                        x: -amPmMetrics.tightBoundingRect.x
+                        y: -root.calcTopOff(amPmMetrics)
+                    }
 
-                text: Time.amPmStr
-                color: Colours.palette.m3onSurface
-                font: Tokens.font.headline.builders.small.scale(2 * root.centerScale).width(30).build()
+                    text: Time.amPmStr
+                    color: Colours.palette.m3onSurface
+                    font: Tokens.font.headline.builders.small.scale(2 * root.centerScale).width(30).build()
 
-                TextMetrics {
-                    id: amPmMetrics
+                    TextMetrics {
+                        id: amPmMetrics
 
-                    text: amPm.text
-                    font: amPm.font
+                        text: amPm.text
+                        font: amPm.font
+                    }
                 }
             }
         }

@@ -21,6 +21,8 @@ Singleton {
     property alias dnd: props.dnd
 
     property bool loaded
+    property var appRules: ({})
+    property list<var> knownApps: []
 
     function hasFullscreen(): bool {
         for (const monitor of Hypr.monitors.values) {
@@ -36,6 +38,88 @@ Singleton {
         if (GlobalConfig.notifs.fullscreen === NotifsFullscreen.Off && hasFullscreen())
             return false;
         return true;
+    }
+
+    function isAppEnabled(appName: string): bool {
+        if (!appName)
+            return true;
+        const rule = root.appRules[appName];
+        return rule ? rule.enabled !== false : true;
+    }
+
+    function isAppPopups(appName: string): bool {
+        if (!appName)
+            return true;
+        const rule = root.appRules[appName];
+        return rule ? rule.popups !== false : true;
+    }
+
+    function setAppEnabled(appName: string, enabled: bool): void {
+        if (!appName)
+            return;
+        const updated = Object.assign({}, root.appRules);
+        const existing = updated[appName] || {};
+        updated[appName] = Object.assign({}, existing, { enabled });
+        root.appRules = updated;
+        appRulesFile.setText(JSON.stringify(updated, null, 2));
+        updateKnownApps();
+    }
+
+    function setAppPopups(appName: string, popups: bool): void {
+        if (!appName)
+            return;
+        const updated = Object.assign({}, root.appRules);
+        const existing = updated[appName] || {};
+        updated[appName] = Object.assign({}, existing, { popups });
+        root.appRules = updated;
+        appRulesFile.setText(JSON.stringify(updated, null, 2));
+        updateKnownApps();
+    }
+
+    function updateKnownApps(): void {
+        const appMap = {};
+
+        for (const notif of root.list) {
+            const name = (notif.appName || notif.notification?.appName || "").trim();
+            if (!name)
+                continue;
+            if (!appMap[name]) {
+                const icon = (notif.appIcon || notif.notification?.appIcon || "").trim();
+                appMap[name] = {
+                    appName: name,
+                    appIcon: icon,
+                    count: 1
+                };
+            } else {
+                appMap[name].count++;
+                if (!appMap[name].appIcon && notif.appIcon)
+                    appMap[name].appIcon = notif.appIcon;
+            }
+        }
+
+        for (const name of Object.keys(root.appRules)) {
+            if (!appMap[name]) {
+                appMap[name] = {
+                    appName: name,
+                    appIcon: root.appRules[name]?.appIcon || "",
+                    count: 0
+                };
+            }
+        }
+
+        const result = Object.values(appMap).map(app => {
+            const rule = root.appRules[app.appName] || {};
+            return {
+                appName: app.appName,
+                appIcon: app.appIcon || rule.appIcon || "",
+                count: app.count,
+                enabled: rule.enabled !== false,
+                popups: rule.popups !== false
+            };
+        });
+
+        result.sort((a, b) => a.appName.localeCompare(b.appName));
+        root.knownApps = result;
     }
 
     onDndChanged: {
@@ -95,11 +179,19 @@ Singleton {
         onNotification: notif => {
             notif.tracked = true;
 
+            const name = (notif.appName || "").trim();
+            if (name && !root.isAppEnabled(name)) {
+                notif.close();
+                return;
+            }
+
+            const canPopup = root.shouldShowPopup() && (name ? root.isAppPopups(name) : true);
             const comp = notifComp.createObject(root, {
-                popup: root.shouldShowPopup(),
+                popup: canPopup,
                 notification: notif
             });
             root.list = [comp, ...root.list];
+            root.updateKnownApps();
         }
     }
 
@@ -134,11 +226,36 @@ Singleton {
                 root.list.sort((a, b) => (b?.time ?? 0) - (a?.time ?? 0));
             }
             root.loaded = true;
+            root.updateKnownApps();
         }
         onLoadFailed: err => {
             if (err === FileViewError.FileNotFound) {
                 root.loaded = true;
+                root.updateKnownApps();
                 Qt.callLater(() => setText("[]"));
+            }
+        }
+    }
+
+    FileView {
+        id: appRulesFile
+
+        printErrors: false
+        path: `${Paths.state}/notif-apps.json`
+        onLoaded: {
+            try {
+                const content = text().trim();
+                if (content.length > 0)
+                    root.appRules = JSON.parse(content);
+            } catch (e) {
+                root.appRules = ({});
+            }
+            root.updateKnownApps();
+        }
+        onLoadFailed: err => {
+            if (err === FileViewError.FileNotFound) {
+                root.appRules = ({});
+                root.updateKnownApps();
             }
         }
     }

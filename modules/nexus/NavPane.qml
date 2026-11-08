@@ -18,6 +18,7 @@ ColumnLayout {
     SearchBar {
         id: searchField
 
+        z: 2
         Layout.fillWidth: true
 
         placeholderText: Tr.tr("Search settings")
@@ -30,10 +31,6 @@ ColumnLayout {
         clearIcon.font: Tokens.font.icon.medium
         clearIcon.padding: Tokens.padding.extraSmall
 
-        Behavior on bg.border.color {
-            CAnim {}
-        }
-
         Keys.onDownPressed: root.nState.searchMove(1)
         Keys.onUpPressed: root.nState.searchMove(-1)
         Keys.onReturnPressed: root.nState.searchActivate()
@@ -43,6 +40,10 @@ ColumnLayout {
                 clear();
             else
                 event.accepted = false;
+        }
+
+        Behavior on bg.border.color {
+            CAnim {}
         }
 
         Binding {

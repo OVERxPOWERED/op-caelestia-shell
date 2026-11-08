@@ -377,15 +377,22 @@ Singleton {
         const list = Hypr.workspaces.values.filter(ws => {
             if (!ws || !ws.name.startsWith("special:"))
                 return false;
-            return getToplevelsForWorkspace(ws.id).length > 0;
+            return getToplevelsForWorkspace(ws.name ?? ws.id).length > 0;
         });
         list.sort((a, b) => a.name.localeCompare(b.name));
         return list;
     }
 
     // Get all toplevel windows for a given workspace
-    function getToplevelsForWorkspace(wsId: int): var {
-        return Hypr.toplevels.values.filter(t => t && t.workspace && t.workspace.id === wsId);
+    function getToplevelsForWorkspace(wsId: var): var {
+        return Hypr.toplevels.values.filter(t => {
+            if (!t || !t.workspace) return false;
+            if (typeof wsId === "number")
+                return t.workspace.id === wsId || t.workspace.name === String(wsId);
+            if (typeof wsId === "string")
+                return t.workspace.name === wsId || String(t.workspace.id) === wsId;
+            return false;
+        });
     }
 
     // Get all toplevel windows across all workspaces, filtered by search query
@@ -424,11 +431,19 @@ Singleton {
     function focusWindow(toplevel: HyprlandToplevel, callback: var): void {
         if (!toplevel) return;
         const addr = toplevel.address;
-        const wsId = toplevel.workspace?.id;
-        if (wsId !== undefined) {
+        const wsName = toplevel.workspace?.name;
+        if (wsName && wsName.startsWith("special:")) {
+            const cleanName = wsName.slice("special:".length);
             Hypr.dispatch(Hypr.usingLua
-                ? `hl.dsp.focus({ workspace = "${wsId}" })`
-                : `workspace ${wsId}`);
+                ? `hl.dsp.workspace.toggle_special("${cleanName}")`
+                : `togglespecialworkspace ${cleanName}`);
+        } else {
+            const wsId = toplevel.workspace?.id;
+            if (wsId !== undefined) {
+                Hypr.dispatch(Hypr.usingLua
+                    ? `hl.dsp.focus({ workspace = "${wsId}" })`
+                    : `workspace ${wsId}`);
+            }
         }
         if (addr) {
             Hypr.dispatch(Hypr.usingLua

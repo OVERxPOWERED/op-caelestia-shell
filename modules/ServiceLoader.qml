@@ -24,6 +24,7 @@ Scope {
         Motion;
         AppFonts;
         DoctorWatchdog;
+        VoiceTyping;
 
         if (GlobalConfig.utilities.vpn.enabled)
             VPN;

@@ -15,8 +15,8 @@ import qs.modules.nexus.pages.network
 import qs.modules.nexus.pages.panels
 import qs.modules.nexus.pages.services
 import qs.modules.nexus.pages.wallandstyle
-import qs.modules.nexus.pages.panels.taskbar
 import qs.modules.nexus.pages.lock
+import qs.modules.nexus.pages.panels.taskbar
 
 QtObject {
     id: root
@@ -211,6 +211,22 @@ QtObject {
             }
         },
         Component {
+            // Notifications
+            StackPage {
+                Component {
+                    NotificationsPage {}
+                }
+            }
+        },
+        Component {
+            // Voice typing
+            StackPage {
+                Component {
+                    VoiceTypingPage {}
+                }
+            }
+        },
+        Component {
             // Lock screen
             StackPage {
                 Component {
@@ -223,9 +239,6 @@ QtObject {
             StackPage {
                 Component {
                     ServicesPage {}
-                }
-                Component {
-                    NotificationsPage {}
                 }
                 Component {
                     CalendarPage {}

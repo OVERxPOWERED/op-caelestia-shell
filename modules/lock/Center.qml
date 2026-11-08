@@ -23,6 +23,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         Layout.topMargin: patternMode ? 0 : Tokens.padding.large
         centerScale: root.patternMode ? root.centerScale * 0.75 : root.centerScale
+        centerWidth: root.patternMode ? Math.round(root.centerWidth * 0.75) : root.centerWidth
 
         Behavior on centerScale {
             Anim {}

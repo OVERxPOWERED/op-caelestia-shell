@@ -6,6 +6,7 @@ import Caelestia.I18n
 import Caelestia.Services
 import qs.components.controls
 import qs.services
+import qs.modules.nexus
 import qs.modules.nexus.common
 
 PageBase {
@@ -78,7 +79,29 @@ PageBase {
             icon: "notifications"
             text: Tr.tr("Notifications")
             subtext: Tr.tr("Notifications, toasts, timeouts")
-            onClicked: root.nState.openSubPage(1)
+            onClicked: {
+                const idx = PageRegistry.pages.findIndex(p => p.icon === "notifications");
+                if (idx >= 0)
+                    root.nState.currentPageIdx = idx;
+            }
+        }
+
+        // Voice typing
+        SectionHeader {
+            text: Tr.tr("Voice typing")
+        }
+
+        NavRow {
+            first: true
+            last: true
+            icon: "mic"
+            text: Tr.tr("Voice typing")
+            subtext: Tr.tr("Speech recognition, microphone, smart formatting")
+            onClicked: {
+                const idx = PageRegistry.pages.findIndex(p => p.icon === "mic");
+                if (idx >= 0)
+                    root.nState.currentPageIdx = idx;
+            }
         }
 
         // Google Calendar
@@ -92,7 +115,7 @@ PageBase {
             icon: "calendar_month"
             text: Tr.tr("Google Calendar")
             subtext: CalendarService.authenticated ? Tr.tr("Connected as %1").arg(CalendarService.accountEmail) : Tr.tr("Not connected")
-            onClicked: root.nState.openSubPage(2)
+            onClicked: root.nState.openSubPage(1)
         }
 
         // Polling

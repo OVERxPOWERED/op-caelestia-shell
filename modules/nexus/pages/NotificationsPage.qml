@@ -1,8 +1,15 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Caelestia.Config
 import Caelestia.I18n
+import qs.components
 import qs.components.controls
+import qs.components.effects
+import qs.services
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
@@ -38,7 +45,6 @@ PageBase {
     readonly property list<string> toastFullscreenValues: ["off", "important", "all"]
 
     title: Tr.tr("Notifications")
-    isSubPage: true
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -46,9 +52,23 @@ PageBase {
         width: root.cappedWidth
         spacing: Tokens.spacing.extraSmall / 2
 
-        // Notifications
+        // General
         SectionHeader {
             first: true
+            text: Tr.tr("General")
+        }
+
+        ToggleRow {
+            first: true
+            last: true
+            text: Tr.tr("Do not disturb")
+            subtext: Tr.tr("Silence and hide all incoming notification popups")
+            checked: Notifs.dnd
+            onToggled: Notifs.dnd = checked
+        }
+
+        // Notifications
+        SectionHeader {
             text: Tr.tr("Notifications")
         }
 
@@ -95,6 +115,141 @@ PageBase {
             to: 10
             stepSize: 1
             onMoved: v => GlobalConfig.notifs.groupPreviewNum = Math.round(v)
+        }
+
+        // App notifications
+        SectionHeader {
+            text: Tr.tr("App notifications")
+        }
+
+        StyledText {
+            Layout.fillWidth: true
+            Layout.leftMargin: Tokens.padding.small
+            Layout.bottomMargin: Tokens.spacing.extraSmall
+            text: Tr.tr("Manage permissions and popups for individual applications.")
+            color: Colours.palette.m3outline
+            font: Tokens.font.body.small
+            wrapMode: Text.WordWrap
+        }
+
+        ItemList {
+            id: appNotifList
+
+            first: true
+            last: true
+            showList: true
+            placeholderIcon: "notifications_paused"
+            placeholderText: Tr.tr("No apps have sent notifications yet")
+            color: list.count === 0 ? Colours.tPalette.m3surfaceContainer : "transparent"
+            list.spacing: Tokens.spacing.extraSmall / 2
+
+            model: ScriptModel {
+                values: Notifs.knownApps
+            }
+
+            delegate: ConnectedRect {
+                id: appCard
+
+                required property var modelData
+                required property int index
+
+                readonly property string appName: modelData.appName
+                readonly property string appIcon: modelData.appIcon
+                readonly property bool appEnabled: modelData.enabled
+                readonly property bool appPopups: modelData.popups
+                readonly property int notifCount: modelData.count
+
+                anchors.left: appNotifList.list.contentItem.left
+                anchors.right: appNotifList.list.contentItem.right
+                implicitHeight: cardLayout.implicitHeight + Tokens.padding.medium * 2
+                color: Colours.tPalette.m3surfaceContainerLow
+
+                RowLayout {
+                    id: cardLayout
+
+                    anchors.fill: parent
+                    anchors.margins: Tokens.padding.medium
+                    anchors.leftMargin: Tokens.padding.largeIncreased
+                    anchors.rightMargin: Tokens.padding.largeIncreased
+                    spacing: Tokens.spacing.medium
+
+                    // Leading App Icon
+                    StyledRect {
+                        implicitWidth: 36
+                        implicitHeight: 36
+                        radius: Tokens.rounding.small
+                        color: appCard.appEnabled ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainerHigh
+
+                        Loader {
+                            anchors.centerIn: parent
+                            sourceComponent: {
+                                const path = Quickshell.iconPath(appCard.appIcon || appCard.appName.toLowerCase());
+                                return path ? appIconComp : fallbackIconComp;
+                            }
+                        }
+
+                        Component {
+                            id: appIconComp
+
+                            ColouredIcon {
+                                implicitSize: 22
+                                source: Quickshell.iconPath(appCard.appIcon || appCard.appName.toLowerCase())
+                                colour: appCard.appEnabled ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
+                            }
+                        }
+
+                        Component {
+                            id: fallbackIconComp
+
+                            MaterialIcon {
+                                text: "apps"
+                                color: appCard.appEnabled ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
+                                fontStyle: Tokens.font.icon.small
+                            }
+                        }
+                    }
+
+                    // App Title & Subtext
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 0
+
+                        StyledText {
+                            Layout.fillWidth: true
+                            text: appCard.appName
+                            font: Tokens.font.body.medium
+                            color: appCard.appEnabled ? Colours.palette.m3onSurface : Colours.palette.m3onSurfaceVariant
+                            elide: Text.ElideRight
+                        }
+
+                        StyledText {
+                            Layout.fillWidth: true
+                            text: !appCard.appEnabled
+                                ? Tr.tr("Notifications blocked")
+                                : appCard.appPopups
+                                    ? Tr.tr("Allowed • Popups enabled")
+                                    : Tr.tr("Silent • Notification center only")
+                            font: Tokens.font.body.small
+                            color: Colours.palette.m3outline
+                            elide: Text.ElideRight
+                        }
+                    }
+
+                    // Popups Toggle (only visible when app is enabled)
+                    IconButton {
+                        visible: appCard.appEnabled
+                        icon: appCard.appPopups ? "featured_play_list" : "do_not_disturb_on"
+                        type: appCard.appPopups ? ButtonBase.Tonal : ButtonBase.Text
+                        onClicked: Notifs.setAppPopups(appCard.appName, !appCard.appPopups)
+                    }
+
+                    // Master Enable Switch
+                    StyledSwitch {
+                        checked: appCard.appEnabled
+                        onToggled: Notifs.setAppEnabled(appCard.appName, checked)
+                    }
+                }
+            }
         }
 
         // Toasts

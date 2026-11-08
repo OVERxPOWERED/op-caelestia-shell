@@ -11,6 +11,7 @@ import "modules/areapicker"
 import "modules/displays"
 import "modules/overview"
 import "modules/quicknote"
+import "modules/voice"
 import "modules/lock"
 import "modules/shutdown"
 import QtQuick
@@ -39,6 +40,7 @@ ShellRoot {
     DisplayProfileAsk {}
     Overview {}
     QuickNote {}
+    VoicePill {}
     Lock {
         id: lock
     }

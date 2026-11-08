@@ -176,6 +176,42 @@ Scope {
         target: "toaster"
     }
 
+    // qmllint disable unresolved-type
+    CustomShortcut {
+        // qmllint enable unresolved-type
+        name: "voicetype"
+        description: "Toggle voice typing"
+        onPressed: VoiceTyping.toggle()
+    }
+
+    IpcHandler {
+        function toggle(): void {
+            VoiceTyping.toggle();
+        }
+
+        function start(): void {
+            VoiceTyping.start();
+        }
+
+        function pause(): void {
+            VoiceTyping.pause();
+        }
+
+        function resume(): void {
+            VoiceTyping.resume();
+        }
+
+        function cancel(): void {
+            VoiceTyping.cancel();
+        }
+
+        function finish(): void {
+            VoiceTyping.finish();
+        }
+
+        target: "voicetype"
+    }
+
     LoggingCategory {
         id: lc
 

@@ -25,6 +25,7 @@ case "${1:-}" in
         echo "Restarting OP-Caelestia Shell..."
         stop_shell
         shift || true
+        exec "$SCRIPT_DIR/run-local-shell.sh" "$@"
         ;;
 esac
 

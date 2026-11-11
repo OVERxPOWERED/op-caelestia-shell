@@ -13,6 +13,28 @@ import qs.services
 Scope {
     id: root
 
+    property string requestedTab: "clipboard"
+
+    function toggleTab(tab: string): void {
+        const s = ShellState.forActive() || (Screens.screens.length > 0 ? ShellState.forScreen(Screens.screens[0]) : null);
+        if (s) {
+            if (s.clipboard && root.requestedTab === tab) {
+                s.clipboard = false;
+            } else {
+                root.requestedTab = tab;
+                s.clipboard = true;
+            }
+        }
+    }
+
+    function openTab(tab: string): void {
+        const s = ShellState.forActive() || (Screens.screens.length > 0 ? ShellState.forScreen(Screens.screens[0]) : null);
+        if (s) {
+            root.requestedTab = tab;
+            s.clipboard = true;
+        }
+    }
+
     Variants {
         model: Screens.screens
 
@@ -45,7 +67,6 @@ Scope {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            console.log("[Clipboard] Backdrop clicked -> closing");
                             if (scope.screenState) scope.screenState.clipboard = false;
                         }
                     }
@@ -53,9 +74,9 @@ Scope {
                     ClipboardContent {
                         anchors.fill: parent
                         screen: win.screen
+                        initialTab: root.requestedTab
 
                         onCloseRequested: {
-                            console.log("[Clipboard] onCloseRequested -> closing");
                             if (scope.screenState) scope.screenState.clipboard = false;
                         }
                     }
@@ -68,11 +89,11 @@ Scope {
         target: "clipboard"
 
         function open(): void {
-            const s = ShellState.forActive() || (Screens.screens.length > 0 ? ShellState.forScreen(Screens.screens[0]) : null);
-            console.log("[Clipboard IPC] open called, screenState:", s, "modelData:", s ? s.modelData?.name : "none", "screens count:", Screens.screens.length);
-            if (s) {
-                s.clipboard = true;
-            }
+            root.openTab("clipboard");
+        }
+
+        function openTab(tab: string): void {
+            root.openTab(tab || "clipboard");
         }
 
         function close(): void {
@@ -83,22 +104,11 @@ Scope {
         }
 
         function toggle(): void {
-            const s = ShellState.forActive() || (Screens.screens.length > 0 ? ShellState.forScreen(Screens.screens[0]) : null);
-            console.log("[Clipboard IPC] toggle called, screenState:", s);
-            if (s) {
-                s.clipboard = !s.clipboard;
-            }
+            root.toggleTab("clipboard");
         }
-    }
 
-    CustomShortcut {
-        name: "clipboardPreview"
-        description: "Toggle native Caelestia clipboard preview"
-        onPressed: {
-            const s = ShellState.forActive();
-            if (s) {
-                s.clipboard = !s.clipboard;
-            }
+        function toggleTab(tab: string): void {
+            root.toggleTab(tab || "clipboard");
         }
     }
 
@@ -106,10 +116,15 @@ Scope {
         name: "clipboard"
         description: "Toggle native Caelestia clipboard"
         onPressed: {
-            const s = ShellState.forActive();
-            if (s) {
-                s.clipboard = !s.clipboard;
-            }
+            root.toggleTab("clipboard");
+        }
+    }
+
+    CustomShortcut {
+        name: "emojis"
+        description: "Toggle native Caelestia emojis and symbols"
+        onPressed: {
+            root.toggleTab("emojis");
         }
     }
 }

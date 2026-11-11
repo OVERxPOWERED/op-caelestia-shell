@@ -19,43 +19,79 @@ Item {
     required property ShellScreen screen
     signal closeRequested
 
+    property string initialTab: "clipboard"
+    property string currentTab: initialTab
+
     property var allItems: []
     property var filteredItems: []
+    property var filteredEmojis: []
     property bool loading: false
     property real openedAt: 0
 
     readonly property string monoFontFamily: "JetBrainsMono Nerd Font, JetBrains Mono NF, JetBrains Mono, monospace"
 
-    function refresh() {
+    onInitialTabChanged: {
+        currentTab = initialTab;
+    }
+
+    onCurrentTabChanged: {
+        searchInput.text = "";
+        if (currentTab === "clipboard") {
+            refreshClipboard();
+        } else {
+            refreshEmojis();
+        }
+        searchInput.forceActiveFocus();
+    }
+
+    function refreshClipboard() {
         if (!fetchProcess.running) {
             loading = true;
             fetchProcess.running = true;
         }
     }
 
-    function applyFilter() {
-        const query = searchInput.text.toLowerCase().trim();
-        if (query === "") {
-            filteredItems = allItems;
-        } else {
-            const res = [];
-            for (let i = 0; i < allItems.length; i++) {
-                const item = allItems[i];
-                const titleMatch = (item.title || "").toLowerCase().includes(query);
-                const detailsMatch = (item.details || "").toLowerCase().includes(query);
-                if (titleMatch || detailsMatch) {
-                    res.push(item);
-                }
-            }
-            filteredItems = res;
+    function refreshEmojis() {
+        if (!emojiProcess.running) {
+            emojiProcess.command = ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "emojis", searchInput.text.trim(), "100"];
+            emojiProcess.running = true;
         }
-        list.currentIndex = 0;
-        list.positionViewAtBeginning();
+    }
+
+    function applyFilter() {
+        if (currentTab === "clipboard") {
+            const query = searchInput.text.toLowerCase().trim();
+            if (query === "") {
+                filteredItems = allItems;
+            } else {
+                const res = [];
+                for (let i = 0; i < allItems.length; i++) {
+                    const item = allItems[i];
+                    const titleMatch = (item.title || "").toLowerCase().includes(query);
+                    const detailsMatch = (item.details || "").toLowerCase().includes(query);
+                    if (titleMatch || detailsMatch) {
+                        res.push(item);
+                    }
+                }
+                filteredItems = res;
+            }
+            list.currentIndex = 0;
+            list.positionViewAtBeginning();
+        } else {
+            emojiSearchDebounce.restart();
+        }
     }
 
     function copyItem(id) {
-        actionProcess.command = ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "copy", id];
-        actionProcess.running = true;
+        Quickshell.execDetached(["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "copy", id]);
+        if (ClipboardSettings.autoClearSearch) {
+            searchInput.text = "";
+        }
+        root.closeRequested();
+    }
+
+    function copyEmoji(glyph) {
+        Quickshell.execDetached(["wl-copy", glyph]);
         if (ClipboardSettings.autoClearSearch) {
             searchInput.text = "";
         }
@@ -63,12 +99,12 @@ Item {
     }
 
     function deleteItem(id) {
-        actionProcess.command = ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "delete", id];
-        actionProcess.running = true;
+        Quickshell.execDetached(["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "delete", id]);
         allItems = allItems.filter(it => it.id !== id);
         applyFilter();
     }
 
+    // Process for fetching clipboard items
     Process {
         id: fetchProcess
         running: true
@@ -86,14 +122,46 @@ Item {
         }
     }
 
+    // Process for fetching emojis
     Process {
-        id: actionProcess
+        id: emojiProcess
+        running: false
+        command: ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "emojis", "", "100"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    root.filteredEmojis = JSON.parse(text);
+                    emojiList.currentIndex = 0;
+                    emojiList.positionViewAtBeginning();
+                } catch (e) {
+                    console.error("Emoji JSON parse error:", e);
+                }
+            }
+        }
     }
+
+    Timer {
+        id: emojiSearchDebounce
+        interval: 60
+        repeat: false
+        onTriggered: {
+            if (root.currentTab === "emojis") {
+                emojiProcess.command = ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "emojis", searchInput.text.trim(), "100"];
+                emojiProcess.running = true;
+            }
+        }
+    }
+
 
     onVisibleChanged: {
         if (visible) {
             openedAt = Date.now();
-            refresh();
+            currentTab = initialTab;
+            if (currentTab === "clipboard") {
+                refreshClipboard();
+            } else {
+                refreshEmojis();
+            }
             if (ClipboardSettings.autoFocusSearch) {
                 searchInput.forceActiveFocus();
             }
@@ -102,30 +170,35 @@ Item {
 
     Component.onCompleted: {
         openedAt = Date.now();
-        refresh();
+        currentTab = initialTab;
+        if (currentTab === "clipboard") {
+            refreshClipboard();
+        } else {
+            refreshEmojis();
+        }
         if (ClipboardSettings.autoFocusSearch) {
             searchInput.forceActiveFocus();
         }
     }
 
-    // Modal Card Container: 850px width, 550px height (Fuzzel proportions)
+    // Modal Card Container: 850px width, 550px height, matching shell acrylic blur
     Elevation {
         id: cardElevation
 
         anchors.centerIn: parent
         width: 850
-        height: 550
-        radius: 10
-        level: 3
+        height: 560
+        radius: Tokens.rounding.extraLarge
+        level: 4
 
         StyledRect {
             id: card
 
             anchors.fill: parent
             radius: parent.radius
-            color: Colours.tPalette.m3surfaceContainer
-            border.width: 2
-            border.color: Colours.light ? Qt.alpha(Colours.palette.m3primary, 0.45) : Qt.alpha(Colours.palette.m3primary, 0.40)
+            color: Colours.tPalette.m3surface
+            border.width: 1
+            border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.30) : Qt.alpha(Colours.palette.m3outline, 0.35)
 
             MouseArea {
                 anchors.fill: parent
@@ -134,20 +207,20 @@ Item {
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
-                anchors.topMargin: 14
-                anchors.bottomMargin: 14
-                spacing: 8
+                anchors.leftMargin: 22
+                anchors.rightMargin: 22
+                anchors.topMargin: 16
+                anchors.bottomMargin: 16
+                spacing: 10
 
                 // -----------------------------------------------------------------
-                // Top Search Row: Fuzzel prompt "> " + query + match counter "750/750"
+                // Top Header Row: Prompt "> " + Query Input + Tab Pills + Counter
                 // -----------------------------------------------------------------
                 RowLayout {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 32
+                    Layout.preferredHeight: 34
                     Layout.alignment: Qt.AlignTop
-                    spacing: 8
+                    spacing: 10
 
                     StyledText {
                         text: "> "
@@ -160,7 +233,7 @@ Item {
 
                     Item {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 28
+                        Layout.preferredHeight: 30
                         Layout.alignment: Qt.AlignVCenter
 
                         TextInput {
@@ -180,27 +253,52 @@ Item {
                             
                             onAccepted: {
                                 if (Date.now() - root.openedAt < 400) return;
-                                list.copyCurrent();
+                                if (root.currentTab === "clipboard") {
+                                    list.copyCurrent();
+                                } else {
+                                    emojiList.copyCurrent();
+                                }
                             }
 
                             Keys.onUpPressed: {
-                                if (list.currentIndex > 0) {
-                                    list.currentIndex--;
-                                    list.positionViewAtIndex(list.currentIndex, ListView.Contain);
+                                if (root.currentTab === "clipboard") {
+                                    if (list.currentIndex > 0) {
+                                        list.currentIndex--;
+                                        list.positionViewAtIndex(list.currentIndex, ListView.Contain);
+                                    }
+                                } else {
+                                    if (emojiList.currentIndex > 0) {
+                                        emojiList.currentIndex--;
+                                        emojiList.positionViewAtIndex(emojiList.currentIndex, ListView.Contain);
+                                    }
                                 }
                             }
 
                             Keys.onDownPressed: {
-                                if (list.currentIndex < list.count - 1) {
-                                    list.currentIndex++;
-                                    list.positionViewAtIndex(list.currentIndex, ListView.Contain);
+                                if (root.currentTab === "clipboard") {
+                                    if (list.currentIndex < list.count - 1) {
+                                        list.currentIndex++;
+                                        list.positionViewAtIndex(list.currentIndex, ListView.Contain);
+                                    }
+                                } else {
+                                    if (emojiList.currentIndex < emojiList.count - 1) {
+                                        emojiList.currentIndex++;
+                                        emojiList.positionViewAtIndex(emojiList.currentIndex, ListView.Contain);
+                                    }
                                 }
                             }
 
                             Keys.onDeletePressed: {
-                                if (list.currentIndex >= 0 && list.currentIndex < root.filteredItems.length) {
-                                    root.deleteItem(root.filteredItems[list.currentIndex].id);
+                                if (root.currentTab === "clipboard") {
+                                    if (list.currentIndex >= 0 && list.currentIndex < root.filteredItems.length) {
+                                        root.deleteItem(root.filteredItems[list.currentIndex].id);
+                                    }
                                 }
+                            }
+
+                            Keys.onTabPressed: event => {
+                                event.accepted = true;
+                                root.currentTab = (root.currentTab === "clipboard" ? "emojis" : "clipboard");
                             }
 
                             Keys.onEscapePressed: event => {
@@ -216,7 +314,7 @@ Item {
                             StyledText {
                                 anchors.left: parent.left
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: Tr.tr("Type to search clipboard...")
+                                text: root.currentTab === "clipboard" ? Tr.tr("Type to search clipboard...") : Tr.tr("Type to search emojis & symbols...")
                                 color: Colours.palette.m3outline
                                 font.family: root.monoFontFamily
                                 font.pixelSize: 15
@@ -225,14 +323,110 @@ Item {
                         }
                     }
 
-                    // Match counter (matching / total) e.g. 750/750
+                    // Tab Switcher Pills
+                    RowLayout {
+                        Layout.alignment: Qt.AlignVCenter
+                        spacing: 6
+
+                        // Clipboard Tab Pill
+                        StyledRect {
+                            Layout.preferredHeight: 28
+                            Layout.preferredWidth: tabClipboardText.implicitWidth + 20
+                            radius: Tokens.rounding.full
+                            color: root.currentTab === "clipboard" 
+                                ? Qt.alpha(Colours.palette.m3primary, 0.22) 
+                                : (tabClipMouse.containsMouse ? Qt.alpha(Colours.palette.m3onSurface, 0.08) : "transparent")
+                            border.width: 1
+                            border.color: root.currentTab === "clipboard" 
+                                ? Qt.alpha(Colours.palette.m3primary, 0.45) 
+                                : Qt.alpha(Colours.palette.m3outlineVariant, 0.30)
+
+                            MouseArea {
+                                id: tabClipMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    root.currentTab = "clipboard";
+                                }
+                            }
+
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 4
+
+                                MaterialIcon {
+                                    text: "content_paste"
+                                    color: root.currentTab === "clipboard" ? Colours.palette.m3primary : Colours.palette.m3outline
+                                    fontStyle: Tokens.font.icon.builders.small.scale(0.70).build()
+                                }
+
+                                StyledText {
+                                    id: tabClipboardText
+                                    text: "History"
+                                    font.family: root.monoFontFamily
+                                    font.pixelSize: 12
+                                    font.bold: root.currentTab === "clipboard"
+                                    color: root.currentTab === "clipboard" ? Colours.palette.m3primary : Colours.palette.m3outline
+                                }
+                            }
+                        }
+
+                        // Emojis Tab Pill
+                        StyledRect {
+                            Layout.preferredHeight: 28
+                            Layout.preferredWidth: tabEmojiText.implicitWidth + 20
+                            radius: Tokens.rounding.full
+                            color: root.currentTab === "emojis" 
+                                ? Qt.alpha(Colours.palette.m3primary, 0.22) 
+                                : (tabEmojiMouse.containsMouse ? Qt.alpha(Colours.palette.m3onSurface, 0.08) : "transparent")
+                            border.width: 1
+                            border.color: root.currentTab === "emojis" 
+                                ? Qt.alpha(Colours.palette.m3primary, 0.45) 
+                                : Qt.alpha(Colours.palette.m3outlineVariant, 0.30)
+
+                            MouseArea {
+                                id: tabEmojiMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    root.currentTab = "emojis";
+                                }
+                            }
+
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 4
+
+                                MaterialIcon {
+                                    text: "mood"
+                                    color: root.currentTab === "emojis" ? Colours.palette.m3primary : Colours.palette.m3outline
+                                    fontStyle: Tokens.font.icon.builders.small.scale(0.70).build()
+                                }
+
+                                StyledText {
+                                    id: tabEmojiText
+                                    text: "Emojis"
+                                    font.family: root.monoFontFamily
+                                    font.pixelSize: 12
+                                    font.bold: root.currentTab === "emojis"
+                                    color: root.currentTab === "emojis" ? Colours.palette.m3primary : Colours.palette.m3outline
+                                }
+                            }
+                        }
+                    }
+
+                    // Match counter (matching / total) e.g. 750/750 or 45 emojis
                     StyledText {
-                        text: `${root.filteredItems.length}/${root.allItems.length}`
+                        text: root.currentTab === "clipboard" 
+                            ? (root.allItems.length > 0 ? `${root.filteredItems.length}/${root.allItems.length}` : "")
+                            : `${root.filteredEmojis.length} glyphs`
                         font.family: root.monoFontFamily
-                        font.pixelSize: 15
+                        font.pixelSize: 14
                         color: Colours.palette.m3outline
                         Layout.alignment: Qt.AlignVCenter
-                        Layout.rightMargin: 4
+                        Layout.rightMargin: 2
                     }
                 }
 
@@ -244,223 +438,346 @@ Item {
                 }
 
                 // -----------------------------------------------------------------
-                // Main List Area: Uniform 36px Rows, Instant 1:1 Fuzzel Scrolling
+                // MAIN CONTENT: Tab 1 (Clipboard History) OR Tab 2 (Emojis Picker)
                 // -----------------------------------------------------------------
-                StyledListView {
-                    id: list
-
+                Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    clip: true
-                    spacing: 2
 
-                    boundsBehavior: Flickable.StopAtBounds
-                    highlightRangeMode: ListView.NoHighlightRange
-                    keyNavigationWraps: false
+                    // =============================================================
+                    // TAB 1: CLIPBOARD HISTORY LIST VIEW
+                    // =============================================================
+                    StyledListView {
+                        id: list
 
-                    StyledScrollBar.vertical: StyledScrollBar {
-                        flickable: list
-                    }
+                        anchors.fill: parent
+                        visible: root.currentTab === "clipboard"
+                        clip: true
+                        spacing: 2
 
-                    model: root.filteredItems
+                        boundsBehavior: Flickable.StopAtBounds
+                        highlightRangeMode: ListView.NoHighlightRange
+                        keyNavigationWraps: false
 
-                    function copyCurrent(): void {
-                        if (currentIndex >= 0 && currentIndex < root.filteredItems.length) {
-                            const it = root.filteredItems[currentIndex];
-                            root.copyItem(it.id);
+                        StyledScrollBar.vertical: StyledScrollBar {
+                            flickable: list
                         }
-                    }
 
-                    highlightFollowsCurrentItem: false
+                        model: root.filteredItems
 
-                    delegate: Item {
-                        id: itemDelegate
-
-                        required property var modelData
-                        required property int index
-
-                        readonly property bool isSelected: list.currentIndex === index
-                        readonly property bool isHovered: itemMouse.containsMouse
-                        readonly property bool isImage: modelData.type === "image"
-
-                        width: list.width
-                        height: (isImage && isSelected) ? 96 : 36
-
-                        StyledRect {
-                            anchors.fill: parent
-                            radius: 6
-                            color: itemDelegate.isSelected 
-                                ? Qt.alpha(Colours.palette.m3primary, 0.22) 
-                                : (itemDelegate.isHovered ? Qt.alpha(Colours.palette.m3onSurface, 0.05) : "transparent")
-                            border.width: (itemDelegate.isImage && itemDelegate.isSelected) ? 1 : 0
-                            border.color: Qt.alpha(Colours.palette.m3primary, 0.35)
-
-                            MouseArea {
-                                id: itemMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    if (itemDelegate.isImage && !itemDelegate.isSelected) {
-                                        list.currentIndex = itemDelegate.index;
-                                        list.positionViewAtIndex(list.currentIndex, ListView.Contain);
-                                    } else {
-                                        root.copyItem(itemDelegate.modelData.id);
-                                    }
-                                }
+                        function copyCurrent(): void {
+                            if (currentIndex >= 0 && currentIndex < root.filteredItems.length) {
+                                const it = root.filteredItems[currentIndex];
+                                root.copyItem(it.id);
                             }
+                        }
 
-                            // -------------------------------------------------------------
-                            // CASE A: EXPANDED SELECTED IMAGE INSPECT PREVIEW (96px)
-                            // -------------------------------------------------------------
-                            RowLayout {
-                                visible: itemDelegate.isImage && itemDelegate.isSelected
+                        highlightFollowsCurrentItem: false
+
+                        delegate: Item {
+                            id: itemDelegate
+
+                            required property var modelData
+                            required property int index
+
+                            readonly property bool isSelected: list.currentIndex === index
+                            readonly property bool isHovered: itemMouse.containsMouse
+                            readonly property bool isImage: modelData.type === "image"
+
+                            width: list.width
+                            height: (isImage && isSelected) ? 96 : 36
+
+                            StyledRect {
                                 anchors.fill: parent
-                                anchors.margins: 8
-                                spacing: 12
+                                radius: 6
+                                color: itemDelegate.isSelected 
+                                    ? Qt.alpha(Colours.palette.m3primary, 0.22) 
+                                    : (itemDelegate.isHovered ? Qt.alpha(Colours.palette.m3onSurface, 0.05) : "transparent")
+                                border.width: (itemDelegate.isImage && itemDelegate.isSelected) ? 1 : 0
+                                border.color: Qt.alpha(Colours.palette.m3primary, 0.35)
 
-                                // Large Thumbnail Preview Box
-                                StyledRect {
-                                    Layout.preferredWidth: 80
-                                    Layout.preferredHeight: 80
-                                    Layout.alignment: Qt.AlignVCenter
-                                    radius: 6
-                                    color: Colours.palette.m3surfaceContainerHighest
-                                    clip: true
-
-                                    Image {
-                                        anchors.fill: parent
-                                        anchors.margins: 4
-                                        source: itemDelegate.modelData.thumb ? `file://${itemDelegate.modelData.thumb}` : ""
-                                        fillMode: Image.PreserveAspectFit
-                                        asynchronous: true
-                                        smooth: true
+                                MouseArea {
+                                    id: itemMouse
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        if (itemDelegate.isImage && !itemDelegate.isSelected) {
+                                            list.currentIndex = itemDelegate.index;
+                                            list.positionViewAtIndex(list.currentIndex, ListView.Contain);
+                                        } else {
+                                            root.copyItem(itemDelegate.modelData.id);
+                                        }
                                     }
                                 }
 
-                                // Metadata Column
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    Layout.alignment: Qt.AlignVCenter
-                                    spacing: 5
-
-                                    StyledText {
-                                        Layout.fillWidth: true
-                                        text: itemDelegate.modelData.title
-                                        font.family: root.monoFontFamily
-                                        font.pixelSize: 15
-                                        font.bold: true
-                                        color: Colours.palette.m3primary
-                                        elide: Text.ElideRight
-                                    }
-
-                                    StyledText {
-                                        Layout.fillWidth: true
-                                        text: itemDelegate.modelData.details
-                                        font.family: root.monoFontFamily
-                                        font.pixelSize: 13
-                                        color: Colours.palette.m3onSurfaceVariant
-                                        elide: Text.ElideRight
-                                    }
-                                }
-
-                                // Quick Actions: Copy and Delete
+                                // Case A: Expanded Selected Image Inspect Preview (96px)
                                 RowLayout {
-                                    Layout.alignment: Qt.AlignVCenter
-                                    spacing: 6
+                                    visible: itemDelegate.isImage && itemDelegate.isSelected
+                                    anchors.fill: parent
+                                    anchors.margins: 8
+                                    spacing: 12
 
-                                    IconButton {
-                                        icon: "content_copy"
-                                        type: IconButton.Text
-                                        Layout.preferredWidth: 30
-                                        Layout.preferredHeight: 30
-                                        onClicked: root.copyItem(itemDelegate.modelData.id)
-                                    }
-
-                                    IconButton {
-                                        icon: "delete"
-                                        type: IconButton.Text
-                                        Layout.preferredWidth: 30
-                                        Layout.preferredHeight: 30
-                                        onClicked: root.deleteItem(itemDelegate.modelData.id)
-                                    }
-                                }
-                            }
-
-                            // -------------------------------------------------------------
-                            // CASE B: COMPACT ROW (36px - Unselected Image or Any Text)
-                            // -------------------------------------------------------------
-                            RowLayout {
-                                visible: !(itemDelegate.isImage && itemDelegate.isSelected)
-                                anchors.fill: parent
-                                anchors.leftMargin: 8
-                                anchors.rightMargin: 8
-                                spacing: 10
-
-                                // Image micro-thumbnail or type icon
-                                Item {
-                                    Layout.preferredWidth: 26
-                                    Layout.preferredHeight: 26
-                                    Layout.alignment: Qt.AlignVCenter
-
-                                    // Crisp 26x26 thumbnail for images
                                     StyledRect {
-                                        visible: itemDelegate.isImage
-                                        anchors.fill: parent
-                                        radius: 3
+                                        Layout.preferredWidth: 80
+                                        Layout.preferredHeight: 80
+                                        Layout.alignment: Qt.AlignVCenter
+                                        radius: 6
                                         color: Colours.palette.m3surfaceContainerHighest
                                         clip: true
 
                                         Image {
                                             anchors.fill: parent
+                                            anchors.margins: 4
                                             source: itemDelegate.modelData.thumb ? `file://${itemDelegate.modelData.thumb}` : ""
-                                            fillMode: Image.PreserveAspectCrop
+                                            fillMode: Image.PreserveAspectFit
                                             asynchronous: true
+                                            smooth: true
                                         }
                                     }
 
-                                    // Micro icon for text
-                                    MaterialIcon {
-                                        visible: !itemDelegate.isImage
-                                        anchors.centerIn: parent
-                                        text: itemDelegate.modelData.type === "url" ? "link" : (itemDelegate.modelData.type === "code" ? "terminal" : "notes")
-                                        color: itemDelegate.isSelected ? Colours.palette.m3primary : Colours.palette.m3outline
-                                        fontStyle: Tokens.font.icon.builders.small.scale(0.75).build()
+                                    ColumnLayout {
+                                        Layout.fillWidth: true
+                                        Layout.alignment: Qt.AlignVCenter
+                                        spacing: 5
+
+                                        StyledText {
+                                            Layout.fillWidth: true
+                                            text: itemDelegate.modelData.title
+                                            font.family: root.monoFontFamily
+                                            font.pixelSize: 15
+                                            font.bold: true
+                                            color: Colours.palette.m3primary
+                                            elide: Text.ElideRight
+                                        }
+
+                                        StyledText {
+                                            Layout.fillWidth: true
+                                            text: itemDelegate.modelData.details
+                                            font.family: root.monoFontFamily
+                                            font.pixelSize: 13
+                                            color: Colours.palette.m3onSurfaceVariant
+                                            elide: Text.ElideRight
+                                        }
+                                    }
+
+                                    RowLayout {
+                                        Layout.alignment: Qt.AlignVCenter
+                                        spacing: 6
+
+                                        IconButton {
+                                            icon: "content_copy"
+                                            type: IconButton.Text
+                                            Layout.preferredWidth: 30
+                                            Layout.preferredHeight: 30
+                                            onClicked: root.copyItem(itemDelegate.modelData.id)
+                                        }
+
+                                        IconButton {
+                                            icon: "delete"
+                                            type: IconButton.Text
+                                            Layout.preferredWidth: 30
+                                            Layout.preferredHeight: 30
+                                            onClicked: root.deleteItem(itemDelegate.modelData.id)
+                                        }
                                     }
                                 }
 
-                                // Main Text Content in JetBrains Mono
-                                StyledText {
-                                    Layout.fillWidth: true
-                                    Layout.alignment: Qt.AlignVCenter
-                                    text: itemDelegate.isImage ? `Image (${itemDelegate.modelData.details || itemDelegate.modelData.title})` : itemDelegate.modelData.title
-                                    font.family: root.monoFontFamily
-                                    font.pixelSize: 14
-                                    color: itemDelegate.isSelected ? Colours.palette.m3primary : Colours.palette.m3onSurface
-                                    elide: Text.ElideRight
-                                    maximumLineCount: 1
+                                // Case B: Compact Row (36px - Unselected Image or Any Text)
+                                RowLayout {
+                                    visible: !(itemDelegate.isImage && itemDelegate.isSelected)
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 8
+                                    anchors.rightMargin: 8
+                                    spacing: 10
+
+                                    Item {
+                                        Layout.preferredWidth: 26
+                                        Layout.preferredHeight: 26
+                                        Layout.alignment: Qt.AlignVCenter
+
+                                        StyledRect {
+                                            visible: itemDelegate.isImage
+                                            anchors.fill: parent
+                                            radius: 3
+                                            color: Colours.palette.m3surfaceContainerHighest
+                                            clip: true
+
+                                            Image {
+                                                anchors.fill: parent
+                                                source: itemDelegate.modelData.thumb ? `file://${itemDelegate.modelData.thumb}` : ""
+                                                fillMode: Image.PreserveAspectCrop
+                                                asynchronous: true
+                                            }
+                                        }
+
+                                        MaterialIcon {
+                                            visible: !itemDelegate.isImage
+                                            anchors.centerIn: parent
+                                            text: itemDelegate.modelData.type === "url" ? "link" : (itemDelegate.modelData.type === "code" ? "terminal" : "notes")
+                                            color: itemDelegate.isSelected ? Colours.palette.m3primary : Colours.palette.m3outline
+                                            fontStyle: Tokens.font.icon.builders.small.scale(0.75).build()
+                                        }
+                                    }
+
+                                    StyledText {
+                                        Layout.fillWidth: true
+                                        Layout.alignment: Qt.AlignVCenter
+                                        text: itemDelegate.isImage ? `Image (${itemDelegate.modelData.details || itemDelegate.modelData.title})` : itemDelegate.modelData.title
+                                        font.family: root.monoFontFamily
+                                        font.pixelSize: 14
+                                        color: itemDelegate.isSelected ? Colours.palette.m3primary : Colours.palette.m3onSurface
+                                        elide: Text.ElideRight
+                                        maximumLineCount: 1
+                                    }
+
+                                    RowLayout {
+                                        Layout.alignment: Qt.AlignVCenter
+                                        spacing: 2
+                                        visible: itemDelegate.isSelected || itemMouse.containsMouse
+
+                                        IconButton {
+                                            icon: "content_copy"
+                                            type: IconButton.Text
+                                            Layout.preferredWidth: 24
+                                            Layout.preferredHeight: 24
+                                            onClicked: root.copyItem(itemDelegate.modelData.id)
+                                        }
+
+                                        IconButton {
+                                            icon: "delete"
+                                            type: IconButton.Text
+                                            Layout.preferredWidth: 24
+                                            Layout.preferredHeight: 24
+                                            onClicked: root.deleteItem(itemDelegate.modelData.id)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // =============================================================
+                    // TAB 2: EMOJIS & SYMBOLS PICKER LIST VIEW
+                    // =============================================================
+                    StyledListView {
+                        id: emojiList
+
+                        anchors.fill: parent
+                        visible: root.currentTab === "emojis"
+                        clip: true
+                        spacing: 2
+
+                        boundsBehavior: Flickable.StopAtBounds
+                        highlightRangeMode: ListView.NoHighlightRange
+                        keyNavigationWraps: false
+
+                        StyledScrollBar.vertical: StyledScrollBar {
+                            flickable: emojiList
+                        }
+
+                        model: root.filteredEmojis
+
+                        function copyCurrent(): void {
+                            if (currentIndex >= 0 && currentIndex < root.filteredEmojis.length) {
+                                const e = root.filteredEmojis[currentIndex];
+                                root.copyEmoji(e.char);
+                            }
+                        }
+
+                        highlightFollowsCurrentItem: false
+
+                        delegate: Item {
+                            id: emojiDelegate
+
+                            required property var modelData
+                            required property int index
+
+                            readonly property bool isSelected: emojiList.currentIndex === index
+                            readonly property bool isHovered: emojiMouse.containsMouse
+
+                            width: emojiList.width
+                            height: 42
+
+                            StyledRect {
+                                anchors.fill: parent
+                                radius: 6
+                                color: emojiDelegate.isSelected 
+                                    ? Qt.alpha(Colours.palette.m3primary, 0.22) 
+                                    : (emojiDelegate.isHovered ? Qt.alpha(Colours.palette.m3onSurface, 0.05) : "transparent")
+                                border.width: emojiDelegate.isSelected ? 1 : 0
+                                border.color: Qt.alpha(Colours.palette.m3primary, 0.35)
+
+                                MouseArea {
+                                    id: emojiMouse
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        root.copyEmoji(emojiDelegate.modelData.char);
+                                    }
                                 }
 
-                                // Quick actions visible on hover or selection
                                 RowLayout {
-                                    Layout.alignment: Qt.AlignVCenter
-                                    spacing: 2
-                                    visible: itemDelegate.isSelected || itemMouse.containsMouse
+                                    anchors.fill: parent
+                                    anchors.leftMargin: 10
+                                    anchors.rightMargin: 10
+                                    spacing: 12
 
+                                    // Emoji / Glyph Display Box
+                                    Item {
+                                        Layout.preferredWidth: Math.max(34, glyphText.implicitWidth + 8)
+                                        Layout.preferredHeight: 32
+                                        Layout.alignment: Qt.AlignVCenter
+
+                                        Text {
+                                            id: glyphText
+                                            anchors.centerIn: parent
+                                            text: emojiDelegate.modelData.char || ""
+                                            font.pixelSize: 20
+                                            font.family: root.monoFontFamily
+                                            color: Colours.palette.m3onSurface
+                                        }
+                                    }
+
+                                    // Description Column
+                                    ColumnLayout {
+                                        Layout.fillWidth: true
+                                        Layout.alignment: Qt.AlignVCenter
+                                        spacing: 2
+
+                                        StyledText {
+                                            Layout.fillWidth: true
+                                            text: emojiDelegate.modelData.title || emojiDelegate.modelData.char
+                                            font.family: root.monoFontFamily
+                                            font.pixelSize: 13
+                                            font.bold: emojiDelegate.isSelected
+                                            color: emojiDelegate.isSelected ? Colours.palette.m3primary : Colours.palette.m3onSurface
+                                            elide: Text.ElideRight
+                                            maximumLineCount: 1
+                                        }
+
+                                        StyledText {
+                                            Layout.fillWidth: true
+                                            text: emojiDelegate.modelData.tags || ""
+                                            font.family: root.monoFontFamily
+                                            font.pixelSize: 11
+                                            color: Colours.palette.m3outline
+                                            elide: Text.ElideRight
+                                            maximumLineCount: 1
+                                            visible: text.length > 0
+                                        }
+                                    }
+
+                                    // Quick Copy Action Icon
                                     IconButton {
+                                        visible: emojiDelegate.isSelected || emojiDelegate.isHovered
                                         icon: "content_copy"
                                         type: IconButton.Text
-                                        Layout.preferredWidth: 24
-                                        Layout.preferredHeight: 24
-                                        onClicked: root.copyItem(itemDelegate.modelData.id)
-                                    }
-
-                                    IconButton {
-                                        icon: "delete"
-                                        type: IconButton.Text
-                                        Layout.preferredWidth: 24
-                                        Layout.preferredHeight: 24
-                                        onClicked: root.deleteItem(itemDelegate.modelData.id)
+                                        Layout.preferredWidth: 26
+                                        Layout.preferredHeight: 26
+                                        Layout.alignment: Qt.AlignVCenter
+                                        onClicked: root.copyEmoji(emojiDelegate.modelData.char)
                                     }
                                 }
                             }

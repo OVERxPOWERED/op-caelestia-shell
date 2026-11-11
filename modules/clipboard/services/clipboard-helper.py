@@ -13,6 +13,8 @@ CACHE_DIR.mkdir(parents=True, exist_ok=True)
 PINS_FILE = Path.home() / ".local" / "share" / "caelestia" / "clipboard" / "pins.json"
 PINS_FILE.parent.mkdir(parents=True, exist_ok=True)
 
+EMOJI_FILE = Path("/home/overxpowered/.local/lib/python3.14/site-packages/caelestia/data/emojis.txt")
+
 def load_pins():
     if PINS_FILE.exists():
         try:
@@ -62,8 +64,6 @@ def get_list(limit=60):
                 except Exception:
                     pass
 
-            # Prettify dimensions & size
-            # e.g. "49 KiB png 512x170" -> "512 × 170 • 49 KiB PNG"
             dim_match = re.search(r"(\d+x\d+)", raw_details)
             size_match = re.search(r"([\d\.]+\s*[KMGT]?i?B)", raw_details, re.IGNORECASE)
             fmt_match = re.search(r"\b(png|jpe?g|webp|gif)\b", raw_details, re.IGNORECASE)
@@ -105,7 +105,14 @@ def copy_item(item_id):
         decoded = subprocess.check_output(["cliphist", "decode", item_id])
         subprocess.run(["wl-copy"], input=decoded)
         return True
-    except Exception as e:
+    except Exception:
+        return False
+
+def copy_text(text):
+    try:
+        subprocess.run(["wl-copy"], input=text.encode("utf-8"))
+        return True
+    except Exception:
         return False
 
 def delete_item(item_id):
@@ -117,11 +124,77 @@ def delete_item(item_id):
     except Exception:
         return False
 
+def parse_emoji_desc(char, desc):
+    words = desc.split()
+    if not words:
+        return char, ""
+    clean_words = []
+    emoticons = []
+    for w in words:
+        if w in [":D", "xD", "XD", ":')", ":'D", ":)", ";)", ":(", ":P", ":-)", ";-)", "<3"]:
+            emoticons.append(w)
+        else:
+            clean_words.append(w)
+    if len(clean_words) <= 4:
+        title = " ".join(clean_words)
+        tags = " ".join(emoticons)
+    else:
+        title = " ".join(clean_words[:4])
+        tags = " ".join(emoticons + clean_words[4:])
+    return title.capitalize(), tags
+
+def get_emojis(query="", limit=100):
+    if not EMOJI_FILE.exists():
+        return []
+
+    results = []
+    q_words = query.strip().lower().split()
+
+    with open(EMOJI_FILE, "r", encoding="utf-8", errors="replace") as f:
+        lines = [line.strip() for line in f if line.strip()]
+
+    if not q_words:
+        # On empty search: show standard smileys/faces/gestures first, followed by handy arrows & kaomoji
+        selected_lines = lines[49:160] + lines[0:23]
+        for line in selected_lines[:limit]:
+            parts = line.split(None, 1)
+            char = parts[0]
+            desc = parts[1] if len(parts) > 1 else ""
+            title, tags = parse_emoji_desc(char, desc)
+            results.append({
+                "char": char,
+                "title": title,
+                "tags": tags
+            })
+    else:
+        for line in lines:
+            line_lower = line.lower()
+            if all(w in line_lower for w in q_words):
+                parts = line.split(None, 1)
+                char = parts[0]
+                desc = parts[1] if len(parts) > 1 else ""
+                title, tags = parse_emoji_desc(char, desc)
+                results.append({
+                    "char": char,
+                    "title": title,
+                    "tags": tags
+                })
+                if len(results) >= limit:
+                    break
+
+    return results
+
 if __name__ == "__main__":
     if len(sys.argv) < 2 or sys.argv[1] == "list":
         limit = int(sys.argv[2]) if len(sys.argv) > 2 else 60
         print(json.dumps(get_list(limit)))
     elif sys.argv[1] == "copy" and len(sys.argv) > 2:
         copy_item(sys.argv[2])
+    elif sys.argv[1] == "copy-text" and len(sys.argv) > 2:
+        copy_text(sys.argv[2])
     elif sys.argv[1] == "delete" and len(sys.argv) > 2:
         delete_item(sys.argv[2])
+    elif sys.argv[1] == "emojis":
+        query = sys.argv[2] if len(sys.argv) > 2 else ""
+        limit = int(sys.argv[3]) if len(sys.argv) > 3 else 100
+        print(json.dumps(get_emojis(query, limit)))

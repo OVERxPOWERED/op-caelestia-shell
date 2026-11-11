@@ -122,6 +122,46 @@ Scope {
     }
 
     IpcHandler {
+        function getScreenState(mon: string): ScreenState {
+            if (mon && mon.length > 0) {
+                for (const s of Quickshell.screens) {
+                    if (Hypr.monitorFor(s)?.name === mon)
+                        return ShellState.forScreen(s);
+                }
+            }
+            return ShellState.forActive();
+        }
+
+        function freezeOn(mon: string, val: bool): void {
+            const screenState = getScreenState(mon);
+            if (screenState) screenState.freezeFocus = val;
+        }
+
+        function openDrawer(drawer: string): void {
+            const screenState = ShellState.forActive();
+            if (screenState) screenState[drawer] = true;
+        }
+
+        function openDrawerOn(mon: string, drawer: string): void {
+            const screenState = getScreenState(mon);
+            if (screenState) screenState[drawer] = true;
+        }
+
+        function closeDrawer(drawer: string): void {
+            const screenState = ShellState.forActive();
+            if (screenState) screenState[drawer] = false;
+        }
+
+        function closeDrawerOn(mon: string, drawer: string): void {
+            const screenState = getScreenState(mon);
+            if (screenState) screenState[drawer] = false;
+        }
+
+        function tabOn(mon: string, index: int): void {
+            const screenState = getScreenState(mon);
+            if (screenState) screenState.dashboardTab = index;
+        }
+
         function toggle(drawer: string): void {
             if (list().split("\n").includes(drawer)) {
                 if (root.hasFullscreen && ["launcher", "session", "dashboard"].includes(drawer))
@@ -140,6 +180,13 @@ Scope {
 
         function isOpen(drawer: string): string {
             const screenState = ShellState.forActive();
+            if (typeof screenState[drawer] !== "boolean")
+                return "unknown";
+            return screenState[drawer] ? "1" : "0";
+        }
+
+        function isOpenOn(mon: string, drawer: string): string {
+            const screenState = getScreenState(mon);
             if (typeof screenState[drawer] !== "boolean")
                 return "unknown";
             return screenState[drawer] ? "1" : "0";

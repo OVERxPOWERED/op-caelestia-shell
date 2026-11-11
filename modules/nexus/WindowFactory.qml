@@ -11,8 +11,15 @@ import qs.modules.nexus
 Singleton {
     id: root
 
+    property var currentWindow: null
+
     function create(parent: Item, props: var): void {
-        nexusComp.createObject(parent ?? dummy, props);
+        if (root.currentWindow) {
+            root.currentWindow.destroy();
+            root.currentWindow = null;
+            return;
+        }
+        root.currentWindow = nexusComp.createObject(parent ?? dummy, props);
     }
 
     QtObject {
@@ -27,6 +34,11 @@ Singleton {
 
             color: Colours.tPalette.m3surface
             surfaceFormat.opaque: false
+
+            Component.onDestruction: {
+                if (root.currentWindow === win)
+                    root.currentWindow = null;
+            }
 
             onVisibleChanged: {
                 if (!visible)

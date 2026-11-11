@@ -115,6 +115,8 @@ StyledWindow {
         id: focusGrab
 
         active: {
+            if (root.screenState.freezeFocus)
+                return false;
             const s = root.screenState;
             const conf = root.contentItem.Config;
             if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))

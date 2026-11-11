@@ -96,6 +96,12 @@ QtObject {
             category: "shell"
         },
         {
+            label: Tr.tr("Clipboard"),
+            icon: "content_paste",
+            description: Tr.tr("History limits, card previews, shortcuts guide"),
+            category: "shell"
+        },
+        {
             label: Tr.tr("Voice typing"),
             icon: "mic",
             description: Tr.tr("Speech recognition, microphone, smart formatting"),

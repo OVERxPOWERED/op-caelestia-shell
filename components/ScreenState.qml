@@ -14,8 +14,20 @@ PersistentProperties {
     property bool dock
     property bool overview
     property bool quicknote
+    property bool clipboard
 
     property var launcherPickCallback: undefined
+
+    onClipboardChanged: {
+        if (clipboard) {
+            dock = false;
+            overview = false;
+            launcher = false;
+            dashboard = false;
+            session = false;
+            quicknote = false;
+        }
+    }
 
     onQuicknoteChanged: {
         if (quicknote) {
@@ -24,6 +36,7 @@ PersistentProperties {
             launcher = false;
             dashboard = false;
             session = false;
+            clipboard = false;
         }
     }
 
@@ -36,6 +49,7 @@ PersistentProperties {
             quicknote = false;
             dashboard = false;
             session = false;
+            clipboard = false;
         }
     }
 
@@ -43,6 +57,7 @@ PersistentProperties {
         if (overview) {
             launcher = false;
             quicknote = false;
+            clipboard = false;
             dashboard = false;
             session = false;
         }
@@ -67,4 +82,5 @@ PersistentProperties {
     // Dashboard state
     property int dashboardTab
     property date dashboardDate: new Date()
+    property bool freezeFocus
 }

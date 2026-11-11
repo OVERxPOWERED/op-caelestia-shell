@@ -71,6 +71,9 @@ Item {
 
             radius: Tokens.rounding.extraLarge * 2
             color: Colours.tPalette.m3surfaceContainer
+            border.width: 1
+            border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.30) : Qt.alpha(Colours.palette.m3outline, 0.35)
+            antialiasing: true
 
             RowLayout {
                 id: bigInfoRow
@@ -159,6 +162,9 @@ Item {
 
                     radius: Tokens.rounding.large
                     color: Colours.tPalette.m3surfaceContainer
+                    border.width: 1
+                    border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.30) : Qt.alpha(Colours.palette.m3outline, 0.35)
+                    antialiasing: true
 
                     ColumnLayout {
                         id: forecastItemColumn
@@ -217,6 +223,9 @@ Item {
         Layout.preferredHeight: 60
         radius: Tokens.rounding.medium
         color: Colours.tPalette.m3surfaceContainer
+        border.width: 1
+        border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.30) : Qt.alpha(Colours.palette.m3outline, 0.35)
+        antialiasing: true
 
         Row {
             anchors.centerIn: parent

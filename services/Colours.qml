@@ -121,7 +121,7 @@ Singleton {
         }
         const ignoreAlpha = Math.min(0.57, Math.max(0, transparency.base - 0.03));
         const messages = [];
-        for (const ns of ["caelestia-drawers", "caelestia-quicknote"]) {
+        for (const ns of ["caelestia-drawers", "caelestia-quicknote", "caelestia-clipboard"]) {
             messages.push(rule.arg(ns).arg("blur").arg(trEnabled));
             messages.push(rule.arg(ns).arg("ignore_alpha").arg(ignoreAlpha));
         }

@@ -11,9 +11,9 @@ import "modules/areapicker"
 import "modules/displays"
 import "modules/overview"
 import "modules/quicknote"
+import "modules/clipboard"
 import "modules/voice"
 import "modules/lock"
-import "modules/shutdown"
 import QtQuick
 import Quickshell
 import qs.services
@@ -40,12 +40,12 @@ ShellRoot {
     DisplayProfileAsk {}
     Overview {}
     QuickNote {}
+    Clipboard {}
     VoicePill {}
     Lock {
         id: lock
     }
 
-    Shutdown {}
     Shortcuts {}
     BatteryMonitor {}
     IdleMonitors {
@@ -56,3 +56,4 @@ ShellRoot {
     // so the Bluetooth pairing agent is always running
     Component.onCompleted: void(BtAgent.active)
 }
+

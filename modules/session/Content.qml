@@ -44,7 +44,6 @@ Column {
 
         icon: Config.session.icons.shutdown
         command: Config.session.commands.shutdown
-        screenKind: "poweroff"
 
         KeyNavigation.up: logout
         KeyNavigation.down: hibernate
@@ -66,7 +65,6 @@ Column {
 
         icon: Config.session.icons.hibernate
         command: Config.session.commands.hibernate
-        screenKind: "hibernate"
 
         KeyNavigation.up: shutdown
         KeyNavigation.down: reboot
@@ -77,7 +75,6 @@ Column {
 
         icon: Config.session.icons.reboot
         command: Config.session.commands.reboot
-        screenKind: "reboot"
 
         KeyNavigation.up: hibernate
     }
@@ -86,11 +83,8 @@ Column {
         id: button
 
         required property list<string> command
-        property string screenKind
 
         function exec(): void {
-            if (screenKind && ShutdownScreen.begin(command, screenKind))
-                return;
             if (!SessionManager.exec(command))
                 Quickshell.execDetached(command);
         }

@@ -130,7 +130,8 @@ Scope {
                         color: Qt.alpha(Colours.palette.m3surfaceContainer, Colours.transparency.enabled ? 0.72 : 1)
                         radius: Tokens.rounding.extraLarge
                         border.width: 1
-                        border.color: Colours.palette.m3outlineVariant
+                        border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.30) : Qt.alpha(Colours.palette.m3outline, 0.35)
+                        antialiasing: true
                         scale: root.opacity < 1 ? 0.94 : 1
 
                         Behavior on scale {

@@ -219,6 +219,14 @@ QtObject {
             }
         },
         Component {
+            // Clipboard
+            StackPage {
+                Component {
+                    ClipboardPage {}
+                }
+            }
+        },
+        Component {
             // Voice typing
             StackPage {
                 Component {

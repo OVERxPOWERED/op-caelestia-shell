@@ -194,26 +194,6 @@ PageBase {
         }
 
         SectionHeader {
-            text: Tr.tr("Shutdown")
-        }
-
-        ToggleRow {
-            id: shutdownRow
-
-            first: true
-            last: true
-            text: Tr.tr("Shutdown screen")
-            subtext: Tr.tr("Fade to a minimal black screen with the logo when you power off, restart or hibernate from the session menu")
-            onToggled: ShutdownScreen.setEnabled(shutdownRow.checked)
-
-            Binding {
-                target: shutdownRow
-                property: "checked"
-                value: ShutdownScreen.enabled
-            }
-        }
-
-        SectionHeader {
             text: Tr.tr("Motion")
         }
 

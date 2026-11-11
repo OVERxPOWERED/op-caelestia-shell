@@ -23,3 +23,5 @@ __pycache__/
 /docs/IDEAS.md
 /docs/*roadmap.md
 .vscode/
+/clipboard-designs/
+/docs/screenshots/

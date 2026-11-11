@@ -20,11 +20,11 @@ Scope {
         WorkspaceManager;
         Density;
         Glass;
-        ShutdownScreen;
         Motion;
         AppFonts;
         DoctorWatchdog;
         VoiceTyping;
+        ClipboardSettings;
 
         if (GlobalConfig.utilities.vpn.enabled)
             VPN;

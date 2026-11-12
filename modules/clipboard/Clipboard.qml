@@ -13,8 +13,10 @@ import qs.services
 Scope {
     id: root
 
+    property string requestedTab: "clipboard"
+
     function toggleTab(tab: string): void {
-        const s = ShellState.forActive() || (Screens.screens.length > 0 ? ShellState.forScreen(Screens.screens[0]) : null);
+        const s = ShellState.forActive();
         if (s) {
             if (s.clipboard && root.requestedTab === tab) {
                 s.clipboard = false;
@@ -22,14 +24,41 @@ Scope {
                 root.requestedTab = tab;
                 s.clipboard = true;
             }
+        } else if (Screens.screens.length > 0) {
+            for (let i = 0; i < Screens.screens.length; i++) {
+                const sc = ShellState.forScreen(Screens.screens[i]);
+                if (sc) {
+                    if (sc.clipboard && root.requestedTab === tab) {
+                        sc.clipboard = false;
+                    } else {
+                        root.requestedTab = tab;
+                        sc.clipboard = true;
+                    }
+                }
+            }
         }
     }
 
     function openTab(tab: string): void {
-        const s = ShellState.forActive() || (Screens.screens.length > 0 ? ShellState.forScreen(Screens.screens[0]) : null);
+        const s = ShellState.forActive();
         if (s) {
             root.requestedTab = tab;
             s.clipboard = true;
+        } else if (Screens.screens.length > 0) {
+            for (let i = 0; i < Screens.screens.length; i++) {
+                const sc = ShellState.forScreen(Screens.screens[i]);
+                if (sc) {
+                    root.requestedTab = tab;
+                    sc.clipboard = true;
+                }
+            }
+        }
+    }
+
+    function close(): void {
+        for (let i = 0; i < Screens.screens.length; i++) {
+            const s = ShellState.forScreen(Screens.screens[i]);
+            if (s) s.clipboard = false;
         }
     }
 

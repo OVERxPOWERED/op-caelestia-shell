@@ -29,7 +29,7 @@ def save_pins(pins):
     except Exception:
         pass
 
-def get_list(limit=60):
+def get_list(limit=1000):
     try:
         raw_list = subprocess.check_output(["cliphist", "list"]).decode("utf-8", errors="replace").splitlines()
     except Exception:
@@ -38,7 +38,8 @@ def get_list(limit=60):
     pinned_ids = {p.get("id") for p in load_pins() if "id" in p}
     items = []
 
-    for line in raw_list[:limit]:
+    slice_target = raw_list if (not limit or limit <= 0) else raw_list[:limit]
+    for line in slice_target:
         parts = line.split("\t", 1)
         if len(parts) < 2:
             continue
@@ -156,7 +157,8 @@ def get_emojis(query="", limit=2000):
     if not q_words:
         # On empty search: show handy symbols first, followed by all Unicode emojis
         selected_lines = lines[0:23] + lines[49:]
-        for line in selected_lines[:limit]:
+        slice_target = selected_lines if (not limit or limit <= 0) else selected_lines[:limit]
+        for line in slice_target:
             parts = line.split(None, 1)
             char = parts[0]
             desc = parts[1] if len(parts) > 1 else ""
@@ -179,7 +181,7 @@ def get_emojis(query="", limit=2000):
                     "title": title,
                     "tags": tags
                 })
-                if limit and len(results) >= limit:
+                if limit and limit > 0 and len(results) >= limit:
                     break
 
     return results

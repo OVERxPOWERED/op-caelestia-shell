@@ -19,6 +19,8 @@ Item {
     required property ShellScreen screen
     signal closeRequested
 
+    readonly property alias cardOpacity: card.opacity
+
     property string initialTab: "clipboard"
     property string currentTab: initialTab
 
@@ -42,6 +44,12 @@ Item {
             refreshEmojis();
         }
         searchInput.forceActiveFocus();
+    }
+
+    function requestClose(): void {
+        if (exitAnim.running) return;
+        enterAnim.stop();
+        exitAnim.restart();
     }
 
     function refreshClipboard() {
@@ -87,7 +95,7 @@ Item {
         if (ClipboardSettings.autoClearSearch) {
             searchInput.text = "";
         }
-        root.closeRequested();
+        root.requestClose();
     }
 
     function copyEmoji(glyph) {
@@ -95,7 +103,7 @@ Item {
         if (ClipboardSettings.autoClearSearch) {
             searchInput.text = "";
         }
-        root.closeRequested();
+        root.requestClose();
     }
 
     function deleteItem(id) {
@@ -194,6 +202,57 @@ Item {
         border.width: 1
         border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.25) : Qt.alpha(Colours.palette.m3outline, 0.20)
 
+        transformOrigin: Item.Center
+        scale: 0.92
+        opacity: 0.0
+
+        ParallelAnimation {
+            id: enterAnim
+            running: true
+
+            Anim {
+                target: card
+                property: "scale"
+                from: 0.92
+                to: 1.0
+            }
+
+            Anim {
+                target: card
+                property: "opacity"
+                from: 0.0
+                to: 1.0
+                type: Anim.DefaultEffects
+            }
+        }
+
+        SequentialAnimation {
+            id: exitAnim
+            running: false
+
+            ParallelAnimation {
+                Anim {
+                    target: card
+                    property: "scale"
+                    from: card.scale
+                    to: 0.92
+                    type: Anim.FastSpatial
+                }
+
+                Anim {
+                    target: card
+                    property: "opacity"
+                    from: card.opacity
+                    to: 0.0
+                    type: Anim.FastEffects
+                }
+            }
+
+            ScriptAction {
+                script: root.closeRequested()
+            }
+        }
+
         MouseArea {
             anchors.fill: parent
             onClicked: {}
@@ -256,29 +315,17 @@ Item {
 
                         Keys.onUpPressed: {
                             if (root.currentTab === "clipboard") {
-                                if (list.currentIndex > 0) {
-                                    list.currentIndex--;
-                                    list.positionViewAtIndex(list.currentIndex, ListView.Contain);
-                                }
+                                list.decrementCurrentIndex();
                             } else {
-                                if (emojiList.currentIndex > 0) {
-                                    emojiList.currentIndex--;
-                                    emojiList.positionViewAtIndex(emojiList.currentIndex, ListView.Contain);
-                                }
+                                emojiList.decrementCurrentIndex();
                             }
                         }
 
                         Keys.onDownPressed: {
                             if (root.currentTab === "clipboard") {
-                                if (list.currentIndex < list.count - 1) {
-                                    list.currentIndex++;
-                                    list.positionViewAtIndex(list.currentIndex, ListView.Contain);
-                                }
+                                list.incrementCurrentIndex();
                             } else {
-                                if (emojiList.currentIndex < emojiList.count - 1) {
-                                    emojiList.currentIndex++;
-                                    emojiList.positionViewAtIndex(emojiList.currentIndex, ListView.Contain);
-                                }
+                                emojiList.incrementCurrentIndex();
                             }
                         }
 
@@ -301,7 +348,7 @@ Item {
                             if (searchInput.text !== "") {
                                 searchInput.text = "";
                             } else {
-                                root.closeRequested();
+                                root.requestClose();
                             }
                         }
 
@@ -426,7 +473,9 @@ Item {
                     spacing: 2
 
                     boundsBehavior: Flickable.StopAtBounds
-                    highlightRangeMode: ListView.NoHighlightRange
+                    preferredHighlightBegin: 0
+                    preferredHighlightEnd: height
+                    highlightRangeMode: ListView.ApplyRange
                     keyNavigationWraps: false
 
                     StyledScrollBar.vertical: StyledScrollBar {
@@ -443,6 +492,26 @@ Item {
                     }
 
                     highlightFollowsCurrentItem: false
+                    highlight: StyledRect {
+                        id: listHighlight
+                        radius: 6
+                        color: Qt.alpha(Colours.palette.m3primary, 0.20)
+                        border.width: 1
+                        border.color: Qt.alpha(Colours.palette.m3primary, 0.35)
+
+                        y: list.currentItem?.y ?? 0
+                        width: list.width
+                        height: list.currentItem?.height ?? 36
+                        visible: list.currentItem !== null && list.count > 0
+                        z: 0
+
+                        Behavior on y {
+                            Anim {}
+                        }
+                        Behavior on height {
+                            Anim {}
+                        }
+                    }
 
                     delegate: Item {
                         id: itemDelegate
@@ -460,11 +529,10 @@ Item {
                         StyledRect {
                             anchors.fill: parent
                             radius: 6
-                            color: itemDelegate.isSelected 
-                                ? Qt.alpha(Colours.palette.m3primary, 0.22) 
-                                : (itemDelegate.isHovered ? Qt.alpha(Colours.palette.m3onSurface, 0.05) : "transparent")
-                            border.width: (itemDelegate.isImage && itemDelegate.isSelected) ? 1 : 0
-                            border.color: Qt.alpha(Colours.palette.m3primary, 0.35)
+                            color: (itemDelegate.isHovered && !itemDelegate.isSelected) 
+                                ? Qt.alpha(Colours.palette.m3onSurface, 0.06) 
+                                : "transparent"
+                            border.width: 0
 
                             MouseArea {
                                 id: itemMouse
@@ -474,7 +542,6 @@ Item {
                                 onClicked: {
                                     if (itemDelegate.isImage && !itemDelegate.isSelected) {
                                         list.currentIndex = itemDelegate.index;
-                                        list.positionViewAtIndex(list.currentIndex, ListView.Contain);
                                     } else {
                                         root.copyItem(itemDelegate.modelData.id);
                                     }
@@ -517,8 +584,9 @@ Item {
                                         font.family: root.monoFontFamily
                                         font.pixelSize: 15
                                         font.bold: true
-                                        color: Colours.palette.m3primary
+                                        color: itemDelegate.isSelected ? Colours.palette.m3primary : Colours.palette.m3onSurface
                                         elide: Text.ElideRight
+                                        Behavior on color { ColorAnimation { duration: 150 } }
                                     }
 
                                     StyledText {
@@ -587,6 +655,7 @@ Item {
                                         text: itemDelegate.modelData.type === "url" ? "link" : (itemDelegate.modelData.type === "code" ? "terminal" : "notes")
                                         color: itemDelegate.isSelected ? Colours.palette.m3primary : Colours.palette.m3outline
                                         fontStyle: Tokens.font.icon.builders.small.scale(0.75).build()
+                                        Behavior on color { ColorAnimation { duration: 150 } }
                                     }
                                 }
 
@@ -599,6 +668,7 @@ Item {
                                     color: itemDelegate.isSelected ? Colours.palette.m3primary : Colours.palette.m3onSurface
                                     elide: Text.ElideRight
                                     maximumLineCount: 1
+                                    Behavior on color { ColorAnimation { duration: 150 } }
                                 }
 
                                 RowLayout {
@@ -639,7 +709,9 @@ Item {
                     spacing: 2
 
                     boundsBehavior: Flickable.StopAtBounds
-                    highlightRangeMode: ListView.NoHighlightRange
+                    preferredHighlightBegin: 0
+                    preferredHighlightEnd: height
+                    highlightRangeMode: ListView.ApplyRange
                     keyNavigationWraps: false
 
                     StyledScrollBar.vertical: StyledScrollBar {
@@ -656,6 +728,23 @@ Item {
                     }
 
                     highlightFollowsCurrentItem: false
+                    highlight: StyledRect {
+                        id: emojiHighlight
+                        radius: 6
+                        color: Qt.alpha(Colours.palette.m3primary, 0.20)
+                        border.width: 1
+                        border.color: Qt.alpha(Colours.palette.m3primary, 0.35)
+
+                        y: emojiList.currentItem?.y ?? 0
+                        width: emojiList.width
+                        height: emojiList.currentItem?.height ?? 42
+                        visible: emojiList.currentItem !== null && emojiList.count > 0
+                        z: 0
+
+                        Behavior on y {
+                            Anim {}
+                        }
+                    }
 
                     delegate: Item {
                         id: emojiDelegate
@@ -672,11 +761,10 @@ Item {
                         StyledRect {
                             anchors.fill: parent
                             radius: 6
-                            color: emojiDelegate.isSelected 
-                                ? Qt.alpha(Colours.palette.m3primary, 0.22) 
-                                : (emojiDelegate.isHovered ? Qt.alpha(Colours.palette.m3onSurface, 0.05) : "transparent")
-                            border.width: emojiDelegate.isSelected ? 1 : 0
-                            border.color: Qt.alpha(Colours.palette.m3primary, 0.35)
+                            color: (emojiDelegate.isHovered && !emojiDelegate.isSelected) 
+                                ? Qt.alpha(Colours.palette.m3onSurface, 0.06) 
+                                : "transparent"
+                            border.width: 0
 
                             MouseArea {
                                 id: emojiMouse
@@ -725,6 +813,7 @@ Item {
                                         color: emojiDelegate.isSelected ? Colours.palette.m3primary : Colours.palette.m3onSurface
                                         elide: Text.ElideRight
                                         maximumLineCount: 1
+                                        Behavior on color { ColorAnimation { duration: 150 } }
                                     }
 
                                     StyledText {

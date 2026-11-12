@@ -61,7 +61,7 @@ Item {
 
     function refreshEmojis() {
         if (!emojiProcess.running) {
-            emojiProcess.command = ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "emojis", searchInput.text.trim(), "100"];
+            emojiProcess.command = ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "emojis", searchInput.text.trim(), "2000"];
             emojiProcess.running = true;
         }
     }
@@ -116,7 +116,7 @@ Item {
     Process {
         id: fetchProcess
         running: true
-        command: ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "list", `${ClipboardSettings.maxHistory}`]
+        command: ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "list", `${ClipboardSettings.maxHistory || 1000}`]
         stdout: StdioCollector {
             onStreamFinished: {
                 root.loading = false;
@@ -134,7 +134,7 @@ Item {
     Process {
         id: emojiProcess
         running: false
-        command: ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "emojis", "", "100"]
+        command: ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "emojis", "", "2000"]
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
@@ -154,7 +154,7 @@ Item {
         repeat: false
         onTriggered: {
             if (root.currentTab === "emojis") {
-                emojiProcess.command = ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "emojis", searchInput.text.trim(), "100"];
+                emojiProcess.command = ["python3", `${Quickshell.shellDir}/modules/clipboard/services/clipboard-helper.py`, "emojis", searchInput.text.trim(), "2000"];
                 emojiProcess.running = true;
             }
         }
@@ -520,11 +520,15 @@ Item {
                         required property int index
 
                         readonly property bool isSelected: list.currentIndex === index
-                        readonly property bool isHovered: itemMouse.containsMouse
+                        readonly property bool isHovered: itemHover.hovered
                         readonly property bool isImage: modelData.type === "image"
 
                         width: list.width
                         height: (isImage && isSelected) ? 96 : 36
+
+                        HoverHandler {
+                            id: itemHover
+                        }
 
                         StyledRect {
                             anchors.fill: parent
@@ -537,7 +541,6 @@ Item {
                             MouseArea {
                                 id: itemMouse
                                 anchors.fill: parent
-                                hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     if (itemDelegate.isImage && !itemDelegate.isSelected) {
@@ -674,7 +677,7 @@ Item {
                                 RowLayout {
                                     Layout.alignment: Qt.AlignVCenter
                                     spacing: 2
-                                    visible: itemDelegate.isSelected || itemMouse.containsMouse
+                                    visible: itemDelegate.isSelected || itemDelegate.isHovered
 
                                     IconButton {
                                         icon: "content_copy"
@@ -753,10 +756,14 @@ Item {
                         required property int index
 
                         readonly property bool isSelected: emojiList.currentIndex === index
-                        readonly property bool isHovered: emojiMouse.containsMouse
+                        readonly property bool isHovered: emojiHover.hovered
 
                         width: emojiList.width
                         height: 42
+
+                        HoverHandler {
+                            id: emojiHover
+                        }
 
                         StyledRect {
                             anchors.fill: parent
@@ -769,7 +776,6 @@ Item {
                             MouseArea {
                                 id: emojiMouse
                                 anchors.fill: parent
-                                hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     root.copyEmoji(emojiDelegate.modelData.char);

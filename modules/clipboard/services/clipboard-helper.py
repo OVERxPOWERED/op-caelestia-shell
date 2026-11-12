@@ -143,7 +143,7 @@ def parse_emoji_desc(char, desc):
         tags = " ".join(emoticons + clean_words[4:])
     return title.capitalize(), tags
 
-def get_emojis(query="", limit=100):
+def get_emojis(query="", limit=2000):
     if not EMOJI_FILE.exists():
         return []
 
@@ -154,8 +154,8 @@ def get_emojis(query="", limit=100):
         lines = [line.strip() for line in f if line.strip()]
 
     if not q_words:
-        # On empty search: show standard smileys/faces/gestures first, followed by handy arrows & kaomoji
-        selected_lines = lines[49:160] + lines[0:23]
+        # On empty search: show handy symbols first, followed by all Unicode emojis
+        selected_lines = lines[0:23] + lines[49:]
         for line in selected_lines[:limit]:
             parts = line.split(None, 1)
             char = parts[0]
@@ -179,14 +179,14 @@ def get_emojis(query="", limit=100):
                     "title": title,
                     "tags": tags
                 })
-                if len(results) >= limit:
+                if limit and len(results) >= limit:
                     break
 
     return results
 
 if __name__ == "__main__":
     if len(sys.argv) < 2 or sys.argv[1] == "list":
-        limit = int(sys.argv[2]) if len(sys.argv) > 2 else 60
+        limit = int(sys.argv[2]) if len(sys.argv) > 2 else 1000
         print(json.dumps(get_list(limit)))
     elif sys.argv[1] == "copy" and len(sys.argv) > 2:
         copy_item(sys.argv[2])
@@ -196,5 +196,5 @@ if __name__ == "__main__":
         delete_item(sys.argv[2])
     elif sys.argv[1] == "emojis":
         query = sys.argv[2] if len(sys.argv) > 2 else ""
-        limit = int(sys.argv[3]) if len(sys.argv) > 3 else 100
+        limit = int(sys.argv[3]) if len(sys.argv) > 3 else 2000
         print(json.dumps(get_emojis(query, limit)))

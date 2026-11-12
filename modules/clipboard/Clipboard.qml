@@ -13,14 +13,11 @@ import qs.services
 Scope {
     id: root
 
-    property string requestedTab: "clipboard"
-    signal requestCloseAll
-
     function toggleTab(tab: string): void {
         const s = ShellState.forActive() || (Screens.screens.length > 0 ? ShellState.forScreen(Screens.screens[0]) : null);
         if (s) {
             if (s.clipboard && root.requestedTab === tab) {
-                root.requestCloseAll();
+                s.clipboard = false;
             } else {
                 root.requestedTab = tab;
                 s.clipboard = true;
@@ -84,13 +81,6 @@ Scope {
                         screen: win.screen
                         initialTab: root.requestedTab
 
-                        Connections {
-                            target: root
-                            function onRequestCloseAll() {
-                                content.requestClose();
-                            }
-                        }
-
                         onCloseRequested: {
                             if (scope.screenState) scope.screenState.clipboard = false;
                         }
@@ -112,7 +102,10 @@ Scope {
         }
 
         function close(): void {
-            root.requestCloseAll();
+            for (let i = 0; i < Screens.screens.length; i++) {
+                const s = ShellState.forScreen(Screens.screens[i]);
+                if (s) s.clipboard = false;
+            }
         }
 
         function toggle(): void {

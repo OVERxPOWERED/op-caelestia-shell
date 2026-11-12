@@ -13,7 +13,7 @@ Singleton {
     property bool showInstructions: true
     property bool autoClearSearch: true
     property bool autoFocusSearch: true
-    property int maxHistory: 80
+    property int maxHistory: 1000
     property int imageCardHeight: 116
 
     function clearCache() {

@@ -557,24 +557,7 @@ Singleton {
 
     // A display appeared: apply the layout saved for this set of displays, or ask what to do
     function handleAdded(name: string): void {
-        if (pending || chooser)
-            return;
-        const m = monitors.find(o => o.name === name);
-        if (!m || !isExternalName(name))
-            return;
-
-        const known = profileForConnected();
-        if (known) {
-            run(["hyprmoncfg", "apply", known.name, "--confirm-timeout", "0"], (code, out, err) => {
-                if (code === 0)
-                    Toaster.toast(Tr.tr("Display layout applied"), Tr.tr("Using your saved layout \"%1\"").arg(known.name), "monitor");
-                else
-                    root.fail(Tr.tr("Could not apply the saved layout"), out, err);
-                refreshTimer.restart();
-            });
-        } else {
-            openChooser(m);
-        }
+        scheduleReconcile("added", name);
     }
 
     function openChooser(m: var): void {
@@ -595,61 +578,137 @@ Singleton {
         layout(kind);
     }
 
-    // A display went away. If that leaves nothing on (e.g. "external only" and the cable was
-    // pulled), turn the laptop panel back on so the screen is never left black.
+    // A display went away: reconcile topology and restore internal panel if needed
     function handleRemoved(name: string): void {
-        if (chooser && chooser.name === name)
-            dismissChooser();
-        if (monitors.some(m => !m.disabled && isPhysical(m)))
-            return;
+        scheduleReconcile("removed", name);
+    }
 
-        if (pending)
-            revert();
-        const internal = internalMonitor;
-        if (internal && !monitors.some(m => !m.disabled && isPhysical(m))) {
-            const was = lastGood[internal.name] ?? {
-                scale: 1,
-                transform: 0
-            };
-            Quickshell.execDetached(["hyprctl", "eval", `hl.monitor({ output = "${internal.name}", disabled = false, mode = "preferred", position = "0x0", scale = ${was.scale}, transform = ${was.transform} })`]);
-            Toaster.toast(Tr.tr("Laptop screen turned back on"), Tr.tr("The display you were using was disconnected"), "laptop");
-            refreshTimer.restart();
+    property var pendingEvents: []
+
+    function scheduleReconcile(type: string, name: string): void {
+        pendingEvents = [...pendingEvents, { type: type, name: name, time: Date.now() }];
+        if (type === "removed") {
+            if (chooser && chooser.name === name)
+                dismissChooser();
+            if (pending)
+                revert();
         }
+        reconcileTimer.restart();
     }
 
     Timer {
-        id: addedTimer
-
-        // Give Hyprland a moment to publish the new display's modes before looking at it
-        interval: 900
+        id: reconcileTimer
+        interval: 800
         onTriggered: {
-            const names = root.addedQueue;
-            root.addedQueue = [];
+            const events = root.pendingEvents;
+            root.pendingEvents = [];
             root.refresh(() => {
                 root.reloadProfiles();
-                // profiles load asynchronously; wait for them before matching
-                matchTimer.names = names;
-                matchTimer.start();
+                reconcileActionTimer.events = events;
+                reconcileActionTimer.restart();
             });
         }
     }
 
     Timer {
-        id: matchTimer
-
-        property var names: []
-
+        id: reconcileActionTimer
+        property var events: []
         interval: 350
-        onTriggered: names.forEach(n => root.handleAdded(n))
+        onTriggered: root.reconcileTopology(events)
     }
 
     Timer {
-        id: removedTimer
+        id: startupTimer
+        interval: 1200
+        onTriggered: root.reconcileTopology([{ type: "startup", name: "" }])
+    }
 
-        property string name
-
+    Timer {
+        id: verifyTimer
         interval: 700
-        onTriggered: root.refresh(() => root.handleRemoved(name))
+        onTriggered: root.verifyActiveDisplay()
+    }
+
+    function reconcileTopology(events: var): void {
+        const physical = monitors.filter(m => isPhysical(m));
+        const anyActive = physical.some(m => !m.disabled);
+        const internal = internalMonitor;
+        const hasExternal = externalMonitors.length > 0;
+        const hadRemove = (events ?? []).some(e => e.type === "removed");
+        const hadAdd = (events ?? []).some(e => e.type === "added");
+        const isStartup = (events ?? []).some(e => e.type === "startup");
+
+        // 1. Emergency safety check: If no physical display is active at all,
+        // force the internal panel on immediately!
+        if (!anyActive && internal) {
+            const was = lastGood[internal.name] ?? { scale: 1, transform: 0 };
+            const descRule = internal.description ? `hl.monitor({ output = "desc:${internal.description}", disabled = false, mode = "preferred", position = "0x0", scale = ${was.scale}, transform = ${was.transform} }); ` : "";
+            const nameRule = `hl.monitor({ output = "${internal.name}", disabled = false, mode = "preferred", position = "0x0", scale = ${was.scale}, transform = ${was.transform} })`;
+            Quickshell.execDetached(["hyprctl", "eval", descRule + nameRule]);
+        }
+
+        // 2. Check if a profile matches the currently connected displays
+        const known = profileForConnected();
+        if (known) {
+            const shouldApply = hadRemove || !anyActive ||
+                                (hadAdd && (Date.now() - root.startedAt > 10000)) ||
+                                (isStartup && !hasExternal && internal && internal.disabled);
+
+            if (shouldApply) {
+                run(["hyprmoncfg", "apply", known.name, "--confirm-timeout", "0"], (code, out, err) => {
+                    if (code === 0) {
+                        if (hadRemove && !hasExternal)
+                            Toaster.toast(Tr.tr("Display restored"), Tr.tr("External monitor disconnected, restored %1").arg(known.name), "laptop");
+                        else if (hadAdd)
+                            Toaster.toast(Tr.tr("Display layout applied"), Tr.tr("Using saved layout \"%1\"").arg(known.name), "monitor");
+                    } else {
+                        root.fail(Tr.tr("Could not apply display profile"), out, err);
+                    }
+                    refreshTimer.restart();
+                    verifyTimer.restart();
+                });
+                return;
+            }
+        } else {
+            if (hadAdd && hasExternal && (Date.now() - root.startedAt > 10000)) {
+                const newest = externalMonitors[externalMonitors.length - 1];
+                if (newest && !chooser)
+                    openChooser(newest);
+            } else if (!hasExternal && internal && (!anyActive || internal.disabled)) {
+                const was = lastGood[internal.name] ?? { scale: 1, transform: 0 };
+                const descRule = internal.description ? `hl.monitor({ output = "desc:${internal.description}", disabled = false, mode = "preferred", position = "0x0", scale = ${was.scale}, transform = ${was.transform} }); ` : "";
+                const nameRule = `hl.monitor({ output = "${internal.name}", disabled = false, mode = "preferred", position = "0x0", scale = ${was.scale}, transform = ${was.transform} })`;
+                Quickshell.execDetached(["hyprctl", "eval", descRule + nameRule]);
+                run(["hyprmoncfg", "save", "Auto " + internal.name], () => {
+                    run(["hyprmoncfg", "apply", "Auto " + internal.name, "--confirm-timeout", "0"], () => {
+                        refreshTimer.restart();
+                        verifyTimer.restart();
+                    });
+                });
+                Toaster.toast(Tr.tr("Display fallback restored"), Tr.tr("Restored laptop screen"), "laptop");
+            }
+        }
+
+        verifyTimer.restart();
+    }
+
+    function verifyActiveDisplay(): void {
+        run(["hyprctl", "-j", "monitors", "all"], (code, out) => {
+            if (code !== 0)
+                return;
+            const currentMons = root.parseMonitors(out);
+            const physical = currentMons.filter(m => root.isPhysical(m));
+            if (physical.length > 0 && !physical.some(m => !m.disabled)) {
+                const internal = physical.find(m => m.internal) ?? physical[0];
+                if (internal) {
+                    const descRule = internal.description ? `hl.monitor({ output = "desc:${internal.description}", disabled = false, mode = "preferred", position = "0x0", scale = 1 }); ` : "";
+                    const nameRule = `hl.monitor({ output = "${internal.name}", disabled = false, mode = "preferred", position = "0x0", scale = 1 })`;
+                    Quickshell.execDetached(["hyprctl", "eval", descRule + nameRule]);
+                    Toaster.toast(Tr.tr("Emergency Display Rescue"), Tr.tr("Recovered active display output"), "laptop");
+                    refreshTimer.restart();
+                }
+            }
+        });
     }
 
     Timer {
@@ -662,6 +721,7 @@ Singleton {
     Component.onCompleted: {
         refresh();
         reloadProfiles();
+        startupTimer.restart();
     }
 
     Timer {
@@ -688,17 +748,15 @@ Singleton {
             if (event.name.includes("mon") || event.name === "configreloaded")
                 refreshTimer.restart();
 
-            if (event.name === "monitoraddedv2") {
-                // Displays already connected when the shell starts are not "new"
-                const [, name] = event.parse(3);
-                if (Date.now() - root.startedAt > 10000 && root.isExternalName(name)) {
-                    root.addedQueue = [...root.addedQueue, name];
-                    addedTimer.restart();
-                }
-            } else if (event.name === "monitorremovedv2") {
-                const [, name] = event.parse(3);
-                removedTimer.name = name;
-                removedTimer.restart();
+            if (event.name.startsWith("monitoradded")) {
+                const parts = event.name === "monitoraddedv2" ? event.parse(3) : [null, event.data];
+                const name = parts[1] ?? "";
+                if (Date.now() - root.startedAt > 10000 && root.isExternalName(name))
+                    root.scheduleReconcile("added", name);
+            } else if (event.name.startsWith("monitorremoved")) {
+                const parts = event.name === "monitorremovedv2" ? event.parse(3) : [null, event.data];
+                const name = parts[1] ?? "";
+                root.scheduleReconcile("removed", name);
             }
         }
 
@@ -766,6 +824,11 @@ Singleton {
 
         function revert(): void {
             root.revert();
+        }
+
+        function reconcile(): string {
+            root.reconcileTopology([{ type: "manual", name: "" }]);
+            return "ok";
         }
 
         function status(): string {

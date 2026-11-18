@@ -93,9 +93,13 @@ Item {
             opacity: root.notifCount > 0 ? 0 : 1
 
             sourceComponent: ColumnLayout {
-                spacing: Tokens.spacing.extraLarge
+                width: clipRect.width - Tokens.padding.large * 2
+                spacing: Tokens.spacing.large
 
                 Image {
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.maximumWidth: clipRect.width * 0.8
+                    Layout.maximumHeight: Math.max(80, clipRect.height - emptyLabel.implicitHeight - Tokens.spacing.large - Tokens.padding.large * 2)
                     asynchronous: true
                     source: Paths.absolutePath(Config.paths.notifBg)
                     fillMode: Image.PreserveAspectFit
@@ -103,9 +107,12 @@ Item {
                 }
 
                 StyledText {
+                    id: emptyLabel
+
                     Layout.alignment: Qt.AlignHCenter
                     text: Tr.tr("All up to date!")
-                    color: Colours.palette.m3outlineVariant
+                    color: Colours.palette.m3onSurfaceVariant
+                    opacity: 0.7
                     font: Tokens.font.headline.builders.small.width(90).build()
                 }
             }

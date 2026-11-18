@@ -35,10 +35,12 @@ void main()
     vec2 qPos = max(q, 0.0);
     float dist = length(qPos) + min(max(q.x, q.y), 0.0) - r;
 
-    if (dist > 0.75) {
+    if (dist > 0.5) {
         fragColor = vec4(0.0);
         return;
     }
+
+    float aa = max(fwidth(dist), 0.75);
 
     // Smooth outward unit normal
     vec2 sp = vec2(p.x >= 0.0 ? 1.0 : -1.0, p.y >= 0.0 ? 1.0 : -1.0);
@@ -103,19 +105,21 @@ void main()
         cornerGlowWeight = pow(corners, 1.45);
     }
 
-    // Ultra-crisp thin rim sitting tightly on outer edge [-uRimWidth, +0.25]
-    float rimOuter = 1.0 - smoothstep(-0.25, 0.25, dist);
-    float rimInner = smoothstep(-(uRimWidth + 0.25), -(uRimWidth - 0.25), dist);
-    float rimMask = rimOuter * rimInner;
+    // Smoothly anti-aliased specular rim tucked cleanly inside dist <= 0 so clip:true / MSAA edges never jaggedly fight
+    float rimCenter = -0.35 - uRimWidth * 0.5;
+    float halfStroke = max(uRimWidth * 0.5, 0.45);
+    float dFromRim = abs(dist - rimCenter) - halfStroke;
+    float strokeScale = clamp(uRimWidth / 0.90, 0.72, 1.0);
+    float rimMask = (1.0 - smoothstep(-aa * 0.8, aa * 0.8, dFromRim)) * strokeScale;
 
-    // Subtle hairline outer contour
-    float contourMask = (1.0 - smoothstep(-0.20, 0.45, dist)) * smoothstep(-0.85, -0.25, dist);
+    // Subtle hairline dark contour tucked inside the edge
+    float contourMask = (1.0 - smoothstep(-0.40, 0.05, dist)) * smoothstep(-1.35, -0.40, dist);
     float contourA = uContourColor.a * contourMask;
 
     float rimA = uHighlightColor.a * specWeight * rimMask;
 
     // Inner bevel edge refraction glow (configurable uGlowWidth in px)
-    float insideClip = 1.0 - smoothstep(-0.35, 0.30, dist);
+    float insideClip = 1.0 - smoothstep(-aa * 0.85, 0.10, dist);
     float glowStart = -(max(uGlowWidth, 0.5) + 0.3);
     float bevelBase = smoothstep(glowStart, -0.3, dist);
     float edgeGlow = (uMode >= 4.5 ? pow(bevelBase, 1.8) * cornerGlowWeight : bevelBase * specWeight) * insideClip * uInnerSheen;

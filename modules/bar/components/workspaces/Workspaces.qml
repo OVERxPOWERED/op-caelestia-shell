@@ -8,6 +8,7 @@ import Caelestia
 import Caelestia.Components
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 
 StyledClippingRect {
@@ -70,6 +71,11 @@ StyledClippingRect {
 
     color: Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.full
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+    }
 
     Item {
         anchors.fill: parent

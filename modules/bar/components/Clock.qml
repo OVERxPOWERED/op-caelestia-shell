@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
 import qs.components
+import qs.components.effects
 import qs.services
 
 StyledRect {
@@ -25,6 +26,12 @@ StyledRect {
 
     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Config.bar.clock.background ? Colours.tPalette.m3surfaceContainer.a : 0)
     radius: Tokens.rounding.full
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        visible: Config.bar.clock.background && width > 0 && height > 0
+    }
 
     ColumnLayout {
         id: layout

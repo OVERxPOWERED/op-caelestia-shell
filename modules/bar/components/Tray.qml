@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Services.SystemTray
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 
 StyledRect {
@@ -36,6 +37,12 @@ StyledRect {
 
     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, (Config.bar.tray.background && items.count > 0) ? Colours.tPalette.m3surfaceContainer.a : 0)
     radius: Tokens.rounding.full
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        visible: Config.bar.tray.background && items.count > 0 && width > 0 && height > 0
+    }
 
     Column {
         id: layout

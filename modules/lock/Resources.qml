@@ -26,6 +26,13 @@ StyledRect {
     implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
     radius: Tokens.rounding.extraLarge
     color: Colours.tPalette.m3surfaceContainer
+    antialiasing: true
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        deepBevel: true
+    }
 
     ServiceRef {
         service: Cpu

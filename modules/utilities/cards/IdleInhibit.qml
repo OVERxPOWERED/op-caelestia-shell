@@ -22,7 +22,6 @@ StyledRect {
     GlassRim {
         z: 10
         radius: root.radius
-        deepBevel: true
     }
 
     RowLayout {

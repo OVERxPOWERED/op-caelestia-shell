@@ -4,6 +4,7 @@ import Quickshell.Widgets
 import Caelestia
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 
 RowLayout {
@@ -54,9 +55,15 @@ RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            bottomRightRadius: Tokens.rounding.extraLarge
-            radius: Tokens.rounding.medium
+            radius: Tokens.rounding.extraLarge
             color: Colours.tPalette.m3surfaceContainer
+            antialiasing: true
+
+            GlassRim {
+                z: 10
+                radius: parent.radius
+                deepBevel: true
+            }
 
             NotifDock {
                 lock: root.lock

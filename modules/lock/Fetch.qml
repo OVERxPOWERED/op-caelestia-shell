@@ -26,6 +26,12 @@ StyledClippingRect {
     radius: root.showGif ? Tokens.rounding.extraLarge : Tokens.rounding.medium
     color: root.showGif ? "transparent" : Colours.tPalette.m3surfaceContainer
 
+    GlassRim {
+        z: 10
+        radius: root.radius
+        deepBevel: true
+    }
+
     // GIF Display Mode
     AnimatedImage {
         id: gifPlayer

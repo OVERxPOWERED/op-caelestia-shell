@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 import qs.utils
 import qs.modules.bar.components.status
@@ -42,6 +43,11 @@ StyledRect {
 
     color: Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.full
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+    }
 
     clip: true
     implicitWidth: Tokens.sizes.bar.innerWidth

@@ -199,8 +199,12 @@ Item {
         color: Colours.transparency.enabled 
             ? Qt.alpha(Colours.palette.m3surface, 0.72) 
             : Colours.palette.m3surface
-        border.width: 1
-        border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.25) : Qt.alpha(Colours.palette.m3outline, 0.20)
+
+        GlassRim {
+            z: 10
+            radius: card.radius
+            deepBevel: true
+        }
 
         transformOrigin: Item.Center
         scale: 0.92

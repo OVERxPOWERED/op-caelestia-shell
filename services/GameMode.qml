@@ -18,12 +18,19 @@ Singleton {
             "animations:enabled": 0,
             "decoration:shadow:enabled": 0,
             "decoration:blur:enabled": 0,
+            "decoration:active_opacity": 1,
+            "decoration:inactive_opacity": 1,
             "general:gaps_in": 0,
             "general:gaps_out": 0,
             "general:border_size": 1,
             "decoration:rounding": 0,
             "general:allow_tearing": 1
         });
+        Hypr.extras.batchMessage([
+            Hypr.usingLua
+                ? `eval hl.window_rule({ match = { fullscreen = false }, opacity = "1.00 override" })`
+                : `keyword windowrule opacity 1.00 override, match:fullscreen 0`
+        ]);
     }
 
     onEnabledChanged: {

@@ -5,6 +5,7 @@ import Caelestia.Config
 import Caelestia.I18n
 import Caelestia.Services
 import qs.components
+import qs.components.effects
 import qs.services
 import qs.utils
 
@@ -55,6 +56,12 @@ StyledClippingRect {
             textColour: Colours.palette.m3onSecondary
             subTextColour: Colours.palette.m3secondaryContainer
         }
+    }
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        deepBevel: true
     }
 
     component Contents: ColumnLayout {

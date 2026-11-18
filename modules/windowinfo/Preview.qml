@@ -8,6 +8,7 @@ import Quickshell.Wayland
 import Caelestia.Config
 import Caelestia.I18n
 import qs.components
+import qs.components.effects
 import qs.services
 
 Item {
@@ -32,6 +33,13 @@ Item {
 
         color: Colours.tPalette.m3surfaceContainer
         radius: Tokens.rounding.medium
+        antialiasing: true
+
+        GlassRim {
+            z: 10
+            radius: preview.radius
+            deepBevel: true
+        }
 
         Loader {
             asynchronous: true

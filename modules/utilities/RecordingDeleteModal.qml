@@ -141,9 +141,13 @@ Loader {
             anchors.centerIn: parent
             radius: Tokens.rounding.extraLarge
             color: Colours.palette.m3surfaceContainerHigh
-            border.width: 1
-            border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.30) : Qt.alpha(Colours.palette.m3outline, 0.35)
             antialiasing: true
+
+            GlassRim {
+                z: 10
+                radius: parent.radius
+                deepBevel: true
+            }
 
             scale: 0
             Component.onCompleted: scale = Qt.binding(() => root.props.recordingConfirmDelete ? 1 : 0)

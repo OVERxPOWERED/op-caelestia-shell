@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 
 Item {
@@ -45,8 +46,12 @@ Item {
                 implicitHeight: 22
                 radius: Tokens.rounding.small
                 color: Colours.palette.m3surfaceContainerHigh
-                border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                antialiasing: true
+
+                GlassRim {
+                    z: 10
+                    radius: parent.radius
+                }
 
                 StyledText {
                     id: enterText
@@ -76,8 +81,12 @@ Item {
                 implicitHeight: 22
                 radius: Tokens.rounding.small
                 color: Colours.palette.m3surfaceContainerHigh
-                border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                antialiasing: true
+
+                GlassRim {
+                    z: 10
+                    radius: parent.radius
+                }
 
                 StyledText {
                     id: dragKeyText
@@ -107,8 +116,12 @@ Item {
                 implicitHeight: 22
                 radius: Tokens.rounding.small
                 color: Colours.palette.m3surfaceContainerHigh
-                border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                antialiasing: true
+
+                GlassRim {
+                    z: 10
+                    radius: parent.radius
+                }
 
                 StyledText {
                     id: midKeyText

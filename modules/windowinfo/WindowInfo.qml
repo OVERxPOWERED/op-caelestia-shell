@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Hyprland
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 
 Item {
@@ -40,7 +41,14 @@ Item {
 
                 color: Colours.tPalette.m3surfaceContainer
                 radius: Tokens.rounding.large
+                antialiasing: true
                 clip: true
+
+                GlassRim {
+                    z: 10
+                    radius: parent.radius
+                    deepBevel: true
+                }
 
                 Details {
                     client: root.client
@@ -53,6 +61,13 @@ Item {
 
                 color: Colours.tPalette.m3surfaceContainer
                 radius: Tokens.rounding.large
+                antialiasing: true
+
+                GlassRim {
+                    z: 10
+                    radius: parent.radius
+                    deepBevel: true
+                }
 
                 Buttons {
                     id: buttons

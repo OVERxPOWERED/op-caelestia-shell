@@ -4,6 +4,7 @@ import Quickshell.Widgets
 import Caelestia
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 
 Item {
@@ -24,6 +25,12 @@ Item {
 
             radius: Tokens.rounding.large
             color: Colours.tPalette.m3surfaceContainerLow
+
+            GlassRim {
+                z: 10
+                radius: parent.radius
+                deepBevel: true
+            }
 
             NotifDock {
                 objectName: "sidebarNotifications"

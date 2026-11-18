@@ -19,14 +19,17 @@ StyledRect {
     readonly property bool hasImage: modelData.image.length > 0
     readonly property bool hasAppIcon: modelData.appIcon.length > 0
     readonly property int bodyTextFormat: /[<*_`#\[\]]/.test(modelData.body) ? Text.MarkdownText : Text.PlainText
-    readonly property int nonAnimHeight: summary.implicitHeight + (root.expanded ? Tokens.spacing.extraSmall * 2 + appName.height + body.height + actions.height + actions.anchors.topMargin : bodyPreview.height) + inner.anchors.margins * 2
+    readonly property int nonAnimHeight: Math.max(TokenConfig.sizes.notifs.image, summary.implicitHeight + (root.expanded ? Tokens.spacing.extraSmall * 2 + appName.height + body.height + actions.height + actions.anchors.topMargin : bodyPreview.height)) + inner.anchors.margins * 2
     property bool expanded: Config.notifs.openExpanded
 
     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.large
-    border.width: 1
-    border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.30) : Qt.alpha(Colours.palette.m3outline, 0.35)
-    antialiasing: true
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        deepBevel: true
+    }
 
     implicitHeight: inner.implicitHeight
 
@@ -114,9 +117,14 @@ StyledRect {
 
                 anchors.left: parent.left
                 anchors.top: parent.top
+                anchors.topMargin: root.expanded ? 0 : Math.max(0, (root.nonAnimHeight - inner.anchors.margins * 2 - TokenConfig.sizes.notifs.image) / 2)
                 width: TokenConfig.sizes.notifs.image
                 height: TokenConfig.sizes.notifs.image
                 visible: root.hasImage || root.hasAppIcon
+
+                Behavior on anchors.topMargin {
+                    Anim {}
+                }
 
                 sourceComponent: StyledClippingRect {
                     radius: Tokens.rounding.full
@@ -178,7 +186,7 @@ StyledRect {
                         asynchronous: true
                         active: !root.hasAppIcon
                         anchors.centerIn: parent
-                        anchors.verticalCenterOffset: 1
+                        anchors.verticalCenterOffset: 2
 
                         sourceComponent: MaterialIcon {
                             text: Icons.getNotifIcon(root.modelData.summary, root.modelData.urgency)
@@ -260,6 +268,7 @@ StyledRect {
                 id: summary
 
                 anchors.top: parent.top
+                anchors.topMargin: Math.max(0, (root.nonAnimHeight - inner.anchors.margins * 2 - summary.implicitHeight - bodyPreview.height) / 2)
                 anchors.left: image.right
                 anchors.leftMargin: Tokens.spacing.medium
 
@@ -313,7 +322,7 @@ StyledRect {
             StyledText {
                 id: timeSep
 
-                anchors.top: parent.top
+                anchors.verticalCenter: root.expanded ? appName.verticalCenter : summary.verticalCenter
                 anchors.left: summary.right
                 anchors.leftMargin: Tokens.spacing.small
 
@@ -339,7 +348,7 @@ StyledRect {
             StyledText {
                 id: time
 
-                anchors.top: parent.top
+                anchors.verticalCenter: root.expanded ? appName.verticalCenter : summary.verticalCenter
                 anchors.left: timeSep.right
                 anchors.leftMargin: Tokens.spacing.small
 
@@ -354,8 +363,7 @@ StyledRect {
                 id: expandBtn
 
                 anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.topMargin: -Tokens.padding.extraSmall
+                anchors.verticalCenter: root.expanded ? appName.verticalCenter : summary.verticalCenter
 
                 implicitWidth: expandIcon.implicitHeight
                 implicitHeight: expandIcon.implicitHeight

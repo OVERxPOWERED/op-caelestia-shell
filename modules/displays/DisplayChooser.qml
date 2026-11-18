@@ -8,6 +8,7 @@ import Caelestia.Config
 import Caelestia.I18n
 import qs.components
 import qs.components.containers
+import qs.components.effects
 import qs.services
 
 // "What should this display do?", shown when a new display is plugged in. Keyboard first:
@@ -129,9 +130,13 @@ Scope {
 
                         color: Qt.alpha(Colours.palette.m3surfaceContainer, Colours.transparency.enabled ? 0.72 : 1)
                         radius: Tokens.rounding.extraLarge
-                        border.width: 1
-                        border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.30) : Qt.alpha(Colours.palette.m3outline, 0.35)
-                        antialiasing: true
+
+                        GlassRim {
+                            z: 10
+                            radius: parent.radius
+                            deepBevel: true
+                        }
+
                         scale: root.opacity < 1 ? 0.94 : 1
 
                         Behavior on scale {

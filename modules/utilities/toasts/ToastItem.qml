@@ -11,6 +11,7 @@ StyledRect {
     id: root
 
     required property Toast modelData
+    readonly property bool isSemantic: root.modelData.type === Toast.Success || root.modelData.type === Toast.Warning || root.modelData.type === Toast.Error
 
     anchors.left: parent.left
     anchors.right: parent.right
@@ -27,7 +28,7 @@ StyledRect {
         return Colours.palette.m3surface;
     }
 
-    border.width: 1
+    border.width: root.isSemantic ? 1 : 0
     border.color: {
         let colour = Colours.palette.m3outlineVariant;
         if (root.modelData.type === Toast.Success)
@@ -37,6 +38,13 @@ StyledRect {
         if (root.modelData.type === Toast.Error)
             colour = Colours.palette.m3error;
         return Qt.alpha(colour, 0.3);
+    }
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        deepBevel: true
+        visible: !root.isSemantic && width > 0 && height > 0
     }
 
     Elevation {

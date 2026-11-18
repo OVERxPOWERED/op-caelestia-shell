@@ -7,6 +7,7 @@ import Qt5Compat.GraphicalEffects
 import Quickshell
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 
 Item {
@@ -66,6 +67,13 @@ Item {
         implicitHeight: content.implicitHeight + Tokens.padding.extraLarge * 2
         radius: Tokens.rounding.extraLarge
         color: Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.4)
+        antialiasing: true
+
+        GlassRim {
+            z: 10
+            radius: panel.radius
+            deepBevel: true
+        }
 
         layer.enabled: true
         layer.effect: MultiEffect {

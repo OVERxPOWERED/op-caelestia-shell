@@ -8,6 +8,7 @@ import Quickshell.Widgets
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.services
 import qs.utils
 import ".."
@@ -60,8 +61,16 @@ Item {
                         radius: Tokens.rounding.large
 
                         color: hoverHandler.hovered ? Colours.layer(Colours.palette.m3surfaceContainerHigh, 1) : Colours.layer(Colours.palette.m3surfaceContainer, 0)
-                        border.width: isFocused ? 2 : 1
-                        border.color: isFocused ? Colours.palette.m3primary : (hoverHandler.hovered ? Colours.palette.m3outline : Colours.palette.m3outlineVariant)
+                        border.width: itemCard.isFocused ? 2 : 0
+                        border.color: Colours.palette.m3primary
+                        antialiasing: true
+
+                        GlassRim {
+                            z: 10
+                            radius: itemCard.radius
+                            deepBevel: true
+                            visible: !itemCard.isFocused && width > 0 && height > 0
+                        }
 
                         scale: hoverHandler.hovered ? 1.02 : 1.0
                         Behavior on scale { Anim {} }

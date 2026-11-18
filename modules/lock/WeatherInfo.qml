@@ -2,6 +2,7 @@ import "weather"
 import QtQuick
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 
 StyledRect {
@@ -18,6 +19,13 @@ StyledRect {
     }
     radius: Tokens.rounding.extraExtraLarge
     color: Colours.tPalette.m3surfaceContainer
+    antialiasing: true
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        deepBevel: true
+    }
 
     Timer {
         running: true

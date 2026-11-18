@@ -7,6 +7,7 @@ import Caelestia.Config
 import Caelestia.Services
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.services
 import qs.utils
 
@@ -97,6 +98,20 @@ Column {
         radius: pressed ? Tokens.rounding.medium : activeFocus ? Tokens.rounding.extraLarge : Tokens.rounding.largeIncreased
         font: Tokens.font.icon.builders.large.scale(1.3).build()
         onClicked: exec()
+
+        Elevation {
+            anchors.fill: parent
+            radius: button.radius
+            z: -1
+            visible: !GameMode.enabled
+            level: button.activeFocus ? 2 : 1
+        }
+
+        GlassRim {
+            z: 2
+            radius: button.radius
+            deepBevel: true
+        }
 
         Keys.onEnterPressed: exec()
         Keys.onReturnPressed: exec()

@@ -80,7 +80,13 @@ MouseArea {
         StyledRect {
             anchors.fill: parent
             radius: parent.radius
-            color: Colours.palette.m3surfaceContainerLow
+            color: Colours.tPalette.m3surfaceContainer
+
+            GlassRim {
+                z: 10
+                radius: parent.radius
+                deepBevel: true
+            }
 
             ColumnLayout {
                 id: column

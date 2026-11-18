@@ -5,6 +5,7 @@ import QtQuick.Effects
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.services
 
 Item {
@@ -308,10 +309,15 @@ Item {
         color: Colours.tPalette.m3surfaceContainerHigh
         border.color: root.isListening
             ? Qt.alpha(root.accentColor, 0.40)
-            : root.isPaused
-                ? Qt.alpha(root.accentColor, 0.35)
-                : Qt.rgba(1.0, 1.0, 1.0, 0.16)
-        border.width: 1
+            : Qt.alpha(root.accentColor, 0.35)
+        border.width: (root.isListening || root.isPaused) ? 1 : 0
+        antialiasing: true
+
+        GlassRim {
+            z: 10
+            radius: pillBg.radius
+            visible: !root.isListening && !root.isPaused && width > 0 && height > 0
+        }
 
         Behavior on border.color {
             CAnim {}

@@ -97,7 +97,7 @@ Singleton {
     }
 
     function toggleTransparency(notify: bool): void {
-        const nextState = !transparency.enabled;
+        const nextState = !Tokens.transparency.enabled;
         GlobalConfig.appearance.transparency.enabled = nextState;
         if (notify ?? false) {
             Quickshell.execDetached([
@@ -231,7 +231,7 @@ Singleton {
     }
 
     component Transparency: QtObject {
-        readonly property bool enabled: Tokens.transparency.enabled
+        readonly property bool enabled: Tokens.transparency.enabled && !GameMode.enabled
         readonly property real base: Math.max(0, Math.min(1, Tokens.transparency.base - (root.light ? 0.1 : 0)))
         readonly property real layers: Math.max(0, Math.min(1, Tokens.transparency.layers))
 

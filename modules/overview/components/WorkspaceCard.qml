@@ -8,6 +8,7 @@ import Quickshell.Widgets
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.services
 import qs.utils
 import ".."
@@ -230,12 +231,16 @@ Item {
         radius: Tokens.rounding.large
 
         color: Colours.layer(Colours.palette.m3surfaceContainer, 0)
-        border.width: root.isDropTarget ? 2.5 : (root.isFocused ? 2 : (hoverHandler.hovered || root.isSelected ? 1.5 : 1))
-        border.color: root.isDropTarget
-            ? Colours.palette.m3primary
-            : (root.isFocused
-                ? Colours.palette.m3primary
-                : (hoverHandler.hovered || root.isSelected ? Colours.palette.m3outline : Colours.palette.m3outlineVariant))
+        border.width: root.isDropTarget ? 2.5 : (root.isFocused ? 2 : 0)
+        border.color: Colours.palette.m3primary
+        antialiasing: true
+
+        GlassRim {
+            z: 10
+            radius: cardBody.radius
+            deepBevel: true
+            visible: !root.isDropTarget && !root.isFocused && width > 0 && height > 0
+        }
 
         Behavior on border.color { CAnim {} }
         Behavior on border.width { Anim {} }

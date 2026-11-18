@@ -6,6 +6,7 @@ import M3Shapes
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.services
 
 StyledRect {
@@ -37,6 +38,13 @@ StyledRect {
 
     color: Colours.tPalette.m3surfaceContainer
     radius: patternMode ? Tokens.rounding.extraLarge : Tokens.rounding.full
+    antialiasing: true
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        deepBevel: root.patternMode
+    }
 
     focus: true
     onActiveFocusChanged: {

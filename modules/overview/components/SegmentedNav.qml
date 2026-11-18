@@ -4,6 +4,7 @@ import QtQuick
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.services
 import ".."
 
@@ -20,8 +21,12 @@ StyledRect {
     implicitHeight: 38
     radius: Tokens.rounding.full
     color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 0)
-    border.width: 1
-    border.color: Colours.palette.m3outlineVariant
+    antialiasing: true
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+    }
 
     // Sliding indicator
     StyledRect {

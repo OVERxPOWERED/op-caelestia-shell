@@ -5,6 +5,7 @@ import Caelestia.Config
 import Caelestia.I18n
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.services
 import qs.utils
 
@@ -20,9 +21,13 @@ StyledRect {
 
     color: Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.extraLarge
-    border.width: 1
-    border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.30) : Qt.alpha(Colours.palette.m3outline, 0.35)
     antialiasing: true
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        deepBevel: true
+    }
 
     implicitWidth: Tokens.sizes.dashboard.perfHeroCardWidth
     implicitHeight: Math.max(tempProg.implicitHeight + detailsRow.implicitHeight + Tokens.spacing.large, usageShape.implicitHeight + usageLabel.implicitHeight) + Tokens.padding.large * 2

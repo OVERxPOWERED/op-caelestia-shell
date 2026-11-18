@@ -112,8 +112,12 @@ Item {
             anchors.fill: parent
             radius: parent.radius
             color: Colours.transparency.enabled ? Qt.alpha(Colours.palette.m3surfaceContainer, Colours.transparency.base) : Colours.palette.m3surfaceContainer
-            border.width: 1
-            border.color: Colours.transparency.enabled ? Qt.alpha(Colours.palette.m3outlineVariant, 0.45) : Colours.palette.m3outlineVariant
+
+            GlassRim {
+                z: 10
+                radius: parent.radius
+                deepBevel: true
+            }
 
             ColumnLayout {
                 anchors.fill: parent

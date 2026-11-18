@@ -5,6 +5,7 @@ import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.services
 import ".."
 
@@ -31,8 +32,16 @@ Item {
         radius: Tokens.rounding.large
 
         color: hoverHandler.hovered ? Colours.layer(Colours.palette.m3surfaceContainerHigh, 1) : Colours.layer(Colours.palette.m3surfaceContainerLow, 0)
-        border.width: 1.5
-        border.color: hoverHandler.hovered ? Colours.palette.m3primary : Colours.palette.m3outlineVariant
+        border.width: hoverHandler.hovered ? 1.5 : 0
+        border.color: Colours.palette.m3primary
+        antialiasing: true
+
+        GlassRim {
+            z: 10
+            radius: parent.radius
+            deepBevel: true
+            visible: !hoverHandler.hovered && width > 0 && height > 0
+        }
 
         Behavior on color { CAnim {} }
         Behavior on border.color { CAnim {} }

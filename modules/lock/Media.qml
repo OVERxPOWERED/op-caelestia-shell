@@ -6,6 +6,7 @@ import Caelestia.Config
 import Caelestia.I18n
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.components.images
 import qs.services
 
@@ -108,5 +109,11 @@ StyledClippingRect {
                 onClicked: Players.active?.next()
             }
         }
+    }
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        deepBevel: true
     }
 }

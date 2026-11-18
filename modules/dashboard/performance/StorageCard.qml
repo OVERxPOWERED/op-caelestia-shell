@@ -6,6 +6,7 @@ import Caelestia.I18n
 import Caelestia.Services
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.services
 import qs.utils
 
@@ -17,9 +18,13 @@ StyledRect {
 
     color: Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.extraExtraLarge
-    border.width: 1
-    border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.30) : Qt.alpha(Colours.palette.m3outline, 0.35)
     antialiasing: true
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        deepBevel: true
+    }
 
     implicitWidth: layout.implicitWidth + layout.anchors.margins * 2
     implicitHeight: layout.implicitHeight + Tokens.padding.large * 2

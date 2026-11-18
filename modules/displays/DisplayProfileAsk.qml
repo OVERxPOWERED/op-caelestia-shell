@@ -9,6 +9,7 @@ import Caelestia.I18n
 import qs.components
 import qs.components.containers
 import qs.components.controls
+import qs.components.effects
 import qs.services
 
 // "Apply this saved layout?" with Yes and No, shown before a layout chosen in Nexus is applied.
@@ -94,8 +95,13 @@ Scope {
 
                         color: Qt.alpha(Colours.palette.m3surfaceContainer, Colours.transparency.enabled ? 0.72 : 1)
                         radius: Tokens.rounding.extraLarge
-                        border.width: 1
-                        border.color: Colours.palette.m3outlineVariant
+
+                        GlassRim {
+                            z: 10
+                            radius: parent.radius
+                            deepBevel: true
+                        }
+
                         scale: root.opacity < 1 ? 0.94 : 1
 
                         Behavior on scale {

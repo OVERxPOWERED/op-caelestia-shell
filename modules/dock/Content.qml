@@ -8,6 +8,7 @@ import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.modules.launcher.services
 import qs.services
 import QtQml.Models
@@ -492,6 +493,19 @@ Item {
                             anchors.fill: parent
                             radius: Tokens.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
+
+                            Elevation {
+                                anchors.fill: parent
+                                radius: parent.radius
+                                z: -1
+                                visible: !GameMode.enabled
+                                level: 1
+                            }
+
+                            GlassRim {
+                                z: 2
+                                radius: parent.radius
+                            }
                         }
 
                         StateLayer {
@@ -655,6 +669,19 @@ Item {
                     anchors.fill: parent
                     radius: Tokens.rounding.large
                     color: Colours.tPalette.m3surfaceContainer
+
+                    Elevation {
+                        anchors.fill: parent
+                        radius: parent.radius
+                        z: -1
+                        visible: !GameMode.enabled
+                        level: 1
+                    }
+
+                    GlassRim {
+                        z: 2
+                        radius: parent.radius
+                    }
                 }
 
                 StateLayer {

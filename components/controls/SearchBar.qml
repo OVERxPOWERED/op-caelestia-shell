@@ -1,6 +1,7 @@
 import QtQuick
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 
 TextFieldBase {
@@ -27,6 +28,14 @@ TextFieldBase {
         color: Colours.tPalette.m3surfaceContainer
         radius: Tokens.rounding.full
 
+        Elevation {
+            anchors.fill: parent
+            radius: Math.min(bg.radius, bg.height / 2)
+            z: -1
+            visible: !GameMode.enabled
+            level: 2
+        }
+
         StateLayer {
             id: stateLayer
 
@@ -34,6 +43,11 @@ TextFieldBase {
             disabled: root.activeFocus
             manualPressOverride: tapHandler.pressed
             onClicked: root.focus = true
+        }
+
+        GlassRim {
+            z: 2
+            radius: bg.radius
         }
     }
 

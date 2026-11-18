@@ -2,6 +2,7 @@ import "dash"
 import QtQuick.Layouts
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.components.filedialog
 import qs.services
 
@@ -100,8 +101,12 @@ GridLayout {
 
     component Rect: StyledRect {
         color: Colours.tPalette.m3surfaceContainer
-        border.width: 1
-        border.color: Colours.light ? Qt.alpha(Colours.palette.m3outline, 0.30) : Qt.alpha(Colours.palette.m3outline, 0.35)
         antialiasing: true
+
+        GlassRim {
+            z: 10
+            radius: parent.radius
+            deepBevel: true
+        }
     }
 }

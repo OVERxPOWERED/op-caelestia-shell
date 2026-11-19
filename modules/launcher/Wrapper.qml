@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.modules.launcher.services
 
 Item {
@@ -56,5 +57,17 @@ Item {
             panels: root.panels
             maxHeight: root.maxHeight
         }
+    }
+
+    BlurWave {
+        target: content
+        active: root.shouldBeActive
+        direction: "bottomToTop"
+        waveHeight: 0.45
+        blurLayers: 4
+        duration: 600
+        easingType: Easing.OutQuad
+        blurStrength: 1.0
+        blurMax: 32
     }
 }

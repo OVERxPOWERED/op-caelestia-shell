@@ -6,6 +6,7 @@ import Caelestia
 import Caelestia.Config
 import Caelestia.I18n
 import qs.components
+import qs.components.effects
 import qs.components.filedialog
 import qs.utils
 
@@ -53,5 +54,16 @@ Item {
             screenState: root.screenState
             facePicker: root.facePicker
         }
+    }
+
+    BlurWave {
+        target: content
+        active: root.shouldBeActive
+        direction: "topToBottom"
+        waveHeight: 0.45
+        blurLayers: 6
+        duration: 800
+        blurStrength: 1.0
+        blurMax: 32
     }
 }

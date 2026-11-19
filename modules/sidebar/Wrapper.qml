@@ -4,6 +4,7 @@ import QtQuick
 import Caelestia
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 
 Item {
     id: root
@@ -40,5 +41,18 @@ Item {
             props: root.props
             screenState: root.screenState
         }
+    }
+
+    BlurWave {
+        target: content
+        active: root.shouldBeActive
+        direction: "rightToLeft"
+        waveHeight: 0.45
+        blurLayers: 4
+        duration: 600
+        easingType: Easing.OutQuad
+        blurStrength: 1.0
+        blurMax: 32
+        cornerRadius: Tokens.rounding.large
     }
 }

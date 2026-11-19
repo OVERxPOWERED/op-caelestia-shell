@@ -42,22 +42,19 @@ NumberAnimation {
         const idx = type % 4; // 0-7 are the 4 standard types
         return Tokens.anim.durations[types[idx]];
     }
-    easing: {
+    easing.type: Easing.BezierSpline
+    easing.bezierCurve: {
         if (type === Anim.FastSpatial)
-            return Tokens.anim.expressiveFastSpatial;
+            return [0.2, 1.0, 0.32, 1.0, 1.0, 1.0];
         if (type === Anim.DefaultSpatial)
-            return Tokens.anim.expressiveDefaultSpatial;
+            return [0.16, 1.0, 0.3, 1.0, 1.0, 1.0];
         if (type === Anim.SlowSpatial)
-            return Tokens.anim.expressiveSlowSpatial;
-        if (type === Anim.FastEffects)
-            return Tokens.anim.expressiveFastEffects;
-        if (type === Anim.DefaultEffects)
-            return Tokens.anim.expressiveDefaultEffects;
-        if (type === Anim.SlowEffects)
-            return Tokens.anim.expressiveSlowEffects;
+            return [0.14, 1.0, 0.28, 1.0, 1.0, 1.0];
+        if (type >= Anim.FastEffects && type <= Anim.SlowEffects)
+            return [0.22, 1.0, 0.36, 1.0, 1.0, 1.0];
 
         if (type >= Anim.EmphasizedSmall && type <= Anim.EmphasizedExtraLarge)
-            return Tokens.anim.emphasized;
-        return Tokens.anim.standard;
+            return [0.16, 1.0, 0.3, 1.0, 1.0, 1.0];
+        return [0.22, 1.0, 0.36, 1.0, 1.0, 1.0];
     }
 }

@@ -12,6 +12,12 @@ PersistentProperties {
     property bool utilities
     property bool sidebar
     property bool dock
+    property real dockOpenX: -1
+
+    onDockChanged: {
+        if (!dock)
+            dockOpenX = -1;
+    }
     property bool overview
     property bool quicknote
     property bool clipboard

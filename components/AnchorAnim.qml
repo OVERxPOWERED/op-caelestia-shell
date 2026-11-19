@@ -33,19 +33,20 @@ AnchorAnimation {
         const idx = type % 4; // 0-7 are the 4 standard types
         return Tokens.anim.durations[types[idx]];
     }
-    easing: {
+    easing.type: Easing.BezierSpline
+    easing.bezierCurve: {
         if (type == AnchorAnim.FastSpatial)
-            return Tokens.anim.expressiveFastSpatial;
+            return [0.2, 1.0, 0.32, 1.0, 1.0, 1.0];
         if (type == AnchorAnim.DefaultSpatial)
-            return Tokens.anim.expressiveDefaultSpatial;
+            return [0.16, 1.0, 0.3, 1.0, 1.0, 1.0];
         if (type == AnchorAnim.SlowSpatial)
-            return Tokens.anim.expressiveSlowSpatial;
+            return [0.14, 1.0, 0.28, 1.0, 1.0, 1.0];
 
-        if (type >= AnchorAnim.StandardSmall && type <= AnchorAnim.StandardExtraLarge)
-            return Tokens.anim.standard;
         if (type >= AnchorAnim.EmphasizedSmall && type <= AnchorAnim.EmphasizedExtraLarge)
-            return Tokens.anim.emphasized;
+            return [0.16, 1.0, 0.3, 1.0, 1.0, 1.0];
+        if (type >= AnchorAnim.StandardSmall && type <= AnchorAnim.StandardExtraLarge)
+            return [0.22, 1.0, 0.36, 1.0, 1.0, 1.0];
 
-        return Tokens.anim.expressiveDefaultSpatial;
+        return [0.16, 1.0, 0.3, 1.0, 1.0, 1.0];
     }
 }

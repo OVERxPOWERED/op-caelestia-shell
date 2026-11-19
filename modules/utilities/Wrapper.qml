@@ -5,6 +5,7 @@ import Quickshell
 import Caelestia
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.modules.sidebar as Sidebar
 import qs.modules.bar.popouts as BarPopouts
 
@@ -77,7 +78,6 @@ Item {
         anchors.left: parent.left
         anchors.margins: Tokens.padding.large
 
-        asynchronous: true
         active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
@@ -87,5 +87,18 @@ Item {
             popouts: root.popouts
             deformMatrix: root.deformMatrix
         }
+    }
+
+    BlurWave {
+        target: content
+        active: root.shouldBeActive
+        direction: root.screenState.sidebar ? "rightToLeft" : "bottomToTop"
+        waveHeight: 0.45
+        blurLayers: 4
+        duration: 600
+        easingType: Easing.OutQuad
+        blurStrength: 1.0
+        blurMax: 32
+        cornerRadius: Tokens.rounding.large
     }
 }

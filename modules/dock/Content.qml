@@ -101,7 +101,7 @@ Item {
 
     property real dockHoverX: -1
     readonly property bool dockHovered: !editMode && dockHoverHandler.hovered
-    property real rippleProgress: screenState.dock ? 0 : 1
+    property real rippleProgress: (screenState.dock && !GameMode.enabled) ? 0 : 1
     property real rippleOriginX: computeRippleOriginX()
 
     NumberAnimation {
@@ -167,7 +167,7 @@ Item {
     }
 
     function getRippleY(itemCenterX: real): real {
-        if (rippleProgress >= 1)
+        if (GameMode.enabled || rippleProgress >= 1)
             return 0;
         const distNorm = getRippleDistNorm(itemCenterX);
         const startOffset = itemSize * (0.45 + 1.15 * distNorm);
@@ -175,7 +175,7 @@ Item {
     }
 
     Component.onCompleted: {
-        if (root.screenState.dock) {
+        if (root.screenState.dock && !GameMode.enabled) {
             rippleOriginX = computeRippleOriginX();
             rippleAnim.restart();
         }
@@ -432,15 +432,27 @@ Item {
     Connections {
         target: root.screenState
         function onDockChanged(): void {
-            if (root.screenState.dock) {
+            if (root.screenState.dock && !GameMode.enabled) {
                 root.rippleOriginX = root.computeRippleOriginX();
                 root.rippleProgress = 0;
                 rippleAnim.restart();
             } else {
                 rippleAnim.stop();
                 root.rippleProgress = 1;
-                root.editMode = false;
-                contextMenu.close();
+                if (!root.screenState.dock) {
+                    root.editMode = false;
+                    contextMenu.close();
+                }
+            }
+        }
+    }
+
+    Connections {
+        target: GameMode
+        function onEnabledChanged(): void {
+            if (GameMode.enabled) {
+                rippleAnim.stop();
+                root.rippleProgress = 1;
             }
         }
     }

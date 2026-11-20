@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Effects
 import Caelestia.Config
+import qs.services
 
 Item {
     id: root
@@ -18,10 +19,10 @@ Item {
     property int blurMax: 32                 // Max blur radius in px
     property real cornerRadius: Config.border.rounding
 
-    property real waveProgress: active ? 0 : 1
+    property real waveProgress: (active && !GameMode.enabled) ? 0 : 1
     readonly property bool targetReady: target.width > 0 && target.height > 0
         && (target.status === undefined || target.status === Loader.Ready)
-    readonly property bool waveActive: active && waveProgress < 1 && targetReady
+    readonly property bool waveActive: !GameMode.enabled && active && waveProgress < 1 && targetReady
 
     readonly property bool isHorizontal: direction === "leftToRight" || direction === "rightToLeft"
     readonly property bool isReversed: direction === "bottomToTop" || direction === "rightToLeft"
@@ -56,7 +57,7 @@ Item {
     }
 
     onActiveChanged: {
-        if (active) {
+        if (active && !GameMode.enabled) {
             waveProgress = 0;
             waveAnim.restart();
         } else {
@@ -66,16 +67,26 @@ Item {
     }
 
     onTargetReadyChanged: {
-        if (targetReady && active) {
+        if (targetReady && active && !GameMode.enabled) {
             waveProgress = 0;
             waveAnim.restart();
         }
     }
 
     Component.onCompleted: {
-        if (active) {
+        if (active && !GameMode.enabled) {
             waveProgress = 0;
             waveAnim.restart();
+        }
+    }
+
+    Connections {
+        target: GameMode
+        function onEnabledChanged() {
+            if (GameMode.enabled) {
+                waveAnim.stop();
+                root.waveProgress = 1;
+            }
         }
     }
 

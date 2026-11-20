@@ -9,7 +9,12 @@ StyledRect {
     id: root
 
     required property int rootHeight
-    readonly property bool showForecast: rootHeight >= Tokens.sizes.lock.showForecastHeight
+    property Item blurSource: null
+    property real absX: 0
+    property real absY: 0
+    property bool compact: false
+    property bool borderless: false
+    readonly property bool showForecast: !compact && rootHeight >= Tokens.sizes.lock.showForecastHeight
 
     implicitHeight: {
         const base = brief.implicitHeight + brief.anchors.topMargin;
@@ -18,13 +23,23 @@ StyledRect {
         return base + Tokens.padding.large;
     }
     radius: Tokens.rounding.extraExtraLarge
-    color: Colours.tPalette.m3surfaceContainer
+    color: Config.lock.useLegacyLayout ? Colours.tPalette.m3surfaceContainer : "transparent"
     antialiasing: true
+
+    GlassBackdrop {
+        visible: !Config.lock.useLegacyLayout && !root.borderless && root.blurSource !== null
+        blurSource: root.blurSource
+        absX: root.absX
+        absY: root.absY
+        radius: root.radius
+    }
 
     GlassRim {
         z: 10
+        visible: !root.borderless
         radius: root.radius
-        deepBevel: true
+        deepBevel: Config.lock.useLegacyLayout
+        dualRim: !Config.lock.useLegacyLayout
     }
 
     Timer {

@@ -8,6 +8,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
+import ".."
 
 StyledRect {
     id: root
@@ -15,6 +16,9 @@ StyledRect {
     required property real centerScale
     required property int centerWidth
     required property var lock
+    property Item blurSource: null
+    property real absX: 0
+    property real absY: 0
     property bool patternMode
 
     readonly property int patternSize: Math.max(180, Math.min(240, Math.round(centerWidth * 0.42)))
@@ -36,15 +40,10 @@ StyledRect {
     }
     implicitHeight: input.implicitHeight + Tokens.padding.extraSmall * 2
 
-    color: Colours.tPalette.m3surfaceContainer
-    radius: patternMode ? Tokens.rounding.extraLarge : Tokens.rounding.full
+    color: Config.lock.useLegacyLayout ? Colours.tPalette.m3surfaceContainer : "transparent"
+    radius: patternMode ? Tokens.rounding.extraLarge : Math.round((inputRow.implicitHeight + Tokens.padding.extraSmall * 2) / 2)
     antialiasing: true
-
-    GlassRim {
-        z: 10
-        radius: root.radius
-        deepBevel: root.patternMode
-    }
+    clip: true
 
     focus: true
     onActiveFocusChanged: {
@@ -70,8 +69,28 @@ StyledRect {
         root.lock.pam.handleKey(event);
     }
 
+    Behavior on radius {
+        Anim {}
+    }
+
     Behavior on implicitWidth {
         Anim {}
+    }
+
+    GlassBackdrop {
+        visible: !Config.lock.useLegacyLayout && root.blurSource !== null
+        blurSource: root.blurSource
+        absX: root.absX
+        absY: root.absY
+        radius: root.radius
+        tintOpacity: 0.22
+    }
+
+    GlassRim {
+        z: 10
+        radius: root.radius
+        deepBevel: Config.lock.useLegacyLayout && root.patternMode
+        dualRim: !Config.lock.useLegacyLayout
     }
 
     StateLayer {
@@ -85,36 +104,40 @@ StyledRect {
 
         anchors.centerIn: parent
         width: parent.width - Tokens.padding.extraSmall * 2
-        spacing: Tokens.spacing.medium
+        spacing: patternContainer.visible ? Tokens.spacing.medium : 0
 
-        PatternGrid {
-            id: patternGrid
+        Item {
+            id: patternContainer
 
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: root.patternSize
             Layout.preferredHeight: root.patternMode && root.patternAvailable ? root.patternSize : 0
-            visible: root.patternMode && root.patternAvailable
-            opacity: root.patternMode && root.patternAvailable ? 1 : 0
-
-            onPatternFinished: code => {
-                if (code === root.patternCode) {
-                    root.lock.lock.unlock();
-                    return;
-                }
-
-                triggerError();
-                root.lock.pam.rejectPattern();
-            }
+            visible: (root.patternMode && root.patternAvailable) || height > 1
+            clip: true
 
             Behavior on Layout.preferredHeight {
                 Anim {
-                    type: Anim.DefaultEffects
+                    type: Anim.ExpressiveDefaultSpatial
                 }
             }
 
-            Behavior on opacity {
-                Anim {
-                    type: Anim.DefaultEffects
+            PatternGrid {
+                id: patternGrid
+
+                anchors.centerIn: parent
+                width: root.patternSize
+                height: root.patternSize
+                opacity: patternContainer.height / Math.max(1, root.patternSize)
+                scale: 0.9 + 0.1 * opacity
+
+                onPatternFinished: code => {
+                    if (code === root.patternCode) {
+                        root.lock.lock.unlock();
+                        return;
+                    }
+
+                    patternGrid.triggerError();
+                    root.lock.pam.rejectPattern();
                 }
             }
         }

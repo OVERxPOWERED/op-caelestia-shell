@@ -1,11 +1,43 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Caelestia.Config
+import qs.components.controls
 import qs.modules.nexus.common
 
 PageBase {
     id: root
+
+    readonly property var clockPresets: [
+        { id: "bottom-right", name: qsTr("Bottom right"), left: -1, top: -1, right: 2, bottom: 2 },
+        { id: "bottom-left", name: qsTr("Bottom left"), left: 10, top: -1, right: -1, bottom: 2 },
+        { id: "bottom-center", name: qsTr("Bottom center"), left: 50, top: -1, right: -1, bottom: 2 },
+        { id: "top-left", name: qsTr("Top left"), left: 10, top: 8, right: -1, bottom: -1 },
+        { id: "top-center", name: qsTr("Top center"), left: 50, top: 8, right: -1, bottom: -1 },
+        { id: "top-right", name: qsTr("Top right"), left: -1, top: 8, right: 2, bottom: -1 },
+        { id: "center", name: qsTr("Center"), left: 50, top: 50, right: -1, bottom: -1 }
+    ]
+
+    function currentClockPreset(): string {
+        const p = Config.background.desktopClock.position;
+        for (const preset of clockPresets) {
+            if (p.left === preset.left && p.top === preset.top && p.right === preset.right && p.bottom === preset.bottom)
+                return preset.id;
+        }
+        return "custom";
+    }
+
+    function applyClockPreset(id: string): void {
+        const preset = clockPresets.find(p => p.id === id);
+        if (!preset)
+            return;
+        GlobalConfig.background.desktopClock.position.left = preset.left;
+        GlobalConfig.background.desktopClock.position.top = preset.top;
+        GlobalConfig.background.desktopClock.position.right = preset.right;
+        GlobalConfig.background.desktopClock.position.bottom = preset.bottom;
+    }
 
     title: qsTr("Desktop & background")
     isSubPage: true
@@ -24,11 +56,84 @@ PageBase {
 
         ToggleRow {
             first: true
-            last: true
             text: qsTr("Desktop clock")
             subtext: qsTr("Display clock widget directly on the desktop wallpaper")
             checked: Config.background.desktopClock.enabled
             onToggled: GlobalConfig.background.desktopClock.enabled = checked
+        }
+
+        SelectRow {
+            id: clockPosPreset
+
+            label: qsTr("Clock position")
+            subtext: qsTr("Choose a preset screen corner or edge")
+            disabled: !Config.background.desktopClock.enabled
+            fallbackText: qsTr("Custom")
+            menuItems: clockPresetItems.instances
+            onSelected: item => root.applyClockPreset(item.value)
+
+            Binding {
+                target: clockPosPreset
+                property: "active"
+                value: clockPresetItems.instances.find(i => i.value === root.currentClockPreset()) ?? null
+            }
+
+            Variants {
+                id: clockPresetItems
+
+                model: root.clockPresets
+
+                MenuItem {
+                    required property var modelData
+
+                    text: modelData.name
+                    value: modelData.id
+                }
+            }
+        }
+
+        StepperRow {
+            label: qsTr("Horizontal position (%)")
+            subtext: qsTr("Distance from the left edge as a percentage of screen width")
+            disabled: !Config.background.desktopClock.enabled
+            value: Config.background.desktopClock.position.left >= 0
+                ? Config.background.desktopClock.position.left
+                : Math.max(0, 100 - Math.max(0, Config.background.desktopClock.position.right))
+            from: 0
+            to: 100
+            stepSize: 1
+            onMoved: v => {
+                GlobalConfig.background.desktopClock.position.left = v;
+                GlobalConfig.background.desktopClock.position.right = -1;
+            }
+        }
+
+        StepperRow {
+            label: qsTr("Vertical position (%)")
+            subtext: qsTr("Distance from the top edge as a percentage of screen height")
+            disabled: !Config.background.desktopClock.enabled
+            value: Config.background.desktopClock.position.top >= 0
+                ? Config.background.desktopClock.position.top
+                : Math.max(0, 100 - Math.max(0, Config.background.desktopClock.position.bottom))
+            from: 0
+            to: 100
+            stepSize: 1
+            onMoved: v => {
+                GlobalConfig.background.desktopClock.position.top = v;
+                GlobalConfig.background.desktopClock.position.bottom = -1;
+            }
+        }
+
+        StepperRow {
+            last: true
+            label: qsTr("Clock scale")
+            subtext: qsTr("Size multiplier for the desktop clock")
+            disabled: !Config.background.desktopClock.enabled
+            value: Config.background.desktopClock.scale
+            from: 0.5
+            to: 2.0
+            stepSize: 0.1
+            onMoved: v => GlobalConfig.background.desktopClock.scale = v
         }
 
         // Background audio visualiser

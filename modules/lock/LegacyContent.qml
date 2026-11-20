@@ -1,0 +1,74 @@
+import QtQuick
+import QtQuick.Layouts
+import Caelestia.Config
+import qs.components
+import qs.components.effects
+import qs.services
+
+RowLayout {
+    id: root
+
+    required property var lock
+
+    spacing: Tokens.spacing.largeIncreased * 2
+
+    ColumnLayout {
+        Layout.fillWidth: true
+        spacing: Tokens.spacing.medium
+
+        WeatherInfo {
+            Layout.fillWidth: true
+            rootHeight: root.height
+        }
+
+        Fetch {
+            Layout.fillWidth: true
+            Layout.fillHeight: Config.lock.showGif
+            Layout.minimumHeight: Config.lock.showGif ? 190 : -1
+            Layout.preferredHeight: Config.lock.showGif ? root.height * 0.42 : -1
+            rootHeight: root.height
+        }
+
+        Media {
+            Layout.fillWidth: true
+            Layout.fillHeight: !Config.lock.showGif
+            Layout.preferredHeight: Config.lock.showGif ? implicitHeight : -1
+            lock: root.lock
+        }
+    }
+
+    Center {
+        Layout.preferredWidth: centerWidth
+        Layout.fillWidth: false
+        Layout.fillHeight: true
+        lock: root.lock
+    }
+
+    ColumnLayout {
+        Layout.fillWidth: true
+        spacing: Tokens.spacing.medium
+
+        Resources {
+            Layout.fillWidth: true
+        }
+
+        StyledRect {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            radius: Tokens.rounding.extraLarge
+            color: Colours.tPalette.m3surfaceContainer
+            antialiasing: true
+
+            GlassRim {
+                z: 10
+                radius: parent.radius
+                deepBevel: true
+            }
+
+            NotifDock {
+                lock: root.lock
+            }
+        }
+    }
+}

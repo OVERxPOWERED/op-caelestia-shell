@@ -15,6 +15,7 @@ WlSessionLockSurface {
     required property Pam pam
 
     readonly property alias unlocking: unlockAnim.running
+    readonly property bool isLegacy: Config.lock.useLegacyLayout
     property bool powerConfirmActive
 
     function requestPowerConfirm(): void {
@@ -39,6 +40,13 @@ WlSessionLockSurface {
 
         ParallelAnimation {
             Anim {
+                target: modernContent
+                property: "revealProgress"
+                to: 0
+                duration: 280
+                easing: Tokens.anim.emphasizedAccel
+            }
+            Anim {
                 target: lockContent
                 properties: "implicitWidth,implicitHeight"
                 to: lockContent.size
@@ -49,12 +57,12 @@ WlSessionLockSurface {
                 to: lockContent.radius
             }
             Anim {
-                target: content
+                target: legacyContent
                 property: "scale"
                 to: 0
             }
             Anim {
-                target: content
+                target: legacyContent
                 property: "opacity"
                 to: 0
                 type: Anim.StandardSmall
@@ -69,7 +77,8 @@ WlSessionLockSurface {
                 target: background
                 property: "opacity"
                 to: 0
-                type: Anim.StandardLarge
+                duration: 320
+                easing: Tokens.anim.standard
             }
             SequentialAnimation {
                 PauseAnimation {
@@ -99,7 +108,15 @@ WlSessionLockSurface {
             target: background
             property: "opacity"
             to: 1
-            type: Anim.StandardLarge
+            duration: 450
+            easing: Tokens.anim.standard
+        }
+        Anim {
+            target: modernContent
+            property: "revealProgress"
+            to: 1
+            duration: 550
+            easing: Tokens.anim.emphasizedDecel
         }
         SequentialAnimation {
             ParallelAnimation {
@@ -132,12 +149,12 @@ WlSessionLockSurface {
                 }
                 Anim {
                     type: Anim.DefaultEffects
-                    target: content
+                    target: legacyContent
                     property: "opacity"
                     to: 1
                 }
                 Anim {
-                    target: content
+                    target: legacyContent
                     property: "scale"
                     to: 1
                 }
@@ -166,11 +183,11 @@ WlSessionLockSurface {
         anchors.fill: parent
         opacity: 0
 
-        layer.enabled: true
+        layer.enabled: Config.lock.backgroundBlur > 0
         layer.effect: MultiEffect {
             autoPaddingEnabled: false
-            blurEnabled: true
-            blur: 1
+            blurEnabled: Config.lock.backgroundBlur > 0
+            blur: Config.lock.backgroundBlur / 100
             blurMax: 64
             blurMultiplier: 1
         }
@@ -197,6 +214,17 @@ WlSessionLockSurface {
         }
     }
 
+    Content {
+        id: modernContent
+
+        anchors.fill: parent
+        visible: Config.lock.enabled && !root.isLegacy
+
+        lock: root
+        blurSource: background
+        revealProgress: 0
+    }
+
     Item {
         id: lockContent
 
@@ -207,7 +235,7 @@ WlSessionLockSurface {
         implicitWidth: size
         implicitHeight: size
 
-        visible: Config.lock.enabled
+        visible: Config.lock.enabled && root.isLegacy
         rotation: 180
         scale: 0
 
@@ -236,8 +264,8 @@ WlSessionLockSurface {
             rotation: 180
         }
 
-        Content {
-            id: content
+        LegacyContent {
+            id: legacyContent
 
             anchors.centerIn: parent
             width: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult * Tokens.sizes.lock.ratio - Tokens.padding.extraLargeIncreased
@@ -250,7 +278,7 @@ WlSessionLockSurface {
     }
 
     PowerConfirm {
-        blurSource: content
+        blurSource: root.isLegacy ? legacyContent : modernContent
         active: root.powerConfirmActive
         onCancelled: root.powerConfirmActive = false
         onAccepted: root.powerConfirmActive = false

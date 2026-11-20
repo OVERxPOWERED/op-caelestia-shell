@@ -12,23 +12,24 @@ ShaderEffect {
     readonly property bool isLargeSurface: Math.min(width, height) >= 90
 
     property bool deepBevel: false
+    property bool dualRim: false
     property real radius: parent ? (parent.radius ?? 0) : 0
-    property real rimWidth: deepBevel ? 0.90 : 0.65
+    property real rimWidth: (deepBevel || dualRim) ? 0.90 : 0.65
     property real lightAngle: -2.356
-    property real innerSheen: deepBevel ? 0.16 : (isLargeSurface ? 0.18 : 0.26)
-    property real glowWidth: deepBevel ? 5.0 : 2.5
-    property real ambientRim: deepBevel
-        ? (Colours.light ? 0.20 : 0.14)
+    property real innerSheen: (deepBevel || dualRim) ? 0.16 : (isLargeSurface ? 0.18 : 0.26)
+    property real glowWidth: (deepBevel || dualRim) ? 5.0 : 2.5
+    property real ambientRim: (deepBevel || dualRim)
+        ? (Colours.light ? 0.20 : 0.16)
         : (Colours.light
             ? (isLargeSurface ? 0.24 : 0.14)
             : (isLargeSurface ? 0.22 : 0.08))
-    property int mode: deepBevel ? 1 : 0
+    property int mode: dualRim ? 2 : deepBevel ? 1 : 0
     property real lensMix: 0.0
     property real topSheen: deepBevel ? (Colours.light ? 0.04 : 0.06) : 0.0
-    property real cornerPower: deepBevel ? 1.25 : (isLargeSurface ? 1.15 : 1.4)
-    property real secondaryStrength: deepBevel ? 0.78 : 0.85
+    property real cornerPower: dualRim ? 1.1 : deepBevel ? 1.25 : (isLargeSurface ? 1.15 : 1.4)
+    property real secondaryStrength: dualRim ? 0.92 : deepBevel ? 0.78 : 0.85
     property color highlightColor: {
-        if (deepBevel) {
+        if (deepBevel || dualRim) {
             const base = Colours.palette.m3primary;
             const r = Colours.light ? 1.0 : (0.85 + base.r * 0.15);
             const g = Colours.light ? 1.0 : (0.85 + base.g * 0.15);

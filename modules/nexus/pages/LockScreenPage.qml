@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -142,6 +143,56 @@ PageBase {
 
         ToggleRow {
             first: true
+            text: qsTr("Legacy lock screen")
+            subtext: qsTr("Use the original centered panel layout instead of independent frosted cards")
+            checked: GlobalConfig.lock.useLegacyLayout
+            onToggled: GlobalConfig.lock.useLegacyLayout = checked
+        }
+
+        SelectRow {
+            id: designStyleRow
+
+            label: qsTr("Design style")
+            subtext: qsTr("Visual style and arrangement of lock screen components")
+            disabled: GlobalConfig.lock.useLegacyLayout
+            menuItems: designStyleItems.instances
+            onSelected: item => GlobalConfig.lock.designStyle = item.value
+
+            Binding {
+                target: designStyleRow
+                property: "active"
+                value: designStyleItems.instances.find(i => i.value === GlobalConfig.lock.designStyle) ?? null
+            }
+
+            Variants {
+                id: designStyleItems
+
+                model: [
+                    { id: "editorial", name: qsTr("Option 1 — Borderless editorial") },
+                    { id: "hud", name: qsTr("Option 2 — Symmetric glass HUD") },
+                    { id: "hero", name: qsTr("Option 3 — Split asymmetric hero") }
+                ]
+
+                MenuItem {
+                    required property var modelData
+
+                    text: modelData.name
+                    value: modelData.id
+                }
+            }
+        }
+
+        StepperRow {
+            label: qsTr("Background blur (%)")
+            subtext: qsTr("Strength of the wallpaper or screen blur behind the lock screen")
+            value: GlobalConfig.lock.backgroundBlur
+            from: 0
+            to: 100
+            stepSize: 5
+            onMoved: v => GlobalConfig.lock.backgroundBlur = v
+        }
+
+        ToggleRow {
             text: qsTr("Wallpaper background")
             subtext: qsTr("Display blurred desktop wallpaper behind lock screen")
             checked: GlobalConfig.lock.useWallpaper
@@ -163,9 +214,145 @@ PageBase {
             onToggled: GlobalConfig.lock.recolourLogo = checked
         }
 
+        // Components
+        SectionHeader {
+            text: qsTr("Components")
+        }
+
+        ToggleRow {
+            first: true
+            text: qsTr("Clock & date")
+            subtext: qsTr("Show the clock and date in the center block")
+            disabled: GlobalConfig.lock.useLegacyLayout
+            checked: GlobalConfig.lock.showClock
+            onToggled: GlobalConfig.lock.showClock = checked
+        }
+
+        ToggleRow {
+            text: qsTr("Profile picture")
+            subtext: qsTr("Show your user avatar in the center block")
+            disabled: GlobalConfig.lock.useLegacyLayout
+            checked: GlobalConfig.lock.showProfile
+            onToggled: GlobalConfig.lock.showProfile = checked
+        }
+
+        ToggleRow {
+            text: qsTr("Battery & power actions")
+            subtext: qsTr("Show battery status and power menu button")
+            disabled: GlobalConfig.lock.useLegacyLayout
+            checked: GlobalConfig.lock.showActions
+            onToggled: GlobalConfig.lock.showActions = checked
+        }
+
+        ToggleRow {
+            text: qsTr("Weather card")
+            subtext: qsTr("Show current weather and forecast card")
+            disabled: GlobalConfig.lock.useLegacyLayout
+            checked: GlobalConfig.lock.showWeather
+            onToggled: GlobalConfig.lock.showWeather = checked
+        }
+
+        ToggleRow {
+            text: qsTr("Resource card")
+            subtext: qsTr("Show CPU, memory, and storage usage card")
+            disabled: GlobalConfig.lock.useLegacyLayout
+            checked: GlobalConfig.lock.showResources
+            onToggled: GlobalConfig.lock.showResources = checked
+        }
+
+        ToggleRow {
+            text: qsTr("Media card")
+            subtext: qsTr("Show now playing media controls card")
+            disabled: GlobalConfig.lock.useLegacyLayout
+            checked: GlobalConfig.lock.showMedia
+            onToggled: GlobalConfig.lock.showMedia = checked
+        }
+
+        ToggleRow {
+            text: qsTr("GIF / Fetch card")
+            subtext: qsTr("Show animated GIF or system fetch card")
+            disabled: GlobalConfig.lock.useLegacyLayout
+            checked: GlobalConfig.lock.showFetch
+            onToggled: GlobalConfig.lock.showFetch = checked
+        }
+
+        ToggleRow {
+            last: true
+            text: qsTr("Notification card")
+            subtext: qsTr("Show notifications card on the lock screen")
+            disabled: GlobalConfig.lock.useLegacyLayout
+            checked: GlobalConfig.lock.showNotifs
+            onToggled: GlobalConfig.lock.showNotifs = checked
+        }
+
+        // Layout Positions
+        SectionHeader {
+            text: qsTr("Component positions")
+        }
+
+        Repeater {
+            id: posRepeater
+
+            readonly property var positions: [
+                { id: "top-left", name: qsTr("Top left") },
+                { id: "top-center", name: qsTr("Top center") },
+                { id: "top-right", name: qsTr("Top right") },
+                { id: "center-left", name: qsTr("Center left") },
+                { id: "center", name: qsTr("Center") },
+                { id: "center-right", name: qsTr("Center right") },
+                { id: "bottom-left", name: qsTr("Bottom left") },
+                { id: "bottom-center", name: qsTr("Bottom center") },
+                { id: "bottom-right", name: qsTr("Bottom right") }
+            ]
+
+            model: [
+                { key: "centerPosition", label: qsTr("Center block"), subtext: qsTr("Clock, profile, password input, and power actions"), enabled: true },
+                { key: "weatherPosition", label: qsTr("Weather card"), subtext: qsTr("Screen position for the weather card"), enabled: GlobalConfig.lock.showWeather },
+                { key: "resourcesPosition", label: qsTr("Resource card"), subtext: qsTr("Screen position for the system resources card"), enabled: GlobalConfig.lock.showResources },
+                { key: "mediaPosition", label: qsTr("Media card"), subtext: qsTr("Screen position for the media player card"), enabled: GlobalConfig.lock.showMedia },
+                { key: "fetchPosition", label: qsTr("GIF / Fetch card"), subtext: qsTr("Screen position for the GIF or system fetch card"), enabled: GlobalConfig.lock.showFetch },
+                { key: "notifsPosition", label: qsTr("Notification card"), subtext: qsTr("Screen position for the notifications card"), enabled: GlobalConfig.lock.showNotifs }
+            ]
+
+            SelectRow {
+                id: posRow
+
+                required property var modelData
+                required property int index
+
+                first: index === 0
+                last: index === posRepeater.count - 1
+                label: modelData.label
+                subtext: modelData.subtext
+                disabled: GlobalConfig.lock.useLegacyLayout || !modelData.enabled
+                menuItems: posMenuItems.instances
+                onSelected: item => GlobalConfig.lock[modelData.key] = item.value
+
+                Binding {
+                    target: posRow
+                    property: "active"
+                    value: posMenuItems.instances.find(i => i.value === GlobalConfig.lock[posRow.modelData.key]) ?? null
+                }
+
+                Variants {
+                    id: posMenuItems
+
+                    model: posRepeater.positions
+
+                    MenuItem {
+                        required property var modelData
+
+                        text: modelData.name
+                        value: modelData.id
+                    }
+                }
+            }
+        }
+
         // Modal popup for pattern recording
         Loader {
             id: patternModal
+
             active: false
             visible: active
             parent: root
@@ -196,6 +383,7 @@ PageBase {
 
                     PatternRecordDialog {
                         id: dialogContent
+
                         anchors.centerIn: parent
                         onFinished: success => patternModal.active = false
                     }

@@ -50,7 +50,10 @@ StyledRect {
 
     clip: true
     radius: Tokens.rounding.large
-    color: root.urgency === "critical" ? Colours.palette.m3secondaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
+    color: {
+        const base = root.urgency === "critical" ? Colours.palette.m3secondaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2);
+        return Config.lock.useLegacyLayout ? base : Qt.alpha(base, root.urgency === "critical" ? 0.45 : 0.32);
+    }
 
     RowLayout {
         id: content

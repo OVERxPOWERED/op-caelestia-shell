@@ -5,20 +5,41 @@ import QtQuick.Layouts
 import Quickshell.Services.UPower
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
+import ".."
 
 StyledRect {
     id: root
 
-    signal powerRequested
-
+    property Item blurSource: null
+    property real absX: 0
+    property real absY: 0
     readonly property bool hasBattery: UPower.displayDevice.isLaptopBattery
     readonly property bool charging: [UPowerDeviceState.Charging, UPowerDeviceState.FullyCharged, UPowerDeviceState.PendingCharge].includes(UPower.displayDevice.state)
 
+    signal powerRequested
+
     implicitWidth: layout.implicitWidth + Tokens.padding.large * 2
     implicitHeight: layout.implicitHeight + Tokens.padding.small * 2
-    color: Colours.tPalette.m3surfaceContainer
+    color: Config.lock.useLegacyLayout ? Colours.tPalette.m3surfaceContainer : "transparent"
     radius: Tokens.rounding.full
+
+    GlassBackdrop {
+        visible: !Config.lock.useLegacyLayout && root.blurSource !== null
+        blurSource: root.blurSource
+        absX: root.absX
+        absY: root.absY
+        radius: root.height / 2
+        tintOpacity: 0.22
+    }
+
+    GlassRim {
+        z: 10
+        visible: !Config.lock.useLegacyLayout
+        radius: root.height / 2
+        dualRim: true
+    }
 
     RowLayout {
         id: layout

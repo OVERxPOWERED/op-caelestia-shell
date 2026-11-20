@@ -1,73 +1,274 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell.Widgets
-import Caelestia
 import Caelestia.Config
+import Caelestia.I18n
 import qs.components
 import qs.components.effects
 import qs.services
+import "center"
 
-RowLayout {
+Item {
     id: root
 
     required property var lock
+    property Item blurSource: null
+    property real revealProgress: 0
 
-    spacing: Tokens.spacing.largeIncreased * 2
+    readonly property string designStyle: Config.lock.designStyle || "hud"
+    readonly property bool isEditorial: designStyle === "editorial"
+    readonly property bool isHud: designStyle === "hud"
+    readonly property bool isHero: designStyle === "hero"
 
-    ColumnLayout {
-        Layout.fillWidth: true
-        spacing: Tokens.spacing.medium
+    readonly property int edgePad: Math.max(Tokens.padding.extraLarge * 2, Math.round(Math.min(width, height) * 0.045))
+    readonly property int cardWidth: Math.round(Math.min(380, Math.max(280, width * 0.21)))
+    property bool layoutReady: false
+
+    function widgetX(pos: string, w: real): real {
+        if (pos.endsWith("-left") || pos === "left")
+            return edgePad;
+        if (pos.endsWith("-right") || pos === "right")
+            return width - w - edgePad;
+        return (width - w) / 2;
+    }
+
+    function widgetY(pos: string, h: real): real {
+        if (pos.startsWith("top-"))
+            return edgePad;
+        if (pos.startsWith("bottom-"))
+            return height - h - edgePad;
+        return (height - h) / 2;
+    }
+
+    // Subtle inward offset when revealProgress = 0 so cards gently drift into place
+    function enterOffsetX(itemX: real, itemW: real): real {
+        return ((width / 2) - (itemX + itemW / 2)) * (1 - revealProgress) * 0.07;
+    }
+
+    function enterOffsetY(itemY: real, itemH: real): real {
+        return ((height / 2) - (itemY + itemH / 2)) * (1 - revealProgress) * 0.07;
+    }
+
+    onWidthChanged: if (width > 0 && height > 0 && !layoutReady) layoutReady = true
+    onHeightChanged: if (width > 0 && height > 0 && !layoutReady) layoutReady = true
+
+    // Soft vignette for contrast in borderless / hero layouts
+    Rectangle {
+        anchors.fill: parent
+        visible: root.isEditorial || root.isHero
+        opacity: root.revealProgress * 0.35
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: Qt.rgba(0, 0, 0, 0.55) }
+            GradientStop { position: 0.5; color: Qt.rgba(0, 0, 0, 0.15) }
+            GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.55) }
+        }
+    }
+
+    // Hero top-left clock + date + inline weather
+    LockSlot {
+        position: "top-left"
+        visible: root.isHero && (Config.lock.showClock || Config.lock.showWeather)
+        width: heroHeader.width
+        height: heroHeader.height
+
+        ColumnLayout {
+            id: heroHeader
+
+            spacing: Tokens.spacing.small
+
+            Clock {
+                visible: Config.lock.showClock
+                centerScale: Math.min(1, (root.lock.screen?.height ?? 1440) / 1440) * 1.05
+                centerWidth: Math.round(Tokens.sizes.lock.centerWidth * centerScale)
+            }
+
+            StyledText {
+                visible: Config.lock.showClock
+                text: Time.format("dddd • d MMMM").toUpperCase()
+                color: Colours.palette.m3onSurface
+                font: Tokens.font.title.builders.medium.weight(Font.DemiBold).build()
+            }
+
+            RowLayout {
+                visible: Config.lock.showWeather
+                Layout.topMargin: Tokens.spacing.small
+                spacing: Tokens.spacing.small
+
+                MaterialIcon {
+                    text: Weather.icon
+                    color: Colours.palette.m3secondary
+                    fontStyle: Tokens.font.icon.large
+                }
+
+                StyledText {
+                    text: `${Weather.temp}  •  ${Weather.description}`
+                    color: Colours.palette.m3onSurfaceVariant
+                    font: Tokens.font.title.small
+                }
+            }
+        }
+    }
+
+    LockSlot {
+        id: weatherSlot
+
+        position: Config.lock.weatherPosition
+        visible: !root.isHero && Config.lock.showWeather
+        width: weatherCard.width
+        height: weatherCard.height
 
         WeatherInfo {
-            Layout.fillWidth: true
+            id: weatherCard
+
+            width: root.cardWidth
             rootHeight: root.height
+            blurSource: root.blurSource
+            absX: weatherSlot.x
+            absY: weatherSlot.y
+            compact: root.isEditorial || root.isHud
+            borderless: root.isEditorial
         }
+    }
+
+    LockSlot {
+        position: Config.lock.fetchPosition
+        visible: Config.lock.showFetch
+        width: fetchCard.width
+        height: fetchCard.height
 
         Fetch {
-            Layout.fillWidth: true
-            Layout.fillHeight: Config.lock.showGif
-            Layout.minimumHeight: Config.lock.showGif ? 190 : -1
-            Layout.preferredHeight: Config.lock.showGif ? root.height * 0.42 : -1
+            id: fetchCard
+
+            width: root.cardWidth
+            height: Config.lock.showGif ? Math.round(Math.min(280, Math.max(180, root.height * 0.24))) : implicitHeight
             rootHeight: root.height
         }
+    }
+
+    LockSlot {
+        id: mediaSlot
+
+        position: Config.lock.mediaPosition
+        visible: Config.lock.showMedia
+        width: mediaCard.width
+        height: mediaCard.height
 
         Media {
-            Layout.fillWidth: true
-            Layout.fillHeight: !Config.lock.showGif
-            Layout.preferredHeight: Config.lock.showGif ? implicitHeight : -1
+            id: mediaCard
+
+            width: root.cardWidth
             lock: root.lock
+            blurSource: root.blurSource
+            absX: mediaSlot.x
+            absY: mediaSlot.y
+            borderless: root.isEditorial
+            compactLayout: root.isEditorial || root.isHud || root.isHero
         }
     }
 
-    Center {
-        lock: root.lock
+    LockSlot {
+        id: centerSlot
+
+        position: Config.lock.centerPosition
+        baseScale: 0.96
+        width: centerCard.width
+        height: centerCard.height
+
+        Center {
+            id: centerCard
+
+            lock: root.lock
+            blurSource: root.blurSource
+            absX: centerSlot.x
+            absY: centerSlot.y
+            hideClockOverride: root.isHero
+        }
     }
 
-    ColumnLayout {
-        Layout.fillWidth: true
-        spacing: Tokens.spacing.medium
+    LockSlot {
+        id: resourcesSlot
+
+        position: Config.lock.resourcesPosition
+        visible: Config.lock.showResources
+        width: resourcesCard.width
+        height: resourcesCard.height
 
         Resources {
-            Layout.fillWidth: true
+            id: resourcesCard
+
+            width: root.cardWidth
+            blurSource: root.blurSource
+            absX: resourcesSlot.x
+            absY: resourcesSlot.y
+            borderless: root.isEditorial
         }
+    }
+
+    LockSlot {
+        id: notifsSlot
+
+        position: Config.lock.notifsPosition
+        visible: Config.lock.showNotifs
+        width: notifsCard.width
+        height: notifsCard.height
 
         StyledRect {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            id: notifsCard
 
+            width: root.cardWidth
+            height: root.isHud
+                ? Math.round(Math.min(300, Math.max(200, root.height * 0.26)))
+                : Math.round(Math.min(400, Math.max(240, root.height * 0.32)))
             radius: Tokens.rounding.extraLarge
-            color: Colours.tPalette.m3surfaceContainer
+            color: "transparent"
             antialiasing: true
+
+            GlassBackdrop {
+                visible: !root.isEditorial && root.blurSource !== null
+                blurSource: root.blurSource
+                absX: notifsSlot.x
+                absY: notifsSlot.y
+                radius: parent.radius
+            }
 
             GlassRim {
                 z: 10
+                visible: !root.isEditorial
                 radius: parent.radius
-                deepBevel: true
+                dualRim: true
             }
 
             NotifDock {
                 lock: root.lock
             }
+        }
+    }
+
+    component LockSlot: Item {
+        id: slot
+
+        required property string position
+        property real baseScale: 0.96
+
+        x: root.widgetX(position, width)
+        y: root.widgetY(position, height)
+        opacity: root.revealProgress
+        scale: baseScale + (1 - baseScale) * root.revealProgress
+
+        transform: Translate {
+            x: root.enterOffsetX(slot.x, slot.width)
+            y: root.enterOffsetY(slot.y, slot.height)
+        }
+
+        Behavior on x {
+            enabled: root.layoutReady
+
+            Anim {}
+        }
+
+        Behavior on y {
+            enabled: root.layoutReady
+
+            Anim {}
         }
     }
 }

@@ -17,6 +17,10 @@ import qs.utils
 StyledRect {
     id: root
 
+    property Item blurSource: null
+    property real absX: 0
+    property real absY: 0
+    property bool borderless: false
     readonly property bool sessionControlsShown: GlobalConfig.lock.enableSessionControls && hover.hovered
     readonly property real fontScale: {
         const diff = width / 391 - 1; // 391 is the width at 1080 height screen
@@ -25,13 +29,23 @@ StyledRect {
 
     implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
     radius: Tokens.rounding.extraLarge
-    color: Colours.tPalette.m3surfaceContainer
+    color: Config.lock.useLegacyLayout ? Colours.tPalette.m3surfaceContainer : "transparent"
     antialiasing: true
+
+    GlassBackdrop {
+        visible: !Config.lock.useLegacyLayout && !root.borderless && root.blurSource !== null
+        blurSource: root.blurSource
+        absX: root.absX
+        absY: root.absY
+        radius: root.radius
+    }
 
     GlassRim {
         z: 10
+        visible: !root.borderless
         radius: root.radius
-        deepBevel: true
+        deepBevel: Config.lock.useLegacyLayout
+        dualRim: !Config.lock.useLegacyLayout
     }
 
     ServiceRef {

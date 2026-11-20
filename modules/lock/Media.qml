@@ -14,34 +14,109 @@ StyledClippingRect {
     id: root
 
     required property var lock
+    property Item blurSource: null
+    property real absX: 0
+    property real absY: 0
+    property bool borderless: false
+    property bool compactLayout: false
 
-    implicitHeight: layout.implicitHeight + layout.anchors.margins * 2
+    implicitHeight: (compactLayout ? compactRow.implicitHeight : layout.implicitHeight) + Tokens.padding.large * 2
     radius: Tokens.rounding.extraLarge
-    color: Colours.tPalette.m3surfaceContainer
+    color: Config.lock.useLegacyLayout ? Colours.tPalette.m3surfaceContainer : "transparent"
 
-    FadeImage {
-        anchors.fill: parent
-        source: Players.getArtUrl(Players.active)
+    GlassBackdrop {
+        visible: !Config.lock.useLegacyLayout && !root.borderless && root.blurSource !== null
+        blurSource: root.blurSource
+        absX: root.absX
+        absY: root.absY
+        radius: root.radius
+    }
 
-        asynchronous: true
-        fillMode: Image.PreserveAspectCrop
-        sourceSize: {
-            const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
-            return Qt.size(width * dpr, height * dpr);
+    RowLayout {
+        id: compactRow
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.margins: Tokens.padding.large
+        spacing: Tokens.spacing.medium
+        visible: root.compactLayout
+
+        StyledClippingRect {
+            Layout.preferredWidth: 52
+            Layout.preferredHeight: 52
+            radius: Tokens.rounding.medium
+            color: Qt.alpha(Colours.tPalette.m3surfaceContainerHigh, 0.6)
+
+            MaterialIcon {
+                anchors.centerIn: parent
+                text: "music_note"
+                color: Colours.palette.m3onSurfaceVariant
+                fontStyle: Tokens.font.icon.medium
+                visible: artThumb.status !== Image.Ready
+            }
+
+            FadeImage {
+                id: artThumb
+
+                anchors.fill: parent
+                source: Players.getArtUrl(Players.active)
+                asynchronous: true
+                fillMode: Image.PreserveAspectCrop
+            }
         }
 
-        layer.enabled: true
-        opacity: status === Image.Ready ? 1 : 0
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 2
 
-        StyledRect {
-            anchors.fill: parent
-            color: Colours.palette.m3surface
-            opacity: 0.7
+            StyledText {
+                Layout.fillWidth: true
+                animate: true
+                text: (Players.active?.trackTitle ?? Tr.tr("Nothing playing")) || Tr.tr("Unknown track")
+                color: Colours.palette.m3primary
+                font: Tokens.font.title.small
+                elide: Text.ElideRight
+            }
+
+            StyledText {
+                Layout.fillWidth: true
+                animate: true
+                text: (Players.active?.trackArtist ?? Tr.tr("Try playing some music!")) || Tr.tr("Unknown artist")
+                color: Colours.palette.m3onSurfaceVariant
+                font: Tokens.font.body.small
+                elide: Text.ElideRight
+            }
         }
 
-        Behavior on opacity {
-            Anim {
-                type: Anim.StandardExtraLarge
+        RowLayout {
+            spacing: Tokens.spacing.extraSmall
+
+            IconButton {
+                type: IconButton.Tonal
+                icon: "skip_previous"
+                isRound: true
+                shapeMorph: true
+                disabled: !Players.active?.canGoPrevious
+                onClicked: Players.active?.previous()
+            }
+
+            IconButton {
+                icon: Players.active?.isPlaying ? "pause" : "play_arrow"
+                isRound: true
+                shapeMorph: true
+                checked: Players.active?.isPlaying ?? false
+                disabled: !Players.active?.canTogglePlaying
+                onClicked: Players.active?.togglePlaying()
+            }
+
+            IconButton {
+                type: IconButton.Tonal
+                icon: "skip_next"
+                isRound: true
+                shapeMorph: true
+                disabled: !Players.active?.canGoNext
+                onClicked: Players.active?.next()
             }
         }
     }
@@ -54,6 +129,7 @@ StyledClippingRect {
         anchors.verticalCenter: parent.verticalCenter
         anchors.margins: Tokens.padding.large
         spacing: Tokens.spacing.extraSmall
+        visible: !root.compactLayout
 
         StyledText {
             Layout.fillWidth: true
@@ -113,7 +189,9 @@ StyledClippingRect {
 
     GlassRim {
         z: 10
+        visible: !root.borderless
         radius: root.radius
-        deepBevel: true
+        deepBevel: Config.lock.useLegacyLayout
+        dualRim: !Config.lock.useLegacyLayout
     }
 }

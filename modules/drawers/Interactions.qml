@@ -220,8 +220,6 @@ CustomMouseArea {
                 const threshold = Config.dock?.dragThreshold ?? 50;
                 if (dragY < -threshold) {
                     dockHideTimer.stop();
-                    if (!screenState.dock)
-                        screenState.dockOpenX = x - (bar.implicitWidth + panels.dock.x);
                     screenState.dock = true;
                 } else if (dragY > threshold) {
                     screenState.dock = false;
@@ -244,10 +242,8 @@ CustomMouseArea {
                 const showDockHover = inBottomPanel(panels.dock, x, y) && !screenState.launcher;
                 if (showDockHover) {
                     dockHideTimer.stop();
-                    if (!screenState.dock) {
-                        screenState.dockOpenX = x - (bar.implicitWidth + panels.dock.x);
+                    if (!screenState.dock)
                         screenState.dock = true;
-                    }
                 } else if (!showDockHover && screenState.dock && !dockHideTimer.running && !panels.dock?.contextMenuOpen) {
                     dockHideTimer.start();
                 }

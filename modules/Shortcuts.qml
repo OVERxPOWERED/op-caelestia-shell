@@ -41,8 +41,7 @@ Scope {
         onPressed: {
             if (root.hasFullscreen)
                 return;
-            const v = ShellState.forActive();
-            v.launcher = v.dashboard = v.osd = v.utilities = !(v.launcher || v.dashboard || v.osd || v.utilities);
+            ShellState.forActive().toggleAll();
         }
     }
 

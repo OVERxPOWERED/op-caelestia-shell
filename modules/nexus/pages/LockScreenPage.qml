@@ -309,8 +309,7 @@ PageBase {
                 { key: "centerPosition", label: qsTr("Center block"), subtext: qsTr("Clock, profile, password input, and power actions"), enabled: true },
                 { key: "weatherPosition", label: qsTr("Weather card"), subtext: qsTr("Screen position for the weather card"), enabled: GlobalConfig.lock.showWeather },
                 { key: "resourcesPosition", label: qsTr("Resource card"), subtext: qsTr("Screen position for the system resources card"), enabled: GlobalConfig.lock.showResources },
-                { key: "mediaPosition", label: qsTr("Media card"), subtext: qsTr("Screen position for the media player card"), enabled: GlobalConfig.lock.showMedia },
-                { key: "fetchPosition", label: qsTr("GIF / Fetch card"), subtext: qsTr("Screen position for the GIF or system fetch card"), enabled: GlobalConfig.lock.showFetch },
+                { key: "mediaPosition", label: qsTr("Media card"), subtext: qsTr("Screen position for the media player card"), enabled: GlobalConfig.lock.showMedia || (GlobalConfig.lock.showFetch && !(GlobalConfig.lock.showGif && GlobalConfig.lock.fetchPlacement === "center")) },
                 { key: "notifsPosition", label: qsTr("Notification card"), subtext: qsTr("Screen position for the notifications card"), enabled: GlobalConfig.lock.showNotifs }
             ]
 
@@ -321,7 +320,7 @@ PageBase {
                 required property int index
 
                 first: index === 0
-                last: index === posRepeater.count - 1
+                last: false
                 label: modelData.label
                 subtext: modelData.subtext
                 disabled: GlobalConfig.lock.useLegacyLayout || !modelData.enabled
@@ -345,6 +344,40 @@ PageBase {
                         text: modelData.name
                         value: modelData.id
                     }
+                }
+            }
+        }
+
+        SelectRow {
+            id: fetchPlacementRow
+
+            last: true
+            label: qsTr("GIF / Fetch placement")
+            subtext: qsTr("Place the GIF or fetch card above or below the media card, or behind the center block (GIF mode)")
+            disabled: GlobalConfig.lock.useLegacyLayout || !GlobalConfig.lock.showFetch
+            menuItems: fetchPlacementItems.instances
+            onSelected: item => GlobalConfig.lock.fetchPlacement = item.value
+
+            Binding {
+                target: fetchPlacementRow
+                property: "active"
+                value: fetchPlacementItems.instances.find(i => i.value === GlobalConfig.lock.fetchPlacement) ?? null
+            }
+
+            Variants {
+                id: fetchPlacementItems
+
+                model: [
+                    { id: "top", name: qsTr("Top of media card") },
+                    { id: "bottom", name: qsTr("Bottom of media card") },
+                    { id: "center", name: qsTr("Behind center block") }
+                ]
+
+                MenuItem {
+                    required property var modelData
+
+                    text: modelData.name
+                    value: modelData.id
                 }
             }
         }

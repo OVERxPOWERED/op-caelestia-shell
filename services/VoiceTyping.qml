@@ -37,6 +37,7 @@ Singleton {
     property string lastCommittedText: ""
     property string transcribedText: ""
     property bool showingCommitPreview: false
+    property bool restartingBackend: false
 
     readonly property string statusText: {
         switch (state) {
@@ -99,22 +100,31 @@ Singleton {
         barLevels = [0.0, 0.0, 0.0, 0.0];
         state = VoiceTyping.State.Listening;
         root.started();
-        startBackendRecord();
+        if (backendProc.running) {
+            restartingBackend = true;
+            stopBackend(true);
+        } else {
+            restartingBackend = false;
+            startBackendRecord();
+        }
     }
 
-    function pause(): void {
+    function pause(fromBackend = false): void {
         if (!isListening)
             return;
         state = VoiceTyping.State.Paused;
+        liveTranscript = "";
         audioLevel = 0.0;
         barLevels = [0.0, 0.0, 0.0, 0.0];
         root.paused();
-        pauseBackendRecord();
+        if (!fromBackend)
+            pauseBackendRecord();
     }
 
     function resume(): void {
         if (!isPaused)
             return;
+        liveTranscript = "";
         state = VoiceTyping.State.Listening;
         root.resumed();
         resumeBackendRecord();
@@ -128,7 +138,9 @@ Singleton {
     }
 
     function toggle(): void {
-        if (active)
+        if (isPaused)
+            resume();
+        else if (active)
             finish();
         else
             start();
@@ -247,6 +259,13 @@ Singleton {
         id: backendProc
 
         onExited: (exitCode, exitStatus) => {
+            if (root.restartingBackend) {
+                root.restartingBackend = false;
+                if (root.active) {
+                    root.startBackendRecord();
+                    return;
+                }
+            }
             root.audioLevel = 0.0;
             root.barLevels = [0.0, 0.0, 0.0, 0.0];
             root.state = VoiceTyping.State.Idle;
@@ -295,7 +314,7 @@ Singleton {
                         root.barLevels = [lvl * 0.85, lvl * 1.25, lvl * 1.10, lvl * 0.75];
                     }
                 } else if (line === "AUTO_PAUSE") {
-                    root.pause();
+                    root.pause(true);
                 } else if (line === "SILENCE_AUTOCOMMIT") {
                     // Handled automatically by backend commit
                 }

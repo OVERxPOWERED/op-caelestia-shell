@@ -29,6 +29,7 @@ class LockConfig : public settings::ObjectNode {
     CONFIG_PROPERTY(QString, mediaPosition, u"bottom-left"_s)
     CONFIG_PROPERTY(QString, notifsPosition, u"bottom-right"_s)
     CONFIG_PROPERTY(QString, fetchPosition, u"center-left"_s)
+    CONFIG_PROPERTY(QString, fetchPlacement, u"top"_s)
     CONFIG_GLOBAL_PROPERTY(bool, enableFprint, true)
     CONFIG_GLOBAL_PROPERTY(int, maxFprintTries, 3)
     CONFIG_GLOBAL_PROPERTY(bool, enableHowdy, true)

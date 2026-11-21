@@ -25,8 +25,8 @@ Singleton {
     // Map of saved Wi-Fi SSID (lowercased) -> security type
     property var savedConnectionSecurity: ({})
 
-    // Time an access point may go unseen in scans before it is dropped from the list
-    readonly property int apGraceMs: 45000
+    // Time an access point may go unseen in passive scans before it is dropped from the list
+    readonly property int apGraceMs: 15000
     readonly property var apLastSeen: new Map()
 
     // True once the saved Wi-Fi profiles have been read at least once
@@ -993,6 +993,8 @@ Singleton {
             if (result.success) {
                 getWifiStatus(status => {
                     root.wifiEnabled = status;
+                    if (!status)
+                        clearNetworks();
                     if (callback)
                         callback(result);
                 });
@@ -1013,6 +1015,8 @@ Singleton {
             if (result.success) {
                 const enabled = result.output.trim() === "enabled";
                 root.wifiEnabled = enabled;
+                if (!enabled)
+                    clearNetworks();
                 if (callback)
                     callback(enabled);
             } else {
@@ -1022,11 +1026,51 @@ Singleton {
         });
     }
 
+    function clearNetworks(): void {
+        apPruneTimer.stop();
+        root.apLastSeen.clear();
+        const rNetworks = root.networks;
+        for (let i = rNetworks.length - 1; i >= 0; i--) {
+            const rn = rNetworks.splice(i, 1)[0];
+            rn.destroy();
+        }
+    }
+
+    function scheduleApPrune(now: real): void {
+        if (root.apLastSeen.size === 0) {
+            apPruneTimer.stop();
+            return;
+        }
+        let earliestExpiry = Infinity;
+        for (const missingSince of root.apLastSeen.values()) {
+            const expiry = missingSince + root.apGraceMs;
+            if (expiry < earliestExpiry)
+                earliestExpiry = expiry;
+        }
+        apPruneTimer.interval = Math.max(50, Math.ceil(earliestExpiry - now));
+        apPruneTimer.restart();
+    }
+
+    function pruneExpiredNetworks(): void {
+        const now = Date.now();
+        const rNetworks = root.networks;
+        for (let i = rNetworks.length - 1; i >= 0; i--) {
+            const rn = rNetworks[i];
+            const missingSince = root.apLastSeen.get(rn.ssid);
+            if (missingSince !== undefined && now - missingSince >= root.apGraceMs) {
+                root.apLastSeen.delete(rn.ssid);
+                rNetworks.splice(i, 1);
+                rn.destroy();
+            }
+        }
+        scheduleApPrune(now);
+    }
+
     function findNetwork(ssid: string): var {
         return networks.find(n => n.ssid === ssid) ?? null;
     }
 
-    function getNetworks(callback: var): void {
+    function getNetworks(callback: var, fromRescan: bool): void {
         // Read the cached scan results. Plain `d w` rescans (and waits ~4 s) whenever they are
         // older than 30 s, and this runs on every NetworkManager event, even mid-connection.
         // Scans are started on purpose by rescanWifi() and by the rescan timer.
@@ -1037,36 +1081,58 @@ Singleton {
                 return;
             }
 
+            if (!root.wifiEnabled) {
+                clearNetworks();
+                if (callback)
+                    callback([]);
+                return;
+            }
+
             const allNetworks = parseNetworkOutput(result.output);
             const networks = deduplicateNetworks(allNetworks);
             const rNetworks = root.networks;
 
+            // Key by SSID (matching deduplicateNetworks) so switching BSSID or band for the
+            // same network updates the existing entry in place instead of creating duplicates.
             const newMap = new Map();
             for (const n of networks)
-                newMap.set(`${n.frequency}:${n.ssid}:${n.bssid}`, n);
+                newMap.set(n.ssid, n);
 
-            // Scans only return a subset of nearby access points while connected,
-            // so an AP that goes unseen is kept for a while instead of vanishing.
             const now = Date.now();
+            const seenExisting = new Set();
             for (let i = rNetworks.length - 1; i >= 0; i--) {
                 const rn = rNetworks[i];
-                const key = `${rn.frequency}:${rn.ssid}:${rn.bssid}`;
+                const key = rn.ssid;
+                if (seenExisting.has(key)) {
+                    rNetworks.splice(i, 1);
+                    rn.destroy();
+                    continue;
+                }
                 if (newMap.has(key)) {
+                    seenExisting.add(key);
                     root.apLastSeen.delete(key);
+                    continue;
+                }
+                if (fromRescan || rn.active) {
+                    root.apLastSeen.delete(key);
+                    rNetworks.splice(i, 1);
+                    rn.destroy();
                     continue;
                 }
                 const missingSince = root.apLastSeen.get(key) ?? now;
                 root.apLastSeen.set(key, missingSince);
-                if (rn.active || now - missingSince > root.apGraceMs) {
+                if (now - missingSince >= root.apGraceMs) {
                     root.apLastSeen.delete(key);
                     rNetworks.splice(i, 1);
                     rn.destroy();
+                } else {
+                    seenExisting.add(key);
                 }
             }
 
             const existingMap = new Map();
             for (const rn of rNetworks)
-                existingMap.set(`${rn.frequency}:${rn.ssid}:${rn.bssid}`, rn);
+                existingMap.set(rn.ssid, rn);
 
             for (const [key, network] of newMap) {
                 const match = existingMap.get(key);
@@ -1078,6 +1144,8 @@ Singleton {
                     }));
                 }
             }
+
+            scheduleApPrune(now);
 
             if (callback)
                 callback(root.networks);
@@ -1925,11 +1993,17 @@ Singleton {
         }
     }
 
+    Timer {
+        id: apPruneTimer
+
+        onTriggered: root.pruneExpiredNetworks()
+    }
+
     Process {
         id: rescanProc
 
         command: ["nmcli", "dev", root.nmcliCommandWifi, "list", "--rescan", "yes"]
-        onExited: root.getNetworks() // qmllint disable signal-handler-parameters
+        onExited: root.getNetworks(undefined, true) // qmllint disable signal-handler-parameters
     }
 
     Process {

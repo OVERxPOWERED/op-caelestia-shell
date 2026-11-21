@@ -130,9 +130,15 @@ void HyprExtras::refreshOptions() {
 
         for (const auto& o : std::as_const(options)) {
             const auto obj = o.toObject();
-            const auto key = obj.value(u"value"_s).toString();
-            const auto value = obj.value(u"data"_s).toObject().value(u"current"_s).toVariant();
-            if (m_options.value(key) != value) {
+            auto key = obj.value(u"name"_s).toString();
+            if (key.isEmpty()) {
+                key = obj.value(u"value"_s).toString();
+            }
+            auto value = obj.value(u"current"_s).toVariant();
+            if (!value.isValid()) {
+                value = obj.value(u"data"_s).toObject().value(u"current"_s).toVariant();
+            }
+            if (!key.isEmpty() && m_options.value(key) != value) {
                 dirty = true;
                 m_options.insert(key, value);
             }

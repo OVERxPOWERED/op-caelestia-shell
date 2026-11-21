@@ -38,7 +38,6 @@ StyledRect {
         z: 10
         visible: !Config.lock.useLegacyLayout
         radius: root.height / 2
-        dualRim: true
     }
 
     RowLayout {

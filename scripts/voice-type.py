@@ -320,7 +320,14 @@ def run_recorder():
     if PID_FILE.exists():
         try:
             pid = int(PID_FILE.read_text().strip())
-            os.kill(pid, signal.SIGTERM)
+            if pid != os.getpid():
+                os.kill(pid, signal.SIGTERM)
+                for _ in range(25):
+                    try:
+                        os.kill(pid, 0)
+                        time.sleep(0.02)
+                    except ProcessLookupError:
+                        break
         except Exception:
             pass
         PID_FILE.unlink(missing_ok=True)
@@ -400,8 +407,10 @@ def run_recorder():
     meter = AudioMeter()
     last_meter_emit = time.monotonic()
     last_speech_time = time.time()
+    silence_since = None
     has_spoken_anything = False
     is_currently_speaking = False
+    was_paused = False
 
     print("RECORDING", flush=True)
 
@@ -419,12 +428,24 @@ def run_recorder():
                 time.sleep(0.3)
                 try:
                     proc.terminate()
+                    proc.wait(timeout=0.3)
                 except Exception:
-                    pass
+                    try:
+                        proc.kill()
+                    except Exception:
+                        pass
                 proc = start_audio_capture()
                 continue
 
             if is_paused:
+                if not was_paused:
+                    was_paused = True
+                    is_currently_speaking = False
+                    silence_since = None
+                    try:
+                        vad.reset()
+                    except Exception:
+                        pass
                 now = time.monotonic()
                 if now - last_meter_emit >= 0.05:
                     try:
@@ -432,51 +453,74 @@ def run_recorder():
                     except BrokenPipeError:
                         break
                     last_meter_emit = now
-                time.sleep(0.02)
                 continue
 
-            # Convert to float32 (-1.0 to 1.0)
-            samples_f32 = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
-
-            # 1. Feed to Silero VAD
-            vad.accept_waveform(samples_f32)
-            speech_active = vad.is_speech_detected()
-
-            if speech_active:
-                if not is_currently_speaking:
-                    is_currently_speaking = True
-                    has_spoken_anything = True
-                    last_speech_time = time.time()
-                    print("PARTIAL:Listening…", flush=True)
-
-            # 2. Process responsive 4-band meter
-            levels, rms = meter.process(samples_f32, speech_active)
-            now = time.monotonic()
-            if now - last_meter_emit >= 0.028:  # ~35 FPS
-                lvl_str = f"{levels[0]:.2f},{levels[1]:.2f},{levels[2]:.2f},{levels[3]:.2f}"
-                try:
-                    print(f"LEVELS:{lvl_str}", flush=True)
-                except BrokenPipeError:
-                    break
-                last_meter_emit = now
-
-            # Check if VAD completed any speech segments
-            while not vad.empty():
-                seg = vad.front
-                seg_samples = np.array(seg.samples, dtype=np.float32)
-                vad.pop()
+            if was_paused:
+                was_paused = False
                 is_currently_speaking = False
+                silence_since = None
                 last_speech_time = time.time()
+                try:
+                    vad.reset()
+                except Exception:
+                    pass
 
-                # Minimum speech duration: 250ms (4000 samples)
-                if len(seg_samples) >= 4000:
-                    wav_data = samples_to_wav_bytes(seg_samples)
-                    transcribe_queue.put(wav_data)
+            try:
+                # Convert to float32 (-1.0 to 1.0)
+                samples_f32 = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
 
-            # Auto-pause after 8 seconds of continuous silence following speech
-            if has_spoken_anything and not is_paused and not is_currently_speaking and (time.time() - last_speech_time >= 8.0):
-                print("AUTO_PAUSE", flush=True)
-                is_paused = True
+                # 1. Feed to Silero VAD
+                vad.accept_waveform(samples_f32)
+                speech_active = vad.is_speech_detected()
+
+                if speech_active:
+                    silence_since = None
+                    last_speech_time = time.time()
+                    if not is_currently_speaking:
+                        is_currently_speaking = True
+                        has_spoken_anything = True
+                        print("PARTIAL:Listening…", flush=True)
+                elif is_currently_speaking and vad.empty():
+                    if silence_since is None:
+                        silence_since = time.time()
+                    elif time.time() - silence_since >= 0.6:
+                        is_currently_speaking = False
+                        silence_since = None
+                        print("PARTIAL:", flush=True)
+
+                # 2. Process responsive 4-band meter
+                levels, rms = meter.process(samples_f32, speech_active)
+                now = time.monotonic()
+                if now - last_meter_emit >= 0.028:  # ~35 FPS
+                    lvl_str = f"{levels[0]:.2f},{levels[1]:.2f},{levels[2]:.2f},{levels[3]:.2f}"
+                    try:
+                        print(f"LEVELS:{lvl_str}", flush=True)
+                    except BrokenPipeError:
+                        break
+                    last_meter_emit = now
+
+                # Check if VAD completed any speech segments
+                while not vad.empty():
+                    seg = vad.front
+                    seg_samples = np.array(seg.samples, dtype=np.float32)
+                    vad.pop()
+                    is_currently_speaking = False
+                    silence_since = None
+                    last_speech_time = time.time()
+
+                    # Minimum speech duration: 250ms (4000 samples)
+                    if len(seg_samples) >= 4000:
+                        wav_data = samples_to_wav_bytes(seg_samples)
+                        transcribe_queue.put(wav_data)
+
+                # Auto-pause after 8 seconds of continuous silence following speech
+                if has_spoken_anything and not is_paused and not is_currently_speaking and (time.time() - last_speech_time >= 8.0):
+                    print("AUTO_PAUSE", flush=True)
+                    is_paused = True
+            except BrokenPipeError:
+                break
+            except Exception as exc:
+                print(f"[voice-type] audio loop error: {exc}", file=sys.stderr, flush=True)
 
     finally:
         is_running = False
@@ -508,7 +552,11 @@ def run_recorder():
         except Exception:
             pass
 
-        PID_FILE.unlink(missing_ok=True)
+        try:
+            if PID_FILE.exists() and PID_FILE.read_text().strip() == str(os.getpid()):
+                PID_FILE.unlink(missing_ok=True)
+        except Exception:
+            pass
         print("TEXT:", flush=True)
 
 def pause_session():

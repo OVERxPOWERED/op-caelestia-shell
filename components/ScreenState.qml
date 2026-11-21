@@ -12,17 +12,34 @@ PersistentProperties {
     property bool utilities
     property bool sidebar
     property bool dock
-    property real dockOpenX: -1
-
-    onDockChanged: {
-        if (!dock)
-            dockOpenX = -1;
-    }
     property bool overview
     property bool quicknote
     property bool clipboard
 
     property var launcherPickCallback: undefined
+    property bool _bulkUpdating: false
+
+    // Dashboard state
+    property int dashboardTab
+    property date dashboardDate: new Date()
+    property bool freezeFocus
+
+    function toggleAll(): void {
+        const open = !(launcher || dashboard || osd || utilities);
+        _bulkUpdating = true;
+        if (open) {
+            dock = false;
+            overview = false;
+            quicknote = false;
+            session = false;
+            clipboard = false;
+        }
+        utilities = open;
+        osd = open;
+        dashboard = open;
+        launcher = open;
+        _bulkUpdating = false;
+    }
 
     onClipboardChanged: {
         if (clipboard) {
@@ -49,7 +66,7 @@ PersistentProperties {
     onLauncherChanged: {
         if (!launcher)
             launcherPickCallback = undefined;
-        else {
+        else if (!_bulkUpdating) {
             dock = false;
             overview = false;
             quicknote = false;
@@ -70,7 +87,7 @@ PersistentProperties {
     }
 
     onDashboardChanged: {
-        if (dashboard) {
+        if (dashboard && !_bulkUpdating) {
             launcher = false;
             overview = false;
             session = false;
@@ -84,9 +101,4 @@ PersistentProperties {
             dashboard = false;
         }
     }
-
-    // Dashboard state
-    property int dashboardTab
-    property date dashboardDate: new Date()
-    property bool freezeFocus
 }

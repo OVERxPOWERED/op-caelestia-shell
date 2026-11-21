@@ -39,7 +39,6 @@ StyledRect {
         visible: !root.borderless
         radius: root.radius
         deepBevel: Config.lock.useLegacyLayout
-        dualRim: !Config.lock.useLegacyLayout
     }
 
     Timer {

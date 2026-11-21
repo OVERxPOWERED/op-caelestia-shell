@@ -90,7 +90,6 @@ StyledRect {
         z: 10
         radius: root.radius
         deepBevel: Config.lock.useLegacyLayout && root.patternMode
-        dualRim: !Config.lock.useLegacyLayout
     }
 
     StateLayer {

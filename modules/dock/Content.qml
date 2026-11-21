@@ -101,85 +101,6 @@ Item {
 
     property real dockHoverX: -1
     readonly property bool dockHovered: !editMode && dockHoverHandler.hovered
-    property real rippleProgress: (screenState.dock && !GameMode.enabled) ? 0 : 1
-    property real rippleOriginX: computeRippleOriginX()
-
-    NumberAnimation {
-        id: rippleAnim
-        target: root
-        property: "rippleProgress"
-        from: 0
-        to: 1
-        duration: 600
-        easing.type: Easing.Linear
-    }
-
-    function computeRippleOriginX(): real {
-        const w = Math.max(row.width, row.implicitWidth, 1);
-        if (screenState.dockOpenX < 0)
-            return w / 2;
-
-        const cursorRowX = screenState.dockOpenX - padding;
-        const step = itemSize + Tokens.spacing.medium;
-        let closestX = w / 2;
-        let bestDist = Infinity;
-
-        for (let i = 0; i < listView.count; i++) {
-            const cx = i * step + itemSize / 2;
-            const d = Math.abs(cx - cursorRowX);
-            if (d < bestDist) {
-                bestDist = d;
-                closestX = cx;
-            }
-        }
-
-        if (runningOnlyApps.length > 0) {
-            let runStart = 0;
-            if (listView.count > 0)
-                runStart = listView.width + Tokens.spacing.medium + 2 + Tokens.spacing.medium;
-
-            for (let j = 0; j < runningOnlyApps.length; j++) {
-                const cx = runStart + j * step + itemSize / 2;
-                const d = Math.abs(cx - cursorRowX);
-                if (d < bestDist) {
-                    bestDist = d;
-                    closestX = cx;
-                }
-            }
-        }
-
-        return closestX;
-    }
-
-    function getRippleDistNorm(itemCenterX: real): real {
-        const w = Math.max(row.width, row.implicitWidth, 1);
-        const maxDist = Math.max(rippleOriginX, w - rippleOriginX, itemSize);
-        return Math.min(Math.abs(itemCenterX - rippleOriginX) / maxDist, 1.0);
-    }
-
-    function getRippleEased(distNorm: real): real {
-        if (rippleProgress >= 1)
-            return 1;
-        const startProgress = 0.18 * distNorm;
-        const endProgress = 0.68 + 0.32 * distNorm;
-        const t = Math.max(0, Math.min(1, (rippleProgress - startProgress) / (endProgress - startProgress)));
-        return t >= 1 ? 1 : (1.0 - Math.pow(2, -8 * t)) / (1.0 - Math.pow(2, -8));
-    }
-
-    function getRippleY(itemCenterX: real): real {
-        if (GameMode.enabled || rippleProgress >= 1)
-            return 0;
-        const distNorm = getRippleDistNorm(itemCenterX);
-        const startOffset = itemSize * (0.45 + 1.15 * distNorm);
-        return startOffset * (1.0 - getRippleEased(distNorm));
-    }
-
-    Component.onCompleted: {
-        if (root.screenState.dock && !GameMode.enabled) {
-            rippleOriginX = computeRippleOriginX();
-            rippleAnim.restart();
-        }
-    }
 
     function getMagnificationScale(itemCenterX: real): real {
         if (!dockHovered || editMode || dockHoverX < 0) return 1.0;
@@ -432,27 +353,9 @@ Item {
     Connections {
         target: root.screenState
         function onDockChanged(): void {
-            if (root.screenState.dock && !GameMode.enabled) {
-                root.rippleOriginX = root.computeRippleOriginX();
-                root.rippleProgress = 0;
-                rippleAnim.restart();
-            } else {
-                rippleAnim.stop();
-                root.rippleProgress = 1;
-                if (!root.screenState.dock) {
-                    root.editMode = false;
-                    contextMenu.close();
-                }
-            }
-        }
-    }
-
-    Connections {
-        target: GameMode
-        function onEnabledChanged(): void {
-            if (GameMode.enabled) {
-                rippleAnim.stop();
-                root.rippleProgress = 1;
+            if (!root.screenState.dock) {
+                root.editMode = false;
+                contextMenu.close();
             }
         }
     }
@@ -544,10 +447,6 @@ Item {
                         scale: magScale
                         y: -(magScale - 1.0) * height * 0.45
                         z: Math.round((magScale - 1.0) * 100)
-
-                        transform: Translate {
-                            y: root.getRippleY(contentItem.itemCenterX)
-                        }
 
                         Behavior on scale {
                             NumberAnimation { duration: 120; easing.type: Easing.OutQuad }
@@ -757,10 +656,6 @@ Item {
                 scale: magScale
                 y: -(magScale - 1.0) * height * 0.45
                 z: Math.round((magScale - 1.0) * 100)
-
-                transform: Translate {
-                    y: root.getRippleY(runningItem.itemCenterX)
-                }
 
                 Behavior on scale {
                     NumberAnimation { duration: 120; easing.type: Easing.OutQuad }

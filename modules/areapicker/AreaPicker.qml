@@ -42,6 +42,7 @@ Scope {
                 Picker {
                     loader: root
                     screen: win.modelData
+                    enabled: !root.closing
                 }
             }
         }

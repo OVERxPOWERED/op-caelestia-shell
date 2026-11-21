@@ -5,6 +5,7 @@ import Caelestia.I18n
 import qs.components
 import qs.components.effects
 import qs.services
+import qs.utils
 import "center"
 
 Item {
@@ -21,6 +22,8 @@ Item {
 
     readonly property int edgePad: Math.max(Tokens.padding.extraLarge * 2, Math.round(Math.min(width, height) * 0.045))
     readonly property int cardWidth: Math.round(Math.min(380, Math.max(280, width * 0.21)))
+    readonly property bool fetchBehindCenter: Config.lock.showFetch && Config.lock.showGif && Config.lock.fetchPlacement === "center"
+    readonly property bool fetchInMediaGroup: Config.lock.showFetch && !fetchBehindCenter
     property bool layoutReady: false
 
     function widgetX(pos: string, w: real): real {
@@ -130,38 +133,50 @@ Item {
     }
 
     LockSlot {
-        position: Config.lock.fetchPosition
-        visible: Config.lock.showFetch
-        width: fetchCard.width
-        height: fetchCard.height
-
-        Fetch {
-            id: fetchCard
-
-            width: root.cardWidth
-            height: Config.lock.showGif ? Math.round(Math.min(280, Math.max(180, root.height * 0.24))) : implicitHeight
-            rootHeight: root.height
-        }
-    }
-
-    LockSlot {
         id: mediaSlot
 
         position: Config.lock.mediaPosition
-        visible: Config.lock.showMedia
-        width: mediaCard.width
-        height: mediaCard.height
+        visible: Config.lock.showMedia || root.fetchInMediaGroup
+        width: mediaGroup.width
+        height: mediaGroup.height
 
-        Media {
-            id: mediaCard
+        Item {
+            id: mediaGroup
+
+            readonly property bool fetchVisible: root.fetchInMediaGroup
+            readonly property bool mediaVisible: Config.lock.showMedia
+            readonly property bool fetchOnBottom: Config.lock.fetchPlacement === "bottom"
+            readonly property int gap: (fetchVisible && mediaVisible) ? Tokens.spacing.medium : 0
+            readonly property real fetchHeight: Config.lock.showGif
+                ? Math.round(Math.min(280, Math.max(180, root.height * 0.24)))
+                : fetchCard.implicitHeight
 
             width: root.cardWidth
-            lock: root.lock
-            blurSource: root.blurSource
-            absX: mediaSlot.x
-            absY: mediaSlot.y
-            borderless: root.isEditorial
-            compactLayout: root.isEditorial || root.isHud || root.isHero
+            height: (fetchVisible ? fetchHeight : 0) + gap + (mediaVisible ? mediaCard.height : 0)
+
+            Fetch {
+                id: fetchCard
+
+                visible: mediaGroup.fetchVisible
+                width: root.cardWidth
+                height: mediaGroup.fetchHeight
+                y: (!mediaGroup.fetchOnBottom || !mediaGroup.mediaVisible) ? 0 : (mediaCard.height + mediaGroup.gap)
+                rootHeight: root.height
+            }
+
+            Media {
+                id: mediaCard
+
+                visible: mediaGroup.mediaVisible
+                width: root.cardWidth
+                y: (mediaGroup.fetchOnBottom || !mediaGroup.fetchVisible) ? 0 : (fetchCard.height + mediaGroup.gap)
+                lock: root.lock
+                blurSource: root.blurSource
+                absX: mediaSlot.x
+                absY: mediaSlot.y + y
+                borderless: root.isEditorial
+                compactLayout: root.isEditorial || root.isHud || root.isHero
+            }
         }
     }
 
@@ -170,16 +185,48 @@ Item {
 
         position: Config.lock.centerPosition
         baseScale: 0.96
-        width: centerCard.width
-        height: centerCard.height
+        width: centerGifCard.visible ? centerGifCard.width : centerCard.width
+        height: centerGifCard.visible ? centerGifCard.height : centerCard.height
+
+        StyledClippingRect {
+            id: centerGifCard
+
+            visible: root.fetchBehindCenter
+            anchors.centerIn: parent
+            width: centerCard.width + Tokens.padding.extraLarge * 2
+            height: Math.min(root.height - root.edgePad * 2, centerCard.height + Tokens.padding.extraLarge * 4)
+            radius: Tokens.rounding.extraLarge
+            color: Colours.tPalette.m3surfaceContainer
+            antialiasing: true
+
+            AnimatedImage {
+                anchors.fill: parent
+                source: centerGifCard.visible ? Paths.absolutePath(Config.paths.lockGif) : ""
+                playing: centerGifCard.visible && root.visible
+                speed: 1
+                asynchronous: true
+                fillMode: AnimatedImage.PreserveAspectCrop
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                color: Qt.rgba(0, 0, 0, 0.26)
+            }
+
+            GlassRim {
+                z: 10
+                radius: centerGifCard.radius
+            }
+        }
 
         Center {
             id: centerCard
 
+            anchors.centerIn: parent
             lock: root.lock
             blurSource: root.blurSource
-            absX: centerSlot.x
-            absY: centerSlot.y
+            absX: centerSlot.x + x
+            absY: centerSlot.y + y
             hideClockOverride: root.isHero
         }
     }
@@ -234,7 +281,6 @@ Item {
                 z: 10
                 visible: !root.isEditorial
                 radius: parent.radius
-                dualRim: true
             }
 
             NotifDock {

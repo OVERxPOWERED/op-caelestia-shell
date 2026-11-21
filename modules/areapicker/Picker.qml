@@ -17,6 +17,10 @@ MouseArea {
     required property ShellScreen screen
 
     property bool onClient
+    property bool animReady
+    property bool dragging
+    property real lastPointerX: -1
+    property real lastPointerY: -1
 
     property real realBorderWidth: onClient ? (Hypr.options["general:border_size"] ?? 1) : 2
     property real realRounding: onClient ? (Hypr.options["decoration:rounding"] ?? 0) : 0
@@ -51,17 +55,20 @@ MouseArea {
             return ipc?.pinned && ipc?.monitor === monId && !wsClients.includes(t) && !Hypr.isToplevelIgnored(t);
         });
 
-        return wsClients.concat(pinnedClients).sort((a, b) => {
-            // Pinned first, then fullscreen, then floating, then any other
+        return wsClients.concat(pinnedClients).filter(t => !t?.lastIpcObject?.hidden).sort((a, b) => {
+            // Pinned first, then fullscreen, then floating, then topmost focus
             const ac = a?.lastIpcObject;
             const bc = b?.lastIpcObject;
             if (!ac || !bc)
                 return !ac - !bc; // Missing IPC last
-            return (bc.pinned - ac.pinned) || ((bc.fullscreen !== 0) - (ac.fullscreen !== 0)) || (bc.floating - ac.floating);
+            return (bc.pinned - ac.pinned) || ((bc.fullscreen !== 0) - (ac.fullscreen !== 0)) || (bc.floating - ac.floating) || ((ac.focusHistoryID ?? 0) - (bc.focusHistoryID ?? 0));
         });
     }
 
-    function checkClientRects(x: real, y: real): void {
+    function checkClientRects(x: real, y: real): bool {
+        if (x < 0 || y < 0 || x > screen.width || y > screen.height)
+            return false;
+
         for (const client of clients) {
             if (!client)
                 continue;
@@ -82,25 +89,39 @@ MouseArea {
                 sy = cy;
                 ex = cx + cw;
                 ey = cy + ch;
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     function save(): void {
+        const tx = Math.max(0, Math.min(sx, ex));
+        const ty = Math.max(0, Math.min(sy, ey));
+        const tex = Math.min(screen.width, Math.max(sx, ex));
+        const tey = Math.min(screen.height, Math.max(sy, ey));
+        const cropW = Math.max(1, Math.floor(tex - tx));
+        const cropH = Math.max(1, Math.floor(tey - ty));
         const tmpfile = Qt.resolvedUrl(`/tmp/caelestia-picker-${Quickshell.processId}-${Date.now()}.png`);
-        CUtils.saveItem(screencopy, tmpfile, Qt.rect(Math.ceil(rsx), Math.ceil(rsy), Math.floor(sw), Math.floor(sh)), path => {
+        CUtils.saveItem(screencopy, tmpfile, Qt.rect(Math.ceil(tx), Math.ceil(ty), cropW, cropH), path => {
             if (root.loader.clipboardOnly) {
                 Quickshell.execDetached(["sh", "-c", "wl-copy --type image/png < " + path]);
                 Quickshell.execDetached(["notify-send", "-a", "caelestia-cli", "-i", path, Tr.tr("Screenshot taken"), Tr.tr("Screenshot copied to clipboard")]);
             } else {
                 Quickshell.execDetached(["swappy", "-f", path]);
             }
+            if (!root.loader.freeze) {
+                screencopy.visible = false;
+                overlay.visible = border.visible = true;
+            }
             closeAnim.start();
         });
     }
 
-    onClientsChanged: checkClientRects(mouseX, mouseY)
+    onClientsChanged: {
+        if (lastPointerX >= 0 && lastPointerY >= 0 && !pressed)
+            checkClientRects(lastPointerX, lastPointerY);
+    }
 
     anchors.fill: parent
     opacity: 0
@@ -136,18 +157,18 @@ MouseArea {
     onPressed: event => {
         ssx = event.x;
         ssy = event.y;
+        dragging = false;
     }
 
     onReleased: {
-        if (closeAnim.running)
+        if (closeAnim.running || captureDelay.running)
             return;
 
         if (root.loader.freeze) {
             save();
         } else {
             overlay.visible = border.visible = false;
-            screencopy.visible = false;
-            screencopy.active = true;
+            captureDelay.start();
         }
     }
 
@@ -156,12 +177,17 @@ MouseArea {
         const y = event.y;
 
         if (pressed) {
-            onClient = false;
-            sx = ssx;
-            sy = ssy;
-            ex = x;
-            ey = y;
+            if (dragging || Math.hypot(x - ssx, y - ssy) > 4) {
+                dragging = true;
+                onClient = false;
+                sx = ssx;
+                sy = ssy;
+                ex = x;
+                ey = y;
+            }
         } else {
+            lastPointerX = x;
+            lastPointerY = y;
             checkClientRects(x, y);
         }
     }
@@ -207,20 +233,46 @@ MouseArea {
         }
     }
 
+    Timer {
+        id: captureDelay
+
+        interval: 32
+        onTriggered: {
+            screencopy.visible = true;
+            screencopy.active = true;
+        }
+    }
+
     Process {
         running: true
         command: ["hyprctl", "cursorpos", "-j"]
         stdout: StdioCollector {
             onStreamFinished: {
-                const pos = JSON.parse(text);
-                root.checkClientRects(pos.x - root.screen.x, pos.y - root.screen.y);
+                try {
+                    const pos = JSON.parse(text);
+                    const px = pos.x - root.screen.x;
+                    const py = pos.y - root.screen.y;
+                    if (px >= 0 && py >= 0 && px <= root.screen.width && py <= root.screen.height) {
+                        root.lastPointerX = px;
+                        root.lastPointerY = py;
+                        root.checkClientRects(px, py);
+                    }
+                } catch (e) {
+                    // ignore malformed cursorpos
+                }
+                Qt.callLater(() => root.animReady = true);
             }
+        }
+        onExited: (exitCode) => {
+            if (exitCode !== 0)
+                Qt.callLater(() => root.animReady = true);
         }
     }
 
     Loader {
         id: screencopy
 
+        z: -1
         asynchronous: true
         anchors.fill: parent
 
@@ -231,7 +283,6 @@ MouseArea {
 
             onHasContentChanged: {
                 if (hasContent && !root.loader.freeze) {
-                    overlay.visible = border.visible = true;
                     root.save();
                 }
             }
@@ -295,25 +346,25 @@ MouseArea {
     }
 
     Behavior on rsx {
-        enabled: !root.pressed
+        enabled: root.animReady && !root.pressed && !root.loader.closing
 
         Anim {}
     }
 
     Behavior on rsy {
-        enabled: !root.pressed
+        enabled: root.animReady && !root.pressed && !root.loader.closing
 
         Anim {}
     }
 
     Behavior on sw {
-        enabled: !root.pressed
+        enabled: root.animReady && !root.pressed && !root.loader.closing
 
         Anim {}
     }
 
     Behavior on sh {
-        enabled: !root.pressed
+        enabled: root.animReady && !root.pressed && !root.loader.closing
 
         Anim {}
     }

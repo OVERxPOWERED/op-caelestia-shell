@@ -105,10 +105,10 @@ MouseArea {
         const tmpfile = Qt.resolvedUrl(`/tmp/caelestia-picker-${Quickshell.processId}-${Date.now()}.png`);
         CUtils.saveItem(screencopy, tmpfile, Qt.rect(Math.ceil(tx), Math.ceil(ty), cropW, cropH), path => {
             if (root.loader.clipboardOnly) {
-                Quickshell.execDetached(["sh", "-c", "wl-copy --type image/png < " + path]);
+                Quickshell.execDetached(["sh", "-c", "wl-copy --type image/png < \"$1\"", "_", path]);
                 Quickshell.execDetached(["notify-send", "-a", "caelestia-cli", "-i", path, Tr.tr("Screenshot taken"), Tr.tr("Screenshot copied to clipboard")]);
             } else {
-                Quickshell.execDetached(["swappy", "-f", path]);
+                Quickshell.execDetached(["sh", "-c", "m=$(mktemp) && swappy -f \"$1\" && saved=$(find \"${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots\" -maxdepth 1 -type f -name \"screenshot-*.png\" -newer \"$m\" -printf \"%T@ %p\\n\" 2>/dev/null | sort -nr | head -n1 | cut -d\" \" -f2-) && [ -n \"$saved\" ] && wl-copy --type image/png < \"$saved\"; rm -f \"$m\"", "_", path]);
             }
             if (!root.loader.freeze) {
                 screencopy.visible = false;

@@ -19,6 +19,18 @@ StyledRect {
     readonly property bool hasImage: modelData.image.length > 0
     readonly property bool hasAppIcon: modelData.appIcon.length > 0
     readonly property int bodyTextFormat: /[<*_`#\[\]]/.test(modelData.body) ? Text.MarkdownText : Text.PlainText
+    readonly property var openAction: {
+        const acts = modelData.actions;
+        if (!acts || acts.length === 0)
+            return null;
+        const byId = acts.find(a => a.identifier === "default" || a.identifier === "open");
+        if (byId)
+            return byId;
+        const byText = acts.find(a => (a.text ?? "").trim().toLowerCase() === "open");
+        if (byText)
+            return byText;
+        return acts.length === 1 ? acts[0] : null;
+    }
     readonly property int nonAnimHeight: Math.max(TokenConfig.sizes.notifs.image, summary.implicitHeight + (root.expanded ? Tokens.spacing.extraSmall * 2 + appName.height + body.height + actions.height + actions.anchors.topMargin : bodyPreview.height)) + inner.anchors.margins * 2
     property bool expanded: Config.notifs.openExpanded
 
@@ -51,7 +63,7 @@ StyledRect {
 
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: root.expanded && body.hoveredLink ? Qt.PointingHandCursor : pressed ? Qt.ClosedHandCursor : undefined
+        cursorShape: (root.expanded && body.hoveredLink) || root.openAction ? Qt.PointingHandCursor : pressed ? Qt.ClosedHandCursor : undefined
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
         preventStealing: true
 
@@ -87,12 +99,12 @@ StyledRect {
             }
         }
         onClicked: event => {
-            if (!GlobalConfig.notifs.actionOnClick || event.button !== Qt.LeftButton)
+            if (event.button !== Qt.LeftButton || Math.abs(root.x) > 4)
                 return;
-
-            const actions = root.modelData.actions;
-            if (actions.length === 1)
-                actions[0].invoke();
+            if (root.expanded && body.hoveredLink)
+                return;
+            if (root.openAction)
+                root.openAction.invoke();
         }
 
         Item {

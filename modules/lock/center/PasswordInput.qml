@@ -109,6 +109,7 @@ StyledRect {
             id: patternContainer
 
             Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: root.patternMode ? Tokens.padding.small : 0
             Layout.preferredWidth: root.patternSize
             Layout.preferredHeight: root.patternMode && root.patternAvailable ? root.patternSize : 0
             visible: (root.patternMode && root.patternAvailable) || height > 1
@@ -145,6 +146,9 @@ StyledRect {
             id: inputRow
 
             Layout.fillWidth: true
+            Layout.leftMargin: root.patternMode ? Tokens.padding.medium : 0
+            Layout.rightMargin: root.patternMode ? Tokens.padding.medium : 0
+            Layout.bottomMargin: root.patternMode ? Tokens.padding.small : 0
             spacing: Tokens.spacing.medium
 
             Item {

@@ -224,9 +224,9 @@ Item {
 
             anchors.centerIn: parent
             lock: root.lock
-            blurSource: root.blurSource
-            absX: centerSlot.x + x
-            absY: centerSlot.y + y
+            blurSource: centerGifCard.visible ? centerGifCard : root.blurSource
+            absX: centerGifCard.visible ? x : (centerSlot.x + x)
+            absY: centerGifCard.visible ? y : (centerSlot.y + y)
             hideClockOverride: root.isHero
         }
     }

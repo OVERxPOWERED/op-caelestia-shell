@@ -2,7 +2,9 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Effects
+import QtQuick.Layouts
 import Caelestia.Config
+import Caelestia.I18n
 import qs.components
 import qs.components.controls
 import qs.components.effects
@@ -14,12 +16,6 @@ Item {
     property real parentWidth: 1920
     property real parentHeight: 1080
 
-    // Animation physics state
-    property real animY: -85
-    property real animScaleX: 0.8
-    property real animScaleY: 0.8
-    property real animOpacity: 0.0
-
     readonly property bool isListening: VoiceTyping.isListening
     readonly property bool isPaused: VoiceTyping.isPaused
     readonly property bool isTranscribing: VoiceTyping.isTranscribing
@@ -27,84 +23,172 @@ Item {
     readonly property bool isPressed: dragArea.pressed
     readonly property bool isDragging: dragArea.pressed || dragArea.drag.active
 
-    // Target width for each state (explicit deterministic geometry)
-    readonly property real targetWidth: {
-        if (!VoiceTyping.active)
-            return 56;
-        if (isPaused)
-            return 256;
-        if (isListening)
-            return VoiceTyping.liveTranscript
-                ? Math.min(360, Math.max(260, 100 + statusLabel.implicitWidth))
-                : 256;
-        if (isTranscribing)
-            return VoiceTyping.liveTranscript
-                ? Math.min(360, Math.max(260, 100 + statusLabel.implicitWidth))
-                : 216;
-        if (isDone)
-            return Math.min(360, Math.max(248, 100 + statusLabel.implicitWidth));
-        return 256;
-    }
+    readonly property string theme: VoiceTyping.theme
+    readonly property bool isWaveMode: theme === "wave"
+    readonly property bool isCompactMode: theme === "compact"
+    readonly property bool isClassicMode: theme === "classic" || (!isWaveMode && !isCompactMode)
 
-    // Dynamic color theming
-    readonly property color accentColor: isListening
-        ? Colours.palette.m3primary
+    readonly property string transcriptText: VoiceTyping.transcriptionPreview ? VoiceTyping.previewTranscript : ""
+    readonly property bool hasTranscript: transcriptText.length > 0 && !isDone
+    readonly property bool showCloseButton: !isDone && !isWaveMode && (hoverHandler.hovered || dragArea.containsMouse)
+
+    // System-consistent surface & accent colors
+    readonly property color surfaceColor: Colours.transparency.enabled
+        ? Qt.alpha(Colours.palette.m3surface, Math.min(Colours.transparency.base, 0.78))
+        : Colours.palette.m3surface
+
+    readonly property color accentColor: isDone
+        ? Colours.palette.m3success
         : isPaused
             ? Colours.palette.m3tertiary
-            : isDone
-                ? Colours.palette.m3secondary
-                : Colours.palette.m3primary
+            : Colours.palette.m3primary
 
-    readonly property color onAccentColor: isListening
-        ? Colours.palette.m3onPrimary
-        : isPaused
-            ? Colours.palette.m3onTertiary
-            : isDone
-                ? Colours.palette.m3onSecondary
-                : Colours.palette.m3onPrimary
+    readonly property bool isBottomAnchored: {
+        if (VoiceTyping.customPosition && VoiceTyping.pillY >= 0)
+            return (VoiceTyping.pillY + targetHeight / 2) > (parentHeight / 2);
+        return VoiceTyping.positionPreset.startsWith("bottom");
+    }
 
-    // Container geometry
-    property real currentPillWidth: VoiceTyping.active ? root.targetWidth : 56
-    property real currentPillHeight: 48
+    readonly property real hiddenSlideOffset: isBottomAnchored ? 56 : -56
+
+    // Animation state
+    property real animY: hiddenSlideOffset
+    property real animScaleX: 0.88
+    property real animScaleY: 0.88
+    property real animOpacity: 0.0
     property real heightBounce: 0
 
-    function updateFromSavedPosition(): void {
-        if (VoiceTyping.customPosition && VoiceTyping.pillX >= 0) {
-            root.x = Math.max(8, Math.min(parentWidth - root.width - 8, VoiceTyping.pillX));
-        } else {
-            root.x = Math.max(8, (parentWidth - root.width) / 2);
+    // Target geometry per theme & state
+    readonly property real targetWidth: {
+        if (!VoiceTyping.active)
+            return isWaveMode ? 420 : 180;
+
+        if (isWaveMode)
+            return Math.min(480, Math.max(320, parentWidth - 48));
+
+        if (isDone) {
+            const doneW = doneTextMetrics.implicitWidth + 84;
+            return Math.min(360, Math.max(196, doneW));
         }
 
-        if (VoiceTyping.customPosition && VoiceTyping.pillY >= 0) {
-            root.y = Math.max(8, Math.min(parentHeight - root.height - 8, VoiceTyping.pillY));
-        } else {
-            root.y = 16;
+        if (isCompactMode) {
+            const textW = Math.max(compactLabelMetrics.implicitWidth, 72);
+            const waveW = VoiceTyping.liveWaveform ? 44 : 0;
+            const closeW = showCloseButton ? 28 : 0;
+            return Math.min(420, Math.max(188, 54 + textW + waveW + closeW));
+        }
+
+        // Classic (two-line)
+        const line1W = classicStatusMetrics.implicitWidth + 16;
+        const line2W = hasTranscript ? classicTranscriptMetrics.implicitWidth : 0;
+        const textBlockW = Math.max(82, Math.min(250, Math.max(line1W, line2W)));
+        const badgeW = 46;
+        const waveW = VoiceTyping.liveWaveform ? 74 : 4;
+        const closeW = showCloseButton ? 28 : 0;
+        return Math.min(440, Math.max(216, 22 + badgeW + textBlockW + waveW + closeW));
+    }
+
+    readonly property real targetHeight: {
+        if (isWaveMode) {
+            if (isDone)
+                return 54;
+            return hasTranscript ? Math.max(84, 54 + waveTranscriptText.implicitHeight + 6) : 54;
+        }
+        if (isDone)
+            return Math.max(46, doneTextMetrics.implicitHeight + 22);
+        if (isCompactMode)
+            return Math.max(40, compactLabelMetrics.implicitHeight + 18);
+        // Classic (two-line)
+        const linesH = classicStatusMetrics.implicitHeight + (hasTranscript ? classicTranscriptMetrics.implicitHeight + 2 : 0);
+        return Math.max(50, linesH + 18);
+    }
+
+    property real currentWidth: targetWidth
+    property real currentHeight: targetHeight
+
+    Behavior on currentWidth {
+        enabled: VoiceTyping.enableAnimations
+        SpringAnimation {
+            spring: 4.5 * VoiceTyping.speedFactor
+            damping: 0.34
+            epsilon: 0.15
+            mass: 0.9
         }
     }
 
-    implicitWidth: currentPillWidth
-    implicitHeight: currentPillHeight + heightBounce
+    Behavior on currentHeight {
+        enabled: VoiceTyping.enableAnimations
+        SpringAnimation {
+            spring: 4.5 * VoiceTyping.speedFactor
+            damping: 0.36
+            epsilon: 0.15
+            mass: 0.9
+        }
+    }
+
+    function updateFromSavedPosition(): void {
+        const edgeX = 20;
+        const topY = 16;
+        const bottomY = 26;
+
+        if (VoiceTyping.customPosition && VoiceTyping.pillX >= 0 && VoiceTyping.pillY >= 0) {
+            root.x = Math.max(8, Math.min(parentWidth - root.width - 8, VoiceTyping.pillX));
+            root.y = Math.max(8, Math.min(parentHeight - root.height - 8, VoiceTyping.pillY));
+            return;
+        }
+
+        const preset = VoiceTyping.positionPreset || "top-center";
+        if (preset.endsWith("left"))
+            root.x = edgeX;
+        else if (preset.endsWith("right"))
+            root.x = Math.max(8, parentWidth - root.width - edgeX);
+        else
+            root.x = Math.max(8, (parentWidth - root.width) / 2);
+
+        if (preset.startsWith("bottom"))
+            root.y = Math.max(8, parentHeight - root.height - bottomY);
+        else
+            root.y = topY;
+    }
+
+    implicitWidth: currentWidth
+    implicitHeight: currentHeight + heightBounce
     width: implicitWidth
     height: implicitHeight
-
-    scale: 1.0
     opacity: animOpacity
 
     onParentWidthChanged: {
         if (!dragArea.drag.active)
-            root.updateFromSavedPosition();
+            updateFromSavedPosition();
+    }
+
+    onParentHeightChanged: {
+        if (!dragArea.drag.active)
+            updateFromSavedPosition();
+    }
+
+    onWidthChanged: {
+        if (!VoiceTyping.customPosition && !dragArea.drag.active)
+            updateFromSavedPosition();
+    }
+
+    onHeightChanged: {
+        if (!VoiceTyping.customPosition && !dragArea.drag.active)
+            updateFromSavedPosition();
     }
 
     onTargetWidthChanged: {
-        if (VoiceTyping.active)
+        if (VoiceTyping.active && VoiceTyping.enableAnimations && !isWaveMode)
             squashBounceAnim.restart();
     }
 
+    Component.onCompleted: updateFromSavedPosition()
+
     transform: Scale {
-        origin.x: root.implicitWidth / 2
-        origin.y: 0
-        xScale: root.animScaleX
-        yScale: root.animScaleY
+        origin.x: root.width / 2
+        origin.y: root.height / 2
+        xScale: root.animScaleX * VoiceTyping.scaleFactor
+        yScale: root.animScaleY * VoiceTyping.scaleFactor
     }
 
     states: [
@@ -126,9 +210,9 @@ Item {
 
             PropertyChanges {
                 target: root
-                animY: -85
-                animScaleX: 0.8
-                animScaleY: 0.8
+                animY: root.hiddenSlideOffset
+                animScaleX: 0.88
+                animScaleY: 0.88
                 animOpacity: 0.0
             }
         }
@@ -143,69 +227,31 @@ Item {
                 SpringAnimation {
                     target: root
                     property: "animY"
-                    spring: 3.6
-                    damping: 0.30
-                    mass: 0.95
+                    spring: (VoiceTyping.enableAnimations ? 4.2 : 40.0) * VoiceTyping.speedFactor
+                    damping: VoiceTyping.enableAnimations ? 0.34 : 1.0
+                    mass: 0.9
                     epsilon: 0.2
                 }
-
-                SequentialAnimation {
-                    ParallelAnimation {
-                        NumberAnimation {
-                            target: root
-                            property: "animScaleX"
-                            to: 0.90
-                            duration: 180
-                            easing.type: Easing.OutQuad
-                        }
-                        NumberAnimation {
-                            target: root
-                            property: "animScaleY"
-                            to: 1.12
-                            duration: 180
-                            easing.type: Easing.OutQuad
-                        }
-                    }
-                    ParallelAnimation {
-                        NumberAnimation {
-                            target: root
-                            property: "animScaleX"
-                            to: 1.04
-                            duration: 160
-                            easing.type: Easing.InOutQuad
-                        }
-                        NumberAnimation {
-                            target: root
-                            property: "animScaleY"
-                            to: 0.96
-                            duration: 160
-                            easing.type: Easing.InOutQuad
-                        }
-                    }
-                    ParallelAnimation {
-                        NumberAnimation {
-                            target: root
-                            property: "animScaleX"
-                            to: 1.0
-                            duration: 180
-                            easing.type: Easing.OutBack
-                            easing.overshoot: 1.4
-                        }
-                        NumberAnimation {
-                            target: root
-                            property: "animScaleY"
-                            to: 1.0
-                            duration: 180
-                            easing.type: Easing.OutBack
-                            easing.overshoot: 1.4
-                        }
-                    }
+                SpringAnimation {
+                    target: root
+                    property: "animScaleX"
+                    spring: (VoiceTyping.enableAnimations ? 4.6 : 40.0) * VoiceTyping.speedFactor
+                    damping: VoiceTyping.enableAnimations ? 0.36 : 1.0
+                    mass: 0.85
+                    epsilon: 0.002
                 }
-
+                SpringAnimation {
+                    target: root
+                    property: "animScaleY"
+                    spring: (VoiceTyping.enableAnimations ? 4.6 : 40.0) * VoiceTyping.speedFactor
+                    damping: VoiceTyping.enableAnimations ? 0.36 : 1.0
+                    mass: 0.85
+                    epsilon: 0.002
+                }
                 NumberAnimation {
                     target: root
                     property: "animOpacity"
-                    duration: 180
+                    duration: VoiceTyping.enableAnimations ? Math.max(80, Math.round(170 / VoiceTyping.speedFactor)) : 0
                     easing.type: Easing.OutCubic
                 }
             }
@@ -215,115 +261,105 @@ Item {
             to: "hidden"
 
             ParallelAnimation {
-                SpringAnimation {
+                NumberAnimation {
                     target: root
                     property: "animY"
-                    spring: 4.8
-                    damping: 0.45
-                    mass: 0.85
-                    epsilon: 0.2
+                    duration: VoiceTyping.enableAnimations ? Math.max(90, Math.round(190 / VoiceTyping.speedFactor)) : 0
+                    easing.type: Easing.InCubic
                 }
                 NumberAnimation {
                     target: root
                     property: "animScaleX"
-                    to: 0.8
-                    duration: 220
+                    duration: VoiceTyping.enableAnimations ? Math.max(90, Math.round(180 / VoiceTyping.speedFactor)) : 0
                     easing.type: Easing.InQuad
                 }
                 NumberAnimation {
                     target: root
                     property: "animScaleY"
-                    to: 0.8
-                    duration: 220
+                    duration: VoiceTyping.enableAnimations ? Math.max(90, Math.round(180 / VoiceTyping.speedFactor)) : 0
                     easing.type: Easing.InQuad
                 }
                 NumberAnimation {
                     target: root
                     property: "animOpacity"
-                    duration: 160
+                    duration: VoiceTyping.enableAnimations ? Math.max(80, Math.round(150 / VoiceTyping.speedFactor)) : 0
                     easing.type: Easing.InQuad
                 }
             }
         }
     ]
 
-    Component.onCompleted: updateFromSavedPosition()
-
-    // Spring physics for horizontal width morphing
-    Behavior on currentPillWidth {
-        SpringAnimation {
-            spring: 4.2
-            damping: 0.28
-            epsilon: 0.15
-            mass: 1.0
-        }
-    }
-
     Connections {
         function onPillPositionChanged(): void {
-            if (!dragArea.drag.active) {
+            if (!dragArea.drag.active)
                 root.updateFromSavedPosition();
-            }
         }
 
         target: VoiceTyping
     }
 
-    // Secondary vertical squash-and-stretch bounce on state change
+    // Subtle squash-and-stretch settle on pill morphs
     SequentialAnimation {
         id: squashBounceAnim
 
         NumberAnimation {
             target: root
             property: "heightBounce"
-            to: 4.0
-            duration: 120
+            to: 2.5
+            duration: Math.max(60, Math.round(100 / VoiceTyping.speedFactor))
             easing.type: Easing.OutQuad
         }
         NumberAnimation {
             target: root
             property: "heightBounce"
-            to: -2.0
-            duration: 140
-            easing.type: Easing.InOutQuad
-        }
-        NumberAnimation {
-            target: root
-            property: "heightBounce"
             to: 0
-            duration: 160
-            easing.type: Easing.OutBounce
+            duration: Math.max(80, Math.round(150 / VoiceTyping.speedFactor))
+            easing.type: Easing.OutBack
         }
     }
 
-    // Main capsule container
-    StyledRect {
-        id: pillBg
+    // Hidden text metrics for deterministic sizing across all user font configurations
+    StyledText {
+        id: classicStatusMetrics
+        visible: false
+        text: VoiceTyping.statusText
+        font: Tokens.font.label.medium
+    }
+
+    StyledText {
+        id: classicTranscriptMetrics
+        visible: false
+        text: root.transcriptText
+        font: Tokens.font.label.small
+    }
+
+    StyledText {
+        id: compactLabelMetrics
+        visible: false
+        text: root.hasTranscript ? root.transcriptText : VoiceTyping.statusText
+        font: Tokens.font.label.medium
+    }
+
+    StyledText {
+        id: doneTextMetrics
+        visible: false
+        text: VoiceTyping.statusText
+        font: Tokens.font.label.medium
+    }
+
+    // Interactive container positioned at animY
+    Item {
+        id: bodyContainer
 
         y: root.animY
         width: root.width
         height: root.height
-        radius: height / 2
-        clip: true
 
-        color: Colours.tPalette.m3surfaceContainerHigh
-        border.color: root.isListening
-            ? Qt.alpha(root.accentColor, 0.40)
-            : Qt.alpha(root.accentColor, 0.35)
-        border.width: (root.isListening || root.isPaused) ? 1 : 0
-        antialiasing: true
-
-        GlassRim {
-            z: 10
-            radius: pillBg.radius
-            visible: !root.isListening && !root.isPaused && width > 0 && height > 0
+        HoverHandler {
+            id: hoverHandler
         }
 
-        Behavior on border.color {
-            CAnim {}
-        }
-
-        // MouseArea for dragging and click toggle
+        // Drag / click-to-pause / right-click-to-cancel area
         MouseArea {
             id: dragArea
 
@@ -332,6 +368,8 @@ Item {
             property bool isDragging: false
 
             anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
             preventStealing: true
             drag.target: root
             drag.axis: Drag.XAndYAxis
@@ -350,299 +388,386 @@ Item {
             }
 
             onPositionChanged: mouse => {
-                const dx = Math.abs(mouse.x - startMouseX);
-                const dy = Math.abs(mouse.y - startMouseY);
-                if (dx > 4 || dy > 4) {
+                if (Math.abs(mouse.x - startMouseX) > 4 || Math.abs(mouse.y - startMouseY) > 4)
                     isDragging = true;
-                }
             }
 
             onReleased: mouse => {
                 if (isDragging) {
                     VoiceTyping.savePosition(root.x, root.y);
-                } else {
-                    if (mouse.button === Qt.RightButton) {
-                        VoiceTyping.cancel();
-                    } else {
-                        VoiceTyping.togglePause();
-                    }
+                } else if (mouse.button === Qt.RightButton) {
+                    VoiceTyping.cancel();
+                } else if (!root.isDone) {
+                    VoiceTyping.togglePause();
                 }
                 isDragging = false;
             }
         }
 
-        // Content viewport with fixed anchors (no layout jitter!)
-        Item {
-            id: contentArea
+        // =========================================================================
+        // 1. PILL CONTAINER (Classic & Compact themes)
+        // =========================================================================
+        StyledRect {
+            id: pillBg
 
             anchors.fill: parent
-            anchors.leftMargin: 8
-            anchors.rightMargin: 8
+            visible: !root.isWaveMode
+            radius: height / 2
+            clip: true
+            antialiasing: true
+            color: root.surfaceColor
 
-            // 1. Left Badge (Microphone / Status Icon)
-            Item {
-                id: iconBox
-
-                width: 34
-                height: 34
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-
-                // Ambient pulsing glow
-                Rectangle {
-                    id: pulseGlow
-
-                    anchors.centerIn: parent
-                    width: parent.width + (root.isListening ? 8 : 0)
-                    height: parent.height + (root.isListening ? 8 : 0)
-                    radius: width / 2
-                    color: Qt.alpha(root.accentColor, root.isListening ? 0.20 : 0.0)
-
-                    Behavior on width {
-                        Anim {
-                            type: Anim.DefaultSpatial
-                        }
-                    }
-
-                    Behavior on height {
-                        Anim {
-                            type: Anim.DefaultSpatial
-                        }
-                    }
-
-                    Behavior on color {
-                        CAnim {}
-                    }
-
-                    SequentialAnimation on opacity {
-                        running: root.isListening
-                        loops: Animation.Infinite
-
-                        NumberAnimation {
-                            from: 0.35
-                            to: 0.95
-                            duration: 650
-                            easing.type: Easing.InOutSine
-                        }
-                        NumberAnimation {
-                            from: 0.95
-                            to: 0.35
-                            duration: 650
-                            easing.type: Easing.InOutSine
-                        }
-                    }
-                }
-
-                // Frosted Circular Glass Badge
-                Rectangle {
-                    id: badgeCircle
-
-                    anchors.fill: parent
-                    radius: width / 2
-                    color: Qt.alpha(root.accentColor, root.isListening ? 0.22 : 0.14)
-                    border.color: Qt.alpha(root.accentColor, root.isListening ? 0.45 : 0.25)
-                    border.width: 1
-
-                    Behavior on color {
-                        CAnim {}
-                    }
-
-                    Behavior on border.color {
-                        CAnim {}
-                    }
-
-                    MaterialIcon {
-                        id: micIcon
-
-                        anchors.centerIn: parent
-                        color: root.accentColor
-                        fontStyle: Tokens.font.icon.small
-
-                        text: {
-                            if (root.isPaused)
-                                return "pause";
-                            if (root.isTranscribing)
-                                return "hourglass_top";
-                            if (root.isDone)
-                                return "check";
-                            return "mic";
-                        }
-                    }
-                }
+            GlassRim {
+                z: 10
+                radius: pillBg.radius
+                deepBevel: true
             }
 
-            // 2. Audio Waveform Bars (Liquid audio feedback)
-            Row {
-                id: waveRow
+            // Done / "Dictation inserted" state (shared across Classic & Compact)
+            RowLayout {
+                id: doneRow
 
-                spacing: 3
-                anchors.left: iconBox.right
+                anchors.fill: parent
                 anchors.leftMargin: 8
-                anchors.verticalCenter: parent.verticalCenter
-                opacity: root.isDone ? 0.0 : 1.0
+                anchors.rightMargin: 16
+                spacing: 10
+                visible: root.isDone
+                opacity: root.isDone ? 1.0 : 0.0
 
                 Behavior on opacity {
+                    enabled: VoiceTyping.enableAnimations
                     NumberAnimation {
-                        duration: 150
-                    }
-                }
-
-                Repeater {
-                    model: 4
-
-                    Rectangle {
-                        id: waveBar
-
-                        required property int index
-
-                        readonly property real barLevel: (VoiceTyping.barLevels && VoiceTyping.barLevels.length > index)
-                            ? VoiceTyping.barLevels[index]
-                            : 0.0
-
-                        readonly property real dynamicHeight: Math.min(26.0, Math.max(4.0, 4.0 + barLevel * 22.0))
-
-                        width: 3.5
-                        radius: 1.75
-                        color: root.accentColor
-
-                        height: {
-                            if (root.isListening)
-                                return dynamicHeight;
-                            if (root.isPaused)
-                                return (index === 1 || index === 2) ? 10.0 : 4.0;
-                            return 4.0;
-                        }
-
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        Behavior on height {
-                            NumberAnimation {
-                                duration: root.isPaused ? 200 : 35
-                                easing.type: Easing.OutQuad
-                            }
-                        }
-
-                        Behavior on color {
-                            CAnim {}
-                        }
-                    }
-                }
-            }
-
-            // 3. Status Text / Transcribed Preview
-            Item {
-                id: textViewport
-
-                anchors.left: waveRow.right
-                anchors.leftMargin: 10
-                anchors.right: resumeBadge.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: parent.verticalCenter
-                height: 24
-                clip: true
-
-                StyledText {
-                    id: statusLabel
-
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    text: VoiceTyping.statusText
-                    font: Tokens.font.label.medium
-                    color: Colours.palette.m3onSurface
-                    elide: VoiceTyping.liveTranscript ? Text.ElideLeft : Text.ElideRight
-                    width: parent.width
-
-                    onTextChanged: {
-                        if (opacityAnim.running)
-                            opacityAnim.stop();
-                        opacityAnim.restart();
-                    }
-
-                    SequentialAnimation on opacity {
-                        id: opacityAnim
-
-                        running: false
-
-                        NumberAnimation {
-                            to: 0.3
-                            duration: 40
-                            easing.type: Easing.OutQuad
-                        }
-                        NumberAnimation {
-                            to: 1.0
-                            duration: 70
-                            easing.type: Easing.InQuad
-                        }
-                    }
-                }
-            }
-
-            // 4. Resume Badge (Smooth elastic bloom when paused)
-            Rectangle {
-                id: resumeBadge
-
-                anchors.right: closeBtn.left
-                anchors.rightMargin: 6
-                anchors.verticalCenter: parent.verticalCenter
-
-                width: root.isPaused ? 26 : 0
-                height: 24
-                radius: 12
-                clip: true
-
-                opacity: root.isPaused ? 1.0 : 0.0
-                scale: root.isPaused ? 1.0 : 0.6
-
-                color: Qt.alpha(Colours.palette.m3tertiary, 0.20)
-                border.color: Qt.rgba(1.0, 1.0, 1.0, 0.22)
-                border.width: 1
-
-                Behavior on width {
-                    SpringAnimation {
-                        spring: 4.5
-                        damping: 0.32
-                        epsilon: 0.1
-                    }
-                }
-
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 160
+                        duration: Math.max(80, Math.round(160 / VoiceTyping.speedFactor))
                         easing.type: Easing.OutCubic
                     }
                 }
 
-                Behavior on scale {
-                    SpringAnimation {
-                        spring: 4.5
-                        damping: 0.32
-                        epsilon: 0.1
+                StyledRect {
+                    Layout.preferredWidth: 32
+                    Layout.preferredHeight: 32
+                    Layout.alignment: Qt.AlignVCenter
+                    radius: width / 2
+                    color: Qt.alpha(Colours.palette.m3success, 0.22)
+                    border.color: Qt.alpha(Colours.palette.m3success, 0.45)
+                    border.width: 1
+
+                    MaterialIcon {
+                        anchors.centerIn: parent
+                        text: "check"
+                        color: Colours.palette.m3success
+                        fontStyle: Tokens.font.icon.small
                     }
                 }
 
-                MaterialIcon {
-                    anchors.centerIn: parent
-                    text: "play_arrow"
-                    color: Colours.palette.m3tertiary
-                    fontStyle: Tokens.font.icon.small
+                StyledText {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                    text: VoiceTyping.statusText
+                    font: Tokens.font.label.medium
+                    color: Colours.palette.m3onSurface
+                    elide: Text.ElideRight
                 }
             }
 
-            // 5. Close / Cancel Button (Far right)
-            IconButton {
-                id: closeBtn
+            // -----------------------------------------------------------------
+            // CLASSIC THEME (Two-line recording pill)
+            // -----------------------------------------------------------------
+            RowLayout {
+                id: classicRow
 
-                icon: "close"
-                type: IconButton.Text
-                opacity: 0.75
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                onClicked: VoiceTyping.cancel()
+                anchors.fill: parent
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
+                spacing: 10
+                visible: root.isClassicMode && !root.isDone
 
-                Behavior on opacity {
-                    Anim {
-                        type: Anim.FastEffects
+                // Left circular badge
+                Item {
+                    Layout.preferredWidth: 36
+                    Layout.preferredHeight: 36
+                    Layout.alignment: Qt.AlignVCenter
+
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: parent.width + (root.isListening ? 8 : 0)
+                        height: parent.height + (root.isListening ? 8 : 0)
+                        radius: width / 2
+                        color: Qt.alpha(root.accentColor, root.isListening ? 0.16 : 0.0)
+
+                        SequentialAnimation on opacity {
+                            running: root.isListening && VoiceTyping.enableAnimations
+                            loops: Animation.Infinite
+
+                            NumberAnimation {
+                                from: 0.3
+                                to: 0.9
+                                duration: Math.max(300, Math.round(700 / VoiceTyping.speedFactor))
+                                easing.type: Easing.InOutSine
+                            }
+                            NumberAnimation {
+                                from: 0.9
+                                to: 0.3
+                                duration: Math.max(300, Math.round(700 / VoiceTyping.speedFactor))
+                                easing.type: Easing.InOutSine
+                            }
+                        }
                     }
+
+                    StyledRect {
+                        anchors.fill: parent
+                        radius: width / 2
+                        color: Qt.alpha(root.accentColor, root.isListening ? 0.22 : 0.14)
+                        border.color: Qt.alpha(root.accentColor, root.isListening ? 0.45 : 0.28)
+                        border.width: 1
+
+                        MaterialIcon {
+                            anchors.centerIn: parent
+                            color: root.accentColor
+                            fontStyle: Tokens.font.icon.small
+                            text: root.isPaused ? "pause" : root.isTranscribing ? "hourglass_top" : "mic"
+                        }
+                    }
+                }
+
+                // Middle two-line text stack
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                    spacing: 1
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 6
+
+                        Rectangle {
+                            Layout.preferredWidth: 6
+                            Layout.preferredHeight: 6
+                            Layout.alignment: Qt.AlignVCenter
+                            radius: 3
+                            color: root.accentColor
+
+                            SequentialAnimation on opacity {
+                                running: root.isListening && VoiceTyping.enableAnimations
+                                loops: Animation.Infinite
+
+                                NumberAnimation {
+                                    from: 0.45
+                                    to: 1.0
+                                    duration: Math.max(250, Math.round(550 / VoiceTyping.speedFactor))
+                                    easing.type: Easing.InOutSine
+                                }
+                                NumberAnimation {
+                                    from: 1.0
+                                    to: 0.45
+                                    duration: Math.max(250, Math.round(550 / VoiceTyping.speedFactor))
+                                    easing.type: Easing.InOutSine
+                                }
+                            }
+                        }
+
+                        StyledText {
+                            Layout.fillWidth: true
+                            text: VoiceTyping.statusText
+                            font: Tokens.font.label.medium
+                            color: Colours.palette.m3onSurface
+                            elide: Text.ElideRight
+                        }
+                    }
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        visible: root.hasTranscript
+                        text: root.transcriptText
+                        font: Tokens.font.label.small
+                        color: Colours.palette.m3onSurfaceVariant
+                        elide: Text.ElideLeft
+                    }
+                }
+
+                // Right capsule dot waveform
+                VoiceDotWave {
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: VoiceTyping.liveWaveform
+                    dotCount: 9
+                    inCapsule: true
+                    active: VoiceTyping.active && !root.isDone
+                    paused: root.isPaused
+                    animate: VoiceTyping.enableAnimations
+                    speedFactor: VoiceTyping.speedFactor
+                    barLevels: VoiceTyping.barLevels
+                    activeColor: root.accentColor
+                }
+
+                // Hover close button
+                IconButton {
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: root.showCloseButton
+                    icon: "close"
+                    type: IconButton.Text
+                    opacity: 0.78
+                    onClicked: VoiceTyping.cancel()
+                }
+            }
+
+            // -----------------------------------------------------------------
+            // COMPACT THEME (Single-row recording pill)
+            // -----------------------------------------------------------------
+            RowLayout {
+                id: compactRow
+
+                anchors.fill: parent
+                anchors.leftMargin: 12
+                anchors.rightMargin: 10
+                spacing: 8
+                visible: root.isCompactMode && !root.isDone
+
+                MaterialIcon {
+                    Layout.alignment: Qt.AlignVCenter
+                    color: root.accentColor
+                    fontStyle: Tokens.font.icon.small
+                    text: root.isPaused ? "pause" : root.isTranscribing ? "hourglass_top" : "mic"
+                }
+
+                StyledText {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                    text: root.hasTranscript ? root.transcriptText : VoiceTyping.statusText
+                    font: Tokens.font.label.medium
+                    color: Colours.palette.m3onSurface
+                    elide: root.hasTranscript ? Text.ElideLeft : Text.ElideRight
+                }
+
+                VoiceDotWave {
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: VoiceTyping.liveWaveform
+                    dotCount: 6
+                    inCapsule: false
+                    dotSize: 2.8
+                    dotSpacing: 2.5
+                    maxDotHeight: 13
+                    active: VoiceTyping.active && !root.isDone
+                    paused: root.isPaused
+                    animate: VoiceTyping.enableAnimations
+                    speedFactor: VoiceTyping.speedFactor
+                    barLevels: VoiceTyping.barLevels
+                    activeColor: root.accentColor
+                }
+
+                IconButton {
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: root.showCloseButton
+                    icon: "close"
+                    type: IconButton.Text
+                    opacity: 0.78
+                    onClicked: VoiceTyping.cancel()
+                }
+            }
+        }
+
+        // =========================================================================
+        // 2. DYNAMIC WAVE THEME (Floating audio ribbons + central glass badge)
+        // =========================================================================
+        Item {
+            id: waveRoot
+
+            anchors.fill: parent
+            visible: root.isWaveMode
+
+            Item {
+                id: waveHeader
+
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 50
+
+                VoiceWaveCanvas {
+                    id: waveCanvas
+
+                    anchors.fill: parent
+                    visible: VoiceTyping.liveWaveform || !root.isDone
+                    active: VoiceTyping.active
+                    paused: root.isPaused
+                    done: root.isDone
+                    animate: VoiceTyping.enableAnimations
+                    speedFactor: VoiceTyping.speedFactor
+                    audioLevel: VoiceTyping.liveWaveform ? VoiceTyping.audioLevel : (root.isListening ? 0.16 : 0.0)
+                    barLevels: VoiceTyping.liveWaveform ? VoiceTyping.barLevels : [0.12, 0.16, 0.14, 0.12]
+                    centerHoleRadius: 21
+                    primaryColor: root.accentColor
+                    secondaryColor: Colours.palette.m3onSurface
+                }
+
+                // Central frosted circular mic / check badge (blurred by Hyprland)
+                StyledRect {
+                    id: waveBadge
+
+                    anchors.centerIn: parent
+                    width: 42
+                    height: 42
+                    radius: width / 2
+                    color: root.isDone
+                        ? Qt.alpha(Colours.palette.m3surface, Colours.transparency.enabled ? 0.84 : 1.0)
+                        : root.surfaceColor
+
+                    GlassRim {
+                        z: 10
+                        radius: waveBadge.radius
+                        deepBevel: true
+                    }
+
+                    // Subtle status halo inside circle when listening or done
+                    Rectangle {
+                        anchors.fill: parent
+                        anchors.margins: 2
+                        radius: width / 2
+                        color: root.isDone
+                            ? Qt.alpha(Colours.palette.m3success, 0.18)
+                            : root.isPaused
+                                ? Qt.alpha(Colours.palette.m3tertiary, 0.14)
+                                : "transparent"
+                    }
+
+                    MaterialIcon {
+                        anchors.centerIn: parent
+                        fontStyle: Tokens.font.icon.medium
+                        color: root.isDone
+                            ? Colours.palette.m3success
+                            : root.isPaused
+                                ? Colours.palette.m3tertiary
+                                : Colours.palette.m3onSurface
+                        text: root.isDone
+                            ? "check"
+                            : root.isPaused
+                                ? "pause"
+                                : root.isTranscribing
+                                    ? "hourglass_top"
+                                    : "mic"
+                    }
+                }
+            }
+
+            // Floating live transcript text underneath the wave ribbons
+            StyledText {
+                id: waveTranscriptText
+
+                anchors.top: waveHeader.bottom
+                anchors.topMargin: 4
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: Math.min(parent.width - 24, implicitWidth)
+                visible: root.hasTranscript
+                text: root.transcriptText
+                font: Tokens.font.mono.small
+                color: Colours.palette.m3onSurface
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideLeft
+
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowColor: Qt.rgba(0, 0, 0, 0.82)
+                    shadowBlur: 0.45
+                    shadowVerticalOffset: 1
                 }
             }
         }

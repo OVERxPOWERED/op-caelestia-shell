@@ -7,21 +7,21 @@ import Caelestia.Config
 import qs.components.containers
 import qs.services
 
-Variants {
+Scope {
     id: root
 
     function applyBlurRule(): void {
+        const enabled = Colours.transparency.enabled;
+        const ignoreAlpha = Math.min(0.57, Math.max(0, Colours.transparency.base - 0.03));
         const ns = "caelestia-voicepill";
         Hypr.extras.batchMessage(Hypr.usingLua ? [
-            `eval hl.layer_rule({ match = { namespace = "${ns}" }, blur = true })`,
-            `eval hl.layer_rule({ match = { namespace = "${ns}" }, ignore_alpha = 0.15 })`
+            `eval hl.layer_rule({ match = { namespace = "${ns}" }, blur = ${enabled} })`,
+            `eval hl.layer_rule({ match = { namespace = "${ns}" }, ignore_alpha = ${ignoreAlpha} })`
         ] : [
-            `keyword layerrule blur 1, match:namespace ${ns}`,
-            `keyword layerrule ignore_alpha 0.15, match:namespace ${ns}`
+            `keyword layerrule blur ${enabled ? 1 : 0}, match:namespace ${ns}`,
+            `keyword layerrule ignore_alpha ${ignoreAlpha}, match:namespace ${ns}`
         ]);
     }
-
-    model: Screens.screens
 
     Component.onCompleted: applyBlurRule()
 
@@ -30,10 +30,29 @@ Variants {
             root.applyBlurRule();
         }
 
+        function onUsingLuaChanged(): void {
+            root.applyBlurRule();
+        }
+
         target: Hypr
     }
 
-    Scope {
+    Connections {
+        function onEnabledChanged(): void {
+            root.applyBlurRule();
+        }
+
+        function onBaseChanged(): void {
+            root.applyBlurRule();
+        }
+
+        target: Colours.transparency
+    }
+
+    Variants {
+        model: Screens.screens
+
+        Scope {
         id: scope
 
         required property ShellScreen modelData
@@ -79,10 +98,13 @@ Variants {
             Region {
                 id: activeMask
 
-                x: Math.max(0, content.x - 8)
-                y: Math.max(0, content.y + content.animY - 8)
-                width: content.width + 16
-                height: content.height + 16
+                readonly property real padX: Math.max(12, (content.width * (VoiceTyping.scaleFactor - 1)) / 2 + 12)
+                readonly property real padY: Math.max(12, (content.height * (VoiceTyping.scaleFactor - 1)) / 2 + 12)
+
+                x: Math.max(0, content.x - padX)
+                y: Math.max(0, content.y + content.animY - padY)
+                width: content.width + padX * 2
+                height: content.height + padY * 2
             }
 
             VoicePillContent {
@@ -93,4 +115,5 @@ Variants {
             }
         }
     }
+}
 }

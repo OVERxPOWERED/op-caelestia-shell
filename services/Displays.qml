@@ -41,8 +41,9 @@ Singleton {
     readonly property string draftName: "__nexus_draft"
     readonly property var userProfiles: profiles.filter(p => !p.name.startsWith("__nexus"))
 
-    // Include virtual outputs (e.g. Sunshine's) when picking displays for layouts; for testing
-    property bool treatVirtualAsExternal
+    // Include virtual outputs (e.g. Sunshine's HEADLESS-*) when picking displays for layouts.
+    // Can be toggled off via IPC (`displays includeVirtual false`) if virtual displays should be ignored.
+    property bool treatVirtualAsExternal: true
     // Set while the plug-in chooser is open: { name, description }
     property var chooser: null
     // A saved layout waiting for a yes or no before it is applied
@@ -50,7 +51,7 @@ Singleton {
     readonly property double startedAt: Date.now()
 
     readonly property var internalMonitor: monitors.find(m => m.internal) ?? null
-    readonly property var externalMonitors: monitors.filter(m => !m.internal && (treatVirtualAsExternal || !m.virtual))
+    readonly property var externalMonitors: monitors.filter(m => !m.internal && !m.fallback && (treatVirtualAsExternal || !m.virtual))
     readonly property var selectedMonitor: monitors.find(m => m.name === selected) ?? monitors.find(m => !m.disabled) ?? monitors[0] ?? null
     readonly property bool canChangeLayout: internalMonitor !== null && externalMonitors.length > 0
 
@@ -464,7 +465,7 @@ Singleton {
     }
 
     function autoProfileName(): string {
-        return "Auto " + monitors.filter(m => !m.virtual).map(m => m.name).join(" + ");
+        return "Auto " + monitors.filter(m => isPhysical(m)).map(m => m.name).join(" + ");
     }
 
     // Makes the layout that is live now the one used at startup
@@ -529,14 +530,14 @@ Singleton {
 
     property var addedQueue: []
 
-    // A display you can actually look at (not Hyprland's FALLBACK, and not a virtual output
-    // unless virtual ones are being treated as real for testing)
+    // A display you can actually look at (not Hyprland's FALLBACK placeholder, and virtual outputs
+    // such as Sunshine's HEADLESS-* only when treatVirtualAsExternal is enabled)
     function isPhysical(m: var): bool {
         return !m.fallback && (treatVirtualAsExternal || !m.virtual);
     }
 
     function isExternalName(name: string): bool {
-        return !/^(eDP|LVDS|DSI)/.test(name) && (treatVirtualAsExternal || !name.startsWith("HEADLESS"));
+        return name !== "FALLBACK" && !/^(eDP|LVDS|DSI)/.test(name) && (treatVirtualAsExternal || !name.startsWith("HEADLESS"));
     }
 
     function displayKey(m: var): string {
@@ -545,10 +546,10 @@ Singleton {
 
     // The saved layout made for exactly the displays that are connected now, if there is one
     function profileForConnected(): var {
-        const real = monitors.filter(m => treatVirtualAsExternal || !m.virtual);
+        const real = monitors.filter(m => isPhysical(m));
         const connected = new Set(real.map(displayKey));
         const matches = userProfiles.filter(p => {
-            const keys = new Set(p.outputs.filter(o => treatVirtualAsExternal || !o.name.startsWith("HEADLESS")).map(o => o.description || o.name));
+            const keys = new Set(p.outputs.filter(o => o.name !== "FALLBACK" && (treatVirtualAsExternal || !o.name.startsWith("HEADLESS"))).map(o => o.description || o.name));
             return keys.size === connected.size && [...keys].every(k => connected.has(k));
         });
         matches.sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at)));

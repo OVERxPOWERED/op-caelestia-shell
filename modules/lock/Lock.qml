@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import qs.components.misc
+import qs.services
 
 Scope {
     id: root
@@ -26,6 +27,12 @@ Scope {
         id: lock
 
         signal unlock
+
+        Binding {
+            target: ScreenTime
+            property: "sessionLocked"
+            value: lock.locked
+        }
 
         LockSurface {
             lock: lock

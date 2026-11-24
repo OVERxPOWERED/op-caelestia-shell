@@ -259,6 +259,15 @@ PageBase {
             }
         }
 
+        ToggleRow {
+            id: panelBlurRow
+
+            text: Tr.tr("Panel blur opening animation")
+            subtext: Tr.tr("Sweep a soft blur wave across panels as they open")
+            checked: GlobalConfig.appearance.anim.panelBlurReveal
+            onToggled: GlobalConfig.appearance.anim.panelBlurReveal = checked
+        }
+
         RowButton {
             last: true
             icon: "restart_alt"

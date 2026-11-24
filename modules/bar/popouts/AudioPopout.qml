@@ -4,35 +4,34 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Widgets
 import Quickshell.Services.Pipewire
 import Caelestia.Config
 import Caelestia.I18n
 import qs.components
 import qs.components.containers
 import qs.components.controls
+import qs.components.effects
 import qs.services
 import qs.utils
 
-Item {
+ColumnLayout {
     id: root
 
     required property PopoutState popouts
 
-    readonly property list<PwNode> sortedStreams: [...(Audio.streams ?? [])].filter(s => s).sort((a, b) => (Audio.getStreamName(a) || "").localeCompare(Audio.getStreamName(b) || ""))
-    property int selectedStreamId: -1
-    readonly property PwNode selectedStream: {
-        if (sortedStreams.length === 0)
-            return null;
-        const found = sortedStreams.find(s => s.id === root.selectedStreamId);
-        return found ?? sortedStreams[0];
+    readonly property list<PwNode> activeStreams: [...(Audio.streams ?? [])]
+        .filter(s => s && !Audio.isHiddenStream(s))
+        .sort((a, b) => (Audio.getStreamName(a) || "").localeCompare(Audio.getStreamName(b) || ""))
+
+    implicitWidth: 340
+    spacing: Tokens.spacing.medium
+
+    function getStreamIconSource(stream: PwNode): string {
+        const icon = Audio.getStreamIcon(stream);
+        if (icon)
+            return icon;
+        return Quickshell.iconPath("audio-x-generic");
     }
-
-    readonly property int maxExpandedApps: 2
-    readonly property bool useCompactAppSelector: sortedStreams.length > maxExpandedApps
-
-    implicitWidth: Math.max(280, layout.implicitWidth + Tokens.padding.medium * 2)
-    implicitHeight: layout.implicitHeight + Tokens.padding.medium * 2
 
     ButtonGroup {
         id: sinks
@@ -42,467 +41,273 @@ Item {
         id: sources
     }
 
-    ColumnLayout {
-        id: layout
+    StyledText {
+        Layout.topMargin: Tokens.padding.medium
+        Layout.leftMargin: Tokens.padding.small
+        text: Tr.tr("Audio")
+        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+    }
 
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
+    RowLayout {
+        Layout.fillWidth: true
         spacing: Tokens.spacing.medium
 
-        StyledText {
-            text: Tr.trCtx("Output device", "audio output device")
-            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
-        }
-
-        Repeater {
-            model: Audio.sinks
-
-            StyledRadioButton {
-                id: control
-
-                required property PwNode modelData
-
-                Layout.fillWidth: true
-                ButtonGroup.group: sinks
-                checked: Audio.sink?.id === modelData.id
-                onClicked: Audio.setAudioSink(modelData)
-                text: modelData.description
-            }
-        }
-
-        StyledText {
-            Layout.topMargin: Tokens.spacing.medium
-            text: Tr.trCtx("Input device", "audio input device")
-            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
-        }
-
-        Repeater {
-            model: Audio.sources
-
-            StyledRadioButton {
-                required property PwNode modelData
-
-                Layout.fillWidth: true
-                ButtonGroup.group: sources
-                checked: Audio.source?.id === modelData.id
-                onClicked: Audio.setAudioSource(modelData)
-                text: modelData.description
-            }
-        }
-
-        RowLayout {
+        ColumnLayout {
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.medium
-            spacing: Tokens.spacing.small
+            spacing: Tokens.spacing.medium
 
-            IconButton {
-                icon: Icons.getVolumeIcon(Audio.volume, Audio.muted)
-                type: IconButton.Text
-                inactiveOnColour: Audio.muted ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-                onClicked: Audio.setStreamMuted(Audio.sink, !Audio.muted)
+            // Output devices card
+            StyledRect {
+                Layout.fillWidth: true
+                implicitWidth: outputLayout.implicitWidth + Tokens.padding.medium * 2
+                implicitHeight: outputLayout.implicitHeight + Tokens.padding.medium * 2
+                radius: Tokens.rounding.medium
+                color: Colours.tPalette.m3surfaceContainer
+                clip: true
+
+                GlassRim {
+                    z: 10
+                    radius: parent.radius
+                }
+
+                ColumnLayout {
+                    id: outputLayout
+
+                    width: parent.width - Tokens.padding.medium * 2
+                    x: Tokens.padding.medium
+                    y: Tokens.padding.medium
+                    spacing: Tokens.spacing.medium
+
+                    StyledText {
+                        text: Tr.trCtx("Output device", "audio output device")
+                        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+                    }
+
+                    StyledText {
+                        visible: Audio.sinks.length === 0
+                        Layout.fillWidth: true
+                        text: Tr.tr("No output devices connected")
+                        color: Colours.palette.m3onSurfaceVariant
+                        font: Tokens.font.body.small
+                        elide: Text.ElideRight
+                    }
+
+                    Repeater {
+                        model: Audio.sinks
+
+                        StyledRadioButton {
+                            required property PwNode modelData
+
+                            Layout.fillWidth: true
+                            Layout.minimumWidth: 0
+                            ButtonGroup.group: sinks
+                            checked: Audio.sink?.id === modelData.id
+                            onClicked: Audio.setAudioSink(modelData)
+                            text: modelData.description || modelData.name
+                        }
+                    }
+                }
             }
 
-            StyledText {
+            // Input devices card
+            StyledRect {
                 Layout.fillWidth: true
-                text: Audio.muted ? Tr.tr("Volume (muted)") : Tr.tr("Volume (%1%)").arg(Math.round(Audio.volume * 100))
-                font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+                implicitWidth: inputLayout.implicitWidth + Tokens.padding.medium * 2
+                implicitHeight: inputLayout.implicitHeight + Tokens.padding.medium * 2
+                radius: Tokens.rounding.medium
+                color: Colours.tPalette.m3surfaceContainer
+                clip: true
+
+                GlassRim {
+                    z: 10
+                    radius: parent.radius
+                }
+
+                ColumnLayout {
+                    id: inputLayout
+
+                    width: parent.width - Tokens.padding.medium * 2
+                    x: Tokens.padding.medium
+                    y: Tokens.padding.medium
+                    spacing: Tokens.spacing.medium
+
+                    StyledText {
+                        text: Tr.trCtx("Input device", "audio input device")
+                        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+                    }
+
+                    StyledText {
+                        visible: Audio.sources.length === 0
+                        Layout.fillWidth: true
+                        text: Tr.tr("No input devices connected")
+                        color: Colours.palette.m3onSurfaceVariant
+                        font: Tokens.font.body.small
+                        elide: Text.ElideRight
+                    }
+
+                    Repeater {
+                        model: Audio.sources
+
+                        StyledRadioButton {
+                            required property PwNode modelData
+
+                            Layout.fillWidth: true
+                            Layout.minimumWidth: 0
+                            ButtonGroup.group: sources
+                            checked: Audio.source?.id === modelData.id
+                            onClicked: Audio.setAudioSource(modelData)
+                            text: modelData.description || modelData.name
+                        }
+                    }
+                }
             }
         }
 
+        // Master vertical volume slider
         CustomMouseArea {
-            Layout.fillWidth: true
-            implicitHeight: 18
+            Layout.fillHeight: true
+            Layout.preferredWidth: Tokens.sizes.osd.sliderWidth
+            implicitWidth: Tokens.sizes.osd.sliderWidth
+            acceptedButtons: Qt.NoButton
 
-            onWheel: event => {
+            function onWheel(event: WheelEvent): void {
                 if (event.angleDelta.y > 0)
                     Audio.incrementVolume();
                 else if (event.angleDelta.y < 0)
                     Audio.decrementVolume();
             }
 
-            StyledSlider {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                implicitHeight: 12
+            FilledSlider {
+                anchors.fill: parent
 
+                icon: Icons.getVolumeIcon(value, Audio.muted)
                 value: Audio.volume
-                onInteraction: value => Audio.setVolume(value)
+                to: GlobalConfig.services.maxVolume
+                enableIconTap: true
+
+                onIconTapped: Audio.setStreamMuted(Audio.sink, !Audio.muted)
+                onMoved: Audio.setVolume(value)
             }
         }
+    }
 
-        // Applications Header with active stream counter badge
-        RowLayout {
-            Layout.topMargin: Tokens.spacing.medium
-            Layout.fillWidth: true
-            spacing: Tokens.spacing.small
+    // Multi-app volume card with fade-scroll indicator (no scrollbar)
+    StyledRect {
+        id: appsCard
 
-            StyledText {
-                text: Tr.tr("Applications")
-                font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
-            }
+        // Fit 3 full rows + peek of 4th row before scrolling so overflow fade is clear
+        readonly property real rowHeight: Math.max(24, Tokens.padding.medium * 2)
+        readonly property real maxListHeight: rowHeight * 3 + Tokens.spacing.medium * 2.5
 
-            Item {
-                Layout.fillWidth: true
-            }
+        Layout.fillWidth: true
+        visible: streamRepeater.count > 0
+        implicitWidth: appLayout.implicitWidth + Tokens.padding.medium * 2
+        implicitHeight: Math.min(appLayout.implicitHeight, maxListHeight) + Tokens.padding.medium * 2
+        radius: Tokens.rounding.medium
+        color: Colours.tPalette.m3surfaceContainer
+        clip: true
 
-            StyledRect {
-                visible: root.sortedStreams.length > 0
-                implicitHeight: 20
-                implicitWidth: countText.implicitWidth + Tokens.padding.small * 2
-                radius: Tokens.rounding.full
-                color: Colours.tPalette.m3surfaceContainerHigh
-
-                StyledText {
-                    id: countText
-
-                    anchors.centerIn: parent
-                    text: Tr.tr("%1 active").arg(root.sortedStreams.length)
-                    font: Tokens.font.body.small
-                    color: Colours.palette.m3onSurfaceVariant
-                }
-            }
+        GlassRim {
+            z: 10
+            radius: parent.radius
         }
 
-        // Empty state: No audio streams active
-        RowLayout {
-            Layout.fillWidth: true
-            visible: root.sortedStreams.length === 0
-            spacing: Tokens.spacing.small
-            opacity: 0.7
+        VerticalFadeFlickable {
+            id: appFlickable
 
-            MaterialIcon {
-                text: "music_off"
-                color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.small
-            }
+            readonly property bool scrollable: contentHeight > height
 
-            StyledText {
-                Layout.fillWidth: true
-                text: Tr.tr("No apps playing audio")
-                color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.small
-            }
-        }
-
-        // Direct List Mode: Used when <= maxExpandedApps are active
-        Repeater {
-            model: (!root.useCompactAppSelector && root.sortedStreams.length > 0) ? root.sortedStreams : []
+            anchors.fill: parent
+            anchors.margins: Tokens.padding.medium
+            fadeAmount: scrollable ? 0.18 : 0
+            interactive: scrollable
+            contentWidth: width
+            contentHeight: appLayout.implicitHeight
+            boundsBehavior: Flickable.StopAtBounds
 
             ColumnLayout {
-                id: streamControl
+                id: appLayout
 
-                required property PwNode modelData
-                readonly property real streamVol: Audio.getStreamVolume(modelData)
-                readonly property bool streamMuted: Audio.getStreamMuted(modelData)
-                readonly property string streamIcon: Audio.getStreamIcon(modelData)
+                width: appFlickable.width
+                spacing: Tokens.spacing.medium
 
-                Layout.fillWidth: true
-                spacing: Tokens.spacing.extraSmall
+                Repeater {
+                    id: streamRepeater
 
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: Tokens.spacing.small
+                    model: root.activeStreams
 
-                    IconButton {
-                        icon: Icons.getVolumeIcon(streamControl.streamVol, streamControl.streamMuted)
-                        type: IconButton.Text
-                        inactiveOnColour: streamControl.streamMuted ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-                        onClicked: Audio.setStreamMuted(streamControl.modelData, !streamControl.streamMuted)
-                    }
+                    RowLayout {
+                        id: streamRow
 
-                    IconImage {
-                        visible: streamControl.streamIcon !== ""
-                        asynchronous: true
-                        implicitSize: 16
-                        source: streamControl.streamIcon
-                        Layout.alignment: Qt.AlignVCenter
-                    }
+                        required property PwNode modelData
+                        required property int index
 
-                    StyledText {
-                        Layout.preferredWidth: 0
+                        readonly property real streamVol: Audio.getStreamVolume(modelData)
+                        readonly property bool streamMuted: Audio.getStreamMuted(modelData)
+
                         Layout.fillWidth: true
-                        text: Audio.getStreamName(streamControl.modelData)
-                        font: Tokens.font.body.small
-                        elide: Text.ElideRight
-                    }
+                        spacing: Tokens.spacing.medium
 
-                    StyledText {
-                        text: streamControl.streamMuted ? Tr.tr("Muted") : `${Math.round(streamControl.streamVol * 100)}%`
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.body.small
-                    }
-                }
+                        ColouredIcon {
+                            Layout.preferredWidth: 24
+                            Layout.preferredHeight: 24
+                            source: root.getStreamIconSource(streamRow.modelData)
+                            colour: Colours.palette.m3secondary
+                            layer.enabled: Config.bar.tray.recolour
+                            opacity: streamRow.streamMuted ? 0.38 : 1.0
 
-                CustomMouseArea {
-                    Layout.fillWidth: true
-                    implicitHeight: 16
-
-                    onWheel: event => {
-                        const step = Config.services.audioIncrement;
-                        const curVol = streamControl.streamVol;
-                        if (event.angleDelta.y > 0)
-                            Audio.setStreamVolume(streamControl.modelData, Math.min(1, curVol + step));
-                        else if (event.angleDelta.y < 0)
-                            Audio.setStreamVolume(streamControl.modelData, Math.max(0, curVol - step));
-                    }
-
-                    StyledSlider {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        implicitHeight: 10
-
-                        radius: Tokens.rounding.small
-                        value: streamControl.streamVol
-                        enabled: !streamControl.streamMuted
-                        onInteraction: v => Audio.setStreamVolume(streamControl.modelData, v)
-                    }
-                }
-            }
-        }
-
-        // Compact Carousel / Pill Chips Mode: Used when > maxExpandedApps are active
-        ColumnLayout {
-            id: compactStreamControl
-
-            visible: root.useCompactAppSelector
-            Layout.fillWidth: true
-            Layout.preferredWidth: 0
-            spacing: Tokens.spacing.small
-
-            readonly property PwNode currentStream: root.selectedStream
-            readonly property real streamVol: currentStream ? Audio.getStreamVolume(currentStream) : 0
-            readonly property bool streamMuted: currentStream ? Audio.getStreamMuted(currentStream) : false
-            readonly property string currentIcon: currentStream ? Audio.getStreamIcon(currentStream) : ""
-
-            function scrollToSelected(): void {
-                for (let i = 0; i < chipRepeater.count; i++) {
-                    const item = chipRepeater.itemAt(i);
-                    if (item && item.isSelected) {
-                        chipFlickable.scrollTo(item);
-                        break;
-                    }
-                }
-            }
-
-            HorizontalFadeFlickable {
-                id: chipFlickable
-
-                function scrollTo(item: Item): void {
-                    if (!item)
-                        return;
-                    const targetX = Math.max(0, Math.min(chipFlickable.contentWidth - chipFlickable.width, item.x + item.width / 2 - chipFlickable.width / 2));
-                    scrollAnim.stop();
-                    scrollAnim.to = targetX;
-                    scrollAnim.start();
-                }
-
-                Anim {
-                    id: scrollAnim
-
-                    target: chipFlickable
-                    property: "contentX"
-                    type: Anim.DefaultSpatial
-                }
-
-                Layout.fillWidth: true
-                implicitHeight: 32
-                contentWidth: chipRow.implicitWidth
-                contentHeight: 32
-                boundsBehavior: Flickable.StopAtBounds
-
-                WheelHandler {
-                    orientation: Qt.Horizontal
-                    acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-                    onWheel: event => {
-                        scrollAnim.stop();
-                        const delta = event.angleDelta.y !== 0 ? event.angleDelta.y : event.angleDelta.x;
-                        chipFlickable.contentX = Math.max(0, Math.min(chipFlickable.contentWidth - chipFlickable.width, chipFlickable.contentX - delta));
-                    }
-                }
-
-                Row {
-                    id: chipRow
-
-                    spacing: Tokens.spacing.extraSmall
-                    height: parent.height
-
-                    Repeater {
-                        id: chipRepeater
-
-                        model: root.useCompactAppSelector ? root.sortedStreams : []
-
-                        StyledRect {
-                            id: chip
-
-                            required property PwNode modelData
-                            readonly property bool isSelected: root.selectedStream?.id === modelData.id
-                            readonly property bool isMuted: Audio.getStreamMuted(modelData)
-                            readonly property string streamName: Audio.getStreamName(modelData)
-                            readonly property string appIcon: Audio.getStreamIcon(modelData)
-
-                            implicitHeight: 28
-                            implicitWidth: Math.min(145, chipInnerRow.implicitWidth + Tokens.padding.small * 2)
-                            radius: Tokens.rounding.full
-
-                            scale: stateLayer.pressed ? 0.94 : isSelected ? 1.04 : (stateLayer.containsMouse ? 1.02 : 1.0)
-                            opacity: isSelected ? 1.0 : (stateLayer.containsMouse ? 0.9 : 0.75)
-
-                            color: isSelected ? Colours.palette.m3primary : Colours.tPalette.m3surfaceContainerHigh
-
-                            Behavior on color {
-                                CAnim {}
+                            TapHandler {
+                                onTapped: Audio.setStreamMuted(streamRow.modelData, !streamRow.streamMuted)
                             }
+                        }
 
-                            Behavior on scale {
-                                Anim {
-                                    type: Anim.FastSpatial
+                        Item {
+                            Layout.fillWidth: true
+                            implicitHeight: Tokens.padding.medium * 2
+
+                            WheelHandler {
+                                acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                                onWheel: event => {
+                                    if (appFlickable.scrollable && !(event.modifiers & Qt.ShiftModifier)) {
+                                        event.accepted = false;
+                                        return;
+                                    }
+                                    const step = GlobalConfig.services.audioIncrement;
+                                    const cur = streamRow.streamVol;
+                                    if (event.angleDelta.y > 0)
+                                        Audio.setStreamVolume(streamRow.modelData, Math.min(GlobalConfig.services.maxVolume, cur + step));
+                                    else if (event.angleDelta.y < 0)
+                                        Audio.setStreamVolume(streamRow.modelData, Math.max(0, cur - step));
                                 }
                             }
 
-                            Behavior on opacity {
-                                Anim {
-                                    type: Anim.DefaultEffects
-                                }
-                            }
+                            StyledSlider {
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                implicitHeight: parent.implicitHeight
 
-                            StateLayer {
-                                id: stateLayer
-
-                                color: chip.isSelected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
-                                onClicked: {
-                                    root.selectedStreamId = chip.modelData.id;
-                                    chipFlickable.scrollTo(chip);
-                                }
-                            }
-
-                            RowLayout {
-                                id: chipInnerRow
-
-                                anchors.centerIn: parent
-                                spacing: Tokens.spacing.extraSmall
-                                width: Math.min(parent.width - Tokens.padding.small, implicitWidth)
-
-                                IconImage {
-                                    visible: chip.appIcon !== ""
-                                    asynchronous: true
-                                    implicitSize: 14
-                                    source: chip.appIcon
-                                    Layout.alignment: Qt.AlignVCenter
-                                }
-
-                                MaterialIcon {
-                                    visible: chip.appIcon === ""
-                                    text: "music_note"
-                                    fontStyle: Tokens.font.icon.small
-                                    color: chip.isSelected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant
-                                    Layout.alignment: Qt.AlignVCenter
-                                }
-
-                                StyledText {
-                                    Layout.fillWidth: true
-                                    Layout.maximumWidth: 90
-                                    text: chip.streamName
-                                    color: chip.isSelected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.body.small
-                                    elide: Text.ElideRight
-                                    horizontalAlignment: Text.AlignHCenter
-                                }
-
-                                MaterialIcon {
-                                    visible: chip.isMuted
-                                    text: "volume_off"
-                                    fontStyle: Tokens.font.icon.small
-                                    color: chip.isSelected ? Colours.palette.m3onPrimary : Colours.palette.m3error
-                                    Layout.alignment: Qt.AlignVCenter
-                                }
+                                radius: Tokens.rounding.small
+                                inlineHandle: true
+                                value: streamRow.streamVol
+                                enabled: !streamRow.streamMuted
+                                onInteraction: v => Audio.setStreamVolume(streamRow.modelData, v)
                             }
                         }
                     }
                 }
             }
-
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: Tokens.spacing.small
-
-                IconButton {
-                    icon: Icons.getVolumeIcon(compactStreamControl.streamVol, compactStreamControl.streamMuted)
-                    type: IconButton.Text
-                    inactiveOnColour: compactStreamControl.streamMuted ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-                    onClicked: {
-                        if (compactStreamControl.currentStream)
-                            Audio.setStreamMuted(compactStreamControl.currentStream, !compactStreamControl.streamMuted);
-                    }
-                }
-
-                IconImage {
-                    visible: compactStreamControl.currentIcon !== ""
-                    asynchronous: true
-                    implicitSize: 16
-                    source: compactStreamControl.currentIcon
-                    Layout.alignment: Qt.AlignVCenter
-                }
-
-                StyledText {
-                    Layout.preferredWidth: 0
-                    Layout.fillWidth: true
-                    text: compactStreamControl.currentStream ? Audio.getStreamName(compactStreamControl.currentStream) : ""
-                    font: Tokens.font.body.small
-                    elide: Text.ElideRight
-                }
-
-                StyledText {
-                    text: compactStreamControl.streamMuted ? Tr.tr("Muted") : `${Math.round(compactStreamControl.streamVol * 100)}%`
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.body.small
-                }
-            }
-
-            CustomMouseArea {
-                Layout.fillWidth: true
-                implicitHeight: 16
-
-                onWheel: event => {
-                    if (!compactStreamControl.currentStream)
-                        return;
-                    const step = Config.services.audioIncrement;
-                    const curVol = compactStreamControl.streamVol;
-                    if (event.angleDelta.y > 0)
-                        Audio.setStreamVolume(compactStreamControl.currentStream, Math.min(1, curVol + step));
-                    else if (event.angleDelta.y < 0)
-                        Audio.setStreamVolume(compactStreamControl.currentStream, Math.max(0, curVol - step));
-                }
-
-                StyledSlider {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    implicitHeight: 10
-
-                    radius: Tokens.rounding.small
-                    value: compactStreamControl.streamVol
-                    enabled: compactStreamControl.currentStream && !compactStreamControl.streamMuted
-                    onInteraction: v => {
-                        if (compactStreamControl.currentStream)
-                            Audio.setStreamVolume(compactStreamControl.currentStream, v);
-                    }
-                }
-            }
         }
+    }
 
-        IconTextButton {
-            Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.medium
-            inactiveColour: Colours.palette.m3primaryContainer
-            inactiveOnColour: Colours.palette.m3onPrimaryContainer
-            verticalPadding: Tokens.padding.extraSmall
-            text: Tr.tr("Open settings")
-            icon: "settings"
+    IconTextButton {
+        Layout.fillWidth: true
+        inactiveColour: Colours.palette.m3primaryContainer
+        inactiveOnColour: Colours.palette.m3onPrimaryContainer
+        verticalPadding: Tokens.padding.small
+        text: Tr.tr("Open settings")
+        icon: "settings"
 
-            onClicked: root.popouts.detachRequested("audio")
-        }
+        onClicked: root.popouts.detachRequested("audio")
     }
 }

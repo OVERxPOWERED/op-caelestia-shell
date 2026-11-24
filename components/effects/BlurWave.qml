@@ -19,10 +19,11 @@ Item {
     property int blurMax: 32                 // Max blur radius in px
     property real cornerRadius: Config.border.rounding
 
-    property real waveProgress: (active && !GameMode.enabled) ? 0 : 1
+    readonly property bool revealEnabled: GlobalConfig.appearance.anim.panelBlurReveal && !GameMode.enabled
+    property real waveProgress: (active && revealEnabled) ? 0 : 1
     readonly property bool targetReady: target.width > 0 && target.height > 0
         && (target.status === undefined || target.status === Loader.Ready)
-    readonly property bool waveActive: !GameMode.enabled && active && waveProgress < 1 && targetReady
+    readonly property bool waveActive: revealEnabled && active && waveProgress < 1 && targetReady
 
     readonly property bool isHorizontal: direction === "leftToRight" || direction === "rightToLeft"
     readonly property bool isReversed: direction === "bottomToTop" || direction === "rightToLeft"
@@ -57,7 +58,7 @@ Item {
     }
 
     onActiveChanged: {
-        if (active && !GameMode.enabled) {
+        if (active && revealEnabled) {
             waveProgress = 0;
             waveAnim.restart();
         } else {
@@ -67,23 +68,24 @@ Item {
     }
 
     onTargetReadyChanged: {
-        if (targetReady && active && !GameMode.enabled) {
+        if (targetReady && active && revealEnabled) {
             waveProgress = 0;
             waveAnim.restart();
         }
     }
 
     Component.onCompleted: {
-        if (active && !GameMode.enabled) {
+        if (active && revealEnabled) {
             waveProgress = 0;
             waveAnim.restart();
         }
     }
 
     Connections {
-        target: GameMode
-        function onEnabledChanged() {
-            if (GameMode.enabled) {
+        target: root
+
+        function onRevealEnabledChanged(): void {
+            if (!root.revealEnabled) {
                 waveAnim.stop();
                 root.waveProgress = 1;
             }

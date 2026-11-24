@@ -3,14 +3,14 @@ import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
 import qs.components
-import qs.components.controls
 import qs.components.effects
 import qs.services
 
 StyledRect {
     id: root
 
-    readonly property real nonAnimHeight: layout.implicitHeight + (IdleInhibitor.enabled ? activeChip.implicitHeight + activeChip.anchors.topMargin : 0) + Tokens.padding.extraLargeIncreased
+    readonly property real chipSpacing: Tokens.spacing.large
+    readonly property real nonAnimHeight: layout.implicitHeight + (IdleInhibitor.active ? activeChip.implicitHeight + root.chipSpacing : 0) + Tokens.padding.extraLargeIncreased
 
     implicitHeight: nonAnimHeight
 
@@ -38,14 +38,15 @@ StyledRect {
             implicitHeight: icon.implicitHeight + Tokens.padding.large
 
             radius: Tokens.rounding.full
-            color: IdleInhibitor.enabled ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
+            color: IdleInhibitor.active ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
 
             MaterialIcon {
                 id: icon
 
                 anchors.centerIn: parent
-                text: "coffee"
-                color: IdleInhibitor.enabled ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
+                animate: true
+                text: IdleInhibitor.preventLock ? "lock_clock" : "coffee"
+                color: IdleInhibitor.active ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
                 fontStyle: Tokens.font.icon.large
             }
         }
@@ -63,33 +64,86 @@ StyledRect {
 
             StyledText {
                 Layout.fillWidth: true
-                text: IdleInhibitor.enabled ? Tr.trCtx("Preventing sleep mode", "idle inhibitor") : Tr.trCtx("Normal power management", "idle inhibitor")
+                text: {
+                    if (IdleInhibitor.preventLock)
+                        return Tr.trCtx("Won't lock or sleep when idle", "idle inhibitor");
+                    if (IdleInhibitor.preventSleep)
+                        return Tr.trCtx("Won't sleep when idle, still locks", "idle inhibitor");
+                    return Tr.trCtx("Normal power management", "idle inhibitor");
+                }
+                animate: true
                 color: Colours.palette.m3onSurfaceVariant
                 font: Tokens.font.body.small
                 elide: Text.ElideRight
             }
         }
 
-        StyledSwitch {
-            checked: IdleInhibitor.enabled
-            onToggled: IdleInhibitor.enabled = checked
+        StyledRect {
+            id: modePill
+
+            readonly property real inset: Tokens.padding.extraSmall / 2
+            readonly property var modes: [
+                {
+                    mode: IdleInhibitor.off,
+                    icon: "close"
+                },
+                {
+                    mode: IdleInhibitor.preventSleepMode,
+                    icon: "coffee"
+                },
+                {
+                    mode: IdleInhibitor.preventLockAndSleepMode,
+                    icon: "lock_clock"
+                }
+            ]
+            readonly property int currentIndex: Math.max(0, modes.findIndex(m => m.mode === IdleInhibitor.mode))
+            readonly property real stageWidth: modes.length > 0 ? stages.implicitWidth / modes.length : 0
+
+            Layout.alignment: Qt.AlignVCenter
+            implicitWidth: stages.implicitWidth + inset * 2
+            implicitHeight: stages.implicitHeight + inset * 2
+            radius: Tokens.rounding.full
+            color: Colours.tPalette.m3surfaceContainerHighest
+
+            StyledRect {
+                id: thumb
+
+                x: modePill.inset + modePill.currentIndex * modePill.stageWidth
+                y: modePill.inset
+                width: modePill.stageWidth
+                height: modePill.height - modePill.inset * 2
+                radius: Tokens.rounding.full
+                color: IdleInhibitor.active ? Colours.palette.m3secondary : Colours.palette.m3primary
+
+                Behavior on x {
+                    Anim {}
+                }
+            }
+
+            Row {
+                id: stages
+
+                anchors.centerIn: parent
+
+                Repeater {
+                    model: modePill.modes
+
+                    ModeStage {}
+                }
+            }
         }
     }
 
     Loader {
         id: activeChip
 
-        asynchronous: true
-        anchors.bottom: parent.bottom
+        anchors.top: layout.bottom
         anchors.left: parent.left
-        anchors.topMargin: Tokens.spacing.large
-        anchors.bottomMargin: IdleInhibitor.enabled ? Tokens.padding.large : -implicitHeight
+        anchors.topMargin: IdleInhibitor.active ? root.chipSpacing : -implicitHeight
         anchors.leftMargin: Tokens.padding.large
 
-        opacity: IdleInhibitor.enabled ? 1 : 0
-        scale: IdleInhibitor.enabled ? 1 : 0.5
-
-        Component.onCompleted: active = Qt.binding(() => opacity > 0)
+        opacity: IdleInhibitor.active ? 1 : 0
+        scale: IdleInhibitor.active ? 1 : 0.5
 
         sourceComponent: StyledRect {
             implicitWidth: activeText.implicitWidth + Tokens.padding.medium * 2
@@ -101,15 +155,18 @@ StyledRect {
             StyledText {
                 id: activeText
 
+                readonly property var since: IdleInhibitor.enabledSince
+                readonly property bool hasSince: !isNaN(new Date(since).getTime())
+
                 anchors.centerIn: parent
                 // TRANSLATORS: %1 = a clock time, e.g. 14:30
-                text: Tr.tr("Active since %1").arg(Qt.formatTime(IdleInhibitor.enabledSince, Units.twelveHourClock ? "hh:mm a" : "hh:mm"))
+                text: hasSince ? Tr.tr("Active since %1").arg(Qt.formatTime(new Date(since), Units.twelveHourClock ? "hh:mm a" : "hh:mm")) : ""
                 color: Colours.palette.m3onPrimary
                 font: Tokens.font.body.builders.small.size(Math.round(Tokens.font.body.small.pointSize * 0.9)).build()
             }
         }
 
-        Behavior on anchors.bottomMargin {
+        Behavior on anchors.topMargin {
             Anim {}
         }
 
@@ -126,5 +183,35 @@ StyledRect {
 
     Behavior on implicitHeight {
         Anim {}
+    }
+
+    component ModeStage: StyledRect {
+        id: stage
+
+        required property var modelData
+
+        readonly property bool selected: IdleInhibitor.mode === stage.modelData.mode
+
+        implicitWidth: icon.implicitHeight + Tokens.padding.small * 2
+        implicitHeight: icon.implicitHeight + Tokens.padding.small * 2
+        radius: Tokens.rounding.full
+
+        MaterialIcon {
+            id: icon
+
+            anchors.centerIn: parent
+            text: stage.modelData.icon
+            color: stage.selected ? (IdleInhibitor.active ? Colours.palette.m3onSecondary : Colours.palette.m3onPrimary) : Colours.palette.m3onSurfaceVariant
+            fill: stage.selected ? 1 : 0
+            fontStyle: Tokens.font.icon.medium
+
+            Behavior on fill {
+                Anim {}
+            }
+        }
+
+        StateLayer {
+            onClicked: IdleInhibitor.mode = stage.modelData.mode
+        }
     }
 }

@@ -1,9 +1,13 @@
 #pragma once
 
+#include <qstring.h>
+
 #include "settings/objectnode.hpp"
 #include "common.hpp"
 
 namespace caelestia::config {
+
+using Qt::StringLiterals::operator""_s;
 
 class DashboardPerformance : public settings::ObjectNode {
     CONFIG_NODE(DashboardPerformance, settings::ObjectNode)
@@ -35,12 +39,21 @@ class DashboardConfig : public settings::ObjectNode {
     CONFIG_PROPERTY(bool, showMedia, true)
     CONFIG_PROPERTY(bool, showPerformance, true)
     CONFIG_PROPERTY(bool, showWeather, true)
+    CONFIG_PROPERTY(bool, showFocus, true)
     CONFIG_PROPERTY(bool, showClockSeconds, false)
     CONFIG_GLOBAL_PROPERTY(int, mediaUpdateInterval, 500)
     CONFIG_GLOBAL_PROPERTY(int, resourceUpdateInterval, 1000)
     CONFIG_PROPERTY(int, dragThreshold, 50)
     CONFIG_SUBOBJECT(DashboardPerformance, performance)
     CONFIG_SUBOBJECT(DashboardPomodoro, pomodoro)
+    CONFIG_LIST(EntryList, tabs,
+        DEFAULT_ARG({
+            LIST_ENTRY(dashboard, true),
+            LIST_ENTRY(media, true),
+            LIST_ENTRY(focus, true),
+            LIST_ENTRY(performance, true),
+            LIST_ENTRY(weather, true),
+        }))
 };
 
 } // namespace caelestia::config

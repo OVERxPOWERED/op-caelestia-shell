@@ -17,6 +17,7 @@ PersistentProperties {
     property bool clipboard
 
     property var launcherPickCallback: undefined
+    property string launcherInitialSearch: ""
     property bool _bulkUpdating: false
 
     // Dashboard state

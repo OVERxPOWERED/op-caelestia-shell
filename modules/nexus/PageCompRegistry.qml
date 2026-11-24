@@ -194,6 +194,9 @@ QtObject {
                 Component {
                     ScratchpadPanel {}
                 }
+                Component {
+                    FocusPanel {}
+                }
             }
         },
         Component {

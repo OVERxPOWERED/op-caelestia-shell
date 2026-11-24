@@ -17,6 +17,7 @@ Slider {
     property int waveDuration: 1000
     property int radius: Tokens.rounding.medium
     property bool interactionOnMove: true
+    property bool inlineHandle: false
     readonly property bool dragging: mouse.pressed
 
     property color fgColour: enabled ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3onSurface, 0.38)
@@ -74,6 +75,8 @@ Slider {
 
             implicitWidth: 4
             implicitHeight: {
+                if (root.inlineHandle)
+                    return mouse.pressed ? parent.height + 4 : parent.height;
                 const t = CUtils.clamp((parent.height - 12) / 16, 0, 1);
                 const lerp = (a, b) => a + (b - a) * t;
                 return parent.height * (mouse.pressed ? lerp(3.5, 1.5) : lerp(3, 1.2));

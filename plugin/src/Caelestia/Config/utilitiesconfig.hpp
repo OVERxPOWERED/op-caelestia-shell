@@ -72,6 +72,9 @@ class UtilitiesConfig : public settings::ObjectNode {
             LIST_ENTRY(settings, true),
             LIST_ENTRY(gameMode, true),
             LIST_ENTRY(dnd, true),
+            LIST_ENTRY(nightMode, true),
+            LIST_ENTRY(wallpaper, false),
+            LIST_ENTRY(focus, false),
             LIST_ENTRY(vpn, false),
         }))
 };

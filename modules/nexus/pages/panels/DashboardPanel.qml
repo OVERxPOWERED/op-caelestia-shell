@@ -9,6 +9,14 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
+    readonly property var builtinTabs: ({
+        dashboard: Tr.tr("Dashboard"),
+        media: Tr.tr("Media"),
+        focus: Tr.tr("Focus"),
+        performance: Tr.tr("Performance"),
+        weather: Tr.tr("Weather")
+    })
+
     title: Tr.tr("Dashboard")
     isSubPage: true
 
@@ -39,11 +47,17 @@ PageBase {
         }
 
         ToggleRow {
-            last: true
             text: Tr.tr("Show clock seconds")
             subtext: Tr.tr("Display seconds for the clock in the main panel")
             checked: Config.dashboard.showClockSeconds
             onToggled: GlobalConfig.dashboard.showClockSeconds = checked
+        }
+
+        NavRow {
+            last: true
+            icon: "timer"
+            text: Tr.tr("Focus tab")
+            onClicked: root.nState.openSubPage(15)
         }
 
         // Tabs
@@ -51,30 +65,55 @@ PageBase {
             text: Tr.tr("Tabs")
         }
 
-        ToggleRow {
+        ListEditor {
+            function labelFor(item: var): string {
+                const prettyName = root.builtinTabs[item.id];
+                if (prettyName)
+                    return prettyName;
+                const label = item.id.replace(/([A-Z])/g, " $1");
+                return label.charAt(0).toUpperCase() + label.slice(1).toLowerCase();
+            }
+
+            function toggledFor(item: var): bool {
+                return item.enabled;
+            }
+
+            z: 1
             first: true
-            text: Tr.tr("Dashboard")
-            checked: Config.dashboard.showDashboard
-            onToggled: GlobalConfig.dashboard.showDashboard = checked
+            values: Config.dashboard.tabs.values
+            onItemMoved: (from, to) => GlobalConfig.dashboard.tabs.move(from, to)
+            onItemRemoved: index => GlobalConfig.dashboard.tabs.remove(index)
+            onItemToggled: (index, checked) => {
+                GlobalConfig.dashboard.tabs.at(index).enabled = checked;
+            }
         }
 
-        ToggleRow {
-            text: Tr.tr("Media")
-            checked: Config.dashboard.showMedia
-            onToggled: GlobalConfig.dashboard.showMedia = checked
-        }
+        DialogSelectButton {
+            id: addTabContainer
 
-        ToggleRow {
-            text: Tr.tr("Performance")
-            checked: Config.dashboard.showPerformance
-            onToggled: GlobalConfig.dashboard.showPerformance = checked
-        }
+            rootParent: root.flickable
+            icon: "add"
+            label: Tr.tr("Add tab")
+            header: Tr.tr("Add new tab")
+            acceptLabel: Tr.trCtx("Add", "button")
 
-        ToggleRow {
-            last: true
-            text: Tr.tr("Weather")
-            checked: Config.dashboard.showWeather
-            onToggled: GlobalConfig.dashboard.showWeather = checked
+            model: {
+                const builtins = Object.keys(root.builtinTabs).map(k => ({
+                    id: k,
+                    label: root.builtinTabs[k]
+                }));
+                return builtins.filter(b => !Config.dashboard.tabs.values.some(v => v.id === b.id));
+            }
+
+            onAccepted: {
+                if (!selectedItem)
+                    return;
+
+                GlobalConfig.dashboard.tabs.insert({
+                    id: selectedItem,
+                    enabled: true
+                });
+            }
         }
 
         // Performance widgets

@@ -112,12 +112,25 @@ Item {
             }
         }
 
-        Component.onCompleted: forceActiveFocus()
+        Component.onCompleted: {
+            if (root.screenState.launcherInitialSearch) {
+                search.text = root.screenState.launcherInitialSearch;
+                root.screenState.launcherInitialSearch = "";
+            }
+            forceActiveFocus();
+        }
 
         Connections {
             function onLauncherChanged(): void {
-                if (!root.screenState.launcher)
+                if (root.screenState.launcher) {
+                    if (root.screenState.launcherInitialSearch) {
+                        search.text = root.screenState.launcherInitialSearch;
+                        root.screenState.launcherInitialSearch = "";
+                    }
+                    search.forceActiveFocus();
+                } else {
                     search.text = "";
+                }
             }
 
             function onSessionChanged(): void {

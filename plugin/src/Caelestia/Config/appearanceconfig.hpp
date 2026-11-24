@@ -259,6 +259,7 @@ private:
 class AppearanceAnim : public settings::ObjectNode {
     CONFIG_NODE(AppearanceAnim, settings::ObjectNode)
 
+    CONFIG_GLOBAL_PROPERTY(bool, panelBlurReveal, false)
     CONFIG_SUBOBJECT(AnimDurations, durations)
 };
 

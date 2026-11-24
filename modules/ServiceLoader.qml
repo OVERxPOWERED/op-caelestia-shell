@@ -13,7 +13,6 @@ Scope {
         Players;
         Brightness;
         Weather.reload();
-        Pomodoro;
         CalendarService;
         Displays;
         DockPins;
@@ -25,6 +24,10 @@ Scope {
         DoctorWatchdog;
         VoiceTyping;
         ClipboardSettings;
+        HyprSunset;
+        FocusLedger;
+        FocusTimer;
+        ScreenTime;
 
         if (GlobalConfig.utilities.vpn.enabled)
             VPN;

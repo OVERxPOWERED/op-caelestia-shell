@@ -1,10 +1,11 @@
 pragma Singleton
 
 import QtQuick
+import QtMultimedia
 import Quickshell
+import Quickshell.Bluetooth
 import Quickshell.Io
 import Quickshell.Services.Pipewire
-import Quickshell.Bluetooth
 import Caelestia
 import Caelestia.Config
 import Caelestia.I18n
@@ -33,11 +34,13 @@ Singleton {
     readonly property alias cava: cava
     readonly property alias beatTracker: beatTracker
 
-    // --- Routing & Combined Output ---
+    // --- Routing, Combined Output & Live Device Availability ---
     property var streamTargets: ({})
     property bool combinedSinkEnabled: false
     property var combinedSinkMembers: []
     property var sinkVolumeTrims: ({})
+    property var routeAvailability: ({})
+    property var nodeDeviceMeta: ({})
     readonly property string combinedModuleName: "caelestia_combined"
     readonly property PwNode combinedSinkNode: sinks.find(s => s && s.name === combinedModuleName) ?? null
     readonly property bool isCombinedSinkActive: combinedSinkNode !== null
@@ -265,6 +268,84 @@ Singleton {
         return "";
     }
 
+    function isHiddenStream(stream: PwNode): bool {
+        if (!stream)
+            return true;
+
+        const name = getStreamName(stream).toLowerCase();
+        const props = stream.properties || {};
+        const appName = (props["application.name"] ?? "").toLowerCase();
+        const nodeName = (stream.name ?? "").toLowerCase();
+        const binary = (props["application.process.binary"] ?? "").toLowerCase();
+        const mediaName = (props["media.name"] ?? "").toLowerCase();
+
+        const isInternal = name.includes("quickshell") || name.includes("caelestia")
+            || appName.includes("quickshell") || appName.includes("caelestia")
+            || nodeName.includes("quickshell") || nodeName.includes("caelestia")
+            || binary.includes("quickshell") || binary.includes("caelestia");
+
+        const isWallpaper = name.includes("wallpaper") || appName.includes("wallpaper")
+            || nodeName.includes("wallpaper") || binary.includes("wallpaper")
+            || name.includes("skwd") || appName.includes("skwd")
+            || nodeName.includes("skwd") || binary.includes("skwd")
+            || mediaName.includes(" - mpv") || (nodeName === "mpv" && binary !== "mpv");
+
+        return isInternal || isWallpaper;
+    }
+
+    function playFocusEnd(): void {
+        if (GlobalConfig.focus.chime)
+            sfxFocusEnd.play();
+    }
+
+    function playBreakEnd(): void {
+        if (GlobalConfig.focus.chime)
+            sfxBreakEnd.play();
+    }
+
+    function isBluetoothConnected(node: PwNode): bool {
+        const desc = (node.description || "").toLowerCase();
+        const name = (node.name || "").toLowerCase();
+        const props = node.properties || {};
+        const isBluetooth = props["device.api"] === "bluez5" || props["device.bus"] === "bluetooth" || name.startsWith("bluez_output.") || name.startsWith("bluez_input.") || desc.includes("bluetooth");
+        if (!isBluetooth)
+            return true;
+
+        const btDevices = Bluetooth.devices?.values ?? [];
+        const match = btDevices.find(d => {
+            if (!d)
+                return false;
+            const dAddrUnderscore = (d.address || "").toLowerCase().replace(/:/g, "_");
+            const dAddrColon = (d.address || "").toLowerCase();
+            const dName = (d.name || "").toLowerCase();
+            return (dAddrUnderscore !== "" && name.includes(dAddrUnderscore))
+                || (dAddrColon !== "" && name.includes(dAddrColon))
+                || (dName !== "" && desc.includes(dName));
+        });
+        return !!match && (match.paired || match.bonded) && match.connected;
+    }
+
+    function isNodeConnectedByRoute(node: PwNode): bool {
+        const desc = (node.description || "").toLowerCase();
+        const props = node.properties || {};
+        const profDesc = (props["device.profile.description"] || "").toLowerCase();
+
+        if (desc.includes("unplugged") || desc.includes("disconnected") || profDesc.includes("unplugged") || profDesc.includes("disconnected"))
+            return false;
+
+        const meta = nodeDeviceMeta[node.id];
+        const devId = props["device.id"] !== undefined ? props["device.id"] : meta?.devId;
+        const profDev = props["card.profile.device"] !== undefined ? props["card.profile.device"] : meta?.profDev;
+
+        if (devId !== undefined && profDev !== undefined) {
+            const key = `${devId}:${profDev}`;
+            if (routeAvailability[key] === false)
+                return false;
+        }
+
+        return true;
+    }
+
     function isValidOutputSink(node: PwNode): bool {
         if (!node || !node.isSink)
             return false;
@@ -273,47 +354,33 @@ Singleton {
         if (node.name === root.combinedModuleName)
             return true;
 
-        // Always retain the currently active default audio sink
-        if (node.id === Pipewire.defaultAudioSink?.id)
-            return true;
-
-        const desc = (node.description || "").toLowerCase();
-        const name = (node.name || "").toLowerCase();
-        const props = node.properties || {};
-        const profDesc = (props["device.profile.description"] || "").toLowerCase();
-
-        // Explicit unplugged / disconnected check
-        if (desc.includes("unplugged") || desc.includes("disconnected") || profDesc.includes("unplugged") || profDesc.includes("disconnected"))
+        if (!isBluetoothConnected(node))
             return false;
 
-        // Bluetooth device verification: must be paired/bonded and connected
-        const isBluetooth = props["device.api"] === "bluez5" || props["device.bus"] === "bluetooth" || name.startsWith("bluez_output.") || desc.includes("bluetooth");
-        if (isBluetooth) {
-            const btDevices = Bluetooth.devices?.values ?? [];
-            const match = btDevices.find(d => {
-                if (!d)
-                    return false;
-                const dAddr = (d.address || "").toLowerCase().replace(/:/g, "_");
-                const dName = (d.name || "").toLowerCase();
-                return (dAddr !== "" && name.includes(dAddr)) || (dName !== "" && desc.includes(dName));
-            });
-            if (!match || (!match.paired && !match.bonded) || !match.connected)
-                return false;
-        }
+        if (!isNodeConnectedByRoute(node))
+            return false;
 
-        // Non-existing / unbound HDMI outputs filtering
-        const isHdmi = desc.includes("hdmi") || desc.includes("displayport") || name.includes("hdmi") || profDesc.includes("hdmi");
-        if (isHdmi) {
-            const nick = (props["node.nick"] || "").trim();
-            const isGenericName = /^hdmi(\s*\/\s*displayport)?\s*[0-9]+$/i.test(desc.trim()) ||
-                                  /^built-in audio digital stereo \(hdmi\)$/i.test(desc.trim()) ||
-                                  /^hdmi\s+[0-9]+$/i.test(desc.trim()) ||
-                                  /^displayport\s+[0-9]+$/i.test(desc.trim()) ||
-                                  /^hdmi\s*\/\s*dp,\s*pcm=[0-9]+$/i.test(desc.trim());
-            // If it has a generic unassigned HDMI hardware name and no custom EDID monitor nick, treat as non-existing
-            if (isGenericName && (nick === "" || nick.toLowerCase().includes("hdmi") || nick.toLowerCase().includes("displayport")))
-                return false;
-        }
+        return true;
+    }
+
+    function isValidInputSource(node: PwNode): bool {
+        if (!node || !node.audio || node.isSink)
+            return false;
+
+        const name = (node.name || "").toLowerCase();
+        const desc = (node.description || "").toLowerCase();
+        const props = node.properties || {};
+        const mediaClass = (props["media.class"] || "").toLowerCase();
+
+        // Exclude sink monitors
+        if (name.endsWith(".monitor") || desc.startsWith("monitor of ") || mediaClass === "audio/sink")
+            return false;
+
+        if (!isBluetoothConnected(node))
+            return false;
+
+        if (!isNodeConnectedByRoute(node))
+            return false;
 
         return true;
     }
@@ -327,7 +394,7 @@ Singleton {
             if (!node.isStream) {
                 if (node.isSink && root.isValidOutputSink(node))
                     newSinks.push(node);
-                else if (node.audio && !node.isSink)
+                else if (root.isValidInputSource(node))
                     newSources.push(node);
             } else if (node.audio) {
                 newStreams.push(node);
@@ -380,6 +447,7 @@ Singleton {
     // lazily-loaded singleton is created, so onValuesChanged would never fire.
     Component.onCompleted: {
         refreshNodes();
+        pwDumpProc.running = true;
         previousSinkName = sink?.description || sink?.name || Tr.trCtx("Unknown device", "unknown audio device");
         previousSourceName = source?.description || source?.name || Tr.trCtx("Unknown device", "unknown audio device");
     }
@@ -387,6 +455,7 @@ Singleton {
     Connections {
         function onValuesChanged(): void {
             root.refreshNodes();
+            pwDumpDebounce.restart();
         }
 
         target: Pipewire.nodes
@@ -395,6 +464,7 @@ Singleton {
     Connections {
         function onValuesChanged(): void {
             root.refreshNodes();
+            pwDumpDebounce.restart();
         }
 
         target: Bluetooth.devices
@@ -430,6 +500,93 @@ Singleton {
 
     Process {
         id: audioCmdProc
+    }
+
+    Timer {
+        id: pwDumpDebounce
+
+        interval: 120
+        repeat: false
+        onTriggered: {
+            if (!pwDumpProc.running)
+                pwDumpProc.running = true;
+        }
+    }
+
+    Process {
+        id: pwSubscribeProc
+
+        command: ["pactl", "subscribe"]
+        running: true
+        stdout: SplitParser {
+            onRead: line => {
+                if (line.includes("card") || line.includes("sink") || line.includes("source") || line.includes("device"))
+                    pwDumpDebounce.restart();
+            }
+        }
+    }
+
+    Process {
+        id: pwDumpProc
+
+        command: ["pw-dump"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    const data = JSON.parse(text);
+                    const nextAvail = {};
+                    const nextMeta = {};
+
+                    for (const obj of data) {
+                        if (!obj)
+                            continue;
+                        if (obj.type === "PipeWire:Interface:Device") {
+                            const devId = obj.id;
+                            const routes = obj.info?.params?.EnumRoute ?? [];
+                            const perDev = {};
+                            for (const r of routes) {
+                                const devs = r.devices ?? [];
+                                const avail = r.available !== "no";
+                                for (const d of devs) {
+                                    const key = `${devId}:${d}`;
+                                    perDev[key] = (perDev[key] === true) || avail;
+                                }
+                            }
+                            for (const k in perDev)
+                                nextAvail[k] = perDev[k];
+                        } else if (obj.type === "PipeWire:Interface:Node") {
+                            const props = obj.info?.props ?? {};
+                            if (props["device.id"] !== undefined && props["card.profile.device"] !== undefined) {
+                                nextMeta[obj.id] = {
+                                    devId: props["device.id"],
+                                    profDev: props["card.profile.device"]
+                                };
+                            }
+                        }
+                    }
+
+                    root.routeAvailability = nextAvail;
+                    root.nodeDeviceMeta = nextMeta;
+                    root.refreshNodes();
+                } catch (e) {
+                    console.warn("Audio: failed to parse pw-dump:", e);
+                }
+            }
+        }
+    }
+
+    SoundEffect {
+        id: sfxFocusEnd
+
+        source: Qt.resolvedUrl("../assets/sounds/notifications/" + GlobalConfig.focus.focusEndSound)
+        volume: 0.8
+    }
+
+    SoundEffect {
+        id: sfxBreakEnd
+
+        source: Qt.resolvedUrl("../assets/sounds/notifications/" + GlobalConfig.focus.breakEndSound)
+        volume: 0.8
     }
 
     Process {

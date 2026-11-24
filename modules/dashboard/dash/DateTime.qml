@@ -18,14 +18,21 @@ Item {
     property bool showPomodoro: GlobalConfig.dashboard.pomodoro.defaultToPomodoro
 
     readonly property color pomodoroColour: {
-        switch (Pomodoro.mode) {
-        case Pomodoro.Mode.ShortBreak:
+        if (FocusTimer.phase === "shortBreak")
             return Colours.palette.m3tertiary;
-        case Pomodoro.Mode.LongBreak:
+        if (FocusTimer.phase === "longBreak")
             return Colours.palette.m3secondary;
-        default:
-            return Colours.palette.m3primary;
-        }
+        return Colours.palette.m3primary;
+    }
+
+    readonly property string phaseIconName: FocusTimer.isStopwatch ? "waves" : FocusTimer.phaseIcon
+
+    readonly property string shortPhaseLabel: {
+        if (FocusTimer.phase === "shortBreak")
+            return Tr.tr("Break");
+        if (FocusTimer.phase === "longBreak")
+            return Tr.tr("Big break");
+        return FocusTimer.isStopwatch ? Tr.tr("Flow") : Tr.tr("Focus");
     }
 
     // Switcher button in top-right (available across both views)
@@ -76,10 +83,17 @@ Item {
 
             CustomMouseArea {
                 anchors.fill: parent
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-                onClicked: {
-                    const nextMode = (Pomodoro.mode + 1) % 3;
-                    Pomodoro.setMode(nextMode);
+                onClicked: event => {
+                    if (event.button === Qt.RightButton) {
+                        if (FocusTimer.canSwitchMode)
+                            FocusTimer.setMode(FocusTimer.mode === "stopwatch" ? "timer" : "stopwatch");
+                        return;
+                    }
+                    const phases = ["focus", "shortBreak", "longBreak"];
+                    const idx = phases.indexOf(FocusTimer.phase);
+                    FocusTimer.setPhase(phases[(idx + 1) % phases.length]);
                 }
 
                 StyledRect {
@@ -92,12 +106,12 @@ Item {
                         spacing: 4
 
                         MaterialIcon {
-                            text: Pomodoro.modeIcon
+                            text: root.phaseIconName
                             color: root.pomodoroColour
                         }
 
                         StyledText {
-                            text: Pomodoro.shortModeName
+                            text: root.shortPhaseLabel
                             font: Tokens.font.label.small
                             color: root.pomodoroColour
                             elide: Text.ElideRight
@@ -107,42 +121,73 @@ Item {
             }
         }
 
-        // Middle Vessel: Big Vertical Background Timer Digits submerged by falling translucent M3 shapes
+        // Active subject chip (visible when a subject is chosen in the Focus tab)
+        StyledRect {
+            id: subjectBadge
+
+            anchors.top: topBar.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.topMargin: Tokens.padding.extraSmall
+            visible: FocusTimer.phase === "focus" && FocusTimer.subject.length > 0
+            implicitWidth: Math.min(parent.width - Tokens.padding.small * 2, subjectText.implicitWidth + Tokens.padding.small * 2)
+            implicitHeight: visible ? subjectText.implicitHeight + 4 : 0
+            radius: Tokens.rounding.full
+            color: Colours.palette.m3secondaryContainer
+            z: 10
+
+            StyledText {
+                id: subjectText
+
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: Tokens.padding.small
+                anchors.verticalCenter: parent.verticalCenter
+                text: FocusTimer.subject
+                font: Tokens.font.label.small
+                color: Colours.palette.m3onSecondaryContainer
+                elide: Text.ElideRight
+                horizontalAlignment: Text.AlignHCenter
+            }
+        }
+
+        // Middle Vessel: Rising wavy fluid fill behind vertical timer digits
         Item {
             id: vesselArea
 
-            anchors.top: topBar.bottom
+            anchors.top: subjectBadge.visible ? subjectBadge.bottom : topBar.bottom
             anchors.bottom: bottomControls.top
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.topMargin: Tokens.padding.small
             anchors.bottomMargin: Tokens.padding.small
-            clip: true
+            anchors.leftMargin: Tokens.padding.extraSmall
+            anchors.rightMargin: Tokens.padding.extraSmall
 
-            // Layer 1: Big Vertical Graphic Timer Digits
+            // Layer 1: Smooth dual-layer wavy fluid rising with FocusTimer.progress
+            PomodoroShapes {
+                anchors.fill: parent
+                accentColour: root.pomodoroColour
+                z: 1
+            }
+
+            // Layer 2: Big Vertical Graphic Timer Digits
             StyledText {
                 id: verticalTimerText
 
                 anchors.centerIn: parent
                 rotation: 90
-                text: Pomodoro.formattedTime
-                color: Qt.alpha(Colours.palette.m3onSurface, 0.75)
-                font: Tokens.font.clock.size(38).weight(Font.Bold).build()
-                z: 1
+                text: FocusTimer.display
+                color: Colours.palette.m3onSurface
+                font: Tokens.font.clock.size(FocusTimer.display.length > 5 ? 30 : 38).weight(Font.Bold).build()
+                z: 2
 
                 Behavior on color {
                     CAnim {}
                 }
             }
-
-            // Layer 2: Falling & Settling Heap of Translucent Material 3 Shapes
-            PomodoroShapes {
-                anchors.fill: parent
-                z: 2
-            }
         }
 
-        // Bottom Controls: Elevated above shapes with generous breathing room
+        // Bottom Controls: Elevated above vessel with generous breathing room
         ColumnLayout {
             id: bottomControls
 
@@ -158,7 +203,7 @@ Item {
                 spacing: 5
 
                 Repeater {
-                    model: Pomodoro.sessionsBeforeLongBreak
+                    model: FocusTimer.cyclesBeforeLongBreak
 
                     StyledRect {
                         required property int index
@@ -166,10 +211,10 @@ Item {
                         width: 5
                         height: 5
                         radius: 2.5
-                        color: index < Pomodoro.cycleCount
-                            ? Colours.palette.m3primary
-                            : (index === Pomodoro.cycleCount && Pomodoro.mode === Pomodoro.Mode.Focus
-                                ? Qt.alpha(Colours.palette.m3primary, 0.6)
+                        color: index < FocusTimer.cycleCount
+                            ? root.pomodoroColour
+                            : (index === FocusTimer.cycleCount && FocusTimer.phase === "focus"
+                                ? Qt.alpha(root.pomodoroColour, 0.6)
                                 : Colours.tPalette.m3outline)
 
                         Behavior on color {
@@ -186,21 +231,22 @@ Item {
 
                 IconButton {
                     type: IconButton.Filled
-                    icon: Pomodoro.running ? "pause" : "play_arrow"
+                    icon: FocusTimer.running ? "pause" : "play_arrow"
                     activeColour: root.pomodoroColour
                     font: Tokens.font.icon.small
                     implicitWidth: 30
                     implicitHeight: 30
-                    onClicked: Pomodoro.toggle()
+                    onClicked: FocusTimer.toggle()
                 }
 
                 IconButton {
                     type: IconButton.Tonal
                     icon: "skip_next"
                     font: Tokens.font.icon.small
+                    disabled: !FocusTimer.sessionActive
                     implicitWidth: 26
                     implicitHeight: 26
-                    onClicked: Pomodoro.skip()
+                    onClicked: FocusTimer.skipPhase()
                 }
 
                 IconButton {
@@ -209,7 +255,7 @@ Item {
                     font: Tokens.font.icon.small
                     implicitWidth: 24
                     implicitHeight: 24
-                    onClicked: Pomodoro.reset()
+                    onClicked: FocusTimer.reset()
                 }
             }
         }
@@ -301,11 +347,11 @@ Item {
                 }
             }
 
-            // Running Pomodoro badge at bottom if timer active while viewing clock
+            // Running Focus badge at bottom if timer active while viewing clock
             CustomMouseArea {
                 Layout.topMargin: Tokens.padding.extraSmall
                 Layout.alignment: Qt.AlignHCenter
-                visible: Pomodoro.running
+                visible: FocusTimer.running || FocusTimer.sessionActive
                 implicitWidth: badgeRow.implicitWidth + Tokens.padding.small * 2
                 implicitHeight: badgeRow.implicitHeight + Tokens.padding.extraSmall
 
@@ -314,7 +360,7 @@ Item {
                 StyledRect {
                     anchors.fill: parent
                     radius: Tokens.rounding.full
-                    color: Qt.alpha(Colours.palette.m3primary, 0.2)
+                    color: Qt.alpha(root.pomodoroColour, 0.2)
 
                     RowLayout {
                         id: badgeRow
@@ -322,13 +368,13 @@ Item {
                         spacing: 2
 
                         MaterialIcon {
-                            text: Pomodoro.modeIcon
-                            color: Colours.palette.m3primary
+                            text: root.phaseIconName
+                            color: root.pomodoroColour
                         }
 
                         StyledText {
-                            text: Pomodoro.formattedTime
-                            color: Colours.palette.m3primary
+                            text: FocusTimer.display
+                            color: root.pomodoroColour
                             font: Tokens.font.label.small
                         }
                     }

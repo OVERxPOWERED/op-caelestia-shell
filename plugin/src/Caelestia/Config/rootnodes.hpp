@@ -12,6 +12,7 @@
 #include "common.hpp"
 #include "dashboardconfig.hpp"
 #include "dockconfig.hpp"
+#include "focusconfig.hpp"
 #include "font.hpp"
 #include "generalconfig.hpp"
 #include "launcherconfig.hpp"
@@ -40,6 +41,7 @@ class ConfigRoot : public settings::RootNode {
     CONFIG_SUBOBJECT(BorderConfig, border)
     CONFIG_SUBOBJECT(DashboardConfig, dashboard)
     CONFIG_SUBOBJECT(DockConfig, dock)
+    CONFIG_GLOBAL_SUBOBJECT(FocusConfig, focus)
     CONFIG_SUBOBJECT(LauncherConfig, launcher)
     CONFIG_SUBOBJECT(LockConfig, lock)
     CONFIG_SUBOBJECT(NexusConfig, nexus)

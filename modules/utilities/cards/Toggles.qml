@@ -23,16 +23,14 @@ StyledRect {
         const seenIds = new Set();
 
         return Config.utilities.quickToggles.values.filter(item => {
-            if (!item.enabled)
+            if (!item.enabled || seenIds.has(item.id))
                 return false;
 
-            if (seenIds.has(item.id)) {
+            if (item.id === "vpn" && GlobalConfig.utilities.vpn.selectedProvider.length === 0)
                 return false;
-            }
 
-            if (item.id === "vpn") {
-                return GlobalConfig.utilities.vpn.selectedProvider.length > 0;
-            }
+            if (item.id === "nightMode" && !HyprSunset.available)
+                return false;
 
             seenIds.add(item.id);
             return true;
@@ -147,6 +145,14 @@ StyledRect {
                     }
                 }
                 DelegateChoice {
+                    roleValue: "nightMode"
+                    delegate: Toggle {
+                        icon: "dark_mode"
+                        checked: HyprSunset.active
+                        onClicked: HyprSunset.toggle()
+                    }
+                }
+                DelegateChoice {
                     roleValue: "vpn"
                     delegate: Toggle {
                         icon: "vpn_key"
@@ -155,6 +161,27 @@ StyledRect {
                         isToggle: VPN.status.state !== "needs-auth" && VPN.status.state !== "error"
                         inactiveOnColour: Colours.palette.m3onSurfaceVariant
                         onClicked: VPN.toggle()
+                    }
+                }
+                DelegateChoice {
+                    roleValue: "wallpaper"
+                    delegate: Toggle {
+                        icon: "wallpaper"
+                        isToggle: false
+                        inactiveOnColour: Colours.palette.m3onSurfaceVariant
+                        onClicked: {
+                            root.screenState.launcherInitialSearch = `${GlobalConfig.launcher.actionPrefix}wallpaper `;
+                            root.screenState.utilities = false;
+                            root.screenState.launcher = true;
+                        }
+                    }
+                }
+                DelegateChoice {
+                    roleValue: "focus"
+                    delegate: Toggle {
+                        icon: FocusTimer.running ? "timer" : "timer_off"
+                        checked: FocusTimer.running
+                        onClicked: FocusTimer.toggle()
                     }
                 }
             }

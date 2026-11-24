@@ -1,32 +1,27 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.services
 import qs.modules.nexus.common
 
 PageBase {
     id: root
 
-    function isToggleOn(id: string): bool {
-        const item = Config.utilities.quickToggles.values.find(t => t.id === id);
-        return item?.enabled ?? false;
-    }
-
-    function setToggleOn(id: string, on: bool): void {
-        const list = GlobalConfig.utilities.quickToggles;
-        for (let i = 0; i < list.count; i++) {
-            const item = list.at(i);
-            if (item.id === id) {
-                item.enabled = on;
-                return;
-            }
-        }
-        list.insert({
-            id,
-            enabled: on
-        });
-    }
+    readonly property var builtinToggles: ({
+        wifi: Tr.tr("Wi-Fi"),
+        bluetooth: Tr.tr("Bluetooth"),
+        mic: Tr.tr("Microphone"),
+        settings: Tr.tr("Settings"),
+        gameMode: Tr.tr("Game mode"),
+        dnd: Tr.tr("Do not disturb"),
+        nightMode: Tr.tr("Night mode"),
+        wallpaper: Tr.tr("Wallpaper selector"),
+        focus: Tr.tr("Focus timer"),
+        vpn: Tr.tr("VPN")
+    })
 
     title: Tr.tr("Utilities")
     isSubPage: true
@@ -85,62 +80,78 @@ PageBase {
             text: Tr.tr("Quick toggles")
         }
 
-        ToggleRow {
+        ListEditor {
+            function labelFor(item: var): string {
+                const prettyName = root.builtinToggles[item.id];
+                if (prettyName)
+                    return prettyName;
+                const label = item.id.replace(/([A-Z])/g, " $1");
+                return label.charAt(0).toUpperCase() + label.slice(1).toLowerCase();
+            }
+
+            function toggledFor(item: var): bool {
+                return item.enabled;
+            }
+
+            z: 1
             first: true
-            text: Tr.tr("Wi-Fi")
-            subtext: Tr.tr("Toggle wireless networking")
-            disabled: !Config.utilities.cards.quickToggles
-            checked: root.isToggleOn("wifi")
-            onToggled: root.setToggleOn("wifi", checked)
+            values: Config.utilities.quickToggles.values
+            onItemMoved: (from, to) => GlobalConfig.utilities.quickToggles.move(from, to)
+            onItemRemoved: index => GlobalConfig.utilities.quickToggles.remove(index)
+            onItemToggled: (index, checked) => {
+                GlobalConfig.utilities.quickToggles.at(index).enabled = checked;
+            }
         }
 
-        ToggleRow {
-            text: Tr.tr("Bluetooth")
-            subtext: Tr.tr("Toggle the Bluetooth adapter")
-            disabled: !Config.utilities.cards.quickToggles
-            checked: root.isToggleOn("bluetooth")
-            onToggled: root.setToggleOn("bluetooth", checked)
+        DialogSelectButton {
+            id: addItemContainer
+
+            rootParent: root.flickable
+            icon: "add"
+            label: Tr.tr("Add entry")
+            header: Tr.tr("Add new entry")
+            acceptLabel: Tr.trCtx("Add", "button")
+
+            model: {
+                const builtins = Object.keys(root.builtinToggles).map(k => ({
+                    id: k,
+                    label: root.builtinToggles[k]
+                }));
+                return builtins.filter(b => !Config.utilities.quickToggles.values.some(v => v.id === b.id));
+            }
+
+            onAccepted: {
+                if (!selectedItem)
+                    return;
+
+                GlobalConfig.utilities.quickToggles.insert({
+                    id: selectedItem,
+                    enabled: true
+                });
+            }
         }
 
-        ToggleRow {
-            text: Tr.tr("Microphone")
-            subtext: Tr.tr("Mute or unmute the default source")
-            disabled: !Config.utilities.cards.quickToggles
-            checked: root.isToggleOn("mic")
-            onToggled: root.setToggleOn("mic", checked)
+        // Night mode
+        SectionHeader {
+            visible: HyprSunset.available
+            text: Tr.tr("Night mode")
         }
 
-        ToggleRow {
-            text: Tr.tr("Settings")
-            subtext: Tr.tr("Open the settings window")
-            disabled: !Config.utilities.cards.quickToggles
-            checked: root.isToggleOn("settings")
-            onToggled: root.setToggleOn("settings", checked)
-        }
+        SliderRow {
+            readonly property int minTemp: 1000
+            readonly property int maxTemp: 6500
 
-        ToggleRow {
-            text: Tr.tr("Game mode")
-            subtext: Tr.tr("Toggle game mode")
-            disabled: !Config.utilities.cards.quickToggles
-            checked: root.isToggleOn("gameMode")
-            onToggled: root.setToggleOn("gameMode", checked)
-        }
-
-        ToggleRow {
-            text: Tr.tr("Do not disturb")
-            subtext: Tr.tr("Silence notifications")
-            disabled: !Config.utilities.cards.quickToggles
-            checked: root.isToggleOn("dnd")
-            onToggled: root.setToggleOn("dnd", checked)
-        }
-
-        ToggleRow {
+            visible: HyprSunset.available
+            first: true
             last: true
-            text: Tr.tr("VPN")
-            subtext: Tr.tr("Connect or disconnect the VPN")
-            disabled: !Config.utilities.cards.quickToggles
-            checked: root.isToggleOn("vpn")
-            onToggled: root.setToggleOn("vpn", checked)
+            icon: "dark_mode"
+            label: Tr.tr("Color temperature")
+            valueLabel: Tr.tr("%1K").arg(HyprSunset.temperature)
+            value: (HyprSunset.temperature - minTemp) / (maxTemp - minTemp)
+            onMoved: v => {
+                const temp = Math.round(minTemp + v * (maxTemp - minTemp));
+                HyprSunset.start(temp);
+            }
         }
     }
 }

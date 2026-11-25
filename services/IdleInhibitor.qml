@@ -1,22 +1,26 @@
 pragma Singleton
 
+import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import Caelestia.Services
 
 Singleton {
     id: root
 
-    // 0 = off, 1 = prevent sleep (display off/suspend), 2 = also prevent lock
+    // 0 = off, 1 = prevent sleep (display off/suspend), 2 = also prevent lock, 3 = also prevent sleep on lid close
     readonly property int off: 0
     readonly property int preventSleepMode: 1
     readonly property int preventLockAndSleepMode: 2
+    readonly property int preventLidSleepMode: 3
 
     property alias mode: props.mode
     readonly property bool active: mode > root.off
     readonly property bool preventSleep: mode >= root.preventSleepMode
     readonly property bool preventLock: mode >= root.preventLockAndSleepMode
-    // Only the strongest mode uses the real Wayland idle-inhibitor (it can't
+    readonly property bool preventLidSleep: mode >= root.preventLidSleepMode
+    // Only the stronger modes use the real Wayland idle-inhibitor (it can't
     // selectively allow lock while blocking sleep), so weaker modes fall back
     // to modules/IdleMonitors.qml gating individual idle actions instead
     readonly property bool enabled: mode >= root.preventLockAndSleepMode
@@ -37,6 +41,12 @@ Singleton {
         property date enabledSince
 
         reloadableId: "idleInhibitor"
+    }
+
+    Binding {
+        target: SessionManager
+        property: "lidInhibited"
+        value: root.preventLidSleep
     }
 
     IdleInhibitor {
@@ -63,11 +73,11 @@ Singleton {
         }
 
         function setMode(newMode: int): void {
-            props.mode = Math.max(0, Math.min(2, newMode));
+            props.mode = Math.max(0, Math.min(root.preventLidSleepMode, newMode));
         }
 
         function cycle(): void {
-            props.mode = (props.mode + 1) % 3;
+            props.mode = (props.mode + 1) % (root.preventLidSleepMode + 1);
         }
 
         function enable(): void {

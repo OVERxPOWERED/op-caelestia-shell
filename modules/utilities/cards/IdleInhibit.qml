@@ -45,7 +45,7 @@ StyledRect {
 
                 anchors.centerIn: parent
                 animate: true
-                text: IdleInhibitor.preventLock ? "lock_clock" : "coffee"
+                text: IdleInhibitor.preventLidSleep ? "laptop" : IdleInhibitor.preventLock ? "lock_clock" : "coffee"
                 color: IdleInhibitor.active ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
                 fontStyle: Tokens.font.icon.large
             }
@@ -65,6 +65,8 @@ StyledRect {
             StyledText {
                 Layout.fillWidth: true
                 text: {
+                    if (IdleInhibitor.preventLidSleep)
+                        return Tr.trCtx("Stays awake when lid is closed", "idle inhibitor");
                     if (IdleInhibitor.preventLock)
                         return Tr.trCtx("Won't lock or sleep when idle", "idle inhibitor");
                     if (IdleInhibitor.preventSleep)
@@ -94,6 +96,10 @@ StyledRect {
                 {
                     mode: IdleInhibitor.preventLockAndSleepMode,
                     icon: "lock_clock"
+                },
+                {
+                    mode: IdleInhibitor.preventLidSleepMode,
+                    icon: "laptop"
                 }
             ]
             readonly property int currentIndex: Math.max(0, modes.findIndex(m => m.mode === IdleInhibitor.mode))

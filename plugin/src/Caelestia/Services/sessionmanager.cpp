@@ -10,6 +10,8 @@
 #include <qloggingcategory.h>
 #include <qtimer.h>
 
+#include <utility>
+
 #include "core/toaster.hpp"
 #include "util/i18n.hpp"
 
@@ -62,6 +64,26 @@ SessionManager::SessionManager(QObject* parent)
         qCWarning(lcSessionManager) << "Failed to connect to Unlock signal:" << bus->lastError().message();
 
     acquireSleepInhibitor();
+}
+
+bool SessionManager::lidInhibited() const {
+    return m_lidInhibitorFd.isValid();
+}
+
+void SessionManager::setLidInhibited(bool inhibit) {
+    if (inhibit == m_lidInhibitorFd.isValid())
+        return;
+
+    if (inhibit) {
+        if (auto fd = acquireInhibitor(u"handle-lid-switch:sleep:idle"_s, u"Keep awake with lid closed"_s, u"block"_s);
+            fd && fd->isValid()) {
+            m_lidInhibitorFd = std::move(*fd);
+            emit lidInhibitedChanged();
+        }
+    } else {
+        m_lidInhibitorFd = QDBusUnixFileDescriptor();
+        emit lidInhibitedChanged();
+    }
 }
 
 bool SessionManager::exec(const QStringList& command) {
@@ -192,19 +214,28 @@ void SessionManager::callSession(const QString& method) {
     call(m_sessionPath, k_sessionIface, method);
 }
 
-void SessionManager::acquireSleepInhibitor() {
+std::optional<QDBusUnixFileDescriptor> SessionManager::acquireInhibitor(
+    const QString& what, const QString& why, const QString& mode) {
     auto bus = getSystemBus();
     if (!bus)
-        return;
+        return std::nullopt;
 
     auto msg = QDBusMessage::createMethodCall(k_loginService, k_loginPath, k_loginIface, u"Inhibit"_s);
-    msg.setArguments({ u"sleep"_s, u"caelestia"_s, u"Lock screen before sleep"_s, u"delay"_s });
+    msg.setArguments({ what, u"caelestia"_s, why, mode });
 
     const QDBusReply<QDBusUnixFileDescriptor> reply = bus->call(msg);
-    if (reply.isValid()) {
-        m_inhibitorFd = reply.value();
-    } else {
-        qCWarning(lcSessionManager) << "Failed to acquire sleep inhibitor lock:" << reply.error().message();
+    if (!reply.isValid()) {
+        qCWarning(lcSessionManager) << "Failed to acquire" << mode << "inhibitor for" << what << ":"
+                                    << reply.error().message();
+        return std::nullopt;
+    }
+
+    return reply.value();
+}
+
+void SessionManager::acquireSleepInhibitor() {
+    if (auto fd = acquireInhibitor(u"sleep"_s, u"Lock screen before sleep"_s, u"delay"_s)) {
+        m_inhibitorFd = std::move(*fd);
     }
 }
 
